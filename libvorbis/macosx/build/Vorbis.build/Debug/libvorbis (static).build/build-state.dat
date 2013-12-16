@@ -1,0 +1,926 @@
+Tlibvorbis (static)
+v7
+r0
+t352036593.263327
+cCheck dependencies
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mdct.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mdct.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/smallft.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/smallft.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/block.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/block.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/envelope.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/envelope.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/window.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/window.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lsp.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lsp.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lpc.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lpc.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/analysis.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/analysis.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/synthesis.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/synthesis.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/psy.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/psy.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/info.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor1.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor1.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor0.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor0.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/res0.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/res0.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mapping0.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mapping0.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/registry.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/registry.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/codebook.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/codebook.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/sharedbook.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/sharedbook.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lookup.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lookup.c normal i386 c com.apple.compilers.gcc.4_2
+cCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/bitrate.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/bitrate.c normal i386 c com.apple.compilers.gcc.4_2
+cLibtool ../../HQEngine/XCode/libs/Debug/libvorbis.a normal i386
+
+N../../HQEngine/XCode/libs/Debug/libvorbis.a
+t1330343625
+s435152
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004C5342BA00000000000000EE
+t1280524986
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/alloca.h
+c000000004AC59C810000000000000588
+t1254464641
+s1416
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/ctype.h
+c000000004AC59C810000000000002C18
+t1254464641
+s11288
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/inttypes.h
+c000000004AC59C8100000000000027D1
+t1254464641
+s10193
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/math.h
+c000000004AC599B500000000000004F1
+t1254463925
+s1265
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/memory.h
+c000000004AC59C810000000000000765
+t1254464641
+s1893
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdio.h
+c000000004AC59C820000000000004174
+t1254464642
+s16756
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdlib.h
+c000000004AC59C820000000000002DF5
+t1254464642
+s11765
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/string.h
+c000000004AC59C820000000000001731
+t1254464642
+s5937
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/sys/types.h
+c000000004C4DE4B40000000000002905
+t1280173236
+s10501
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/emmintrin.h
+c000000004AC59DB7000000000000EA8F
+t1254464951
+s60047
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stddef.h
+c000000004AC59DB70000000000003197
+t1254464951
+s12695
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h
+c000000004AC59DB7000000000000190C
+t1254464951
+s6412
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/include/ogg/ogg.h
+c000000004F4B6EA200000000000020F3
+t1330343586
+s8435
+i<stddef.h>
+i<ogg/os_types.h>
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/include/ogg/os_types.h
+c000000004E3A0CFE00000000000010B3
+t1312427262
+s4275
+i<stdint.h>
+i<sys/types.h>
+i<sys/types.h>
+i<inttypes.h>
+i<sys/types.h>
+i<inttypes.h>
+i<ogg/config_types.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/backends.h
+c000000004BAA67FC0000000000001460
+t1269458940
+s5216
+i"codec_internal.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/bitrate.h
+c000000004BA78C5200000000000007EB
+t1269271634
+s2027
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"os.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/codebook.h
+c000000004BAB799A00000000000013C7
+t1269528986
+s5063
+i<ogg/ogg.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/codec_internal.h
+c000000004BAA67FC0000000000001557
+t1269458940
+s5463
+i"envelope.h"
+i"codebook.h"
+i"psy.h"
+i"bitrate.h"
+i"highlevel.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/envelope.h
+c000000004BAA67FC0000000000000885
+t1269458940
+s2181
+i"mdct.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/highlevel.h
+c000000004C06972C000000000000076F
+t1275500332
+s1903
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/lookup.c
+c000000004BAA67FC0000000000000CEE
+t1269458940
+s3310
+i<math.h>
+i"lookup.h"
+i"lookup_data.h"
+i"os.h"
+i"misc.h"
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/lookup.h
+c000000004BAA67FC0000000000000521
+t1269458940
+s1313
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/lookup_data.h
+c000000004BAA67FC0000000000002779
+t1269458940
+s10105
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/lpc.h
+c000000004BAA67FC00000000000004D3
+t1269458940
+s1235
+i"vorbis/codec.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/lsp.h
+c000000004BAA67FC00000000000004DB
+t1269458940
+s1243
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/masking.h
+c000000004BAA67FC0000000000009A5F
+t1269458940
+s39519
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/mdct.h
+c000000004BAA67FC00000000000007E0
+t1269458940
+s2016
+i"vorbis/codec.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/misc.h
+c000000004BABB79400000000000007DD
+t1269544852
+s2013
+i"vorbis/codec.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/os.h
+c000000004BAA67FC00000000000013EB
+t1269458940
+s5099
+i"config.h"
+i<math.h>
+i<ogg/os_types.h>
+i"misc.h"
+i<malloc.h>
+i<alloca.h>
+i<memory.h>
+i<emmintrin.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/psy.h
+c000000004BAA67FC0000000000001250
+t1269458940
+s4688
+i"smallft.h"
+i"backends.h"
+i"envelope.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/registry.h
+c000000004BA78C520000000000000520
+t1269271634
+s1312
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/scales.h
+c000000004BAA67FC0000000000000B08
+t1269458940
+s2824
+i<math.h>
+i"os.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/smallft.h
+c000000004BA78C520000000000000502
+t1269271634
+s1282
+i"vorbis/codec.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/lib/window.h
+c000000004BA78C520000000000000477
+t1269271634
+s1143
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../../HQEngine/XCode/libs/Debug/libvorbis.a
+t2
+s0
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../include/vorbis/codec.h
+c000000004F4B6E690000000000002102
+t1330343529
+s8450
+i<ogg/ogg.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/analysis.c
+c000000004BAA67FC0000000000000C51
+t1269458940
+s3153
+i<stdio.h>
+i<string.h>
+i<math.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"registry.h"
+i"scales.h"
+i"os.h"
+i"misc.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/bitrate.c
+c000000004BAA67FC000000000000215E
+t1269458940
+s8542
+i<stdlib.h>
+i<string.h>
+i<math.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"os.h"
+i"misc.h"
+i"bitrate.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/block.c
+c000000004CC21F8000000000000076AC
+t1287790464
+s30380
+i<stdio.h>
+i<stdlib.h>
+i<string.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"window.h"
+i"mdct.h"
+i"lpc.h"
+i"registry.h"
+i"misc.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/codebook.c
+c000000004CC1CA6A00000000000034B1
+t1287768682
+s13489
+i<stdlib.h>
+i<string.h>
+i<math.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codebook.h"
+i"scales.h"
+i"misc.h"
+i"os.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/envelope.c
+c000000004BAA67FC00000000000029F1
+t1269458940
+s10737
+i<stdlib.h>
+i<string.h>
+i<stdio.h>
+i<math.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"os.h"
+i"scales.h"
+i"envelope.h"
+i"mdct.h"
+i"misc.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor0.c
+c000000004CC1CA6A0000000000001B31
+t1287768682
+s6961
+i<stdlib.h>
+i<string.h>
+i<math.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"registry.h"
+i"lpc.h"
+i"lsp.h"
+i"codebook.h"
+i"scales.h"
+i"misc.h"
+i"os.h"
+i"misc.h"
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor1.c
+c000000004CC1CA6A0000000000007880
+t1287768682
+s30848
+i<stdlib.h>
+i<string.h>
+i<math.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"registry.h"
+i"codebook.h"
+i"misc.h"
+i"scales.h"
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c
+c000000004CCE79AA0000000000004A94
+t1288599978
+s19092
+i<stdlib.h>
+i<string.h>
+i<ctype.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"codebook.h"
+i"registry.h"
+i"window.h"
+i"psy.h"
+i"misc.h"
+i"os.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lookup.c
+c000000004BAA67FC0000000000000CEE
+t1269458940
+s3310
+i<math.h>
+i"lookup.h"
+i"lookup_data.h"
+i"os.h"
+i"misc.h"
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lpc.c
+c000000004BAA67FC00000000000011C3
+t1269458940
+s4547
+i<stdlib.h>
+i<string.h>
+i<math.h>
+i"os.h"
+i"smallft.h"
+i"lpc.h"
+i"scales.h"
+i"misc.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lsp.c
+c000000004CBA45200000000000003148
+t1287275808
+s12616
+i<math.h>
+i<string.h>
+i<stdlib.h>
+i"lsp.h"
+i"os.h"
+i"misc.h"
+i"lookup.h"
+i"scales.h"
+i"lookup.c"
+i"lookup.c"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mapping0.c
+c000000004BABB79400000000000070B0
+t1269544852
+s28848
+i<stdlib.h>
+i<stdio.h>
+i<string.h>
+i<math.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"codebook.h"
+i"window.h"
+i"registry.h"
+i"psy.h"
+i"misc.h"
+i"os.h"
+i"lpc.h"
+i"lsp.h"
+i"envelope.h"
+i"mdct.h"
+i"psy.h"
+i"scales.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mdct.c
+c000000004BAA67FC0000000000003CC2
+t1269458940
+s15554
+i<stdio.h>
+i<stdlib.h>
+i<string.h>
+i<math.h>
+i"vorbis/codec.h"
+i"mdct.h"
+i"os.h"
+i"misc.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/psy.c
+c000000004CC670B00000000000008BD1
+t1288073392
+s35793
+i<stdlib.h>
+i<math.h>
+i<string.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"masking.h"
+i"psy.h"
+i"os.h"
+i"lpc.h"
+i"smallft.h"
+i"scales.h"
+i"misc.h"
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/registry.c
+c000000004BAA67FC000000000000072D
+t1269458940
+s1837
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"registry.h"
+i"misc.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/res0.c
+c000000004CC1CA6A0000000000006126
+t1287768682
+s24870
+i<stdlib.h>
+i<string.h>
+i<math.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"registry.h"
+i"codebook.h"
+i"misc.h"
+i"os.h"
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/sharedbook.c
+c000000004BAB799A00000000000042D0
+t1269528986
+s17104
+i<stdlib.h>
+i<math.h>
+i<string.h>
+i<ogg/ogg.h>
+i"os.h"
+i"misc.h"
+i"vorbis/codec.h"
+i"codebook.h"
+i"scales.h"
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/smallft.c
+c000000004BAA67FC00000000000056E9
+t1269458940
+s22249
+i<stdlib.h>
+i<string.h>
+i<math.h>
+i"smallft.h"
+i"os.h"
+i"misc.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/synthesis.c
+c000000004CB72138000000000000145C
+t1287070008
+s5212
+i<stdio.h>
+i<ogg/ogg.h>
+i"vorbis/codec.h"
+i"codec_internal.h"
+i"registry.h"
+i"misc.h"
+i"os.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/window.c
+c000000004BAA67FC000000000001F6B1
+t1269458940
+s128689
+i<stdlib.h>
+i<math.h>
+i"os.h"
+i"misc.h"
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Debug/libvorbis.a
+t2
+s0
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/analysis.o
+t1330343622
+s5292
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/bitrate.o
+t1330343625
+s16000
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/block.o
+t1330343621
+s32680
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/codebook.o
+t1330343625
+s13584
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/envelope.o
+t1330343621
+s19512
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor0.o
+t1330343624
+s15136
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor1.o
+t1330343624
+s34316
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/info.o
+t1330343624
+s34652
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lookup.o
+t1330343625
+s1588
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lpc.o
+t1330343622
+s5664
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lsp.o
+t1330343622
+s9068
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mapping0.o
+t1330343624
+s25268
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mdct.o
+t1330343621
+s18576
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/psy.o
+t1330343623
+s69684
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/registry.o
+t1330343624
+s5652
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/res0.o
+t1330343624
+s28044
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/sharedbook.o
+t1330343625
+s14172
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/smallft.o
+t1330343621
+s30592
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/synthesis.o
+t1330343623
+s13752
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/vorbis.LinkFileList
+c000000004F4B64020000000000000AB7
+t1330340866
+s2743
+
+N/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/window.o
+t1330343622
+s37044
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies352036592#352036593#0(0"0(0#1#0"8634370848#0"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/analysis.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/analysis.c normal i386 c com.apple.compilers.gcc.4_2
+s352036422.304725
+e352036422.666035
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/analysis.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/analysis.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@83"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/analysis.c352036422#352036422#0(0"0(0#0#75"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/analysis.c8608301536#1057"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/analysis.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/analysis.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/bitrate.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/bitrate.c normal i386 c com.apple.compilers.gcc.4_2
+s352036425.309160
+e352036425.610187
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/bitrate.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/bitrate.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@82"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/bitrate.c352036425#352036425#0(0"0(0#0#74"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/bitrate.c8630449696#1055"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/bitrate.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/bitrate.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/block.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/block.c normal i386 c com.apple.compilers.gcc.4_2
+s352036421.657625
+e352036421.943173
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/block.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/block.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@80"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/block.c352036421#352036421#0(0"0(0#0#72"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/block.c8630341920#1051"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/block.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/block.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/codebook.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/codebook.c normal i386 c com.apple.compilers.gcc.4_2
+s352036424.757891
+e352036425.306686
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/codebook.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/codebook.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@83"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/codebook.c352036424#352036425#0(0"0(0#0#75"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/codebook.c8611584608#1057"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/codebook.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/codebook.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/envelope.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/envelope.c normal i386 c com.apple.compilers.gcc.4_2
+s352036421.687956
+e352036421.903251
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/envelope.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/envelope.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@83"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/envelope.c352036421#352036421#0(0"0(0#0#75"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/envelope.c8630100064#1057"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/envelope.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/envelope.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor0.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor0.c normal i386 c com.apple.compilers.gcc.4_2
+s352036424.199053
+e352036424.532083
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor0.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor0.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@81"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor0.c352036424#352036424#0(0"0(0#0#73"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor0.c8628936192#1053"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor0.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor0.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor1.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor1.c normal i386 c com.apple.compilers.gcc.4_2
+s352036423.853419
+e352036424.208016
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor1.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor1.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@81"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor1.c352036423#352036424#0(0"0(0#0#73"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor1.c8629768320#1053"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/floor1.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/floor1.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/info.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c normal i386 c com.apple.compilers.gcc.4_2
+s352036423.657732
+e352036424.198944
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/info.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+o/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c: In function 'vorbis_granule_time':
+o/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c:657: warning: integer constant is too large for 'long' type
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c352036423#352036424#0(240"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c: In function 'vorbis_granule_time':/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c:657: warning: integer constant is too large for 'long' type1(22@45"Integer constant is too large for 'long' type352036423#108#132#0(6@71"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c310292778#657#0#657#0#0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c8632887744#1049"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/info.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/info.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lookup.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lookup.c normal i386 c com.apple.compilers.gcc.4_2
+s352036425.306906
+e352036425.465912
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lookup.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lookup.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@81"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lookup.c352036425#352036425#0(0"0(0#0#73"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lookup.c8630264320#1053"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lookup.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lookup.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lpc.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lpc.c normal i386 c com.apple.compilers.gcc.4_2
+s352036422.252855
+e352036422.674536
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lpc.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lpc.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@78"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lpc.c352036422#352036422#0(0"0(0#0#70"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lpc.c8632338272#1047"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lpc.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lpc.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lsp.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lsp.c normal i386 c com.apple.compilers.gcc.4_2
+s352036421.943237
+e352036422.304636
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lsp.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lsp.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@78"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lsp.c352036421#352036422#0(0"0(0#0#70"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lsp.c8632427168#1047"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/lsp.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lsp.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mapping0.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mapping0.c normal i386 c com.apple.compilers.gcc.4_2
+s352036424.532167
+e352036424.974531
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mapping0.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mapping0.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@83"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mapping0.c352036424#352036424#0(0"0(0#0#75"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mapping0.c8632134624#1057"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mapping0.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mapping0.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mdct.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mdct.c normal i386 c com.apple.compilers.gcc.4_2
+s352036421.391443
+e352036421.657543
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mdct.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mdct.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mdct.c352036421#352036421#0(0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mdct.c8632307840#1049"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/mdct.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/mdct.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/psy.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/psy.c normal i386 c com.apple.compilers.gcc.4_2
+s352036422.674616
+e352036423.853337
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/psy.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/psy.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@78"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/psy.c352036422#352036423#0(0"0(0#0#70"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/psy.c8634268032#1047"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/psy.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/psy.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/registry.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/registry.c normal i386 c com.apple.compilers.gcc.4_2
+s352036424.543826
+e352036424.757785
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/registry.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/registry.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@83"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/registry.c352036424#352036424#0(0"0(0#0#75"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/registry.c8630564320#1057"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/registry.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/registry.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/res0.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/res0.c normal i386 c com.apple.compilers.gcc.4_2
+s352036424.208081
+e352036424.543752
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/res0.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/res0.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/res0.c352036424#352036424#0(0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/res0.c8623226112#1049"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/res0.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/res0.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/sharedbook.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/sharedbook.c normal i386 c com.apple.compilers.gcc.4_2
+s352036424.974613
+e352036425.309091
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/sharedbook.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/sharedbook.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@85"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/sharedbook.c352036424#352036425#0(0"0(0#0#77"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/sharedbook.c8631945440#1061"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/sharedbook.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/sharedbook.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/smallft.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/smallft.c normal i386 c com.apple.compilers.gcc.4_2
+s352036421.392955
+e352036421.687870
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/smallft.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/smallft.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@82"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/smallft.c352036421#352036421#0(0"0(0#0#74"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/smallft.c8631966912#1055"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/smallft.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/smallft.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/synthesis.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/synthesis.c normal i386 c com.apple.compilers.gcc.4_2
+s352036422.666123
+e352036423.657568
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/synthesis.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/synthesis.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@84"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/synthesis.c352036422#352036423#0(0"0(0#0#76"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/synthesis.c8623371968#1059"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/synthesis.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/synthesis.o"0#
+
+CCompileC "build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/window.o" /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/window.c normal i386 c com.apple.compilers.gcc.4_2
+s352036421.903369
+e352036422.252772
+r1
+xCompileC
+xbuild/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/window.o
+x/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/window.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@81"Compile /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/window.c352036421#352036422#0(0"0(0#0#73"/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/window.c8634732896#1053"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/vorbis.hmap" -F../../HQEngine/XCode/libs/Debug -I../../HQEngine/XCode/libs/Debug/include -I../../libogg-1.3.0/include -I../../ogg/include "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/DerivedSources" -c /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../lib/window.c -o "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/window.o"0#
+
+CLibtool ../../HQEngine/XCode/libs/Debug/libvorbis.a normal i386
+s352036425.610252
+e352036425.801286
+r1
+xLibtool
+x../../HQEngine/XCode/libs/Debug/libvorbis.a
+xnormal
+xi386
+o/Developer/usr/bin/libtool: file: /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lookup.o has no symbols
+lSLF07#2@63"Libtool ../../HQEngine/XCode/libs/Debug/libvorbis.a normal i386352036425#352036425#0(186"/Developer/usr/bin/libtool: file: /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/lookup.o has no symbols0(0#0#0"8632566496#445"    cd /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/libtool -static -arch_only i386 -syslibroot /Developer/SDKs/MacOSX10.6.sdk -L../../HQEngine/XCode/libs/Debug -filelist "/Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Vorbis.build/Debug/libvorbis (static).build/Objects-normal/i386/vorbis.LinkFileList" -o ../../HQEngine/XCode/libs/Debug/libvorbis.a0#
+
+CLibtool /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/../../HQEngine/XCode/libs/Debug/libvorbis.a normal i386
+r0
+
+CLibtool /Volumes/Entertainment/VS_Projects/libvorbis-1.3.2/macosx/build/Debug/libvorbis.a normal i386
+r0
+

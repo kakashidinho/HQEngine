@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>286559f3-2887-44c5-ab5a-36afc3003da1</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>5cc431c3-41d2-4e9a-b58b-62a35d07085b</UniqueIdentifier>
+    </Filter>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Filter Include="Source">
+      <UniqueIdentifier>{493d8e81-37db-4364-aea5-ab5824907f87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\test">
+      <UniqueIdentifier>{843a64a6-3b3f-44cf-a060-5c3b46b110db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\test\shader">
+      <UniqueIdentifier>{943f36d3-4176-45ca-8397-e0db0b3b52c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\test\setting">
+      <UniqueIdentifier>{82e11271-b650-4819-ad0c-59b1926c5782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\test\image">
+      <UniqueIdentifier>{8d51b49d-7045-46ba-bf26-97e68a3526b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\test\meshes">
+      <UniqueIdentifier>{2034a44c-d6dd-4bd0-b1bc-7921dabb1784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\test\audio">
+      <UniqueIdentifier>{cdd72d12-7611-48da-9994-58fa1c28dafd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Source\test\winmain.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\test\Game.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Source\test\Game.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test_TemporaryKey.pfx" />
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\..\..\Source\test\shader\hlsl-mesh_vs.hlsl">
+      <Filter>Assets\test\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\..\Source\test\shader\hlsl_ps.hlsl">
+      <Filter>Assets\test\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\..\Source\test\shader\hlsl_vs.hlsl">
+      <Filter>Assets\test\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\..\Source\test\shader\hlsl-mesh_ps.hlsl">
+      <Filter>Assets\test\shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\Source\test\shader\hlsl.txt">
+      <Filter>Assets\test\shader</Filter>
+    </Text>
+    <Text Include="..\..\..\..\Source\test\shader\hlsl-mesh.txt">
+      <Filter>Assets\test\shader</Filter>
+    </Text>
+    <Text Include="Assets\test\setting\API.txt">
+      <Filter>Assets\test\setting</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Source\test\image\Marine.pvr">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\test\image\Marine.dds">
+      <Filter>Assets\test\image</Filter>
+    </Image>
+    <Image Include="Assets\test\image\metall16bit.bmp">
+      <Filter>Assets\test\image</Filter>
+    </Image>
+    <Image Include="Assets\test\image\pen2.jpg">
+      <Filter>Assets\test\image</Filter>
+    </Image>
+    <Image Include="Assets\test\image\pen2.png">
+      <Filter>Assets\test\image</Filter>
+    </Image>
+    <Image Include="Assets\test\meshes\Bat_Albedo.jpg">
+      <Filter>Assets\test\meshes</Filter>
+    </Image>
+    <Image Include="Assets\test\meshes\Tiny_skin.bmp">
+      <Filter>Assets\test\meshes</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Assets\test\audio\battletoads-double-dragons-2.ogg" />
+    <Media Include="Assets\test\audio\crysis_warhead_menu.ogg" />
+    <Media Include="Assets\test\meshes\bat.hqanimation" />
+    <Media Include="Assets\test\meshes\bat.hqmesh" />
+    <Media Include="Assets\test\meshes\tiny.hqanimation" />
+    <Media Include="Assets\test\meshes\tiny.hqmesh" />
+    <Media Include="Assets\test\meshes\tower4.hqmesh" />
+  </ItemGroup>
+</Project>

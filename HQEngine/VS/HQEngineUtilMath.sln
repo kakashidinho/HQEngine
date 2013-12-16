@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQUtilMath", "..\Source\HQUtilMath\HQUtilMath.vcproj", "{8CE14C97-6121-46CA-862D-130322FB0143}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CMathDebug|Win32 = CMathDebug|Win32
+		CMathRelease|Win32 = CMathRelease|Win32
+		Debug static CRT|Win32 = Debug static CRT|Win32
+		Debug|Win32 = Debug|Win32
+		DebugLayer|Win32 = DebugLayer|Win32
+		DebugSSE4_1|Win32 = DebugSSE4_1|Win32
+		Release noptimize|Win32 = Release noptimize|Win32
+		Release static CRT|Win32 = Release static CRT|Win32
+		Release|Win32 = Release|Win32
+		ReleaseSSE4_1|Win32 = ReleaseSSE4_1|Win32
+		StaticDebug static CRT|Win32 = StaticDebug static CRT|Win32
+		StaticDebug|Win32 = StaticDebug|Win32
+		StaticRelease static CRT|Win32 = StaticRelease static CRT|Win32
+		StaticRelease|Win32 = StaticRelease|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CE14C97-6121-46CA-862D-130322FB0143}.CMathDebug|Win32.ActiveCfg = CMathDebug|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.CMathDebug|Win32.Build.0 = CMathDebug|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.CMathRelease|Win32.ActiveCfg = CMathRelease|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.CMathRelease|Win32.Build.0 = CMathRelease|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Debug static CRT|Win32.ActiveCfg = Debug static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Debug static CRT|Win32.Build.0 = Debug static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Debug|Win32.Build.0 = Debug|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.DebugLayer|Win32.ActiveCfg = Debug static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.DebugSSE4_1|Win32.ActiveCfg = DebugSSE4_1|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.DebugSSE4_1|Win32.Build.0 = DebugSSE4_1|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Release noptimize|Win32.ActiveCfg = release noptimize|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Release noptimize|Win32.Build.0 = release noptimize|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Release static CRT|Win32.ActiveCfg = Release static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Release static CRT|Win32.Build.0 = Release static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Release|Win32.ActiveCfg = Release|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.Release|Win32.Build.0 = Release|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.ReleaseSSE4_1|Win32.ActiveCfg = ReleaseSSE4_1|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.ReleaseSSE4_1|Win32.Build.0 = ReleaseSSE4_1|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.StaticDebug static CRT|Win32.ActiveCfg = StaticDebug static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.StaticDebug static CRT|Win32.Build.0 = StaticDebug static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.StaticDebug|Win32.ActiveCfg = StaticDebug|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.StaticDebug|Win32.Build.0 = StaticDebug|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.StaticRelease static CRT|Win32.ActiveCfg = StaticRelease static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.StaticRelease static CRT|Win32.Build.0 = StaticRelease static CRT|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.StaticRelease|Win32.ActiveCfg = StaticRelease|Win32
+		{8CE14C97-6121-46CA-862D-130322FB0143}.StaticRelease|Win32.Build.0 = StaticRelease|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

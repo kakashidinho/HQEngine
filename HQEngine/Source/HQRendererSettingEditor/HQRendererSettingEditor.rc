@@ -1,0 +1,119 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+SETTING DIALOGEX 0, 0, 316, 322
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "HQ engine renderer setting editor"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Save as...",IDSAVE,205,301,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,259,301,50,14
+    EDITTEXT        WIDTH,55,41,60,14,ES_AUTOHSCROLL
+    LTEXT           "Width",IDC_STATIC,27,44,20,8
+    EDITTEXT        HEIGHT,55,67,59,14,ES_AUTOHSCROLL
+    LTEXT           "Height",IDC_STATIC,27,69,22,8
+    CONTROL         "Windowed",WIN,"Button",BS_AUTORADIOBUTTON,155,43,49,10
+    CONTROL         "Full screen",FULL,"Button",BS_AUTORADIOBUTTON,156,68,50,10
+    EDITTEXT        ADAPTER,83,18,32,14,ES_AUTOHSCROLL
+    LTEXT           "Adapter Index",IDC_STATIC,28,20,48,8
+    COMBOBOX        BFMT,96,164,143,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        ZFMT,96,190,143,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Back buffer format",IDC_STATIC,26,165,61,8
+    LTEXT           "Depth Stencil format",IDC_STATIC,26,192,66,8
+    COMBOBOX        VPROC,96,218,143,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        MULSAMPLE,96,245,143,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Vertex Processing",IDC_STATIC,26,220,58,8
+    LTEXT           "Anti aliasing",IDC_STATIC,27,247,39,8
+    COMBOBOX        DEV,96,111,143,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Device Type",IDC_STATIC,27,112,40,8
+    PUSHBUTTON      "Open...",IDOPEN,150,301,50,14
+    EDITTEXT        REFRESH,79,90,42,14,ES_AUTOHSCROLL
+    LTEXT           "Refresh Rate",IDC_STATIC,27,93,44,8
+    CONTROL         "vsync",VSYNC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,156,92,35,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    "SETTING", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 315
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

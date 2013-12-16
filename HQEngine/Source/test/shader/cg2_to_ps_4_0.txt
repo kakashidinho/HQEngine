@@ -1,0 +1,68 @@
+// ps_4_0 output by Cg compiler
+// cgc version 3.0.0016, build date Feb 11 2011
+// command line args: -DVPOSITION=POSITION -DVCOLOR=COLOR -DVNORMAL=NORMAL -DVTEXCOORD0=TEXCOORD0 -DVTEXCOORD1=TEXCOORD1 -DVTEXCOORD2=TEXCOORD2 -DVTEXCOORD3=TEXCOORD3 -DVTEXCOORD4=TEXCOORD4 -DVTEXCOORD5=TEXCOORD5 -DVTEXCOORD6=TEXCOORD6 -DVTEXCOORD7=TEXCOORD7 -DVTANGENT=TANGENT -DVBINORMAL=BINORMAL -DVBLENDWEIGHT=BLENDWEIGHT -DVBLENDINDICES=BLENDINDICES -DVPSIZE=PSIZE -profile ps_4_0
+// source file: K:\QEngine\Visual Studio\HQEngine\test\shader\cg2.txt
+//vendor NVIDIA Corporation
+//version 3.0.0.16
+//profile ps_4_0
+//program PS
+//semantic viewProj
+//semantic cbuffer : BUFFER[11]
+//semantic texture1 : TEXUNIT15
+//var sampler2D texture1 : TEXUNIT15 : _texture1 15 : -1 : 1
+//var float2 texcoord : $vin.TEXCOORD0 :  : 1 : 1
+//var float4 color : $vin.COLOR :  : 2 : 1
+//var float4 PS : $vout.COLOR : COLOR : -1 : 1
+
+#pragma pack_matrix(row_major)
+
+struct vOut {
+    float4 _position1 : SV_Position;
+    float2 _texcoord1 : TEXCOORD0;
+    float4 _color1 : COLOR0;
+    float _psize : PSIZE;
+};
+
+struct vOut2 {
+    float4 _position2 : SV_Position;
+    float2 _texcoord2 : TEXCOORD0;
+    float4 _color2 : COLOR0;
+};
+
+struct vIn {
+    float3 _position3 : SV_Position;
+    float2 _texcoord0 : TEXCOORD6;
+    float4 _color0 : COLOR0;
+    float _psize1 : PSIZE;
+};
+
+struct CBUFFER {
+    float3x4 _rotation;
+    float4x4 _viewProj1;
+};
+
+struct X1X {
+    float4 _COL0 : COLOR0;
+    float4 _POSITION : SV_Position;
+    float2 _TEXCOORD0 : TEXCOORD0;
+};
+
+static float4 _TMP0;
+Texture2D<float4> _TMP1 : register(t15);
+uniform SamplerState _texture1 : TEXUNIT15;
+cbuffer C11: register(b11)
+{
+}
+
+ // main procedure, the original name was PS
+float4 main( in X1X cin) : SV_Target
+{
+
+    float2 _texcoord;
+    float4 _color;
+
+    _color = cin._COL0;
+    _texcoord = cin._TEXCOORD0;
+    _TMP0 = _TMP1.Sample(_texture1, _texcoord);
+    return _TMP0*_color;
+} // main end

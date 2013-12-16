@@ -1,0 +1,50 @@
+# depslib dependency file v1.0
+1303920994 source:/host/My Document/Visual Studio 2008/Projects/HQEngine/HQRendererGL/glew-1.6.0 linux/src/glew.c
+	<GL/glew.h>
+	<GL/wglew.h>
+	<GL/glxew.h>
+	<dlfcn.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdlib.h>
+	<string.h>
+	<AvailabilityMacros.h>
+	<dlfcn.h>
+	<mach-o/dyld.h>
+
+1303920994 /home/lehoangquyen/Desktop/VS projects/HQEngine/HQRendererGL/glew-1.6.0 linux/include/GL/glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1303920994 /home/lehoangquyen/Desktop/VS projects/HQEngine/HQRendererGL/glew-1.6.0 linux/include/GL/wglew.h
+	<windows.h>
+
+1303920994 /home/lehoangquyen/Desktop/VS projects/HQEngine/HQRendererGL/glew-1.6.0 linux/include/GL/glxew.h
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<X11/Xmd.h>
+	<GL/glew.h>
+
+1305805119 source:/host/My Document/Visual Studio 2008/Projects/HQEngine/QEXT_glsl_compiler/qext_glsl_compiler.cpp
+	"jnicompilerheader.h"
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<GL/glew.h>
+	<GL/glut.h>
+
+1305804589 /host/My Document/Visual Studio 2008/Projects/HQEngine/QEXT_glsl_compiler/jnicompilerheader.h
+	<JavaVM/jni.h>
+	<jni.h>
+
+1277195842 /home/lehoangquyen/Downloads/jdk1.6.0_21/include/jni.h
+	<stdio.h>
+	<stdarg.h>
+	"jni_md.h"
+
+1277195842 /home/lehoangquyen/Downloads/jdk1.6.0_21/include/linux/jni_md.h
+

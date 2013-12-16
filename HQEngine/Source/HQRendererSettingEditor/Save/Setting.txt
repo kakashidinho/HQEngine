@@ -1,0 +1,13 @@
+Basic Settings
+Width=600
+Height=400
+Windowed=1
+RefreshRate=0
+
+Advanced Settings
+Adapter=0
+Device Type=1
+BackBuffer Format=20
+DepthStencil Format=81
+Vertex Processing=80
+Multisample Type=0

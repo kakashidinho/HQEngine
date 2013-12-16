@@ -1,0 +1,4 @@
+LIBRARY	"HQRendererGL"
+EXPORTS
+	CreateDevice @1
+	ReleaseDevice @2

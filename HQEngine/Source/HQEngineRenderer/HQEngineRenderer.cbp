@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="HQEngineRenderer" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option platforms="Unix;" />
+				<Option output="$(#q_engine_project)/$(#staticlib)" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="$(#q_engine_project)/$(#objdir)" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DLINUX" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option platforms="Unix;" />
+				<Option output="$(#q_engine_project)/$(#staticlib)" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="$(#q_engine_project)/$(#objdir)" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-msse" />
+		</Compiler>
+		<Unit filename="../BaseImpl/HQClearViewportShaderCodeD3D1x.h" />
+		<Unit filename="../BaseImpl/HQCommon.h" />
+		<Unit filename="../BaseImpl/HQRenderDeviceBaseImpl.h" />
+		<Unit filename="../BaseImpl/HQRenderTargetManagerBaseImpl.h" />
+		<Unit filename="../BaseImpl/HQShaderParameterIndexTable.h" />
+		<Unit filename="../BaseImpl/HQTexManagerBaseImpl.h" />
+		<Unit filename="HQRenderer.cpp" />
+		<Unit filename="../HQRenderDevice.h" />
+		<Unit filename="../HQRenderTargetManager.h" />
+		<Unit filename="../HQRenderer.h" />
+		<Unit filename="../HQRendererCoreType.h" />
+		<Unit filename="../HQRendererCoreTypeInline.h" />
+		<Unit filename="../HQRendererStateManager.h" />
+		<Unit filename="../HQReturnVal.h" />
+		<Unit filename="../HQShaderManager.h" />
+		<Unit filename="../HQTextureManager.h" />
+		<Unit filename="../HQVertexAttribute.h" />
+		<Unit filename="../HQVertexStreamManager.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

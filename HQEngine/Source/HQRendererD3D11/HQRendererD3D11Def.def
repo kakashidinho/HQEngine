@@ -1,0 +1,4 @@
+LIBRARY	"HQRendererD3D11"
+EXPORTS
+	CreateDevice @1
+	ReleaseDevice @2

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="HQEngineRendererDevice" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option platforms="Unix;" />
+				<Option output="$(#q_enginedir)/Debug/lib$(PROJECT_NAME)_D.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="$(#q_engine_project)/$(#objdir)" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-W" />
+					<Add option="-O0" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DQ_ENGINE_RENDERERGL_EXPORTS" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="-D_STATICLINK" />
+				</Compiler>
+				<Linker>
+					<Add library="/home/lehoangquyen/CodeBlocksProjects/HQEngine/ImagesLoader/bin/Debug/libImagesLoader.a" />
+					<Add library="/home/lehoangquyen/CodeBlocksProjects/HQEngine/HQUtilMath/bin/StaticDebug/libHQUtilMath.a" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option platforms="Unix;" />
+				<Option output="$(#q_enginedir)/Release/lib$(PROJECT_NAME).so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="$(#q_engine_project)/$(#objdir)" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DQ_ENGINE_RENDERERGL_EXPORTS" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="-D_STATICLINK" />
+				</Compiler>
+				<Linker>
+					<Add library="/home/lehoangquyen/CodeBlocksProjects/HQEngine/ImagesLoader/bin/Release/libImagesLoader.a" />
+					<Add library="/home/lehoangquyen/CodeBlocksProjects/HQEngine/HQUtilMath/bin/StaticRelease/libHQUtilMath.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-msse" />
+			<Add option="-fPIC" />
+			<Add directory="/host/My Document/Visual Studio 2008/Projects/Q_Engine/Q_Engine_RendererGL/" />
+			<Add directory="/home/lehoangquyen/Desktop/VS projects/HQEngine/HQRendererGL/glew-1.6.0 linux/include" />
+		</Compiler>
+		<Linker>
+			<Add option="-lGL" />
+			<Add option="-lX11" />
+			<Add option="-lXxf86vm" />
+		</Linker>
+		<Unit filename="../BaseImpl/HQTexManagerBaseImpl.cpp" />
+		<Unit filename="HQDeviceEnumGL.cpp" />
+		<Unit filename="HQDeviceEnumGL.h" />
+		<Unit filename="HQDeviceGL.cpp" />
+		<Unit filename="HQDeviceGL.h" />
+		<Unit filename="HQDeviceGL_caps.cpp" />
+		<Unit filename="HQRenderTargetFBO.cpp" />
+		<Unit filename="HQRenderTargetGL.h" />
+		<Unit filename="HQShaderGL.cpp" />
+		<Unit filename="HQShaderGL.h" />
+		<Unit filename="HQShaderGL_Cg.cpp" />
+		<Unit filename="HQShaderGL_Cg.h" />
+		<Unit filename="HQShaderGL_Cg_inline.h" />
+		<Unit filename="HQShaderGL_Combine.cpp" />
+		<Unit filename="HQShaderGL_Combine.h" />
+		<Unit filename="HQShaderGL_Common.cpp" />
+		<Unit filename="HQShaderGL_Common.h" />
+		<Unit filename="HQShaderGL_GLSL.cpp" />
+		<Unit filename="HQShaderGL_GLSL.h" />
+		<Unit filename="HQShaderGL_GLSL_VarParser.cpp" />
+		<Unit filename="HQShaderGL_GLSL_VarParser.h" />
+		<Unit filename="HQShaderGL_GLSL_inline.h" />
+		<Unit filename="HQShaderGL_UBO.cpp" />
+		<Unit filename="HQShaderGL_UBO.h" />
+		<Unit filename="HQShaderGL_template_impl.h" />
+		<Unit filename="HQStateManagerGL.cpp" />
+		<Unit filename="HQStateManagerGL.h" />
+		<Unit filename="HQTextureManagerGL.cpp" />
+		<Unit filename="HQTextureManagerGL.h" />
+		<Unit filename="HQVertexStreamManagerGL.cpp" />
+		<Unit filename="HQVertexStreamManagerGL.h" />
+		<Unit filename="glHeaders.h" />
+		<Unit filename="glew-1.6.0 linux/src/glew.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="stdafx.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

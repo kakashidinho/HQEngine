@@ -1,0 +1,1068 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{5d2a9d4b-2008-4a39-a6e9-ef6ffcdd5970}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtilMath">
+      <UniqueIdentifier>{858b503a-1908-4b8c-bb4e-13c46ba0f040}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ImagesLoader">
+      <UniqueIdentifier>{b29ac0a8-63a0-49a3-a14b-e84652235290}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\zlib">
+      <UniqueIdentifier>{807f5b94-462e-4947-acc8-a9cea60ef9ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\libpng">
+      <UniqueIdentifier>{ba3a17eb-33cd-4015-a486-ef967b92e7ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\libjpeg">
+      <UniqueIdentifier>{b1b73449-5cab-4486-be0b-8a33fe1d012e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQRenderer">
+      <UniqueIdentifier>{823aae2d-725a-4973-91ce-29390212febc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQRenderer\BaseImplement">
+      <UniqueIdentifier>{9a1f101a-da89-4992-8919-2639126215c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQRenderDeviceD3D11">
+      <UniqueIdentifier>{0d745ebb-7dee-4d2e-a9eb-2a167d0e1bcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQEngine">
+      <UniqueIdentifier>{992f62ec-e6ee-4c3a-810c-a8fd6fee6ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtil">
+      <UniqueIdentifier>{ed234599-1130-4b8b-b010-29ddc3fe59b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQEngine\IOS">
+      <UniqueIdentifier>{95b6005b-4a5e-4ba5-8c72-d61d1564020b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQEngine\WinStore">
+      <UniqueIdentifier>{a6d50488-23e8-46f2-8b95-2690468082c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQEngine\Win32">
+      <UniqueIdentifier>{74ecfa05-4b28-4e35-ad2e-bae4500c2dad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQSceneManagement">
+      <UniqueIdentifier>{819c0ff2-d251-457d-b801-22b57ab63790}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQAudio">
+      <UniqueIdentifier>{67ddfdee-82c6-494e-8ed1-c2306a6fe12f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQAudio\xaudio2">
+      <UniqueIdentifier>{7c1e1dc1-44f6-4043-b784-be7c1f83664f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQAudio\winstore">
+      <UniqueIdentifier>{750bbfa1-0465-48ad-be8b-da01e80a0cbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtil\winstore">
+      <UniqueIdentifier>{797b88d6-d997-4fa2-b32d-3fb3f0118bd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtil\cpp11">
+      <UniqueIdentifier>{bb4fc779-6691-4d87-9fc3-84344e0bf4ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtil\win32">
+      <UniqueIdentifier>{b77df51d-088d-41ad-a5c1-d627903465d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQEngine\Android">
+      <UniqueIdentifier>{4abd869b-9f9a-4e87-b679-5dadf98160b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtilMath\NeonInline">
+      <UniqueIdentifier>{2960d464-4dd6-4ce7-89b3-9877b8c1cd2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtilMath\NeonASM">
+      <UniqueIdentifier>{659323a6-d386-41c7-af95-7bc35d2d4edf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtilMath\DirectXMath">
+      <UniqueIdentifier>{f7ad6a9c-c702-435e-a6d9-0b1da8a26d2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQEngine\Mac">
+      <UniqueIdentifier>{f7330aed-87d2-4dca-b08b-5d26676609ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQRenderer\BaseImplement\compiledBaseImplShader">
+      <UniqueIdentifier>{833dbbe2-4e9e-4d78-9ef6-d346a2cce400}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\HQUtil\pthread">
+      <UniqueIdentifier>{8d5a2bf6-79af-4463-ae67-43efd93de99f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath\resource.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQ2DMath.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQ2DMathInline.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQ3DMath.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQ3DMathInline.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQMiscDataType.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQPrimeNumber.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQPrimitiveDataType.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMathCommon.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\3STC_DXT.h">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\Bitmap.h">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\ETC.h">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\ImgByteStream.h">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\ImgLoader.h">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\JPEG.h">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\PNGImg.h">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\crc32.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\deflate.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\gzguts.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\inffast.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\inffixed.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\inflate.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\inftrees.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\trees.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\zconf.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\zlib.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\zutil.h">
+      <Filter>Source\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\lpng159\png.h">
+      <Filter>Source\libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\lpng159\pngconf.h">
+      <Filter>Source\libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\lpng159\pngdebug.h">
+      <Filter>Source\libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\lpng159\pnginfo.h">
+      <Filter>Source\libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\lpng159\pnglibconf.h">
+      <Filter>Source\libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\lpng159\pngpriv.h">
+      <Filter>Source\libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\lpng159\pngstruct.h">
+      <Filter>Source\libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jconfig.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdct.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jerror.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jinclude.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jmemsys.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jmorecfg.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jpegint.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jpeglib.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jversion.h">
+      <Filter>Source\libjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineRenderer\HQRendererDeviceDebugLayer.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineRenderer\HQReturnValDebugString.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQBaseImplCommon.h">
+      <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.h">
+      <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQRenderDeviceBaseImpl.h">
+      <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQRenderTargetManagerBaseImpl.h">
+      <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQShaderParameterIndexTable.h">
+      <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQTextureManagerBaseImpl.h">
+      <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRenderDevice.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRenderer.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererCoreType.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererCoreTypeFixedFunction.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererCoreTypeInline.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererPlatformDef.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererStateManager.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRenderTargetManager.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQTextureManager.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQVertexAttribute.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQVertexAttributeInline.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQVertexStreamManager.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceEnumD3D11.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQRenderTargetD3D11.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQShaderD3D11.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQStateManagerD3D11.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQTextureManagerD3D11.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQVertexStreamD3D11.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\..\..\..\Source\HQShaderManager.h">
+      <Filter>Source\HQRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQPlatformDef.h" />
+    <ClInclude Include="..\..\..\..\Source\HQAssert.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQClosedHashTable.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQClosedStringHashTable.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQDefaultHashFunction.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQDefaultKeyEqual.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQGrowableArray.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQHashTable.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQItemManager.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQLinkedList.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQLoggableObject.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQLogStream.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQMemAlignment.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQMemoryManager.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQMutex.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQPair.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQReferenceCountObj.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQSemaphore.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQSharedPointer.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQStack.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQStringHashTable.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQThread.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQTimer.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtil.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineWindow.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineApp.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineAppDelegate.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineCommon.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQKeyCode.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEventSeparateThread.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\winstore\HQWinStoreUtil.h">
+      <Filter>Source\HQEngine\WinStore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\winstore\HQWinStoreFileSystem.h">
+      <Filter>Source\HQEngine\WinStore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQSceneManagement\helperFunctions.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQSceneManagement\HQMeshNodeInternal.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQBoundingVolume.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQCamera.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQMeshNode.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQOctreeSceneManager.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQSceneManagementCommon.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQSceneNode.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioBase.h">
+      <Filter>Source\HQAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudio.h">
+      <Filter>Source\HQAudio\xaudio2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioBuffer.h">
+      <Filter>Source\HQAudio\xaudio2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioSource.h">
+      <Filter>Source\HQAudio\xaudio2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio.h">
+      <Filter>Source\HQAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\winstore\HQAudioWinStore.h">
+      <Filter>Source\HQAudio\winstore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAtomic.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAtomicWin32.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineCustomHeap.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioPCH.h">
+      <Filter>Source\HQAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEnginePCH.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11PCH.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQSceneManagement\HQScenePCH.h">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtil\HQUtilPCH.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath\HQUtilMathPCH.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQNeonMatrixInline.h">
+      <Filter>Source\HQUtilMath\NeonInline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonMatrix.h">
+      <Filter>Source\HQUtilMath\NeonInline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonQuaternion.h">
+      <Filter>Source\HQUtilMath\NeonInline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonVector.h">
+      <Filter>Source\HQUtilMath\NeonInline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQNeonQuaternionInline.h">
+      <Filter>Source\HQUtilMath\NeonInline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath\directx_math\HQDXMatrix.h">
+      <Filter>Source\HQUtilMath\DirectXMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath\directx_math\HQDXQuaternion.h">
+      <Filter>Source\HQUtilMath\DirectXMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQUtilMath\directx_math\HQDXVector.h">
+      <Filter>Source\HQUtilMath\DirectXMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQDXMatrixInline.h">
+      <Filter>Source\HQUtilMath\DirectXMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQDXQuaternionInline.h">
+      <Filter>Source\HQUtilMath\DirectXMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQDataStream.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultDataStream.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQConditionVariable.h">
+      <Filter>Source\HQUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_notex.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_notex_debug.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_tex.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_tex_debug.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_notex.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_notex_debug.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex_debug.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex_debug.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_tex.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_tex_debug.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_notex.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_notex_debug.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_tex.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_tex_debug.h">
+      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQAABB.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQBSP.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQMatrix3x4.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQMatrix4.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQOBB.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQPlane.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQPolygon.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQPrimeNumber.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQQuaternion.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQRay.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQSphere.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQVector.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\3STC_DXT.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\Bitmap.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\BMP.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\DDS.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\ETC.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\ImgByteStream.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\JPEG.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\KTX.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\PNGImg.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\PVR.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\TGA.cpp">
+      <Filter>Source\ImagesLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\adler32.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\compress.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\crc32.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\deflate.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\gzclose.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\gzlib.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\gzread.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\gzwrite.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\infback.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\inffast.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\inflate.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\inftrees.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\trees.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\uncompr.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\zutil.c">
+      <Filter>Source\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\png.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngerror.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngget.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngmem.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngpread.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngread.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngrio.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngrtran.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngrutil.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngset.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngtrans.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngwio.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngwrite.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngwtran.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\lpng159\pngwutil.c">
+      <Filter>Source\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jaricom.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcapimin.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcapistd.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcarith.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jccoefct.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jccolor.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcdctmgr.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jchuff.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcinit.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcmainct.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcmarker.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcmaster.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcomapi.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcparam.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcprepct.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jcsample.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jctrans.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdapimin.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdapistd.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdarith.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdatadst.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdatasrc.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdcoefct.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdcolor.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jddctmgr.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdhuff.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdinput.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdmainct.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdmarker.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdmaster.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdmerge.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdpostct.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdsample.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jdtrans.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jerror.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jfdctflt.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jfdctfst.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jfdctint.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jidctflt.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jidctfst.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jidctint.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jmemansi.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jmemmgr.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jquant1.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jquant2.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\ImagesLoader\jpeg-8d\jutils.c">
+      <Filter>Source\libjpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngineRenderer\HQRenderDeviceDebugLayer.cpp">
+      <Filter>Source\HQRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngineRenderer\HQRenderer.cpp">
+      <Filter>Source\HQRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngineRenderer\HQReturnValDebugString.cpp">
+      <Filter>Source\HQRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\BaseImpl\HQTextureManagerBaseImpl.cpp">
+      <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11_caps.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceEnumD3D11.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQRenderTargetD3D11.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQShaderD3D11.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQStateManagerD3D11.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQTextureManagerD3D11.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQVertexStreamD3D11.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\HQLogStream.cpp">
+      <Filter>Source\HQUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineApp.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\ios\HQIOSGameThread.cpp">
+      <Filter>Source\HQEngine\IOS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEventSeparateThread.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\winstore\HQEngineAppWinStore.cpp">
+      <Filter>Source\HQEngine\WinStore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\winstore\HQEngineWindowWinStore.cpp">
+      <Filter>Source\HQEngine\WinStore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\winstore\HQWinStoreFileSystem.cpp">
+      <Filter>Source\HQEngine\WinStore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\winstore\HQWinStoreUtil.cpp">
+      <Filter>Source\HQEngine\WinStore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\win32\dllmain.cpp">
+      <Filter>Source\HQEngine\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\win32\HQEngineAppWin32.cpp">
+      <Filter>Source\HQEngine\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\win32\HQEngineWindowWin32.cpp">
+      <Filter>Source\HQEngine\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQSceneManagement\helperFunctions.cpp">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQSceneManagement\HQMeshNode.cpp">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQSceneManagement\HQMeshNode_Animation.cpp">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQSceneManagement\HQSceneNode.cpp">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioBase.cpp">
+      <Filter>Source\HQAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudio.cpp">
+      <Filter>Source\HQAudio\xaudio2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioSource.cpp">
+      <Filter>Source\HQAudio\xaudio2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\winstore\HQAudioWinStore.cpp">
+      <Filter>Source\HQAudio\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioPCH.cpp">
+      <Filter>Source\HQAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEnginePCH.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11PCH.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQSceneManagement\HQScenePCH.cpp">
+      <Filter>Source\HQSceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\HQUtilPCH.cpp">
+      <Filter>Source\HQUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\winstore\HQTimerWinStore.cpp">
+      <Filter>Source\HQUtil\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\winstore\HQSemaphoreWinStore.cpp">
+      <Filter>Source\HQUtil\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\winstore\HQMutexWinStore.cpp">
+      <Filter>Source\HQUtil\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\cpp11\HQThreadCpp11.cpp">
+      <Filter>Source\HQUtil\cpp11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQUtilMathPCH.cpp">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\win32\HQMutexWin32.cpp">
+      <Filter>Source\HQUtil\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\win32\HQSemaphoreWin32.cpp">
+      <Filter>Source\HQUtil\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\win32\HQThreadWin32.cpp">
+      <Filter>Source\HQUtil\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\win32\HQTimerWin32.cpp">
+      <Filter>Source\HQUtil\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\android\HQAndroidGameThread.cpp">
+      <Filter>Source\HQEngine\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\android\HQEngineAppAndroid.cpp">
+      <Filter>Source\HQEngine\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\android\HQEngineJNI.cpp">
+      <Filter>Source\HQEngine\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\android\HQEngineWindowAndroid.cpp">
+      <Filter>Source\HQEngine\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQShaderD3D11_FF.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\winstore\HQConditionVariableWinStore.cpp">
+      <Filter>Source\HQUtil\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\pthread\HQConditionVariablePThread.cpp">
+      <Filter>Source\HQUtil\pthread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\pthread\HQMutexPthread.cpp">
+      <Filter>Source\HQUtil\pthread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\pthread\HQSemaphorePthread.cpp">
+      <Filter>Source\HQUtil\pthread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\pthread\HQSemaphorePthreadApple.cpp">
+      <Filter>Source\HQUtil\pthread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\pthread\HQThreadPthread.cpp">
+      <Filter>Source\HQUtil\pthread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioStreamBuffer.cpp">
+      <Filter>Source\HQAudio\xaudio2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQUtil\win32\HQConditionVariableWin32.cpp">
+      <Filter>Source\HQUtil\win32</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\Source\HQEngine\ios\HQEngineAppIOS.mm">
+      <Filter>Source\HQEngine\IOS</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\HQEngine\ios\HQEngineWindowIOS.mm">
+      <Filter>Source\HQEngine\IOS</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\HQEngine\ios\HQIOSAppDelegate.mm">
+      <Filter>Source\HQEngine\IOS</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl" />
+    <None Include="..\..\..\..\Source\HQEngine\apple\HQEngineAppOSX.mm">
+      <Filter>Source\HQEngine\Mac</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\HQEngine\apple\HQEngineWindowOSX.mm">
+      <Filter>Source\HQEngine\Mac</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\BaseImpl\compileBaseImplShader.bat">
+      <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\BaseImpl\HQFFEmuShaderD3D1x.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonMatrix.asm" />
+    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonQuaternion.asm" />
+    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonVector.asm" />
+  </ItemGroup>
+</Project>

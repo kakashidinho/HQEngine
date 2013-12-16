@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="_Thread" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>E:\VS_Projects\HQEngine_Project\HQEngine\Source\test\winmain.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gQAAAgAIgACBgAAAACGAAAAhAtCBMgCAKZQAABjAFAE=</HashCode>
+      <FileName>E:\VS_Projects\HQEngine_Project\HQEngine\Source\test\Game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="BUFFER" Collapsed="true">
+    <Position X="2.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\VS_Projects\HQEngine_Project\HQEngine\Source\test\Game.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="BUFFER2" Collapsed="true">
+    <Position X="4" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAACAAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\VS_Projects\HQEngine_Project\HQEngine\Source\test\Game.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="VertexPos" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAABgAQAAAAA=</HashCode>
+      <FileName>E:\VS_Projects\HQEngine_Project\HQEngine\Source\test\Game.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="VertexUV" Collapsed="true">
+    <Position X="2.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAA=</HashCode>
+      <FileName>E:\VS_Projects\HQEngine_Project\HQEngine\Source\test\Game.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="A" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAACAAQAAAAAAAAA=</HashCode>
+      <FileName>E:\VS_Projects\HQEngine_Project\HQEngine\Source\test\winmain.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,41 @@
+#ifndef HQ_CG_FUNC_PTR_H
+#define HQ_CG_FUNC_PTR_H
+
+#define CG_EXPLICIT
+#define CGGL_EXPLICIT
+#include <Cg/cg.h>
+#include <Cg/cgGL.h>
+
+
+typedef CGerror (CGENTRY* pfcgGetError) (void);
+typedef void (CGENTRY *pfcgSetErrorCallback)(CGerrorCallbackFunc func);
+typedef const char* (CGENTRY* pfcgGetErrorString) (CGerror error);
+typedef CGparameter (CGENTRY* pfcgGetNamedParameter)(CGprogram program, const char *name);
+typedef CGtype (CGENTRY *pfcgGetParameterType)(CGparameter param);
+typedef CGcontext (CGENTRY *pfcgCreateContext)(void);
+typedef void (CGENTRY *pfcgDestroyContext)(CGcontext context);
+typedef CGprogram (CGENTRY *pfcgCreateProgramFromFile)(CGcontext context, CGenum program_type, const char *program_file, CGprofile profile, const char *entry, const char **args);
+typedef CGprogram (CGENTRY *pfcgCreateProgram)(CGcontext context, CGenum program_type, const char *program, CGprofile profile, const char *entry, const char **args);
+typedef CGprogram (CGENTRY *pfcgCombinePrograms2)(const CGprogram exe1, const CGprogram exe2);
+typedef CGprogram (CGENTRY *pfcgCombinePrograms3)(const CGprogram exe1, const CGprogram exe2, const CGprogram exe3);
+typedef void (CGENTRY *pfcgDestroyProgram)(CGprogram program);
+typedef void (CGENTRY *pfcgSetParameterValueir)(CGparameter param, int nelements, const int *vals);
+typedef void (CGENTRY *pfcgSetParameterValuefr)(CGparameter param, int nelements, const float *vals);
+typedef CGbool (CGGLENTRY *pfcgGLIsProfileSupported)(CGprofile profile);
+typedef CGprofile (CGENTRY *pfcgGLGetLatestProfile)(CGGLenum profile_type);
+typedef void (CGGLENTRY *pfcgGLSetOptimalOptions)(CGprofile profile);
+typedef void (CGGLENTRY *pfcgGLSetDebugMode)(CGbool debug);
+typedef void (CGGLENTRY *pfcgGLLoadProgram)(CGprogram program);
+typedef void (CGGLENTRY *pfcgGLUnbindProgram)(CGprofile profile);
+typedef void (CGGLENTRY *pfcgGLDisableProfile)(CGprofile profile);
+typedef void (CGGLENTRY *pfcgGLBindProgram)(CGprogram program);
+
+#ifdef WIN32
+#	define HQ_GET_CG_FUNC_PTR(lib , name) name = (pf##name) GetProcAddress(lib , #name)
+#else
+#	define HQ_GET_CG_FUNC_PTR(lib , name) name = reinterpret_cast<pf##name>( dlsym(lib , #name) )
+#endif
+
+
+
+#endif // HQ_CG_FUNC_PTR_H

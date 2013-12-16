@@ -1,0 +1,57 @@
+
+
+struct vOut
+{
+	float4 position : POSITION;
+	float4 color : COLOR;
+	float psize : PSIZE;
+};
+
+struct vIn
+{
+	float4 position : POSITION;
+	float2 texcoord0  : TEXCOORD6;
+	float4 color0 : COLOR;
+	float psize : PSIZE;
+};
+
+struct vIn2
+{
+	float4 position : ATTR0;
+	float2 texcoord0  : ATTR9;
+	float4 color0 : ATTR1;
+	float psize : ATTR15;
+};
+
+
+vOut VS(uniform sampler2D texture0 : TEXUNIT3,
+	uniform float scale ,
+	in vIn input)
+{
+	vOut output;
+	float4 texcoord = float4 ( input.texcoord0.x , input.texcoord0.y , 0.0 , 0.0);
+	output.color = input.color0 -  tex2Dlod(texture0 , texcoord) ;
+	output.position.xyz = input.position.xyz * scale;
+	output.position.w = 1.0;
+	output.psize = input.psize;
+	return output;
+}
+
+glslv vOut VS(uniform sampler2D texture0 : TEXUNIT3,
+	uniform float scale ,
+	in vIn2 input)
+{
+	vOut output;
+	float4 texcoord = float4 ( input.texcoord0.x , input.texcoord0.y , 0.0 , 0.0);
+	output.color = input.color0 -  tex2Dlod(texture0 , texcoord) ;
+	output.position.xyz = input.position.xyz * scale;
+	output.position.w = 1.0;
+	output.psize = input.psize;
+	return output;
+}
+
+
+float4 PS(in float4 color  : COLOR ) : COLOR
+{
+	return color;
+}

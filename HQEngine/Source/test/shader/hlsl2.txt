@@ -1,0 +1,51 @@
+#pragma pack_matrix( row_major )
+
+
+tbuffer transform : register (t11)
+{
+	float3x4 rotation;
+	float4x4 viewProj;
+};
+
+struct vOut
+{
+	float4 position : SV_Position;
+	float2 texcoord : TEXCOORD0;
+	float4 color : COLOR;
+	float psize : PSIZE;
+};
+
+struct vIn
+{
+	float3 position : VPOSITION;
+	float2 texcoord0  : VTEXCOORD6;
+	float4 color0 : VCOLOR;
+	float psize : VPSIZE;
+};
+
+
+vOut VS(in vIn input)
+{
+	vOut output;
+	output.color = float4(1,1,1,1);
+	output.texcoord = input.texcoord0 ;
+	output.position.w = 1.0;
+	float4 pos = float4(input.position.xyz , 1.0);
+	output.position.x = dot(pos , rotation[0]);
+	output.position.y = dot(pos , rotation[1]);
+	output.position.z = dot(pos , rotation[2]);
+	output.position = mul(output.position , viewProj);
+	output.psize = input.psize;
+	return output;
+}
+
+Texture2D textures[2] : register (t100);
+SamplerState sampler0 : register (s15);
+
+float4 PS(in float4 position : SV_Position,
+	in float2 texcoord  : TEXCOORD0  , 
+	in float4 color : COLOR ,
+	in float psize : PSIZE) : SV_Target
+{
+	return textures[1].Sample ( sampler0 , texcoord) * color;
+}

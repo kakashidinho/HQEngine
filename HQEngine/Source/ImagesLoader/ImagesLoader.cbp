@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ImagesLoader" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option platforms="Unix;" />
+				<Option output="$(#q_engine_project)/$(#staticlib)" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="$(#q_engine_project)/$(#objdir)" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DLINUX" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option platforms="Unix;" />
+				<Option output="$(#q_enginedir)/$(PROJECT_NAME)/bin/$(TARGET_NAME)/lib$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="$(#q_enginedir)/$(PROJECT_NAME)/obj/$(TARGET_NAME)" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add option="-DLINUX" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-fPIC" />
+		</Compiler>
+		<Unit filename="3STC_DXT.cpp" />
+		<Unit filename="3STC_DXT.h" />
+		<Unit filename="BMP.cpp" />
+		<Unit filename="BMP.h" />
+		<Unit filename="Bitmap.cpp" />
+		<Unit filename="Bitmap.h" />
+		<Unit filename="DDS.cpp" />
+		<Unit filename="DDS.h" />
+		<Unit filename="ImgLoader.h" />
+		<Unit filename="ReadMe.txt" />
+		<Unit filename="TGA.cpp" />
+		<Unit filename="TGA.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

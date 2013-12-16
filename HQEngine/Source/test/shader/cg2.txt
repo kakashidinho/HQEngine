@@ -1,0 +1,96 @@
+
+
+
+struct vOut
+{
+	float4 position : POSITION;
+	float2 texcoord : TEXCOORD0;
+	float4 color : COLOR;
+	float psize : PSIZE;
+};
+
+struct vOut2
+{
+	float4 position : POSITION;
+	float2 texcoord : TEXCOORD0;
+	float4 color : COLOR;
+};
+
+struct vIn
+{
+	float3 position : VPOSITION;
+	float2 texcoord0  : VTEXCOORD6;
+	float4 color0 : VCOLOR;
+	float psize : VPSIZE;
+};
+
+
+uniform float4x4 viewProj;
+
+vOut VS(uniform sampler2D texture0 : TEXUNIT3,
+	uniform float3x4 rotation,
+	in vIn input)
+{
+	vOut output;
+	if (TEXTURE_COLOR)
+		output.color = tex2Dlod(texture0 , float4(input.texcoord0 , 0.0 , 0.0));
+	else
+		output.color = float4(1,1,1,1);
+	output.texcoord = input.texcoord0 ;
+	output.position.w = 1.0;
+	float4 pos = float4(input.position.xyz , 1.0);
+	output.position.xyz = mul(rotation , pos );
+/*
+	output.position.x = dot(pos , rotation[0]);
+	output.position.y = dot(pos , rotation[1]);
+	output.position.z = dot(pos , rotation[2]);
+*/
+	output.position = mul(output.position , viewProj);
+	output.psize = input.psize;
+	return output;
+}
+
+
+struct CBUFFER  
+{
+	float3x4 rotation;
+	float4x4 viewProj;
+} ;
+
+
+uniform CBUFFER cbuffer : BUFFER[11];
+
+vs_4_0 vs_5_0 vOut2 VS(uniform sampler2D texture0 : TEXUNIT3,
+	in vIn input)
+{
+	vOut2 output;
+	if (TEXTURE_COLOR)
+		output.color = tex2Dlod(texture0 , float4(input.texcoord0 , 0.0 , 0.0));
+	else
+		output.color = float4(1,1,1,1);
+	output.texcoord = input.texcoord0 ;
+	output.position.w = 1.0;
+	float4 pos = float4(input.position.xyz , 1.0);
+	output.position.x = dot(pos , cbuffer.rotation[0]);
+	output.position.y = dot(pos , cbuffer.rotation[1]);
+	output.position.z = dot(pos , cbuffer.rotation[2]);
+	output.position = mul(output.position , cbuffer.viewProj);
+	return output;
+}
+
+
+
+
+uniform sampler2D texture1 : TEXUNIT15;
+float4 PS(in float2 texcoord  : TEXCOORD0  , 
+	in float4 color : COLOR) : COLOR
+{
+	return tex2D ( texture1 , texcoord) * color;
+}
+
+ps_4_0 float4 PS(in float4 position : POSITION,
+	in float2 texcoord  : TEXCOORD0  , 
+	in float4 color : COLOR ) : COLOR
+{
+	return tex2D ( texture1 , texcoord) * color;
+}

@@ -1,0 +1,81 @@
+// hlslv output by Cg compiler
+// cgc version 3.0.0007, build date Jul 22 2010
+// command line args: -DTEXTURE_COLOR=1 -DVPOSITION=POSITION -DVCOLOR=COLOR -DVNORMAL=NORMAL -DVTEXCOORD0=TEXCOORD0 -DVTEXCOORD1=TEXCOORD1 -DVTEXCOORD2=TEXCOORD2 -DVTEXCOORD3=TEXCOORD3 -DVTEXCOORD4=TEXCOORD4 -DVTEXCOORD5=TEXCOORD5 -DVTEXCOORD6=TEXCOORD6 -DVTEXCOORD7=TEXCOORD7 -DVTANGENT=TANGENT -DVBINORMAL=BINORMAL -DVBLENDWEIGHT=BLENDWEIGHT -DVBLENDINDICES=BLENDINDICES -DVPSIZE=PSIZE -profile hlslv
+// source file: /home/lehoangquyen/Desktop/VS projects/HQEngine/test/shader/cg2.txt
+//vendor NVIDIA Corporation
+//version 3.0.0.07
+//profile hlslv
+//program VS
+//semantic VS.texture0 : TEXUNIT3
+//semantic VS.rotation
+//semantic viewProj
+//semantic cbuffer : BUFFER[11]
+//semantic texture1 : TEXUNIT15
+//var sampler2D texture0 : TEXUNIT3 : _texture0 3 : 0 : 1
+//var float4 rotation[0] :  : _rotation[0] : 1 : 1
+//var float4 rotation[1] :  : _rotation[1] : 1 : 1
+//var float4 rotation[2] :  : _rotation[2] : 1 : 1
+//var float4x4 viewProj :  : _viewProj[0], 4 : -1 : 1
+//var float3x4 cbuffer.rotation :  : , 3 : -1 : 0
+//var float4x4 cbuffer.viewProj :  : , 4 : -1 : 0
+//var sampler2D texture1 : TEXUNIT15 :  : -1 : 0
+//var float3 input.position : $vin.POSITION : POSITION : 2 : 1
+//var float2 input.texcoord0 : $vin.TEXCOORD6 : TEXCOORD6 : 2 : 1
+//var float4 input.color0 : $vin.COLOR :  : 2 : 0
+//var float input.psize : $vin.PSIZE : PSIZE : 2 : 1
+//var float4 VS.position : $vout.POSITION : POSITION : -1 : 1
+//var float2 VS.texcoord : $vout.TEXCOORD0 : TEXCOORD0 : -1 : 1
+//var float4 VS.color : $vout.COLOR : COLOR : -1 : 1
+//var float VS.psize : $vout.PSIZE : PSIZE : -1 : 1
+
+#pragma pack_matrix(row_major)
+
+struct vOut {
+    float4 _position : POSITION;
+    float2 _texcoord : TEXCOORD0;
+    float4 _color : COLOR0;
+    float _psize : PSIZE;
+};
+
+struct vOut2 {
+    float4 _position2 : POSITION;
+    float2 _texcoord1 : TEXCOORD0;
+    float4 _color1 : COLOR0;
+};
+
+struct vIn {
+    float3 _position1 : POSITION;
+    float2 _texcoord0 : TEXCOORD6;
+    float4 _color0 : COLOR0;
+    float _psize1 : PSIZE;
+};
+
+struct CBUFFER {
+    float3x4 _rotation1;
+    float4x4 _viewProj1;
+};
+
+float4 _r0003;
+uniform float4x4 _viewProj;
+
+ // main procedure, the original name was VS
+vOut main(uniform sampler2D _texture0 : TEXUNIT3, uniform float4 _rotation[3], in vIn _input)
+{
+
+    vOut _output;
+    float4 _pos;
+
+    _output._color = tex2Dlod(_texture0, float4(_input._texcoord0.x, _input._texcoord0.y,   0.00000000000000000E00f,   0.00000000000000000E00f));
+    _output._texcoord = _input._texcoord0;
+    _pos = float4(_input._position1.x, _input._position1.y, _input._position1.z,   1.00000000000000000E00f);
+    _output._position.x = dot(_pos, _rotation[0]);
+    _output._position.y = dot(_pos, _rotation[1]);
+    _output._position.z = dot(_pos, _rotation[2]);
+    _r0003 = _output._position.x*_viewProj._11_12_13_14;
+    _r0003 = _r0003 + _output._position.y*_viewProj._21_22_23_24;
+    _r0003 = _r0003 + _output._position.z*_viewProj._31_32_33_34;
+    _r0003 = _r0003 + _viewProj._41_42_43_44;
+    _output._position = _r0003;
+    _output._psize = _input._psize1;
+    return _output;
+} // main end
