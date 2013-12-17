@@ -87,6 +87,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="xcopy /q /y $(SolutionDir)\Libs\developer_runtime_dll\*.*  $(SolutionDir)\Output\$(ConfigurationName)\"
 			/>
 		</Configuration>
 		<Configuration
@@ -163,6 +164,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="xcopy /q /y $(SolutionDir)\Libs\developer_runtime_dll\*.*  $(SolutionDir)\Output\$(ConfigurationName)\"
 			/>
 		</Configuration>
 		<Configuration
@@ -239,6 +241,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="xcopy /q /y $(SolutionDir)\Libs\developer_runtime_dll\*.*  $(SolutionDir)\Output\$(ConfigurationName)\"
 			/>
 		</Configuration>
 		<Configuration
@@ -315,6 +318,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="xcopy /q /y $(SolutionDir)\Libs\developer_runtime_dll\*.*  $(SolutionDir)\Output\$(ConfigurationName)\"
 			/>
 		</Configuration>
 		<Configuration
@@ -388,6 +392,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="xcopy /q /y $(SolutionDir)\Libs\developer_runtime_dll\*.*  $(SolutionDir)\Output\$(ConfigurationName)\"
 			/>
 		</Configuration>
 	</Configurations>

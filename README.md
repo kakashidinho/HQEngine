@@ -2,14 +2,17 @@ HQEngine Game Framework
 ========
 1. Prerequisites
 ----------------------------
-- OpenGL headers, libraries. (For Windows Desktop version)
-- NVIDIA Cg headers, libraries. (For Windows Desktop version)
-- OpenAL headers, libraries. (For Windows Desktop version)
-- DirectX SDK. (For Windows Desktop version)
-- Visual C++ 2008. (For Windows Desktop version)
-- Android SDK, NDK. (For Android)
-- Cygwin. (For Android)
-- Visual Studio 2012. (For Windows Metro/Phone version)
+- For Windows Desktop version:
+	- OpenGL headers, libraries. 
+	- NVIDIA Cg 3.1 headers, libraries. Best way is installing Cg Toolkit 3.1 from NVIDIA. 
+	- OpenAL headers, libraries. Best way is installing OpenAL SDK from Creative Lab. 
+	- DirectX SDK June 2010. 
+	- Visual C++ 2008. 
+- For Android:
+	- Android SDK, NDK. 
+	- Cygwin. 
+- For Windows Metro/Phone version:
+	- Visual Studio 2012. 
  
 2. Folder structure
 ----------------------------
@@ -28,9 +31,13 @@ HQEngine Game Framework
 3. How to build
 ----------------------------
 - Windows Desktop:
-	- Open solution "/HQEngine/VS/HQEngine.sln".
-	- Config Prerequisites' include and libraries paths.
-	- Build and run "test" project.
+	- Open 3D Math library's solution "/HQEngine/VS/HQEngineUtilMath.sln".
+	- Select Build->Batch Build->Build to build various versions (Debug/Release) of Math library.
+	- Open game framework's solution "/HQEngine/VS/HQEngine.sln". Note: it's normal if there's a error popup saying that a C sharp project cannot be opened because you are using Visual C++ Express.
+	- Config Prerequisites' include and libraries paths. 
+	- Build solution.
+	- Output dll and exe files are in "/HQEngine/VS/Output/Debug" folder. 
+	- run "test" project.
 - Android:
 	- *TO DO*
 - Windows Store App:
