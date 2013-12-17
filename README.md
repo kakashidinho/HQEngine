@@ -42,7 +42,7 @@ HQEngine Game Framework
 	- Open Cygwin. (If using Windows)
 	- Build .so file for the "test" project:
 		- Set "ndk_build_script" environment variable to make it point to the path of your ndk-build script. For example: "export ndk_build_script=/cygdrive/e/android-ndk-r7b/ndk-build".
-		- Go to "/HQEngine/Android/HQEngine/test" folder.
+		- Go to "/HQEngine/Android/test" folder.
 		- Run "build_so.sh" script to build the .so file for the test project.
 	- Import and build Android Eclipse project in "HQEngine/Android/HQEngine" folder.
 	- Run script "HQEngine/Android/test/push_res_sd.sh" to push resources to Android device.
