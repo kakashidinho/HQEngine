@@ -33,25 +33,37 @@ HQEngine Game Framework
 - Windows Desktop:
 	- Open 3D Math library's solution "/HQEngine/VS/HQEngineUtilMath.sln".
 	- Select Build->Batch Build->Build to build various versions (Debug/Release) of Math library.
-	- Open game framework's solution "/HQEngine/VS/HQEngine.sln". Note: it's normal if there's a error popup saying that a C sharp project cannot be opened because you are using Visual C++ Express.
+	- Open game framework's solution "/HQEngine/VS/HQEngine.sln". 
+	Note: it's normal if there's a error popup saying that a C sharp project cannot be opened because you are using Visual C++ Express.
 	- Config Prerequisites' include and libraries paths. 
 	- Build solution.
 	- Output dll and exe files are in "/HQEngine/VS/Output/Debug" folder. 
 	- Run "test" project inside Visual Studio. Don't run "test.exe" directly in "/HQEngine/VS/Output/Debug" folder.
 - Windows Store App:
-	- Open Windows Store App's solution "/HQEngine/VS2012/WindowsStoreApp/HQEngine/HQEngine.sln". Note: Be sure to use Windows 8 version if you are using VS Express.
+	- Open Windows Store App's solution "/HQEngine/VS2012/WindowsStoreApp/HQEngine/HQEngine.sln". 
+	Note: Be sure to use Windows 8 version if you are using VS Express.
 	- Build and run "test" project.
 - Windows Phone 8:
-	- Open Windows Phone's solution "/HQEngine/VS2012/WindowsPhone/HQEngine/HQEngine.sln". Note: Be sure to use Windows Phone version if you are using VS Express.
+	- Open Windows Phone's solution "/HQEngine/VS2012/WindowsPhone/HQEngine/HQEngine.sln". 
+	Note: Be sure to use Windows Phone version if you are using VS Express.
 	- Build and run "testWP" project.
 - Android:
 	- Open Cygwin. (If using Windows)
 	- Build .so file for the "test" project:
-		- Set "ndk_build_script" environment variable to make it point to the path of your ndk-build script. For example: "export ndk_build_script=/cygdrive/e/android-ndk-r7b/ndk-build".
+		- Set "ndk_build_script" environment variable to make it point to the path of your ndk-build script. 
+		For example: "export ndk_build_script=/cygdrive/e/android-ndk-r7b/ndk-build".
 		- Go to "/HQEngine/Android/test" folder.
 		- Run "build_so.sh" script to build the .so file for the test project.
 	- Import and build Android Eclipse project in "HQEngine/Android/HQEngine" folder.
 	- Run script "HQEngine/Android/test/push_res_sd.sh" to push resources to Android device.
 	- Import, build and run Android Eclipse project in "HQEngine/Android/test" folder.
+	
+4. License
+---------------------------
+- This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version.  See the file
+COPYING.txt included with this distribution for more information.
 	
 	
