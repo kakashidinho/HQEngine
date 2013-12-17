@@ -37,7 +37,7 @@ HQEngine Game Framework
 	- Config Prerequisites' include and libraries paths. 
 	- Build solution.
 	- Output dll and exe files are in "/HQEngine/VS/Output/Debug" folder. 
-	- run "test" project.
+	- Run "test" project inside Visual Studio. Don't run "test.exe" directly in "/HQEngine/VS/Output/Debug" folder.
 - Android:
 	- *TO DO*
 - Windows Store App:
