@@ -38,6 +38,12 @@ HQEngine Game Framework
 	- Build solution.
 	- Output dll and exe files are in "/HQEngine/VS/Output/Debug" folder. 
 	- Run "test" project inside Visual Studio. Don't run "test.exe" directly in "/HQEngine/VS/Output/Debug" folder.
+- Windows Store App:
+	- Open Windows Store App's solution "/HQEngine/VS2012/WindowsStoreApp/HQEngine/HQEngine.sln". Note: Be sure to use Windows 8 version if you are using VS Express.
+	- Build and run "test" project.
+- Windows Phone 8:
+	- Open Windows Phone's solution "/HQEngine/VS2012/WindowsPhone/HQEngine/HQEngine.sln". Note: Be sure to use Windows Phone version if you are using VS Express.
+	- Build and run "testWP" project.
 - Android:
 	- Open Cygwin. (If using Windows)
 	- Build .so file for the "test" project:
@@ -47,11 +53,5 @@ HQEngine Game Framework
 	- Import and build Android Eclipse project in "HQEngine/Android/HQEngine" folder.
 	- Run script "HQEngine/Android/test/push_res_sd.sh" to push resources to Android device.
 	- Import, build and run Android Eclipse project in "HQEngine/Android/test" folder.
-- Windows Store App:
-	- Open Windows Store App's solution "/HQEngine/VS2012/WindowsStoreApp/HQEngine/HQEngine.sln". Note: Be sure to use Windows 8 version if you are using VS Express.
-	- Build and run "test" project.
-- Windows Phone 8:
-	- Open Windows Phone's solution "/HQEngine/VS2012/WindowsPhone/HQEngine/HQEngine.sln". Note: Be sure to use Windows Phone version if you are using VS Express.
-	- Build and run "testWP" project.
 	
 	
