@@ -22,7 +22,7 @@ HQEngine Game Framework
 	- Android-OpenAL-soft. (OpenAL library for Android)
 	- VS. (Windows Desktop version, contains Visual Studio 2008 solution)
 	- VS2012. (Windows Metro/Phone version)
-		- WindowsStore. (Windows Store App version)
+		- WindowsStoreApp. (Windows Store App version)
 		- WindowsPhone. (Windows Phone 8 version)
 - java2cpp. (Android framework's JNI wrapper headers)
 - libogg. (lib ogg)
