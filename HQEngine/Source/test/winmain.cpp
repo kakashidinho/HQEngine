@@ -26,14 +26,15 @@
 #include <string.h>
 #pragma comment(lib,"Comctl32.lib")
 #ifdef _DEBUG
-#		pragma comment(lib,"../../VS/Output/Debug static CRT/HQAudioD.lib")
 #	ifdef _STATIC_CRT
+#		pragma comment(lib,"../../VS/Output/Debug static CRT/HQAudioD.lib")
 #		pragma comment(lib,"../../VS/Output/Debug static CRT/HQSceneManagement.lib")
 #		pragma comment(lib,"../../VS/Output/Debug static CRT/ImagesLoaderD.lib")
 #		pragma comment(lib,"../../VS/Output/Debug static CRT/HQEngineD.lib")
 #		pragma comment(lib,"../../VS/Output/Debug static CRT/HQUtilD.lib")
 #		pragma comment(lib,"../../VS/Output/Debug static CRT/HQUtilMathD.lib")
 #	else
+#		pragma comment(lib,"../../VS/Output/Debug/HQAudioD.lib")
 #		pragma comment(lib,"../../VS/Output/Debug/HQSceneManagement.lib")
 #		pragma comment(lib,"../../VS/Output/Debug/ImagesLoaderD.lib")
 #		pragma comment(lib,"../../VS/Output/Debug/HQEngineD.lib")

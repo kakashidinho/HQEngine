@@ -38,6 +38,10 @@ static void SetThreadName( DWORD dwThreadID, const char* threadName)
 DWORD WINAPI ThreadFunc(void * arg)
 {
 	HQThread * thread = (HQThread*) arg;
+	
+	if (thread->GetThreadName() != NULL)
+		SetThreadName(GetCurrentThreadId(), thread->GetThreadName());
+
 	thread->Run();
 
 	return 1;
@@ -80,9 +84,6 @@ void HQThread::Start()
 	}
 	
 	m_platformSpecific = CreateThread(0 , 0 ,ThreadFunc ,this , 0 , 0 );
-
-	if (m_threadName != NULL)
-		SetThreadName(GetThreadId((HANDLE) m_platformSpecific), m_threadName);
 }
 
 void HQThread::TempPause()
