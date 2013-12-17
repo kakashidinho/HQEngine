@@ -110,13 +110,13 @@ public:
 	static HQ_FORCE_INLINE HQVector4 *NewArray(size_t numElems) {return HQ_NEW HQVector4[numElems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p) {return HQ_NEW(p) HQVector4();}
-	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p, bool isPoint) {return HQ_NEW(p) HQVector4(isPoint);}
-	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p, hq_float32 _x,hq_float32 _y,hq_float32 _z) {return HQ_NEW(p) HQVector4(_x, _y, _z);}
-	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p, hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w) {return HQ_NEW(p) HQVector4(_x, _y, _z, _w);}
-	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p, const HQVector4 &src) {return HQ_NEW(p) HQVector4(src);}
+	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p) {return new(p) HQVector4();}
+	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p, bool isPoint) {return new(p) HQVector4(isPoint);}
+	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p, hq_float32 _x,hq_float32 _y,hq_float32 _z) {return new(p) HQVector4(_x, _y, _z);}
+	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p, hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w) {return new(p) HQVector4(_x, _y, _z, _w);}
+	static HQ_FORCE_INLINE HQVector4 *PlNew(void *p, const HQVector4 &src) {return new(p) HQVector4(src);}
 
-	static HQ_FORCE_INLINE HQVector4 *PlNewArray(void *p, size_t numElems) {return HQ_NEW(p) HQVector4[numElems];}
+	static HQ_FORCE_INLINE HQVector4 *PlNewArray(void *p, size_t numElems) {return new(p) HQVector4[numElems];}
 
 	HQ_FORCE_INLINE void Set(hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w)
 	{x=_x;y=_y;z=_z;w=_w;};
@@ -326,14 +326,14 @@ public:
 	static HQ_FORCE_INLINE HQMatrix4 *NewArray(size_t numElems) {return HQ_NEW HQMatrix4[numElems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p) {return HQ_NEW(p) HQMatrix4();}
-	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, const void * null) {return HQ_NEW(p) HQMatrix4(null);}
+	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p) {return new(p) HQMatrix4();}
+	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, const void * null) {return new(p) HQMatrix4(null);}
 	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34,
 				hq_float32 _41, hq_float32 _42, hq_float32 _43, hq_float32 _44) 
 	{
-		return HQ_NEW(p) HQMatrix4(
+		return new(p) HQMatrix4(
 			_11, _12, _13, _14,
 			_21, _22, _23, _24,
 			_31, _32, _33, _34,
@@ -341,10 +341,10 @@ public:
 			);
 	}
 
-	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, const HQMatrix4 &matrix) {return HQ_NEW(p) HQMatrix4(matrix);}
-	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, const HQMatrix3x4 &matrix) {return HQ_NEW(p) HQMatrix4(matrix);}
+	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, const HQMatrix4 &matrix) {return new(p) HQMatrix4(matrix);}
+	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, const HQMatrix3x4 &matrix) {return new(p) HQMatrix4(matrix);}
 
-	static HQ_FORCE_INLINE HQMatrix4 *PlNewArray(void *p, size_t numElems) {return HQ_NEW(p) HQMatrix4[numElems];}
+	static HQ_FORCE_INLINE HQMatrix4 *PlNewArray(void *p, size_t numElems) {return new(p) HQMatrix4[numElems];}
 
 
 	HQ_FORCE_INLINE hq_float32& operator[] (hq_uint32 index)
@@ -537,21 +537,21 @@ public:
 	static HQ_FORCE_INLINE HQMatrix3x4 *NewArray(size_t numElems) {return HQ_NEW HQMatrix3x4[numElems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p) {return HQ_NEW(p) HQMatrix3x4();}
-	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p, const void * null) {return HQ_NEW(p) HQMatrix3x4(null);}
+	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p) {return new(p) HQMatrix3x4();}
+	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p, const void * null) {return new(p) HQMatrix3x4(null);}
 	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p, hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34) 
 	{
-		return HQ_NEW(p) HQMatrix3x4(
+		return new(p) HQMatrix3x4(
 			_11, _12, _13, _14,
 			_21, _22, _23, _24,
 			_31, _32, _33, _34
 			);
 	}
-	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p, const HQMatrix3x4& src) {return HQ_NEW(p) HQMatrix3x4(src);}
+	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p, const HQMatrix3x4& src) {return new(p) HQMatrix3x4(src);}
 
-	static HQ_FORCE_INLINE HQMatrix3x4 *PlNewArray(void *p, size_t numElems) {return HQ_NEW(p) HQMatrix3x4[numElems];}
+	static HQ_FORCE_INLINE HQMatrix3x4 *PlNewArray(void *p, size_t numElems) {return new(p) HQMatrix3x4[numElems];}
 
 
 	HQ_FORCE_INLINE hq_float32& operator[] (hq_uint32 index)
@@ -655,21 +655,21 @@ public:
 	static HQ_FORCE_INLINE HQRay3D *NewArray(size_t numElems) {return HQ_NEW HQRay3D[numElems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQRay3D *PlNew(void *p) {return HQ_NEW(p) HQRay3D();}
+	static HQ_FORCE_INLINE HQRay3D *PlNew(void *p) {return new(p) HQRay3D();}
 	static HQ_FORCE_INLINE HQRay3D *PlNew(void *p, hq_float32 oX,hq_float32 oY,hq_float32 oZ,hq_float32 dX,hq_float32 dY,hq_float32 dZ) 
 	{
-		return HQ_NEW(p) HQRay3D(oX, oY, oZ, dX, dY, dZ);
+		return new(p) HQRay3D(oX, oY, oZ, dX, dY, dZ);
 	}
 	static HQ_FORCE_INLINE HQRay3D *PlNew(void *p, const HQVector4& _ori,const HQVector4& _dir) 
 	{
-		return HQ_NEW(p) HQRay3D(_ori, _dir);
+		return new(p) HQRay3D(_ori, _dir);
 	}
 	static HQ_FORCE_INLINE HQRay3D *PlNew(void *p, const HQRay3D& src) 
 	{
-		return HQ_NEW(p) HQRay3D(src);
+		return new(p) HQRay3D(src);
 	}
 
-	static HQ_FORCE_INLINE HQRay3D *PlNewArray(void *p, size_t numElems) {return HQ_NEW(p) HQRay3D[numElems];}
+	static HQ_FORCE_INLINE HQRay3D *PlNewArray(void *p, size_t numElems) {return new(p) HQRay3D[numElems];}
 
 	HQ_FORCE_INLINE void Set(const HQVector4& _ori,const HQVector4& _dir){
 		O.Set(_ori.x,_ori.y,_ori.z,1.0f);
@@ -749,16 +749,16 @@ public:
 	static HQ_FORCE_INLINE HQPlane *NewArray(size_t elems) {return HQ_NEW HQPlane[elems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQPlane *PlNew(void *p){ return HQ_NEW(p) HQPlane();};
+	static HQ_FORCE_INLINE HQPlane *PlNew(void *p){ return new(p) HQPlane();};
 	static HQ_FORCE_INLINE HQPlane *PlNew(void *p, const HQVector4& p0,const HQVector4& p1,const HQVector4& p2 , bool normalize = false)
 	{
-		return HQ_NEW(p) HQPlane(p0, p1, p2, normalize);
+		return new(p) HQPlane(p0, p1, p2, normalize);
 	}
-	static HQ_FORCE_INLINE HQPlane *PlNew(void *p, const HQVector4& Normal,const HQVector4& Point) {return HQ_NEW(p) HQPlane(Normal, Point);}
-	static HQ_FORCE_INLINE HQPlane *PlNew(void *p, const HQVector4& Normal,const hq_float32 Distance) {return HQ_NEW(p) HQPlane(Normal, Distance);}
-	static HQ_FORCE_INLINE HQPlane *PlNew(void *p, const HQPlane &src){ return HQ_NEW(p) HQPlane(src);};
+	static HQ_FORCE_INLINE HQPlane *PlNew(void *p, const HQVector4& Normal,const HQVector4& Point) {return new(p) HQPlane(Normal, Point);}
+	static HQ_FORCE_INLINE HQPlane *PlNew(void *p, const HQVector4& Normal,const hq_float32 Distance) {return new(p) HQPlane(Normal, Distance);}
+	static HQ_FORCE_INLINE HQPlane *PlNew(void *p, const HQPlane &src){ return new(p) HQPlane(src);};
 
-	static HQ_FORCE_INLINE HQPlane *PlNewArray(void *p, size_t elems) {return HQ_NEW(p) HQPlane[elems];}
+	static HQ_FORCE_INLINE HQPlane *PlNewArray(void *p, size_t elems) {return new(p) HQPlane[elems];}
 
 	void Set(const HQVector4& p0,const HQVector4& p1,const HQVector4& p2 , bool normalize = false);
 	void Set(const HQVector4& Normal,const HQVector4& Point);
@@ -822,10 +822,10 @@ public:
 	static HQ_FORCE_INLINE HQAABB *NewArray(size_t elems) {return HQ_NEW HQAABB[elems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQAABB *PlNew(void *p){ return HQ_NEW(p) HQAABB();}
-	static HQ_FORCE_INLINE HQAABB *PlNew(void *p, const HQAABB& src){ return HQ_NEW(p) HQAABB(src);}
+	static HQ_FORCE_INLINE HQAABB *PlNew(void *p){ return new(p) HQAABB();}
+	static HQ_FORCE_INLINE HQAABB *PlNew(void *p, const HQAABB& src){ return new(p) HQAABB(src);}
 
-	static HQ_FORCE_INLINE HQAABB *PlNewArray(void *p, size_t elems) {return HQ_NEW(p) HQAABB[elems];}
+	static HQ_FORCE_INLINE HQAABB *PlNewArray(void *p, size_t elems) {return new(p) HQAABB[elems];}
 
 	void Construct(const HQOBB &obb);//tạo hình hộp aabb bao ngoài obb
 	void Construct(const HQSphere &sphere);//tạo hình hộp aabb bao ngoài hình cầu
@@ -882,10 +882,10 @@ public:
 	static HQ_FORCE_INLINE HQOBB *NewArray(size_t elems) {return HQ_NEW HQOBB[elems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQOBB *PlNew(void *p){ return HQ_NEW(p) HQOBB();}
-	static HQ_FORCE_INLINE HQOBB *PlNew(void *p, const HQOBB& src){ return HQ_NEW(p) HQOBB(src);}
+	static HQ_FORCE_INLINE HQOBB *PlNew(void *p){ return new(p) HQOBB();}
+	static HQ_FORCE_INLINE HQOBB *PlNew(void *p, const HQOBB& src){ return new(p) HQOBB(src);}
 
-	static HQ_FORCE_INLINE HQOBB *PlNewArray(void *p, size_t elems) {return HQ_NEW(p) HQOBB[elems];}
+	static HQ_FORCE_INLINE HQOBB *PlNewArray(void *p, size_t elems) {return new(p) HQOBB[elems];}
 
 	void Transform(const HQOBB& source,const HQMatrix4& mat);//biến đổi
 	void Transform(const HQOBB& source,const HQMatrix3x4& mat);//biến đổi
@@ -934,10 +934,10 @@ public:
 	static HQ_FORCE_INLINE HQSphere *NewArray(size_t elems) {return HQ_NEW HQSphere[elems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQSphere *PlNew(void *p){ return HQ_NEW(p) HQSphere();}
-	static HQ_FORCE_INLINE HQSphere *PlNew(void *p, const HQSphere& src){ return HQ_NEW(p) HQSphere(src);}
+	static HQ_FORCE_INLINE HQSphere *PlNew(void *p){ return new(p) HQSphere();}
+	static HQ_FORCE_INLINE HQSphere *PlNew(void *p, const HQSphere& src){ return new(p) HQSphere(src);}
 
-	static HQ_FORCE_INLINE HQSphere *PlNewArray(void *p, size_t elems) {return HQ_NEW(p) HQSphere[elems];}
+	static HQ_FORCE_INLINE HQSphere *PlNewArray(void *p, size_t elems) {return new(p) HQSphere[elems];}
 
 	//kiểm tra hình cấu bị cắt hay nằm ngoài thể tính nhìn (hợp bởi các mặt phẳng tham số).Trả về HQ_CULLED nếu nằm ngoài,HQ_CLIPPED nếu 1 phần nằm trong , và HQ_VISIBLE nếu hoàn toàn nằm trong.
 	//pháp vector các mặt phẳng hướng ra ngoài thể tích nhìn và phải đã chuẩn hóa
@@ -998,10 +998,10 @@ public:
 	static HQ_FORCE_INLINE HQPolygon3D *NewArray(size_t elems) {return HQ_NEW HQPolygon3D[elems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQPolygon3D *PlNew(void *p){ return HQ_NEW(p) HQPolygon3D();}
-	static HQ_FORCE_INLINE HQPolygon3D *PlNew(void *p, const HQPolygon3D& source){ return HQ_NEW(p) HQPolygon3D(source);}
+	static HQ_FORCE_INLINE HQPolygon3D *PlNew(void *p){ return new(p) HQPolygon3D();}
+	static HQ_FORCE_INLINE HQPolygon3D *PlNew(void *p, const HQPolygon3D& source){ return new(p) HQPolygon3D(source);}
 
-	static HQ_FORCE_INLINE HQPolygon3D *PlNewArray(void *p, size_t elems) {return HQ_NEW(p) HQPolygon3D[elems];}
+	static HQ_FORCE_INLINE HQPolygon3D *PlNewArray(void *p, size_t elems) {return new(p) HQPolygon3D[elems];}
 
 
 	HQ_FORCE_INLINE const HQPlane& GetPlane()const{return plane;};
@@ -1099,12 +1099,12 @@ public:
 	static HQ_FORCE_INLINE HQQuaternion *NewArray(size_t numElems) {return HQ_NEW HQQuaternion[numElems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p) {return HQ_NEW(p) HQQuaternion();}
-	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, const void* null) {return HQ_NEW(p) HQQuaternion(null);}
-	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w) {return HQ_NEW(p) HQQuaternion(_x, _y, _z, _w);}
-	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, const HQQuaternion& src) {return HQ_NEW(p) HQQuaternion(src);}
+	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p) {return new(p) HQQuaternion();}
+	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, const void* null) {return new(p) HQQuaternion(null);}
+	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w) {return new(p) HQQuaternion(_x, _y, _z, _w);}
+	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, const HQQuaternion& src) {return new(p) HQQuaternion(src);}
 
-	static HQ_FORCE_INLINE HQQuaternion *PlNewArray(void *p, size_t numElems) {return HQ_NEW(p) HQQuaternion[numElems];}
+	static HQ_FORCE_INLINE HQQuaternion *PlNewArray(void *p, size_t numElems) {return new(p) HQQuaternion[numElems];}
 
 	HQ_FORCE_INLINE void Set(hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w){
 		x=_x;y=_y;z=_z;w=_w;
@@ -1235,9 +1235,9 @@ public:
 	static HQ_FORCE_INLINE HQBSPTreeNode *NewArray(size_t elems) {return HQ_NEW HQBSPTreeNode[elems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQBSPTreeNode *PlNew(void *p){ return HQ_NEW(p) HQBSPTreeNode();}
+	static HQ_FORCE_INLINE HQBSPTreeNode *PlNew(void *p){ return new(p) HQBSPTreeNode();}
 
-	static HQ_FORCE_INLINE HQBSPTreeNode *PlNewArray(void *p, size_t elems) {return HQ_NEW(p) HQBSPTreeNode[elems];}
+	static HQ_FORCE_INLINE HQBSPTreeNode *PlNewArray(void *p, size_t elems) {return new(p) HQBSPTreeNode[elems];}
 
 	bool Collision(const HQRay3D & ray , hq_float32 *pT , hq_float32 maxT);//<pT> lưu thời điểm cắt
 	void TraverseFtoB(const HQVector4& eye , const HQPlane * frustum , HQPolygonList &listOut);//traverse front to back.<listOut> will store polygons in front to back order.

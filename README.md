@@ -12,7 +12,7 @@ HQEngine Game Framework
 	- Android SDK, NDK. 
 	- Cygwin. 
 - For Windows Metro/Phone version:
-	- Visual Studio 2012. 
+	- Visual Studio 2012 for Windows 8/Windows Phone 8. 
  
 2. Folder structure
 ----------------------------
@@ -41,7 +41,10 @@ HQEngine Game Framework
 - Android:
 	- *TO DO*
 - Windows Store App:
-	- *TO DO*
+	- Open Windows Store App's solution "/HQEngine/VS2012/WindowsStoreApp/HQEngine/HQEngine.sln". Note: Be sure to use Windows 8 version if you are using VS Express.
+	- Build and run "test" project.
 - Windows Phone 8:
-	- *TO DO*
+	- Open Windows Phone's solution "/HQEngine/VS2012/WindowsPhone/HQEngine/HQEngine.sln". Note: Be sure to use Windows Phone version if you are using VS Express.
+	- Build and run "testWP" project.
+	
 	
