@@ -10,7 +10,7 @@ HQEngine Game Framework
 	- Visual C++ 2008. 
 - For Android:
 	- Android SDK, NDK. 
-	- Cygwin. 
+	- Cygwin. (If using Windows)
 - For Windows Metro/Phone version:
 	- Visual Studio 2012 for Windows 8/Windows Phone 8. 
  
@@ -39,7 +39,14 @@ HQEngine Game Framework
 	- Output dll and exe files are in "/HQEngine/VS/Output/Debug" folder. 
 	- Run "test" project inside Visual Studio. Don't run "test.exe" directly in "/HQEngine/VS/Output/Debug" folder.
 - Android:
-	- *TO DO*
+	- Open Cygwin. (If using Windows)
+	- Build .so file for the "test" project:
+		- Set "ndk_build_script" environment variable to make it point to the path of your ndk-build script. For example: "export ndk_build_script=/cygdrive/e/android-ndk-r7b/ndk-build".
+		- Go to "/HQEngine/Android/HQEngine/test" folder.
+		- Run "build_so.sh" script to build the .so file for the test project.
+	- Import and build Android Eclipse project in "HQEngine/Android/HQEngine" folder.
+	- Run script "HQEngine/Android/test/push_res_sd.sh" to push resources to Android device.
+	- Import, build and run Android Eclipse project in "HQEngine/Android/test" folder.
 - Windows Store App:
 	- Open Windows Store App's solution "/HQEngine/VS2012/WindowsStoreApp/HQEngine/HQEngine.sln". Note: Be sure to use Windows 8 version if you are using VS Express.
 	- Build and run "test" project.

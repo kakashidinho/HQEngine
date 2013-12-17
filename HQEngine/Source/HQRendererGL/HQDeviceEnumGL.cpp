@@ -12,6 +12,7 @@
 #include <math.h>
 #include "../HQHashTable.h"
 
+#define REQUIRE_EXACT_RGB 1
 #define REQUIRE_EXACT_DEPTH_STENCIL 0
 #define REFRESHRATEDIFF 0.00001
 
@@ -1629,78 +1630,101 @@ jobject HQDeviceEnumGL::GetJEGLConfig()
 		default: 
 			depth = stencil = 0;
 	}
-	jint attributes[] = {
-        J_EGL_RENDERABLE_TYPE, J_EGL_OPENGL_ES2_BIT,
-		J_EGL_RED_SIZE, red,
-        J_EGL_GREEN_SIZE, green,
-        J_EGL_BLUE_SIZE, blue,
-		J_EGL_ALPHA_SIZE, alpha,
-		J_EGL_DEPTH_SIZE , depth,
-		J_EGL_STENCIL_SIZE , stencil,
-        J_EGL_NONE
-	};
 
-	if (this->selectedApiLevel == 1)
-		attributes[1] = J_EGL_OPENGL_ES_BIT;
-	
-	jintArray jattrib_list = jenv->NewIntArray(15);
-	jenv->SetIntArrayRegion(jattrib_list, 0, 15, attributes);//copy to java type
+	//try to find suitable frame buffer config
+	jint num_configs = 0;
+	do {
+		jint attributes[] = {
+			J_EGL_RENDERABLE_TYPE, J_EGL_OPENGL_ES2_BIT,
+			J_EGL_RED_SIZE, red,
+			J_EGL_GREEN_SIZE, green,
+			J_EGL_BLUE_SIZE, blue,
+			J_EGL_ALPHA_SIZE, alpha,
+			J_EGL_DEPTH_SIZE , depth,
+			J_EGL_STENCIL_SIZE , stencil,
+			J_EGL_NONE
+		};
 
-	//get num configs
-	jint num_configs;
-	jintArray valueArray = jenv->NewIntArray(1);
+		if (this->selectedApiLevel == 1)
+			attributes[1] = J_EGL_OPENGL_ES_BIT;
+		
+		jintArray jattrib_list = jenv->NewIntArray(15);
+		jenv->SetIntArrayRegion(jattrib_list, 0, 15, attributes);//copy to java type
 
-	jenv->CallBooleanMethod(this->jegl,
-							ge_jeglChooseConfigMethodID,
-							this->jdisplay,
-							jattrib_list,
-							NULL,
-							0,
-							valueArray);
+		//get num configs
+		jintArray valueArray = jenv->NewIntArray(1);
 
-	num_configs = GetValue(jenv, valueArray);
-	
-	if (num_configs > 0)
-	{
-		//create java EGLConfig array
-		jclass jeglconfigClass = jenv->FindClass("javax/microedition/khronos/egl/EGLConfig");
-		jobjectArray jconfigList = jenv->NewObjectArray(num_configs , jeglconfigClass , NULL);
-
-		//get returned configs
 		jenv->CallBooleanMethod(this->jegl,
 								ge_jeglChooseConfigMethodID,
 								this->jdisplay,
 								jattrib_list,
-								jconfigList,
-								num_configs,
+								NULL,
+								0,
 								valueArray);
 
-		//choose the right config
-		for (jint i = 0 ; i < num_configs ; ++i)
+		num_configs = GetValue(jenv, valueArray);
+		
+		if (num_configs > 0)
 		{
-			jobject ljconfig = jenv->GetObjectArrayElement(jconfigList , i);
-			this->GetPixelFormat(jenv, ljconfig, lred, lgreen, lblue, lalpha, ldepth, lstencil);
-			if (red == lred && green == lgreen ,blue == lblue && alpha == lalpha 
-#if REQUIRE_EXACT_DEPTH_STENCIL
-&&	depth == ldepth && lstencil == stencil
-#endif
-)
+			//create java EGLConfig array
+			jclass jeglconfigClass = jenv->FindClass("javax/microedition/khronos/egl/EGLConfig");
+			jobjectArray jconfigList = jenv->NewObjectArray(num_configs , jeglconfigClass , NULL);
+
+			//get returned configs
+			jenv->CallBooleanMethod(this->jegl,
+									ge_jeglChooseConfigMethodID,
+									this->jdisplay,
+									jattrib_list,
+									jconfigList,
+									num_configs,
+									valueArray);
+
+			//choose the right config
+			for (jint i = 0 ; i < num_configs ; ++i)
 			{
-				jconfig = jenv->NewGlobalRef(ljconfig);
-				break;
+				jobject ljconfig = jenv->GetObjectArrayElement(jconfigList , i);
+				this->GetPixelFormat(jenv, ljconfig, lred, lgreen, lblue, lalpha, ldepth, lstencil);
+				if (
+	#if REQUIRE_EXACT_RGB
+					red == lred && green == lgreen ,blue == lblue && alpha == lalpha 
+	#else
+					true
+	#endif
+	#if REQUIRE_EXACT_DEPTH_STENCIL
+	&&	depth == ldepth && lstencil == stencil
+	#endif
+	)
+				{
+					__android_log_print(ANDROID_LOG_INFO, "GL Render Device :", "Selected pixel format= (R=%d, G=%d, B=%d, D=%d, S=%d)", lred, lgreen, lblue, ldepth, lstencil);
+					jconfig = jenv->NewGlobalRef(ljconfig);
+					break;
+				}
+
+				//release local ref
+				jenv->DeleteLocalRef(ljconfig);
 			}
 
-			//release local ref
-			jenv->DeleteLocalRef(ljconfig);
+			jenv->DeleteLocalRef(jeglconfigClass);
+			jenv->DeleteLocalRef(jconfigList);
+		}//if (num_configs > 0)
+		else {
+			//maybe due to depth and stencil size are too large.
+			//reduce the size of depth & stencil and retry.
+			if (depth > 1)
+				depth = 1;
+			else 
+				depth = 0;
+			if (stencil > 1)
+				stencil = 1;
+			else
+				stencil = 0;
 		}
+		//release local ref
+		jenv->DeleteLocalRef(valueArray);
+		jenv->DeleteLocalRef(jattrib_list);
 
-		jenv->DeleteLocalRef(jeglconfigClass);
-		jenv->DeleteLocalRef(jconfigList);
-	}
+	} while (num_configs == 0);//will retry until we find a suitable config
 
-	//release local ref
-	jenv->DeleteLocalRef(valueArray);
-	jenv->DeleteLocalRef(jattrib_list);
 
 	return jconfig;
 }
