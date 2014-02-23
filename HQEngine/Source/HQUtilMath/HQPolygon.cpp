@@ -19,6 +19,12 @@ COPYING.txt included with this distribution for more information.
 /*----------------------------------
 HQPolygon3D
 -----------------------------------*/
+
+HQPolygon3D::~HQPolygon3D() {
+	SafeDeleteArray(pPoints);
+	SafeDeleteArray(pIndices);
+}
+
 //*********************************
 //tính hình hộp bao ngoài
 //*********************************

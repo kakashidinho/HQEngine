@@ -992,10 +992,7 @@ public:
 #ifdef HQ_EXPLICIT_ALIGN
 public:
 #endif
-	~HQPolygon3D() {
-		SafeDeleteArray(pPoints);
-		SafeDeleteArray(pIndices);
-	}
+	~HQPolygon3D();
 
 	static HQ_FORCE_INLINE HQPolygon3D *New(){ return HQ_NEW HQPolygon3D();}
 	static HQ_FORCE_INLINE HQPolygon3D *New(const HQPolygon3D& source){ return HQ_NEW HQPolygon3D(source);}
