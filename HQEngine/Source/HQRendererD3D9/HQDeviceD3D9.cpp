@@ -409,7 +409,7 @@ HQReturnVal HQDeviceD3D9::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQ
 #if defined DEBUG || defined _DEBUG		
 	if(FAILED(hr))
 	{
-		this->Log("Clear() failed!Error Code %d",hr);
+		this->Log("Clear() failed!Error Code %d. Make sure you didn't clear depth/stencil when there is no depth/stencil buffer",hr);
 		return HQ_FAILED;
 	}
 #endif
@@ -524,7 +524,7 @@ HQReturnVal HQDeviceD3D9::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool i
 #if defined DEBUG || defined _DEBUG		
 	if(FAILED(hr))
 	{
-		this->Log("Clear() failed!Error Code %d",hr);
+		this->Log("Clear() failed!Error Code %d. Make sure you didn't clear depth/stencil when there is no depth/stencil buffer",hr);
 		return HQ_FAILED;
 	}
 #endif
