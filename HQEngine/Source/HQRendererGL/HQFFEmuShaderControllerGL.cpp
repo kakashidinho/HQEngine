@@ -14,6 +14,8 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQShaderGL.h"
 #include "HQShaderGL_GLSL_VarParser.h"
+#include "HQVertexStreamManagerGL.h"
+#include "HQDeviceGL.h"
 
 #include "../BaseImpl/BaseImplShaderString/HQFFEmuShaderGL.h"
 
@@ -889,6 +891,19 @@ HQReturnVal HQFFShaderControllerGL::DeActiveFFEmu()
 {
 	if (pFFEmu->IsActive())
 	{
+#if 0
+		//not work, for now, need to explicit supply color and texcoords to fixed function shader
+		//deactive color and texcoords attributes if needed
+		HQVertexStreamManagerGL *streamMan = static_cast<HQVertexStreamManagerGL*> (g_pOGLDev->GetVertexStreamManager());
+		if(streamMan->IsVertexAttribActive(COLOR_ATTRIB) == false){
+			glDisableVertexAttribArray(COLOR_ATTRIB);
+		}
+
+		if(streamMan->IsVertexAttribActive(TEXCOORD0_ATTRIB) == false){
+			glDisableVertexAttribArray(TEXCOORD0_ATTRIB);
+		}
+#endif
+		//deactive emulating shader
 		pFFEmu->SetActive(false);
 	}
 	return HQ_OK;
@@ -967,6 +982,21 @@ HQReturnVal HQFFShaderControllerGL::SetFFTransform(HQFFTransformMatrix type, con
 
 void HQFFShaderControllerGL::NotifyFFRender()// notify shader manager that the render device is going to draw something. Shader manager needs to update Fixed Function emulator if needed
 {
+#if 0
+	//not work, for now, need to explicit supply color and texcoords to fixed function shader
+	//active and use default color and texcoords
+	HQVertexStreamManagerGL *streamMan = static_cast<HQVertexStreamManagerGL*> (g_pOGLDev->GetVertexStreamManager());
+	if(streamMan->IsVertexAttribActive(COLOR_ATTRIB) == false){
+		glEnableVertexAttribArray(COLOR_ATTRIB);
+		glVertexAttrib4fARB(COLOR_ATTRIB, 1, 1, 1, 1);
+	}
+
+	if(streamMan->IsVertexAttribActive(TEXCOORD0_ATTRIB) == false){
+		glEnableVertexAttribArray(TEXCOORD0_ATTRIB);
+		glVertexAttrib2fARB(TEXCOORD0_ATTRIB, 0, 0);
+	}
+#endif
+
 	pFFEmu->CommitChange();
 }
 

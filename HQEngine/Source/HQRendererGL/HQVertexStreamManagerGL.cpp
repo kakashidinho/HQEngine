@@ -463,15 +463,19 @@ HQReturnVal  HQVertexStreamManagerGL::SetIndexBuffer(hq_uint32 indexBufferID )
 
 HQReturnVal  HQVertexStreamManagerGL::SetVertexInputLayout(hq_uint32 inputLayoutID) 
 {
+	//set vertex layout 
 	HQSharedPtr<HQVertexInputLayoutGL> pVLayout = this->inputLayouts.GetItemPointer(inputLayoutID);
 	
-	return HQVertexStreamManDelegateGL<HQVertexStreamManagerGL>::SetVertexInputLayout(
+	HQReturnVal hr = HQVertexStreamManDelegateGL<HQVertexStreamManagerGL>::SetVertexInputLayout(
 							this,
 							pVLayout,
 							this->activeInputLayout,
 							this->streams,
 							this->maxVertexAttribs,
 							this->vAttribInfoNodeCache);
+
+
+	return hr;
 
 }
 

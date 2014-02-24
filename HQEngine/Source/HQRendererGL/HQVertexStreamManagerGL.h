@@ -79,6 +79,7 @@ public:
 	inline GLenum GetIndexDataType() {return this->indexDataType;}
 	inline hq_uint32 GetIndexShiftFactor() {return this->indexShiftFactor;}
 	inline void * GetIndexStartAddress() {return this->indexStartAddress;}//for compatibility with vertex array
+	inline bool IsVertexAttribActive(hquint32 attribIndex) const {return this->activeInputLayout != NULL? false: ((this->activeInputLayout->flags & (0x1 << attribIndex)) != 0);}
 
 	HQReturnVal CreateVertexBuffer(const void *initData , hq_uint32 size , 
 									bool dynamic , bool isForPointSprites,
