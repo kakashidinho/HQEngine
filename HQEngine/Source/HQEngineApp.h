@@ -130,7 +130,7 @@ public:
 	///
 	static HQReturnVal Release();
 
-	///
+	///Init window and its render device
 	///fail if window already init and hasn't been destroyed
 	///{initParams} = NULL equals to a parameter with all NULL members and
 	///				 {flushDebugLog} member = false
