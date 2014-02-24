@@ -306,7 +306,7 @@ private:
 #ifdef GLES
 				"#version 100\n"
 #else
-				"#define highp\n#define lowp\n#define mediump\n",
+				"#version 110\n#define highp\n#define lowp\n#define mediump\n",
 #endif
 				"#define VERTEX_SHADER\n",
 				light? lightingDefine: "",
@@ -862,6 +862,10 @@ HQFFShaderControllerGL::HQFFShaderControllerGL()
 	HQColorui black = HQColoruiRGBA(0, 0, 0, 255, CL_BGRA);
 
 	SetFFRenderState(HQ_AMBIENT, &black);//set black global ambient color
+
+	SetFFTransform(HQ_WORLD, &HQMatrix4::IdentityMatrix());
+	SetFFTransform(HQ_VIEW, &HQMatrix4::IdentityMatrix());
+	SetFFTransform(HQ_PROJECTION, &HQMatrix4::IdentityMatrix());
 
 	ActiveFFEmu();//active fixed function shader
 }

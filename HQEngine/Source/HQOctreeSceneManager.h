@@ -15,6 +15,7 @@ COPYING.txt included with this distribution for more information.
 
 class HQOctreeSceneManager 
 {
+	//TO DO
 };
 
 #endif

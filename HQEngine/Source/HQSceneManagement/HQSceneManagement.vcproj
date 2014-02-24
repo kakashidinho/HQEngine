@@ -368,6 +368,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HQCamera.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HQMeshNode.cpp"
 				>
 			</File>
