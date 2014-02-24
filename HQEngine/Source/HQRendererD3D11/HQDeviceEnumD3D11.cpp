@@ -450,6 +450,8 @@ void HQDeviceEnumD3D11::ParseSettingFile(const char *settingFile){
 //save setting
 //***********************
 void HQDeviceEnumD3D11::SaveSettingFile(const char *settingFile){
+	if(!settingFile)
+		return;
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	//windows store and phone style
 	auto File =  HQWinStoreFileSystem::OpenOrCreateFileForWrite(settingFile);

@@ -23,7 +23,7 @@ HQEngineBaseWindow::HQEngineBaseWindow(const char* settingFileDir)
  m_height(__DEFAULT_HEIGHT),
  m_windowed (__DEFAULT_WINDOWED)
 {
-	FILE *f = fopen(settingFileDir , "r");
+	FILE *f = settingFileDir != NULL? fopen(settingFileDir , "r") : NULL;
 	if (f != NULL)
 	{
 		fscanf(f, " Basic Settings");

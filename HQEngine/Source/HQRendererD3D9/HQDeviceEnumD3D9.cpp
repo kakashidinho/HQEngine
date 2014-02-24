@@ -387,6 +387,8 @@ void HQDeviceEnumD3D9::ParseSettingFile(const char *settingFile,IDirect3D9* d3d)
 //save setting
 //***********************
 void HQDeviceEnumD3D9::SaveSettingFile(const char *settingFile){
+	if(!settingFile)
+		return;
 	FILE *save=0;
 	save=fopen(settingFile,"w");
 	if(!save)

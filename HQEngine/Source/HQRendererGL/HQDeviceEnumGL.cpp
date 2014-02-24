@@ -1568,6 +1568,8 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 //save setting
 //***********************
 void HQDeviceEnumGL::SaveSettingFile(const char *settingFile){
+	if(!settingFile)
+		return;
 	FILE *save=0;
 	save=fopen(settingFile,"w");
 	if(!save)

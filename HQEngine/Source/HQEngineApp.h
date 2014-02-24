@@ -125,7 +125,7 @@ public:
 	///get instance of application
 	static HQEngineApp *GetInstance() {return sm_instance;}
 	///
-	///release application instance. 
+	///release application instance (including its window, etc). 
 	///only usable when application loop is stopped or hasn't been begun. 
 	///
 	static HQReturnVal Release();
