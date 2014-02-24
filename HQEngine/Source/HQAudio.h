@@ -37,8 +37,8 @@ COPYING.txt included with this distribution for more information.
 #	endif
 #endif
 
-#ifndef NOT_AVAIL_ID
-#	define NOT_AVAIL_ID 0xcdcdcdcd
+#ifndef HQ_NOT_AVAIL_ID
+#	define HQ_NOT_AVAIL_ID 0xcdcdcdcd
 #endif
 
 const hqfloat32 HQ_DEFAULT_SPEED_OF_SOUND = 343.3f;
@@ -128,7 +128,7 @@ public:
 	virtual void DeleteAllAudioBuffers() = 0;
 	///
 	///{info} specifies format, channels and samples rate ... of audio buffers that can be attached to source. 
-	///{bufferID} can be NOT_AVAIL_ID, in that case no audio buffer is attached to source. 
+	///{bufferID} can be HQ_NOT_AVAIL_ID, in that case no audio buffer is attached to source. 
 	///Note: stream buffer cannot be attached to multiple sources at the same time
 	///
 	virtual HQReturnVal CreateSource(const HQAudioSourceInfo &info, hq_uint32 bufferID, hq_uint32 *pSourceID) = 0;

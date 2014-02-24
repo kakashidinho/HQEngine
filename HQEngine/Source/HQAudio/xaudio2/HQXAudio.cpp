@@ -342,7 +342,7 @@ HQXAudioSourceController *HQXAudioDevice::CreateNewSourceObject(const HQAudioSou
 	return new HQXAudioSourceController(m_xAudioObj, info, pBuffer);//this source uses left handed coordinates
 }
 
-///{bufferID} can be NOT_AVAIL_ID, in that case no audio buffer is attached to source
+///{bufferID} can be HQ_NOT_AVAIL_ID, in that case no audio buffer is attached to source
 HQReturnVal HQXAudioDevice::CreateSource(const HQAudioSourceInfo &info, hq_uint32 bufferID, hq_uint32 *pSourceID)
 {
 	HQSharedPtr<HQBaseAudioBuffer> buffer = m_bufferManager.GetItemPointer(bufferID);
@@ -372,7 +372,7 @@ HQReturnVal HQXAudioDevice::CreateSource(const HQAudioSourceInfo &info, hq_uint3
 ///create source without audio buffer
 HQReturnVal HQXAudioDevice::CreateSource(const HQAudioSourceInfo &info, hq_uint32 *pSourceID) 
 {
-	return CreateSource(info, NOT_AVAIL_ID, pSourceID);
+	return CreateSource(info, HQ_NOT_AVAIL_ID, pSourceID);
 }
 HQReturnVal HQXAudioDevice::AttachAudioBuffer(hq_uint32 bufferID, hq_uint32 sourceID) 
 {

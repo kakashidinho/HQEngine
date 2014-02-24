@@ -33,9 +33,9 @@ struct HQBaseCustomRenderBuffer
 	}
 	virtual void OnLostDevice() {}
 	virtual void OnResetDevice() {}
-	bool IsTexture() {return this->GetTextureID() != NOT_AVAIL_ID;}
+	bool IsTexture() {return this->GetTextureID() != HQ_NOT_AVAIL_ID;}
 	virtual HQSharedPtr<HQTexture> GetTexture() {return HQSharedPtr<HQTexture>::null;};
-	virtual hq_uint32 GetTextureID() {return NOT_AVAIL_ID;}
+	virtual hq_uint32 GetTextureID() {return HQ_NOT_AVAIL_ID;}
 	virtual void *GetData() = 0;
 	
 	HQMultiSampleType multiSampleType;
@@ -289,7 +289,7 @@ public:
 	}
 	void RemoveAllRenderTarget()
 	{
-		this->ActiveRenderTargets(NULL , NOT_AVAIL_ID , 0);
+		this->ActiveRenderTargets(NULL , HQ_NOT_AVAIL_ID , 0);
 		
 		HQItemManager<HQBaseCustomRenderBuffer>::Iterator ite;
 

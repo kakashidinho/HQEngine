@@ -32,17 +32,17 @@ COPYING.txt included with this distribution for more information.
 inline HQReturnVal HQBaseCgShaderController::DeActiveProgramCg(HQSharedPtr<HQBaseShaderProgramGL>& pProgram)
 {
 	
-	if(pProgram->vertexShaderID != NOT_USE_VSHADER)
+	if(pProgram->vertexShaderID != HQ_NOT_USE_VSHADER)
 	{
 		cgGLUnbindProgram(this->cgVertexProfile);
 		cgGLDisableProfile(this->cgVertexProfile);
 	}
-	if(pProgram->pixelShaderID != NOT_USE_PSHADER)
+	if(pProgram->pixelShaderID != HQ_NOT_USE_PSHADER)
 	{
 		cgGLUnbindProgram(this->cgFragmentProfile);
 		cgGLDisableProfile(this->cgFragmentProfile);
 	}
-	if(pProgram->geometryShaderID != NOT_USE_GSHADER)
+	if(pProgram->geometryShaderID != HQ_NOT_USE_GSHADER)
 	{
 		cgGLUnbindProgram(this->cgGeometryProfile);
 		cgGLDisableProfile(this->cgGeometryProfile);

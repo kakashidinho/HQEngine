@@ -51,7 +51,7 @@ void cgErrorCallBack(void)
 HQShaderManagerD3D9::HQShaderManagerD3D9(LPDIRECT3DDEVICE9 pD3DDevice,HQLogStream* logFileStream,bool flushLog)
 : HQLoggableObject(logFileStream , "D3D9 Shader Manager :" , flushLog , 1024)
 #if defined _DEBUG || defined DEBUG
-	,activeProgramID(NOT_USE_SHADER)
+	,activeProgramID(HQ_NOT_USE_SHADER)
 #endif
 {
 	this->pD3DDevice=pD3DDevice;
@@ -115,7 +115,7 @@ bool HQShaderManagerD3D9::IsUsingPShader() //có đang dùng pixel/fragment shad
 /*------------------------*/
 HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
 {
-	if (programID == NOT_USE_SHADER)
+	if (programID == HQ_NOT_USE_SHADER)
 	{
 		if (activeProgram == NULL)
 			return HQ_OK;
@@ -133,7 +133,7 @@ HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
 		activePShader=HQSharedPtr<HQShaderObjectD3D9>::null;
 
 #if defined _DEBUG || defined DEBUG
-		activeProgramID = NOT_USE_SHADER;
+		activeProgramID = HQ_NOT_USE_SHADER;
 #endif
 		
 		return HQ_OK;
@@ -199,7 +199,7 @@ HQReturnVal HQShaderManagerD3D9::DestroyProgram(hq_uint32 programID)
 		return HQ_FAILED;
 	if(pProgram==activeProgram)
 	{
-		this->ActiveProgram(NOT_USE_SHADER);
+		this->ActiveProgram(HQ_NOT_USE_SHADER);
 	}
 	this->Remove(programID);
 	return HQ_OK;
@@ -207,7 +207,7 @@ HQReturnVal HQShaderManagerD3D9::DestroyProgram(hq_uint32 programID)
 
 void HQShaderManagerD3D9::DestroyAllProgram()
 {
-	this->ActiveProgram(NOT_USE_SHADER);
+	this->ActiveProgram(HQ_NOT_USE_SHADER);
 	
 	this->RemoveAll();
 }
@@ -465,21 +465,21 @@ HQReturnVal HQShaderManagerD3D9::CreateProgram(hq_uint32 vertexShaderID,
 							  const char** uniformParameterNames,
 							  hq_uint32 *pID)
 {
-	if(vertexShaderID==NOT_USE_VSHADER && pixelShaderID==NOT_USE_PSHADER && geometryShaderID==NOT_USE_GSHADER)
+	if(vertexShaderID==HQ_NOT_USE_VSHADER && pixelShaderID==HQ_NOT_USE_PSHADER && geometryShaderID==HQ_NOT_USE_GSHADER)
 		return HQ_FAILED_SHADER_PROGRAM_NEED_SHADEROBJECT;//tất cả đều là fixed function => báo lỗi
 	
 	HQSharedPtr<HQShaderObjectD3D9> pVShader = HQSharedPtr<HQShaderObjectD3D9> :: null;
 	HQSharedPtr<HQShaderObjectD3D9> pPShader = HQSharedPtr<HQShaderObjectD3D9> :: null;
-	if (vertexShaderID != NOT_USE_VSHADER)
+	if (vertexShaderID != HQ_NOT_USE_VSHADER)
 		pVShader = this->shaderObjects.GetItemPointer(vertexShaderID);
-	if (pixelShaderID != NOT_USE_PSHADER)
+	if (pixelShaderID != HQ_NOT_USE_PSHADER)
 		pPShader = this->shaderObjects.GetItemPointer(pixelShaderID);
 	
 	if(pVShader == NULL || pPShader == NULL)
 		return HQ_FAILED_INVALID_ID;
-	if(vertexShaderID!=NOT_USE_VSHADER && pVShader->type!=HQ_VERTEX_SHADER)//shader có id <vertexShaderID> không phải vertex shader
+	if(vertexShaderID!=HQ_NOT_USE_VSHADER && pVShader->type!=HQ_VERTEX_SHADER)//shader có id <vertexShaderID> không phải vertex shader
 		return HQ_FAILED_WRONG_SHADER_TYPE;
-	if(pixelShaderID!=NOT_USE_PSHADER && pPShader->type!=HQ_PIXEL_SHADER)//shader có id <pixelShaderID> không phải pixel shader
+	if(pixelShaderID!=HQ_NOT_USE_PSHADER && pPShader->type!=HQ_PIXEL_SHADER)//shader có id <pixelShaderID> không phải pixel shader
 		return HQ_FAILED_WRONG_SHADER_TYPE;
 
 	HQShaderProgramD3D9 *pShader=new HQShaderProgramD3D9();
@@ -489,8 +489,8 @@ HQReturnVal HQShaderManagerD3D9::CreateProgram(hq_uint32 vertexShaderID,
 	pShader->pixelShader = pPShader;
 
 	//store shaders' IDs
-	pShader->vertexShaderID = (pVShader != NULL)? vertexShaderID : NOT_USE_VSHADER;
-	pShader->pixelShaderID = (pPShader != NULL)? pixelShaderID : NOT_USE_PSHADER;
+	pShader->vertexShaderID = (pVShader != NULL)? vertexShaderID : HQ_NOT_USE_VSHADER;
+	pShader->pixelShaderID = (pPShader != NULL)? pixelShaderID : HQ_NOT_USE_PSHADER;
 	
 	hq_uint32 newProgramID;
 	if(!this->AddItem(pShader,&newProgramID))
@@ -522,12 +522,12 @@ hq_uint32 HQShaderManagerD3D9::GetShader(hq_uint32 programID, HQShaderType shade
 	switch (shaderType)
 	{
 	case HQ_VERTEX_SHADER:
-		return (pProgram != NULL)? pProgram->vertexShaderID : NOT_USE_VSHADER;
+		return (pProgram != NULL)? pProgram->vertexShaderID : HQ_NOT_USE_VSHADER;
 	case HQ_PIXEL_SHADER:
-		return (pProgram != NULL)? pProgram->pixelShaderID : NOT_USE_PSHADER;
+		return (pProgram != NULL)? pProgram->pixelShaderID : HQ_NOT_USE_PSHADER;
 	}
 
-	return NOT_USE_GSHADER;
+	return HQ_NOT_USE_GSHADER;
 }
 
 /*-----------------------*/
@@ -546,7 +546,7 @@ hq_uint32 HQShaderManagerD3D9::GetParameterIndex(HQSharedPtr<HQShaderProgramD3D9
 			param=cgGetNamedParameter(pProgram->pixelShader->program,parameterName);
 		if(param==NULL)//vẫn không tìm thấy
 		{
-			return NOT_AVAIL_ID;
+			return HQ_NOT_AVAIL_ID;
 		}
 		//đã tìm thấy =>thêm vào danh sách
 		HQParameterD3D9* pNewParameter = new HQParameterD3D9();
@@ -557,7 +557,7 @@ hq_uint32 HQShaderManagerD3D9::GetParameterIndex(HQSharedPtr<HQShaderProgramD3D9
 		if(!pProgram->parameters.AddItem(pNewParameter , &paramIndex))
 		{
 			delete pNewParameter;
-			return NOT_AVAIL_ID;
+			return HQ_NOT_AVAIL_ID;
 		}
 		else
 		{
@@ -571,7 +571,7 @@ inline CGparameter HQShaderManagerD3D9::GetUniformParam(HQSharedPtr<HQShaderProg
 {
 	hq_uint32 paramIndex = this->GetParameterIndex(pProgram , parameterName);
 
-	if(paramIndex == NOT_AVAIL_ID)
+	if(paramIndex == HQ_NOT_AVAIL_ID)
 		return NULL;
 
 	return pProgram->parameters.GetItemPointerNonCheck(paramIndex)->parameter;
@@ -842,7 +842,7 @@ hq_uint32 HQShaderManagerD3D9::GetParameterIndex(hq_uint32 programID ,
 {
 	HQSharedPtr<HQShaderProgramD3D9> pProgram	= this->GetItemPointer(programID);
 	if(pProgram == NULL)
-		return NOT_AVAIL_ID;
+		return HQ_NOT_AVAIL_ID;
 	return this->GetParameterIndex(pProgram , parameterName);
 }
 

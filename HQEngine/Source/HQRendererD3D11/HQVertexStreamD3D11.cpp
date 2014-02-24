@@ -240,7 +240,7 @@ HQReturnVal HQVertexStreamManagerD3D11::CreateVertexInputLayout(const HQVertexAt
 	if (numAttrib >= MAX_VERTEX_ATTRIBS)
 		return HQ_FAILED_TOO_MANY_ATTRIBUTES;
 
-	if (NOT_USE_VSHADER == vertexShaderID)
+	if (HQ_NOT_USE_VSHADER == vertexShaderID)
 		vertexShaderID = pShaderMan->GetFFVertexShaderForInputLayoutCreation();//get fixed function vertex shader
 	
 	ID3DBlob * pBlob = pShaderMan->GetCompiledVertexShader(vertexShaderID);

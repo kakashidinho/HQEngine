@@ -94,7 +94,7 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 {
 	HQFixedFunctionShaderD3D11()
 		: m_flags(PARAMETERS_DIRTY),
-		m_constantBuffer(NOT_AVAIL_ID),
+		m_constantBuffer(HQ_NOT_AVAIL_ID),
 		m_activeProgramIndex(0)
 	{
 		hquint32 numFFVShaders = sizeof(m_vertexShader) / sizeof(hquint32);
@@ -102,13 +102,13 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 		hquint32 numFFPrograms = sizeof(m_program) / sizeof(hquint32);
 
 		for (hquint32 i = 0; i < numFFVShaders; ++i)
-			m_vertexShader[i] = NOT_AVAIL_ID;
+			m_vertexShader[i] = HQ_NOT_AVAIL_ID;
 
 		for (hquint32 i = 0; i < numFFPShaders; ++i)
-			m_pixelShader[i] = NOT_AVAIL_ID;
+			m_pixelShader[i] = HQ_NOT_AVAIL_ID;
 
 		for (hquint32 i = 0; i < numFFPrograms; ++i)
-			m_program[i] = NOT_AVAIL_ID;
+			m_program[i] = HQ_NOT_AVAIL_ID;
 	}
 	
 	void SetLight(hquint32 index, const HQFFLight* light)
@@ -393,7 +393,7 @@ void HQShaderManagerD3D11::InitFFEmu()
 				this->CreateProgram(
 					pFFEmu->GetVertexShaderSlot(useLighting, useSpecular,  useTexture),
 					pFFEmu->GetPixelShaderSlot(useTexture), 
-					NOT_USE_GSHADER, 
+					HQ_NOT_USE_GSHADER, 
 					NULL, 
 					&pFFEmu->GetProgramSlot(useLighting, useSpecular,  useTexture));
 			}//for (int texture = 0; texture < 2; ++texture)

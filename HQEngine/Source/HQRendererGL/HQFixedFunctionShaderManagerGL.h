@@ -30,7 +30,7 @@ public:
 	
 	virtual hq_uint32 GetShader(hq_uint32 programID, HQShaderType shaderType) 
 	{
-		return NULL_VSHADER;
+		return HQ_NULL_VSHADER;
 	}
 	
 	virtual HQReturnVal ActiveProgram(hq_uint32 programID){return HQ_FAILED;}
@@ -88,7 +88,7 @@ public:
 	
 	virtual hq_uint32 GetParameterIndex(hq_uint32 programID , 
 											const char *parameterName)
-	{return NOT_AVAIL_ID;}
+	{return HQ_NOT_AVAIL_ID;}
 
 	
 	virtual HQReturnVal SetUniformInt(const char* parameterName,

@@ -41,7 +41,7 @@ public:
 	
 	///
 	///active shader program với id là {programID} ,
-	///nếu programID là NOT_USE_SHADER => không dùng shader 
+	///nếu programID là HQ_NOT_USE_SHADER => không dùng shader 
 	///
 	virtual HQReturnVal ActiveProgram(hq_uint32 programID)=0;
 	
@@ -161,9 +161,9 @@ public:
 
 	///
 	///tạo shader program bằng cách kết hợp các shader object:
-	///-{vertexShaderID} - id của vertexshader object ,có thể là NOT_USE_VSHADER nếu không dùng vertex shader. 
-	///-{pixelShaderID} - id của pixelshader/fragment object ,có thể là NOT_USE_PSHADER nếu không dùng pixel/fragment shader. 
-	///-{geometryShaderID} - id của geometryshader object ,có thể là NOT_USE_GSHADER nếu không dùng geometry shader. 
+	///-{vertexShaderID} - id của vertexshader object ,có thể là HQ_NOT_USE_VSHADER nếu không dùng vertex shader. 
+	///-{pixelShaderID} - id của pixelshader/fragment object ,có thể là HQ_NOT_USE_PSHADER nếu không dùng pixel/fragment shader. 
+	///-{geometryShaderID} - id của geometryshader object ,có thể là HQ_NOT_USE_GSHADER nếu không dùng geometry shader. 
 	///Ít nhất 1 trong 3 id phải là id của 1 shader object ,không phải NOT_USE_*SHADER. 
 	///Để tránh không tương thích, tốt nhất mỗi shader program phải có ít nhất vertexshader object và pixelshader object.
 	///Các shader object có thể không tương thích nếu tạo từ các mã nguồn ngôn ngữ khác nhau ví dụ vertex shader tạo từ Cg, pixel shader tạo từ Glsl ,v.v.v.v.. 
@@ -192,7 +192,7 @@ public:
 	virtual hq_uint32 GetShader(hq_uint32 programID, HQShaderType shaderType) = 0;
 
 	///
-	///return NOT_AVAIL_ID if parameter doesn't exist
+	///return HQ_NOT_AVAIL_ID if parameter doesn't exist
 	///
 	virtual hq_uint32 GetParameterIndex(hq_uint32 programID , 
 											const char *parameterName)=0; 

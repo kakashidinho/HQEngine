@@ -15,35 +15,35 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQPrimitiveDataType.h"
 
-#ifndef NOT_AVAIL_ID
-#	define NOT_AVAIL_ID 0xcdcdcdcd
+#ifndef HQ_NOT_AVAIL_ID
+#	define HQ_NOT_AVAIL_ID 0xcdcdcdcd
 #endif
 
-#ifndef NULL_ID
-#	define NULL_ID NOT_AVAIL_ID
+#ifndef HQ_NULL_ID
+#	define HQ_NULL_ID HQ_NOT_AVAIL_ID
 #endif
 
-#define NOT_USE_VSHADER 0xcdcdcdcd
-#define NOT_USE_GSHADER 0xcdcdcddd
-#define NOT_USE_PSHADER 0xcdcddddd
-#define NOT_USE_SHADER 0xcddddddd
+#define HQ_NOT_USE_VSHADER 0xcdcdcdcd
+#define HQ_NOT_USE_GSHADER 0xcdcdcddd
+#define HQ_NOT_USE_PSHADER 0xcdcddddd
+#define HQ_NOT_USE_SHADER 0xcddddddd
 
-#ifndef NULL_VSHADER
-#	define NULL_VSHADER NOT_USE_VSHADER
+#ifndef HQ_NULL_VSHADER
+#	define HQ_NULL_VSHADER HQ_NOT_USE_VSHADER
 #endif
 
-#ifndef NULL_PSHADER
-#	define NULL_PSHADER NOT_USE_PSHADER
+#ifndef HQ_NULL_PSHADER
+#	define HQ_NULL_PSHADER HQ_NOT_USE_PSHADER
 #endif
 
 
-#ifndef NULL_GSHADER
-#	define NULL_GSHADER NOT_USE_GSHADER
+#ifndef HQ_NULL_GSHADER
+#	define HQ_NULL_GSHADER HQ_NOT_USE_GSHADER
 #endif
 
 
 #ifndef NULL_PROGRAM
-#	define NULL_PROGRAM NOT_USE_SHADER
+#	define NULL_PROGRAM HQ_NOT_USE_SHADER
 #endif
 
 

@@ -87,14 +87,14 @@ hq_uint32 HQBaseShaderProgramGL::TryCreateParamObjAndAddToParamsList(const char 
 		
 	if(pNewParameter == NULL)//không tìm thấy
 	{
-		return  NOT_AVAIL_ID;
+		return  HQ_NOT_AVAIL_ID;
 	}
 	
 	hq_uint32 paramIndex;
 	if(!this->parameters.AddItem(pNewParameter , &paramIndex))
 	{
 		delete pNewParameter;
-		return NOT_AVAIL_ID;
+		return HQ_NOT_AVAIL_ID;
 	}
 	else
 	{
@@ -109,7 +109,7 @@ hq_uint32 HQBaseShaderProgramGL::TryCreateParamObjAndAddToParamsList(const char 
 HQBaseCommonShaderManagerGL::HQBaseCommonShaderManagerGL(HQLogStream* logFileStream , const char * logPrefix , bool flushLog)
 :HQLoggableObject(logFileStream , logPrefix , flushLog , 1024) 
 {
-	activeProgram=NOT_USE_SHADER;
+	activeProgram=HQ_NOT_USE_SHADER;
 
 	g_pShaderMan = this;
 }
@@ -128,7 +128,7 @@ bool HQBaseCommonShaderManagerGL::IsUsingVShader() //có đang dùng vertex shad
 	if (pProgram == NULL)
 		return false;
 
-	return pProgram->vertexShaderID != NOT_USE_VSHADER;
+	return pProgram->vertexShaderID != HQ_NOT_USE_VSHADER;
 }
 bool HQBaseCommonShaderManagerGL::IsUsingGShader()//có đang dùng geometry shader không,hay đang dùng fixed function
 {
@@ -136,7 +136,7 @@ bool HQBaseCommonShaderManagerGL::IsUsingGShader()//có đang dùng geometry sha
 	if (pProgram == NULL)
 		return false;
 
-	return pProgram->geometryShaderID != NOT_USE_GSHADER;
+	return pProgram->geometryShaderID != HQ_NOT_USE_GSHADER;
 }
 bool HQBaseCommonShaderManagerGL::IsUsingPShader() //có đang dùng pixel/fragment shader không,hay đang dùng fixed function
 {
@@ -144,7 +144,7 @@ bool HQBaseCommonShaderManagerGL::IsUsingPShader() //có đang dùng pixel/fragm
 	if (pProgram == NULL)
 		return false;
 
-	return pProgram->pixelShaderID != NOT_USE_PSHADER;
+	return pProgram->pixelShaderID != HQ_NOT_USE_PSHADER;
 }
 
 
@@ -160,9 +160,9 @@ HQReturnVal HQBaseCommonShaderManagerGL::DestroyProgram(hq_uint32 programID)
 #if defined DEVICE_LOST_POSSIBLE
 		if (!g_pOGLDev->IsDeviceLost())//must not call opengl when device is lost
 #endif
-			this->ActiveProgram(NOT_USE_SHADER);
+			this->ActiveProgram(HQ_NOT_USE_SHADER);
 		
-		this->activeProgram = NOT_USE_SHADER;
+		this->activeProgram = HQ_NOT_USE_SHADER;
 	}
 	this->Remove(programID);
 	return HQ_OK;
@@ -173,10 +173,10 @@ void HQBaseCommonShaderManagerGL::DestroyAllProgram()
 #if defined DEVICE_LOST_POSSIBLE
 	if (!g_pOGLDev->IsDeviceLost())//must not call opengl when device is lost
 #endif
-		this->ActiveProgram(NOT_USE_SHADER);
+		this->ActiveProgram(HQ_NOT_USE_SHADER);
 
 	this->RemoveAll();
-	this->activeProgram = NOT_USE_SHADER;
+	this->activeProgram = HQ_NOT_USE_SHADER;
 }
 
 HQReturnVal HQBaseCommonShaderManagerGL::DestroyShader(hq_uint32 shaderID)
@@ -205,14 +205,14 @@ hq_uint32 HQBaseCommonShaderManagerGL::GetShader(hq_uint32 programID, HQShaderTy
 	switch (shaderType)
 	{
 	case HQ_VERTEX_SHADER:
-		return (pProgram != NULL)? pProgram->vertexShaderID : NOT_USE_VSHADER;
+		return (pProgram != NULL)? pProgram->vertexShaderID : HQ_NOT_USE_VSHADER;
 	case HQ_GEOMETRY_SHADER:
-		return (pProgram != NULL)? pProgram->geometryShaderID : NOT_USE_GSHADER;
+		return (pProgram != NULL)? pProgram->geometryShaderID : HQ_NOT_USE_GSHADER;
 	case HQ_PIXEL_SHADER:
-		return (pProgram != NULL)? pProgram->pixelShaderID : NOT_USE_PSHADER;
+		return (pProgram != NULL)? pProgram->pixelShaderID : HQ_NOT_USE_PSHADER;
 	}
 
-	return NOT_USE_VSHADER;
+	return HQ_NOT_USE_VSHADER;
 }
 
 
@@ -225,7 +225,7 @@ hq_uint32 HQBaseCommonShaderManagerGL::GetParameterIndex(hq_uint32 programID ,
 {
 	HQSharedPtr<HQBaseShaderProgramGL> pProgram	= this->GetItemPointer(programID);
 	if(pProgram == NULL)
-		return NOT_AVAIL_ID;
+		return HQ_NOT_AVAIL_ID;
 	
 	return pProgram->GetParameterIndex(parameterName);
 }

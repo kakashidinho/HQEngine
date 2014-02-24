@@ -394,8 +394,8 @@ Game::Game()
 #endif
 	}
 
-	pDevice->GetShaderManager()->CreateProgram(vid , pid , NOT_USE_GSHADER, NULL , &program);
-	pDevice->GetShaderManager()->CreateProgram(vid2 , pid2 , NOT_USE_GSHADER, NULL , &programMesh);
+	pDevice->GetShaderManager()->CreateProgram(vid , pid , HQ_NOT_USE_GSHADER, NULL , &program);
+	pDevice->GetShaderManager()->CreateProgram(vid2 , pid2 , HQ_NOT_USE_GSHADER, NULL , &programMesh);
 
 #ifndef GLES
 
@@ -570,8 +570,8 @@ void Game::OnResetDevice()
 		HQ_SCM_GLSL_DEBUG , "../test/shader/ps-mesh.txt", macro,
 		"main" , &pid2);
 
-	pDevice->GetShaderManager()->CreateProgram(vid , pid , NOT_USE_GSHADER, NULL , &program);
-	pDevice->GetShaderManager()->CreateProgram(vid2 , pid2 , NOT_USE_GSHADER, NULL , &programMesh);
+	pDevice->GetShaderManager()->CreateProgram(vid , pid , HQ_NOT_USE_GSHADER, NULL , &program);
+	pDevice->GetShaderManager()->CreateProgram(vid2 , pid2 , HQ_NOT_USE_GSHADER, NULL , &programMesh);
 #endif
 }
 
@@ -776,7 +776,7 @@ void Game::Render(HQTime dt)
 		/*
 		//pDevice->GetShaderManager()->SetUniform4Float("rotation" , rotation[0] , 3);
 		pDevice->GetVertexStreamManager()->SetVertexInputLayout(vertexLayout[2]);
-		pDevice->GetShaderManager()->ActiveProgram(NOT_USE_SHADER);
+		pDevice->GetShaderManager()->ActiveProgram(HQ_NOT_USE_SHADER);
 		HQMatrix4 rot4x4(rotation[0]);
 		rot4x4.Transpose();
 		//pDevice->GetShaderManager()->SetUniformInt(HQ_LIGHTING_ENABLE , HQ_FALSE);

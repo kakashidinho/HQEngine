@@ -167,7 +167,7 @@ HQ_FORCE_INLINE const HQShaderParameterGL* HQBaseShaderProgramGL::GetParameter(c
 	if (pIndex == NULL)//chưa có
 	{
 		hq_uint32 index = this->TryCreateParamObjAndAddToParamsList(parameterName);
-		if (index != NOT_AVAIL_ID)
+		if (index != HQ_NOT_AVAIL_ID)
 			return this->parameters.GetItemRawPointerNonCheck(index);
 	}
 	else
@@ -240,7 +240,7 @@ public:
 	bool IsUsingVShader(); //có đang dùng vertex shader không,hay đang dùng fixed function
 	bool IsUsingGShader();//có đang dùng geometry shader không,hay đang dùng fixed function
 	bool IsUsingPShader();//có đang dùng pixel/fragment shader không,hay đang dùng fixed function
-	bool IsUsingShader() {return this->activeProgram != NOT_USE_SHADER;}
+	bool IsUsingShader() {return this->activeProgram != HQ_NOT_USE_SHADER;}
 
 	hq_uint32 GetActiveProgram() {return activeProgram;}
 

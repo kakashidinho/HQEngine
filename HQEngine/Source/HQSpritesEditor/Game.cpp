@@ -14,7 +14,7 @@ HQLogStream *logStream = NULL;
 
 /*---------------------------*/
 Game::Game(JNIEnv *env, jobject canvas_ref)
-: renderer(), texture(NOT_AVAIL_ID)
+: renderer(), texture(HQ_NOT_AVAIL_ID)
 {
 	logStream = HQCreateFileLogStream("log.txt");
 
@@ -75,7 +75,7 @@ Game::Game(JNIEnv *env, jobject canvas_ref)
 
 #ifdef WIN32
 Game::Game(HWND hwnd)
-: renderer(), texture(NOT_AVAIL_ID)
+: renderer(), texture(HQ_NOT_AVAIL_ID)
 {
 	logStream = HQCreateFileLogStream("log.txt");
 
@@ -144,7 +144,7 @@ void Game::Init()
 		"main",
 		&pid);
 
-	renderer.GetDevice()->GetShaderManager()->CreateProgram(vid, pid, NOT_USE_GSHADER, NULL, &this->program);
+	renderer.GetDevice()->GetShaderManager()->CreateProgram(vid, pid, HQ_NOT_USE_GSHADER, NULL, &this->program);
 
 
 	/*------create vertex buffer & input layout----------*/
@@ -166,7 +166,7 @@ void Game::Paint()
 
 	renderer.GetDevice()->BeginRender(HQ_TRUE, HQ_FALSE, HQ_FALSE);
 	//hightlight texture
-	if (this->texture != NOT_AVAIL_ID)
+	if (this->texture != HQ_NOT_AVAIL_ID)
 	{
 		hquint width, height;
 
@@ -187,7 +187,7 @@ bool Game::LoadTexture(const char *file)
 	
 	bool ok = re == HQ_OK;
 
-	if (oldTexture != NOT_AVAIL_ID)
+	if (oldTexture != HQ_NOT_AVAIL_ID)
 	{
 		if (ok)
 		{

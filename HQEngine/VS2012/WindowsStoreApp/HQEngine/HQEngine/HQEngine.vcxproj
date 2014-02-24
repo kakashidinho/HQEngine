@@ -3022,64 +3022,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">true</ExcludedFromBuild>
     </None>
-    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonMatrix.asm">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">armasm</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'"> $(IntDir)HQNeonMatrix.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -machine ARM  ..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonMatrix.asm $(IntDir)HQNeonMatrix.obj</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'"> $(IntDir)HQNeonMatrix.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'"> $(IntDir)HQNeonMatrix.obj</Outputs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonQuaternion.asm">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">$(IntDir)HQNeonQuaternion.obj</DeploymentContent>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-      </DeploymentContent>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)HQNeonQuaternion.obj</DeploymentContent>
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">armasm -machine ARM  ..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonQuaternion.asm $(IntDir)HQNeonQuaternion.obj</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">$(IntDir)HQNeonQuaternion.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -machine ARM  ..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonQuaternion.asm $(IntDir)HQNeonQuaternion.obj</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)HQNeonQuaternion.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -machine ARM  ..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonQuaternion.asm $(IntDir)HQNeonQuaternion.obj</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)HQNeonQuaternion.obj</Outputs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonVector.asm">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">armasm -machine ARM  ..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonVector.asm $(IntDir)HQNeonVector.obj</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">$(IntDir)HQNeonVector.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -machine ARM  ..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonVector.asm $(IntDir)HQNeonVector.obj</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)HQNeonVector.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -machine ARM  ..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonVector.asm $(IntDir)HQNeonVector.obj</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)HQNeonVector.obj</Outputs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl">

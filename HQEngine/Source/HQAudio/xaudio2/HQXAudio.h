@@ -49,7 +49,7 @@ public:
 		return CreateStreamAudioBufferFromFile(fileName, 3, 65536, pBufferID);
 	}
 	virtual HQReturnVal CreateStreamAudioBufferFromFile(const char *fileName, hquint32 numSubBuffers, hquint32 subBufferSize, hq_uint32 *pBufferID);
-	///{bufferID} can be NOT_AVAIL_ID, in that case no audio buffer is attached to source
+	///{bufferID} can be HQ_NOT_AVAIL_ID, in that case no audio buffer is attached to source
 	virtual HQReturnVal CreateSource(const HQAudioSourceInfo &info, hq_uint32 bufferID, hq_uint32 *pSourceID);
 	///create source without audio buffer
 	virtual HQReturnVal CreateSource(const HQAudioSourceInfo &info, hq_uint32 *pSourceID) ;

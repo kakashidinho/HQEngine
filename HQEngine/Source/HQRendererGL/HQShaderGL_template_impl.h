@@ -40,11 +40,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Active
 	HQReturnVal re;
 	switch(programID)
 	{
-	case NOT_USE_SHADER:
+	case HQ_NOT_USE_SHADER:
 		pProgram = this->GetItemPointerNonCheck(this->activeProgram);
 		re = this->shaderController.DeActiveProgram(pProgram->isGLSL , pProgram);
 
-		this->activeProgram = NOT_USE_SHADER;
+		this->activeProgram = HQ_NOT_USE_SHADER;
 
 		this->ActiveFFEmu();
 
@@ -192,11 +192,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 	HQSharedPtr<HQShaderObjectGL> pVShader = HQSharedPtr<HQShaderObjectGL> :: null;
 	HQSharedPtr<HQShaderObjectGL> pFShader = HQSharedPtr<HQShaderObjectGL> :: null;
 	HQSharedPtr<HQShaderObjectGL> pGShader = HQSharedPtr<HQShaderObjectGL> :: null;
-	if (vertexShaderID != NOT_USE_VSHADER)
+	if (vertexShaderID != HQ_NOT_USE_VSHADER)
 		pVShader = this->shaderObjects.GetItemPointer(vertexShaderID);
-	if (pixelShaderID != NOT_USE_PSHADER)
+	if (pixelShaderID != HQ_NOT_USE_PSHADER)
 		pFShader = this->shaderObjects.GetItemPointer(pixelShaderID);
-	if (geometryShaderID != NOT_USE_GSHADER)
+	if (geometryShaderID != HQ_NOT_USE_GSHADER)
 		pGShader = this->shaderObjects.GetItemPointer(geometryShaderID);
 
 	bool GLSL = false;
@@ -206,7 +206,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 			GLSL = true;
 	}
 	else
-		vertexShaderID = NOT_USE_VSHADER;
+		vertexShaderID = HQ_NOT_USE_VSHADER;
 
 	if(!GLSL && pFShader != NULL)
 	{
@@ -214,7 +214,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 			GLSL = true;
 	}
 	else
-		geometryShaderID = NOT_USE_GSHADER;
+		geometryShaderID = HQ_NOT_USE_GSHADER;
 
 	if(!GLSL && pGShader != NULL)
 	{
@@ -222,7 +222,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 			GLSL = true;
 	}
 	else
-		pixelShaderID = NOT_USE_PSHADER;
+		pixelShaderID = HQ_NOT_USE_PSHADER;
 
 	return this->shaderController.CreateProgram(
 		GLSL,
@@ -240,7 +240,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -261,7 +261,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -287,7 +287,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -313,7 +313,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -339,7 +339,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -365,7 +365,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -391,7 +391,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -417,7 +417,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -443,7 +443,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numMatrices)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -469,7 +469,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numMatrices)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
@@ -501,7 +501,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 const hq_int32* pValues,
 					 hq_uint32 numElements)
 {
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 	{
 		if (this->IsFFEmuActive())
 			return this->SetFFRenderState((HQFFRenderState) parameterIndex, pValues);
@@ -529,7 +529,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	
@@ -554,7 +554,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	
@@ -579,7 +579,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	
@@ -604,7 +604,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	
@@ -629,7 +629,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	
@@ -654,7 +654,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	
@@ -679,7 +679,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	
@@ -703,7 +703,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 const HQBaseMatrix4* pMatrices,
 					 hq_uint32 numMatrices)
 {
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 	{
 		if (this->IsFFEmuActive())
 			return this->SetFFTransform((HQFFTransformMatrix) parameterIndex, pMatrices);
@@ -731,7 +731,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numMatrices)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==NOT_USE_SHADER)
+	if(this->activeProgram==HQ_NOT_USE_SHADER)
 		return HQ_FAILED;
 #endif
 	

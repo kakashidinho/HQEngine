@@ -37,7 +37,7 @@ public:
 										  hq_uint32 *pIndexBufferID) = 0;
 
 	///
-	///{vertexShaderID} is ignored in D3D9 device. if {vertexShaderID} = NOT_USE_VSHADER, this method will create 
+	///{vertexShaderID} is ignored in D3D9 device. if {vertexShaderID} = HQ_NOT_USE_VSHADER, this method will create 
 	///input layout for fixed function shader. D3D11 only accepts the following layout: 
 	///position (x,y,z); color (r,g,b,a); normal (x,y,z); texcoords (u,v)
 	///

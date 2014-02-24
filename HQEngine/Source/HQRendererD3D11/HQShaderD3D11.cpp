@@ -366,7 +366,7 @@ ID3DBlob *HQShaderManagerD3D11::GetCompiledClearVShader()
 /*------------------------*/
 HQReturnVal HQShaderManagerD3D11::ActiveProgram(hq_uint32 programID)
 {
-	if (programID == NOT_USE_SHADER)
+	if (programID == HQ_NOT_USE_SHADER)
 	{
 		ActiveFFEmu();//active fixed function shader
 	}
@@ -424,7 +424,7 @@ HQReturnVal HQShaderManagerD3D11::DestroyProgram(hq_uint32 programID)
 
 	if(pProgram==activeProgram)
 	{
-		this->ActiveProgram(NOT_USE_SHADER);
+		this->ActiveProgram(HQ_NOT_USE_SHADER);
 	}
 	this->Remove(programID);
 	return HQ_OK;
@@ -432,7 +432,7 @@ HQReturnVal HQShaderManagerD3D11::DestroyProgram(hq_uint32 programID)
 
 void HQShaderManagerD3D11::DestroyAllProgram()
 {
-	this->ActiveProgram(NOT_USE_SHADER);
+	this->ActiveProgram(HQ_NOT_USE_SHADER);
 	
 	HQItemManager<HQShaderProgramD3D11>::Iterator ite;
 	this->GetIterator(ite);
@@ -1073,16 +1073,16 @@ HQReturnVal HQShaderManagerD3D11::CreateProgram(hq_uint32 vertexShaderID,
 							  const char** uniformParameterNames,
 							  hq_uint32 *pID)
 {
-	if(vertexShaderID==NOT_USE_VSHADER && pixelShaderID==NOT_USE_PSHADER && geometryShaderID==NOT_USE_GSHADER)
+	if(vertexShaderID==HQ_NOT_USE_VSHADER && pixelShaderID==HQ_NOT_USE_PSHADER && geometryShaderID==HQ_NOT_USE_GSHADER)
 		return HQ_FAILED_SHADER_PROGRAM_NEED_SHADEROBJECT;//tất cả đều là fixed function => báo lỗi
 	HQSharedPtr<HQShaderObjectD3D11> pVShader = HQSharedPtr<HQShaderObjectD3D11> :: null;
 	HQSharedPtr<HQShaderObjectD3D11> pPShader = HQSharedPtr<HQShaderObjectD3D11> :: null;
 	HQSharedPtr<HQShaderObjectD3D11> pGShader = HQSharedPtr<HQShaderObjectD3D11> :: null;
-	if (vertexShaderID != NOT_USE_VSHADER)
+	if (vertexShaderID != HQ_NOT_USE_VSHADER)
 		pVShader = this->shaderObjects.GetItemPointer(vertexShaderID);
-	if (pixelShaderID != NOT_USE_PSHADER)
+	if (pixelShaderID != HQ_NOT_USE_PSHADER)
 		pPShader = this->shaderObjects.GetItemPointer(pixelShaderID);
-	if (geometryShaderID != NOT_USE_GSHADER)
+	if (geometryShaderID != HQ_NOT_USE_GSHADER)
 		pGShader = this->shaderObjects.GetItemPointer(geometryShaderID);
 	
 	if(pVShader == NULL && pPShader == NULL && pGShader == NULL)//tất cả đều null
@@ -1104,9 +1104,9 @@ HQReturnVal HQShaderManagerD3D11::CreateProgram(hq_uint32 vertexShaderID,
 	pProgram->geometryShader = pGShader;
 
 	//store shaders' IDs
-	pProgram->vertexShaderID = pProgram->isUseVS()? vertexShaderID : NOT_USE_VSHADER;
-	pProgram->geometryShaderID = pProgram->isUseGS()? geometryShaderID : NOT_USE_GSHADER;
-	pProgram->pixelShaderID = pProgram->isUsePS()? pixelShaderID : NOT_USE_PSHADER;
+	pProgram->vertexShaderID = pProgram->isUseVS()? vertexShaderID : HQ_NOT_USE_VSHADER;
+	pProgram->geometryShaderID = pProgram->isUseGS()? geometryShaderID : HQ_NOT_USE_GSHADER;
+	pProgram->pixelShaderID = pProgram->isUsePS()? pixelShaderID : HQ_NOT_USE_PSHADER;
 
 	if(!this->AddItem(pProgram,pID))
 	{
@@ -1124,14 +1124,14 @@ hq_uint32 HQShaderManagerD3D11::GetShader(hq_uint32 programID, HQShaderType shad
 	switch (shaderType)
 	{
 	case HQ_VERTEX_SHADER:
-		return (pProgram != NULL)? pProgram->vertexShaderID : NOT_USE_VSHADER;
+		return (pProgram != NULL)? pProgram->vertexShaderID : HQ_NOT_USE_VSHADER;
 	case HQ_GEOMETRY_SHADER:
-		return (pProgram != NULL)? pProgram->geometryShaderID : NOT_USE_GSHADER;
+		return (pProgram != NULL)? pProgram->geometryShaderID : HQ_NOT_USE_GSHADER;
 	case HQ_PIXEL_SHADER:
-		return (pProgram != NULL)? pProgram->pixelShaderID : NOT_USE_PSHADER;
+		return (pProgram != NULL)? pProgram->pixelShaderID : HQ_NOT_USE_PSHADER;
 	}
 
-	return NOT_USE_VSHADER;
+	return HQ_NOT_USE_VSHADER;
 }
 
 /*-----------------------*/
@@ -1212,7 +1212,7 @@ HQReturnVal HQShaderManagerD3D11::SetUniformMatrix(const char* parameterName,
 hq_uint32 HQShaderManagerD3D11::GetParameterIndex(hq_uint32 programID , 
 											const char *parameterName)
 {
-	return NOT_AVAIL_ID;
+	return HQ_NOT_AVAIL_ID;
 }
 
 HQReturnVal HQShaderManagerD3D11::SetUniformInt(hq_uint32 parameterIndex,

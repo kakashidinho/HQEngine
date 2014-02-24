@@ -1060,9 +1060,4 @@
     </None>
     <None Include="..\..\..\..\Source\BaseImpl\HQFFEmuShaderD3D1x.hlsl" />
   </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonMatrix.asm" />
-    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonQuaternion.asm" />
-    <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonVector.asm" />
-  </ItemGroup>
 </Project>
