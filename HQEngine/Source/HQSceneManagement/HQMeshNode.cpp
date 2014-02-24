@@ -154,7 +154,7 @@ HQMeshNode::HQMeshNode(const char *name,
 	
 	//load animation data
 	unsigned char c;
-	if ((c = fgetc(f)) != EOF)
+	if ((c = fgetc(f)) != 0)
 	{
 		//c is length of animation file name
 		char *animFile = HQ_NEW char[c + 1];

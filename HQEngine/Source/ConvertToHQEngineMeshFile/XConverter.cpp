@@ -184,6 +184,8 @@ void ConvertXToHQMeshFile(const char *dest, const char* source)
 	}
 	else//only do this when loading static mesh
 	{
+		fputc(0, f);
+
 		free(meshContainer->pAdjacency);
 		free(meshContainer->pMaterials);
 
