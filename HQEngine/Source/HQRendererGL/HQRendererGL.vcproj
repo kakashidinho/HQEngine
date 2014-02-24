@@ -560,7 +560,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\HQFFShaderControllerGL.cpp"
+				RelativePath=".\HQFFEmuShaderControllerGL.cpp"
 				>
 			</File>
 			<File
