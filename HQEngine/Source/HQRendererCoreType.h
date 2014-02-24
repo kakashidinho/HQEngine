@@ -373,7 +373,11 @@ typedef enum HQRenderTargetFormat
 	HQ_RTFMT_R_FLOAT16 = 1,//chứa 1 channel (red) với dữ liệu dạng 16 bit float
 	HQ_RTFMT_RGBA_32 = 2,//chứa 4 channel (red , green , blue ,alpha) mỗi channel có dữ liệu 8 bit
 	HQ_RTFMT_A_UINT8 = 3,//chứa 1 channel (alpha) với dữ liệu dạng 8 bit unsigned int
-	HQ_RTFMT_R_UINT8 = 4,//chứa 1 channel (red) với dữ liệu dạng 8 bit unsigned int
+	HQ_RTFMT_R_UINT8 = 4,//chứa 1 channel (red) với dữ liệu dạng 8 bit unsigned int,
+	HQ_RTFMT_RGBA_FLOAT64 = 5,//chứa 4 channel, mỗi channel 16 bit float.
+	HQ_RTFMT_RG_FLOAT32 = 6,//chứa 2 channel, mỗi channel 16 bit float.
+	HQ_RTFMT_RGBA_FLOAT128 = 7,//chứa 4 channel, mỗi channel 32 bit float.
+	HQ_RTFMT_RG_FLOAT64 = 8,//chứa 2 channel, mỗi channel 32 bit float.
 	HQ_RTFMT_FORCE_DWORD = 0xffffffff
 } _HQRenderTargetFormat;
 

@@ -277,20 +277,76 @@ GLint HQRenderTargetManagerFBO::GetGLInternalFormat(HQRenderTargetFormat format)
 		break;
 	case HQ_RTFMT_RGBA_32:
 		return GL_RGBA8;
+	case HQ_RTFMT_R_UINT8:
+		if (GLEW_VERSION_3_0)
+			return GL_R8UI;
+		if (GLEW_EXT_texture_integer)
+		{
+			if(GLEW_ARB_texture_rg)
+				return GL_R8UI;
+			return GL_LUMINANCE8UI_EXT;
+		}
+	case HQ_RTFMT_A_UINT8:
+		if (GLEW_EXT_texture_integer)
+		{
+			return GL_LUMINANCE8UI_EXT;
+		}
+	case HQ_RTFMT_RGBA_FLOAT64:
+		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
+			return GL_RGBA16F;
+	case HQ_RTFMT_RG_FLOAT32:
+		if (GLEW_VERSION_3_0)
+			return GL_RG16F;
+		if (GLEW_ARB_texture_float)
+		{
+			if (GLEW_ARB_texture_rg)
+				return GL_RG16F;
+		}
+	case HQ_RTFMT_RGBA_FLOAT128:
+		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
+			return GL_RGBA32F;
+	case HQ_RTFMT_RG_FLOAT64:
+		if (GLEW_VERSION_3_0)
+			return GL_RG32F;
+		if (GLEW_ARB_texture_float)
+		{
+			if (GLEW_ARB_texture_rg)
+				return GL_RG32F;
+		}
 	}
 	return 0;
 }
 
 void HQRenderTargetManagerFBO::GetGLImageFormat(GLint internalFormat , GLenum &format , GLenum &type)
 {
-	if (internalFormat == GL_LUMINANCE32F_ARB || internalFormat == GL_LUMINANCE16F_ARB)
-	{
-		format = GL_LUMINANCE;
-		type = GL_FLOAT;
-	}
-	else{
-		format = GL_RGBA;
-		type = GL_UNSIGNED_BYTE;
+	switch (internalFormat){
+		case GL_LUMINANCE32F_ARB: case GL_LUMINANCE16F_ARB:
+			format = GL_LUMINANCE;
+			type = GL_FLOAT;
+			break;
+		case GL_LUMINANCE8UI_EXT:
+			format = GL_LUMINANCE_INTEGER_EXT ;
+			type = GL_UNSIGNED_BYTE;
+			break;
+		case GL_R8UI:
+			format = GL_RED_INTEGER ;
+			type = GL_UNSIGNED_BYTE;
+			break;
+		case GL_R32F: case GL_R16F:
+			format = GL_RED;
+			type = GL_FLOAT;
+			break;
+		case GL_RG32F: case GL_RG16F:
+			format = GL_RG;
+			type = GL_FLOAT;
+			break;
+		case GL_RGBA32F: case GL_RGBA16F:
+			format = GL_RGBA;
+			type = GL_FLOAT;
+			break;
+		default:
+			format = GL_RGBA;
+			type = GL_UNSIGNED_BYTE;
 	}
 }
 

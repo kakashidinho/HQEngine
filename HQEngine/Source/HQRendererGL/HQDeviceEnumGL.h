@@ -19,7 +19,7 @@ COPYING.txt included with this distribution for more information.
 #include <jni.h>
 #endif
 
-#define NUM_RTT_FORMAT 3
+#define NUM_RTT_FORMAT 9
 #define NUM_DS_FORMAT 5
 
 #ifdef LINUX

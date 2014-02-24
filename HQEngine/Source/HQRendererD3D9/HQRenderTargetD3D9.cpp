@@ -187,6 +187,14 @@ D3DFORMAT HQRenderTargetManagerD3D9::GetD3DFormat(HQRenderTargetFormat format)
 		return D3DFMT_A8;
 	case HQ_RTFMT_R_UINT8:
 		return D3DFMT_L8;
+	case HQ_RTFMT_RGBA_FLOAT64:
+		return D3DFMT_A16B16G16R16F;
+	case HQ_RTFMT_RG_FLOAT32:
+		return D3DFMT_G16R16F;
+	case HQ_RTFMT_RGBA_FLOAT128:
+		return D3DFMT_A32B32G32R32F;
+	case HQ_RTFMT_RG_FLOAT64:
+		return D3DFMT_G32R32F;
 	}
 	return D3DFMT_UNKNOWN;
 }

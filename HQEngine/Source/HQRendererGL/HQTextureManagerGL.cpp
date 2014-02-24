@@ -258,7 +258,10 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 		}
 	case HQ_TBFMT_R16G16B16A16_FLOAT  :
 		//texelSize = 8;
-		return GL_RGBA16F_ARB;
+		if (GLEW_VERSION_3_0)
+			return GL_RGBA16F;
+		if (GLEW_ARB_texture_float)
+			return GL_RGBA16F_ARB;
 	case HQ_TBFMT_R32_FLOAT  :
 		//texelSize = 4;
 		if (GLEW_VERSION_3_0)
@@ -271,10 +274,12 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 		}
 	case HQ_TBFMT_R32G32B32_FLOAT:
 		//texelSize = 12;
-		return GL_RGB32F_ARB;
+		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
+			return GL_RGB32F_ARB;
 	case HQ_TBFMT_R32G32B32A32_FLOAT  :
 		//texelSize = 16;
-		return GL_RGBA32F_ARB;
+		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
+			return GL_RGBA32F_ARB;
 	case HQ_TBFMT_R8_INT :
 		//texelSize = 1;
 		if (GLEW_VERSION_3_0)
@@ -287,7 +292,8 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 		}
 	case HQ_TBFMT_R8G8B8A8_INT :
 		//texelSize = 4;
-		return GL_RGBA8I_EXT;
+		if (GLEW_EXT_texture_integer)
+			return GL_RGBA8I_EXT;
 	case HQ_TBFMT_R8_UINT  :
 		//texelSize = 1;
 		if (GLEW_VERSION_3_0)
@@ -300,7 +306,8 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 		}
 	case HQ_TBFMT_R8G8B8A8_UINT  :
 		//texelSize = 4;
-		return GL_RGBA8UI_EXT;
+		if (GLEW_EXT_texture_integer)
+			return GL_RGBA8UI_EXT;
 	case HQ_TBFMT_R16_INT :
 		//texelSize = 2;
 		if (GLEW_VERSION_3_0)
@@ -313,7 +320,8 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 		}
 	case HQ_TBFMT_R16G16B16A16_INT :
 		//texelSize = 8;
-		return GL_RGBA16UI_EXT;
+		if (GLEW_EXT_texture_integer)
+			return GL_RGBA16UI_EXT;
 	case HQ_TBFMT_R16_UINT :
 		//texelSize = 2;
 		if (GLEW_VERSION_3_0)
@@ -326,7 +334,8 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 		}
 	case HQ_TBFMT_R16G16B16A16_UINT :
 		//texelSize = 8;
-		return GL_RGBA16UI_EXT;
+		if (GLEW_EXT_texture_integer)
+			return GL_RGBA16UI_EXT;
 	case HQ_TBFMT_R32_INT :
 		//texelSize = 4;
 		if (GLEW_VERSION_3_0)
@@ -339,7 +348,8 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 		}
 	case HQ_TBFMT_R32G32B32A32_INT :
 		//texelSize = 16;
-		return GL_RGBA32I_EXT;
+		if (GLEW_EXT_texture_integer)
+			return GL_RGBA32I_EXT;
 	case HQ_TBFMT_R32_UINT :
 		//texelSize = 4;
 		if (GLEW_VERSION_3_0)
@@ -352,7 +362,8 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 		}
 	case HQ_TBFMT_R32G32B32A32_UINT :
 		//texelSize = 16;
-		return GL_RGBA32UI_EXT;
+		if (GLEW_EXT_texture_integer)
+			return GL_RGBA32UI_EXT;
 	case HQ_TBFMT_R8_UNORM  :
 		//texelSize = 1;
 		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_rg)
