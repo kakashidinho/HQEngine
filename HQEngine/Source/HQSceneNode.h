@@ -47,6 +47,15 @@ public:
 		virtual void OnNodeRemovedFromParent(const HQSceneNode * node) {} //call when node has removed from parent
 	};
 
+	HQSceneNode(const char *name);
+	HQSceneNode(const char *name, const HQFloat3 &position , const HQFloat3 &scaleFactors , const HQQuaternion &rotation );
+	HQSceneNode(const char *name, 
+		hqfloat32 positionX, hqfloat32 positionY, hqfloat32 positionZ , 
+		hqfloat32 scaleX, hqfloat32 scaleY, hqfloat32 scaleZ , 
+		hqfloat32 rotationX, hqfloat32 rotationY, hqfloat32 rotationZ, hqfloat32 rotationW //quaternion
+		);
+	
+	virtual ~HQSceneNode() ;
 
 
 	HQSceneNode * GetParent() {return m_pParent;}
@@ -65,9 +74,10 @@ public:
 	///
 	char *& GetNamePointer() {return m_name;}
 
-	const HQFloat3 & GetLocalPosition() const {return m_localPosition;}
+	const HQVector4 & GetLocalPosition() const {return *m_localPosition;}
 	const HQFloat3 & GetScaleFactors() const {return m_scale;}
 	const HQQuaternion & GetLocalRotation() const {return *m_localRotation;}
+	void GetWorldPosition(HQVector4 &positionOut) const ;
 	const HQMatrix3x4 & GetWorldTransform() const {return *m_worldTransform;}
 
 	///
@@ -75,8 +85,8 @@ public:
 	///{pScale} points to scale factor of node. 
 	///{pLocalRotaion} points to local rotation of node
 	///
-	inline void WantToChangeLocalTransform(HQFloat3 *&pLocalPosition, HQFloat3 *&pScale, HQQuaternion *&pLocalRotaion) {
-		pLocalPosition = &m_localPosition;
+	inline void WantToChangeLocalTransform(HQVector4 *&pLocalPosition, HQFloat3 *&pScale, HQQuaternion *&pLocalRotaion) {
+		pLocalPosition = m_localPosition;
 		pScale = &m_scale;
 		pLocalRotaion = m_localRotation;
 
@@ -85,8 +95,8 @@ public:
 
 	void SetListener (Listener * listener);
 
-	virtual void UniformScale(hqfloat32 factor);
-	virtual void NonUniformScale(const HQFloat3 &factor);
+	virtual void SetUniformScale(hqfloat32 factor);
+	virtual void SetNonUniformScale(const HQFloat3 &factor);
 	virtual void SetPosition(const HQFloat3 &position);//set postion of this node in parent space
 	virtual void Translate(const HQFloat3 &offset);//translate this node relative to parent node
 	virtual void RotateX(hqfloat32 angle);//rotate around Ox axis of node local space
@@ -99,10 +109,6 @@ public:
 
 protected:
 	HQSceneNode();
-	HQSceneNode(const char *name);
-	HQSceneNode(const char *name, const HQFloat3 &position , const HQFloat3 &scaleFactors , const HQQuaternion &rotation );
-	
-	virtual ~HQSceneNode() ;
 
 	void RemoveFromSiblingChain();
 	//calculate world transform of this node from parent world transform and this node local transform .
@@ -125,8 +131,8 @@ protected:
 #	pragma warning(disable:4251)
 #endif
 	
-	HQFloat3 m_localPosition;
 	HQFloat3 m_scale;
+	HQVector4 *m_localPosition;
 	HQQuaternion *m_localRotation;
 
 	HQMatrix3x4 *m_worldTransform;

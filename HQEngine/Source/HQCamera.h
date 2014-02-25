@@ -16,7 +16,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQSceneNode.h"
 
 
-class HQSCENEMANAGEMENT_API HQBaseCamera : public HQA16ByteObject
+class HQSCENEMANAGEMENT_API HQBaseCamera
 {
 public :
 	HQBaseCamera();
@@ -31,12 +31,7 @@ protected:
 	HQMatrix4* m_viewMatrix;
 	HQMatrix4* m_projMatrix;
 	HQPlane* m_frustumPlanes;//view frustum
-
-#ifdef WIN32
 };
-#else
-} HQ_ALIGN16 ;
-#endif
 
 
 //base perspective camera. Note: the matrices will be Left-Hand and row-major based
@@ -58,14 +53,36 @@ public :
 	//get multiplcation of view & projection matrix
 	const HQMatrix4 * GetViewProjMatrix() const { return m_viewProjMat;}
 
-private:
+protected:
 	HQMatrix4* m_viewProjMat;//view x projection matrix
+	HQVector4* m_xAxis;//camera's local x axix
+	HQVector4* m_yAxis;//camera's local y axis
+	HQVector4* m_zAxis;//camera's local z axis
+
 	HQRenderAPI m_renderAPI;
 
-#ifdef WIN32
 };
-#else
-} HQ_ALIGN16 ;
-#endif
+
+//camera class
+class HQSCENEMANAGEMENT_API HQCamera: public HQSceneNode, public HQBasePerspectiveCamera{
+public:
+	HQCamera(
+			const char* name,
+			hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,//position
+			hqfloat32 upX, hqfloat32 upY, hqfloat32 upZ,//up direction
+			hqfloat32 directX, hqfloat32 directY, hqfloat32 directZ,//direction
+			hqfloat32 fov, //field of view
+			hqfloat32 aspect_ratio,//width/height,
+			hqfloat32 nearPlane, hqfloat32 farPlane, //near and far plane
+			HQRenderAPI renderAPI//renderer API (D3D or OpenGL)
+		);
+
+	~HQCamera();
+
+	//override HQSceneNode's update
+	void Update(hqfloat32 dt ,bool updateChilds = true, bool parentChanged = false );
+private:
+};
+
 
 #endif

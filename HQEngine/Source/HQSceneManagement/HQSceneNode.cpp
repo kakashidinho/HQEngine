@@ -21,6 +21,9 @@ COPYING.txt included with this distribution for more information.
 #	define TRACE(...)
 #endif
 
+//TO DO
+//handle non uniform scale
+
 /*----------HQSceneNode-------------*/
 /*--------static attribute-----------------*/
 HQSceneNode::Listener  HQSceneNode::m_sDefaultListener;
@@ -33,11 +36,12 @@ HQSceneNode::HQSceneNode()
  m_pNextSibling(NULL) , m_pPrevSibling(NULL), 
  m_name(NULL),
 
+ m_localPosition(HQVector4::New()),
  m_localRotation(HQQuaternion :: New()),
  m_worldTransform(HQMatrix3x4 :: New()),
  m_localTransform(HQMatrix3x4 :: New())
 {
-	m_localPosition.Set(0.0f , 0.0f , 0.0f);
+	m_localPosition->Set(0.0f , 0.0f , 0.0f);
 	m_scale.Set(1.0f , 1.0f , 1.0f);
 	m_pListener = &m_sDefaultListener;//default listener
 }
@@ -47,12 +51,14 @@ HQSceneNode::HQSceneNode(const char *name)
  m_pParent(NULL) , m_pFirstChild(NULL) , m_pLastChild(NULL) , 
  m_pNextSibling(NULL) , m_pPrevSibling(NULL),
 
+ m_localPosition(HQVector4::New()),
  m_localRotation(HQQuaternion :: New()),
  m_worldTransform(HQMatrix3x4 :: New()),
  m_localTransform(HQMatrix3x4 :: New())
 {
-	m_localPosition.Set(0.0f , 0.0f , 0.0f);
+	m_localPosition->Set(0.0f , 0.0f , 0.0f);
 	m_scale.Set(1.0f , 1.0f , 1.0f);
+
 	m_pListener = &m_sDefaultListener;//default listener
 
 	size_t len = strlen(name);
@@ -62,15 +68,40 @@ HQSceneNode::HQSceneNode(const char *name)
 
 
 HQSceneNode::HQSceneNode(const char *name, const HQFloat3 &position , const HQFloat3 &scaleFactors , const HQQuaternion &rotation )
-: m_localPosition(position) , m_scale(scaleFactors) , 
+:  m_scale(scaleFactors) , 
  m_localTransformNeedUpdate(false) , m_worldTransformNeedUpdate(false) ,
  m_pParent(NULL) , m_pFirstChild(NULL) , m_pLastChild(NULL) , 
  m_pNextSibling(NULL) , m_pPrevSibling(NULL),
 
+ m_localPosition(HQVector4::New(position.x, position.y, position.z)),
  m_localRotation(HQQuaternion :: New(rotation)),
  m_worldTransform(HQMatrix3x4 :: New()),
  m_localTransform(HQMatrix3x4 :: New())
 {
+	m_pListener = &m_sDefaultListener;//default listener
+
+	size_t len = strlen(name);
+	m_name = HQ_NEW char[len + 1];
+	strcpy(m_name, name);
+}
+
+HQSceneNode::HQSceneNode(const char *name, 
+		hqfloat32 positionX, hqfloat32 positionY, hqfloat32 positionZ , 
+		hqfloat32 scaleX, hqfloat32 scaleY, hqfloat32 scaleZ , 
+		hqfloat32 rotationX, hqfloat32 rotationY, hqfloat32 rotationZ, hqfloat32 rotationW //quaternion
+		)
+:
+ m_localTransformNeedUpdate(false) , m_worldTransformNeedUpdate(false) ,
+ m_pParent(NULL) , m_pFirstChild(NULL) , m_pLastChild(NULL) , 
+ m_pNextSibling(NULL) , m_pPrevSibling(NULL),
+
+ m_localPosition(HQVector4::New(positionX, positionY, positionZ)),
+ m_localRotation(HQQuaternion :: New(rotationX, rotationY, rotationZ, rotationW)),
+ m_worldTransform(HQMatrix3x4 :: New()),
+ m_localTransform(HQMatrix3x4 :: New())
+{
+	m_scale.Set(scaleX, scaleY, scaleZ);
+
 	m_pListener = &m_sDefaultListener;//default listener
 
 	size_t len = strlen(name);
@@ -85,6 +116,7 @@ HQSceneNode::~HQSceneNode()
 
 	RemoveFromParent();
 
+	delete m_localPosition;
 	delete m_localRotation;
 	delete m_worldTransform;
 	delete m_localTransform;
@@ -168,12 +200,12 @@ void HQSceneNode::SetName(const char *name)
 	strcpy(m_name, name);
 }
 
-void HQSceneNode::UniformScale(float factor)
+void HQSceneNode::SetUniformScale(float factor)
 {
 	m_localTransformNeedUpdate = true;
 	m_scale.Duplicate(factor);
 }
-void HQSceneNode::NonUniformScale(const HQFloat3 &factor)
+void HQSceneNode::SetNonUniformScale(const HQFloat3 &factor)
 {
 	m_localTransformNeedUpdate = true;
 	m_scale = factor;
@@ -181,14 +213,14 @@ void HQSceneNode::NonUniformScale(const HQFloat3 &factor)
 void HQSceneNode::SetPosition(const HQFloat3 &position)//set postion of this node in parent space
 {
 	m_localTransformNeedUpdate = true;
-	m_localPosition = position;
+	m_localPosition->Set( position.x, position.y, position.z);
 }
 void HQSceneNode::Translate(const HQFloat3 &offset)//translate this node relative to parent node
 {
 	m_localTransformNeedUpdate = true;
-	m_localPosition.x += offset.x;
-	m_localPosition.y += offset.y;
-	m_localPosition.z += offset.z;
+	m_localPosition->x += offset.x;
+	m_localPosition->y += offset.y;
+	m_localPosition->z += offset.z;
 }
 void HQSceneNode::RotateX(float angle)//rotate around Ox axis of node local space
 {
@@ -329,8 +361,19 @@ void HQSceneNode::UpdateLocalTransform()
 
 	TRACE("here %s %d", __FILE__, __LINE__);
 
-	m_localTransform->_14 = m_localPosition.x;
-	m_localTransform->_24 = m_localPosition.y;
-	m_localTransform->_34 = m_localPosition.z;
+	m_localTransform->_14 = m_localPosition->x;
+	m_localTransform->_24 = m_localPosition->y;
+	m_localTransform->_34 = m_localPosition->z;
 	
+}
+
+
+void HQSceneNode::GetWorldPosition(HQVector4 &positionOut) const
+{
+	if (this->m_pParent != NULL)
+	{
+		HQVector4TransformNormal(m_localPosition, &m_pParent->GetWorldTransform(), &positionOut);
+	}
+	else
+		memcpy(&positionOut, m_localPosition,sizeof(HQVector4));
 }

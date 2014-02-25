@@ -53,6 +53,7 @@ public:
 	///
 	void Reset();
 
+	//override HQSceneNode's update
 	void Update(hqfloat32 dt ,bool updateChilds = true, bool parentChanged = false );
 
 	void BeginRender();

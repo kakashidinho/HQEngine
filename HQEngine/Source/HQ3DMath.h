@@ -425,7 +425,7 @@ HQ_UTIL_MATH_API HQMatrix4* HQMatrix4rRotateAxisUnit(const HQVector4& axis,hq_fl
 
 HQ_UTIL_MATH_API HQVector4* HQMatrix4rMulVec(const HQMatrix4* mat,const HQVector4* v1,HQVector4* out);//ma trận nhân với vector
 
-HQ_UTIL_MATH_API HQMatrix4* HQMatrix4rView(const HQVector4* pX,const HQVector4* pY,const HQVector4* pZ,const HQVector4* pPos,HQMatrix4 *out);//tạo ma trận phép nhìn với các trục cơ sở của camera Ox Oy Oz và tọa độ điểm đặt
+HQ_UTIL_MATH_API HQMatrix4* HQMatrix4rView(const HQVector4* pX,const HQVector4* pY,const HQVector4* pZ,const HQVector4* pPos,HQMatrix4 *out);//tạo ma trận phép nhìn với các trục cơ sở của camera Ox Oy Oz và tọa độ điểm đặt. Các trục phải là vector đơn vị
 HQ_UTIL_MATH_API HQMatrix4* HQMatrix4rLookAtLH(const HQVector4 *pEye,const HQVector4* pAt,const HQVector4* pUp,HQMatrix4*out);//tạo ma trận phép nhìn trong không gian bàn tay trái với điểm đặt camera (mắt) ,điểm nhìn đến,world 's vector up
 HQ_UTIL_MATH_API HQMatrix4* HQMatrix4rOrthoProjLH(const hq_float32 width,const hq_float32 height,const hq_float32 zNear,const hq_float32 zFar,HQMatrix4*out,HQRenderAPI API);//tạo ma trận chiếu trực giao trong không gian bàn tay trái
 HQ_UTIL_MATH_API HQMatrix4* HQMatrix4rPerspectiveProjLH(const hq_float32 vFOV,const hq_float32 aspect,const hq_float32 zNear,const hq_float32 zFar,HQMatrix4*out,HQRenderAPI API);//tạo ma trận chiếu phối cảnh trong không gian bàn tay trái
@@ -1303,6 +1303,10 @@ public:
 	HQA16ByteMatrix4Ptr() : HQBaseA16ByteMatrix4Ptr() {};//create identity matrix
 	HQA16ByteMatrix4Ptr(const HQMatrix4 &src) : HQBaseA16ByteMatrix4Ptr(src){};
 	HQA16ByteMatrix4Ptr(const void * null) : HQBaseA16ByteMatrix4Ptr(NULL){};//create uninitialized matrix
+	HQA16ByteMatrix4Ptr(const HQMatrix3x4 &src) : HQBaseA16ByteMatrix4Ptr(NULL)
+	{
+		this->ptr = new (this->ptr) HQMatrix4(src);
+	};
 	HQA16ByteMatrix4Ptr(hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 			hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 			hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34,

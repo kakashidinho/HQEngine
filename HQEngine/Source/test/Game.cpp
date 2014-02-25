@@ -355,8 +355,8 @@ Game::Game()
 			HQ_SCM_CG_DEBUG , "../test/shader/cg2.txt", macro,
 			"VS" , &vid);
 		pDevice->GetShaderManager()->CreateShaderFromFile(HQ_VERTEX_SHADER ,
-			HQ_SCM_CG_DEBUG , "../test/shader/cg2-mesh.txt", macro,
-			"VS" , &vid2);
+			HQ_SCM_CG_DEBUG, "../test/shader/cg2-mesh.txt", macro,
+			 "VS" , &vid2);
 		pDevice->GetShaderManager()->CreateShaderFromFile(HQ_PIXEL_SHADER ,
 			HQ_SCM_CG_DEBUG , "../test/shader/cg2.txt", NULL,
 			"PS" , &pid);
@@ -633,7 +633,7 @@ void Game::Render(HQTime dt)
 	
 	//TRACE("here %s %d", __FILE__, __LINE__);
 	//update mesh
-	mesh->UniformScale(0.3f);
+	mesh->SetUniformScale(0.3f);
 	mesh->RotateY(HQPiFamily::PI / 180.f);
 	mesh->AdvanceAnimationTime(dt);
 	mesh->Update(dt);

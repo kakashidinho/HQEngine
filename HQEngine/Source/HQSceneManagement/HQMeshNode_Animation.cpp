@@ -503,7 +503,8 @@ void HQMeshNode::AdvanceAnimationTime(hqfloat32 dt)
 		HQAnimationKeySet &keySet = m_animInfo->activeAnimation->keySets[i];
 		HQAnimationSceneNode *node = m_animInfo->nodes + keySet.nodeIndex;
 
-		HQFloat3 *pTrans, *pScale;
+		HQVector4 *pTrans;
+		HQFloat3 *pScale;
 		HQQuaternion *pRot;
 		
 		node->WantToChangeLocalTransform(pTrans, pScale, pRot);
@@ -526,12 +527,14 @@ void HQMeshNode::Reset()
 		HQAnimationKeySet &keySet = m_animInfo->activeAnimation->keySets[i];
 		HQAnimationSceneNode *node = m_animInfo->nodes + keySet.nodeIndex;
 
-		HQFloat3 *pTrans, *pScale;
+		HQVector4 *pTrans;
+		HQFloat3 *pScale;
 		HQQuaternion *pRot;
 		
 		node->WantToChangeLocalTransform(pTrans, pScale, pRot);
 		
-		*pTrans = keySet.GetTransKey(0);
+		HQFloat3 & transKey = keySet.GetTransKey(0);
+		pTrans->Set(transKey.x, transKey.y, transKey.z);
 		*pScale = keySet.GetScaleKey(0);
 		*pRot = keySet.GetRotKey(0);
 
