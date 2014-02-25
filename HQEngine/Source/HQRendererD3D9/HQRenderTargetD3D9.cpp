@@ -719,7 +719,7 @@ void HQRenderTargetManagerD3D9::InvalidateRenderTargets()
 	for (hq_uint32 i = 1 ; i < this->numActiveRenderTargets ; ++i)
 	{
 		pD3DDevice->SetRenderTarget( i , NULL);
-		this->activeRenderTargets[0].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
+		this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
 	}
 
 	this->ResetToDefaultFrameBuffer();
