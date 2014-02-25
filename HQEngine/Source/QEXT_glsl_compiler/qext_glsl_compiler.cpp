@@ -42,7 +42,6 @@ int glutWindow = 0;
 #ifdef WIN32
 #	pragma comment(lib, "glut32.lib")
 #	pragma comment(lib,"opengl32.lib")
-#	pragma comment(lib,"glew32.lib")
 #endif
 
 const char semanticKeywords[] =
