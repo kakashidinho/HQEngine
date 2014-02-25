@@ -170,7 +170,7 @@ typedef __m128i int4;
 //#define INFCHECK 1
 
 #if !defined HQ_EXPLICIT_ALIGN && !defined HQ_NO_NEED_ALIGN16
-#	ifndef _MSC_VER//gcc stack alignment is buggy
+#	ifndef HQ_STACK_ALIGN_SUPPORTED//gcc stack alignment is buggy, so require explicit alignment on all platforms by default.
 #		define HQ_EXPLICIT_ALIGN
 #	endif
 #endif

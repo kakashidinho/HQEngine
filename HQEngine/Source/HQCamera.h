@@ -19,18 +19,18 @@ COPYING.txt included with this distribution for more information.
 class HQSCENEMANAGEMENT_API HQBaseCamera : public HQA16ByteObject
 {
 public :
-	HQBaseCamera() {}
-	virtual ~HQBaseCamera() {} 
+	HQBaseCamera();
+	virtual ~HQBaseCamera(); 
 
-	const HQMatrix4 * GetViewMatrix() const {return &m_viewMatrix;}
-	const HQMatrix4 * GetProjectionMatrix() const {return &m_projMatrix;}
+	const HQMatrix4 * GetViewMatrix() const {return m_viewMatrix;}
+	const HQMatrix4 * GetProjectionMatrix() const {return m_projMatrix;}
 	virtual const HQMatrix4 * GetViewProjMatrix() const = 0;
 	const HQPlane * GetViewFrustum() {return m_frustumPlanes;}
 
 protected:
-	HQMatrix4 m_viewMatrix;
-	HQMatrix4 m_projMatrix;
-	HQPlane m_frustumPlanes[6];//view frustum
+	HQMatrix4* m_viewMatrix;
+	HQMatrix4* m_projMatrix;
+	HQPlane* m_frustumPlanes;//view frustum
 
 #ifdef WIN32
 };
@@ -52,12 +52,14 @@ public :
 			hqfloat32 nearPlane, hqfloat32 farPlane, //near and far plane
 			HQRenderAPI renderAPI//renderer API (D3D or OpenGL)
 		);
+
+	~HQBasePerspectiveCamera();
 	
 	//get multiplcation of view & projection matrix
-	const HQMatrix4 * GetViewProjMatrix() const { return &m_viewProjMat;}
+	const HQMatrix4 * GetViewProjMatrix() const { return m_viewProjMat;}
 
 private:
-	HQMatrix4 m_viewProjMat;//view x projection matrix
+	HQMatrix4* m_viewProjMat;//view x projection matrix
 	HQRenderAPI m_renderAPI;
 
 #ifdef WIN32

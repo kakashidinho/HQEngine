@@ -60,24 +60,24 @@ struct HQFixedFunctionParamenters: public HQA16ByteObject
 {
 	/* Matrix Uniforms */
 
-	HQMatrix4 uMvpMatrix;
-	HQMatrix4 uWorldMatrix;
+	HQBaseMatrix4 uMvpMatrix;
+	HQBaseMatrix4 uWorldMatrix;
 
 	/* Light Uniforms */
-	HQVector4  uLightPosition    [MAX_LIGHTS];
-	HQVector4  uLightAmbient     [MAX_LIGHTS];
-	HQVector4  uLightDiffuse     [MAX_LIGHTS];
-	HQVector4  uLightSpecular    [MAX_LIGHTS];
-	HQVector4  uLightAttenuation [MAX_LIGHTS];// w is ignored. C struct need to add padding float at the end of each element
+	HQFloat4  uLightPosition    [MAX_LIGHTS];
+	HQFloat4  uLightAmbient     [MAX_LIGHTS];
+	HQFloat4  uLightDiffuse     [MAX_LIGHTS];
+	HQFloat4  uLightSpecular    [MAX_LIGHTS];
+	HQFloat4  uLightAttenuation [MAX_LIGHTS];// w is ignored. C struct need to add padding float at the end of each element
 	
 	/* Global ambient color */
-	HQVector4  uAmbientColor;
+	HQFloat4  uAmbientColor;
 
 	/* Material Uniforms */
-	HQVector4  uMaterialAmbient;
-	HQVector4  uMaterialEmission;
-	HQVector4  uMaterialDiffuse;
-	HQVector4  uMaterialSpecular;
+	HQFloat4  uMaterialAmbient;
+	HQFloat4  uMaterialEmission;
+	HQFloat4  uMaterialDiffuse;
+	HQFloat4  uMaterialSpecular;
 	float uMaterialShininess;
 	
 	/* Eye position */
@@ -95,7 +95,9 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 	HQFixedFunctionShaderD3D11()
 		: m_flags(PARAMETERS_DIRTY),
 		m_constantBuffer(HQ_NOT_AVAIL_ID),
-		m_activeProgramIndex(0)
+		m_activeProgramIndex(0),
+		m_viewMatrix(HQMatrix4::New()),
+		m_projMatrix(HQMatrix4::New())
 	{
 		hquint32 numFFVShaders = sizeof(m_vertexShader) / sizeof(hquint32);
 		hquint32 numFFPShaders = sizeof(m_pixelShader) / sizeof(hquint32);
@@ -109,6 +111,11 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 
 		for (hquint32 i = 0; i < numFFPrograms; ++i)
 			m_program[i] = HQ_NOT_AVAIL_ID;
+	}
+
+	~HQFixedFunctionShaderD3D11(){
+		delete m_viewMatrix;
+		delete m_projMatrix;
 	}
 	
 	void SetLight(hquint32 index, const HQFFLight* light)
@@ -269,7 +276,8 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 	void SetWorldMatrix(const HQBaseMatrix4* matrix)
 	{
 		memcpy(&m_parameters.uWorldMatrix, matrix, sizeof(HQMatrix4)); 
-		m_parameters.uWorldMatrix.Transpose();//transpose the matrix, since we will use column major in shader
+		HQMatrix4* pWorldMatrix = (HQMatrix4*) &m_parameters.uWorldMatrix;
+		HQMatrix4Transpose(pWorldMatrix, pWorldMatrix);//transpose the matrix, since we will use column major in shader
 
 		RecalculateMVP();
 
@@ -278,15 +286,15 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 
 	void SetViewMatrix(const HQBaseMatrix4* matrix)
 	{
-		memcpy(&m_viewMatrix, matrix, sizeof(HQMatrix4)); 
+		memcpy(m_viewMatrix, matrix, sizeof(HQMatrix4)); 
 
-		m_viewMatrix.Transpose();//transpose the matrix, since we will use column major in shader
+		m_viewMatrix->Transpose();//transpose the matrix, since we will use column major in shader
 
 		RecalculateMVP();
 
 		//calcualte eye position from view matrix
-		HQMatrix4 viewInv(NULL);
-		HQMatrix4Inverse(&m_viewMatrix, &viewInv);
+		HQ_DECL_STACK_MATRIX4_CTOR_PARAMS(viewInv, (NULL));
+		HQMatrix4Inverse(m_viewMatrix, &viewInv);
 
 		m_parameters.uEyePos.Set(viewInv._14, viewInv._24, viewInv._34);
 
@@ -295,9 +303,9 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 
 	void SetProjMatrix(const HQBaseMatrix4* matrix)
 	{
-		memcpy(&m_projMatrix, matrix, sizeof(HQMatrix4)); 
+		memcpy(m_projMatrix, matrix, sizeof(HQMatrix4)); 
 
-		m_projMatrix.Transpose();//transpose the matrix, since we will use column major in shader
+		m_projMatrix->Transpose();//transpose the matrix, since we will use column major in shader
 		
 		RecalculateMVP();
 
@@ -306,8 +314,8 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 
 	void RecalculateMVP()
 	{
-		HQMatrix4Multiply(&m_projMatrix, &m_viewMatrix, &m_parameters.uMvpMatrix);
-		HQMatrix4Multiply(&m_parameters.uMvpMatrix, &m_parameters.uWorldMatrix, &m_parameters.uMvpMatrix);
+		HQMatrix4Multiply(m_projMatrix, m_viewMatrix, (HQMatrix4*)&m_parameters.uMvpMatrix);
+		HQMatrix4Multiply((HQMatrix4*)&m_parameters.uMvpMatrix, (HQMatrix4*)&m_parameters.uWorldMatrix, (HQMatrix4*)&m_parameters.uMvpMatrix);
 	}
 
 	bool IsActive()
@@ -329,10 +337,11 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 	}
 
 
-	HQMatrix4 m_viewMatrix;
-	HQMatrix4 m_projMatrix;
-
 	HQFixedFunctionParamenters m_parameters;
+
+	HQMatrix4 *m_viewMatrix;
+	HQMatrix4 *m_projMatrix;
+
 
 	hquint32 m_vertexShader[8];
 	hquint32 m_pixelShader[2];

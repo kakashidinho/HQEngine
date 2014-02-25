@@ -38,7 +38,7 @@ MeshX::MeshX(const char *xFileName)
 	BuildSkinnedMesh();
 
 	boneMatrices = new D3DXMATRIX[skinInfo->GetNumBones()];
-	boneMatrices3x4 = new HQMatrix3x4[skinInfo->GetNumBones()];
+	boneMatrices3x4 = HQMatrix3x4::NewArray(skinInfo->GetNumBones());
 
 }
 

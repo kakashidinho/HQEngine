@@ -76,7 +76,7 @@ struct Float3Key
 struct QuaternionKey
 {
 	QuaternionKey() {
-		pKey = new HQQuaternion();
+		pKey = HQQuaternion::New();
 	}
 	~QuaternionKey()
 	{

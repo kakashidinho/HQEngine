@@ -246,7 +246,7 @@ HQReturnVal HQXAudioSourceController::SetVelocity(const hqfloat32 velocity[3])
 ///default direction is {0 , 0 , 0} => omnidirectional
 HQReturnVal HQXAudioSourceController::SetDirection(const hqfloat32 direction[3]) 
 {
-	HQVector4 directionVec(direction[0], direction[1], direction[2]);
+	HQ_DECL_STACK_VECTOR4_CTOR_PARAMS(directionVec, (direction[0], direction[1], direction[2]));
 	hqfloat32 lenSqr = directionVec.LengthSqr();
 	if (lenSqr != 0)
 	{
@@ -455,7 +455,7 @@ HQReturnVal HQXAudioSourceControllerRH::SetVelocity(const hqfloat32 velocity[3])
 ///default direction is {0 , 0 , 0} => omnidirectional
 HQReturnVal HQXAudioSourceControllerRH::SetDirection(const hqfloat32 direction[3]) 
 {
-	HQVector4 directionVec(direction[0], direction[1], direction[2]);
+	HQ_DECL_STACK_VECTOR4_CTOR_PARAMS(directionVec, (direction[0], direction[1], direction[2]));
 	hqfloat32 lenSqr = directionVec.LengthSqr();
 	if (lenSqr != 0)
 	{

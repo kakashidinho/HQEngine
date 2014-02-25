@@ -12,6 +12,22 @@ COPYING.txt included with this distribution for more information.
 #include "HQScenePCH.h"
 #include "../HQCamera.h"
 
+
+/*-----base camera--------*/
+HQBaseCamera::HQBaseCamera()
+	:m_viewMatrix(HQMatrix4::New()),
+	m_projMatrix(HQMatrix4::New()),
+	m_frustumPlanes(HQPlane::NewArray(6))
+{
+}
+
+HQBaseCamera::~HQBaseCamera(){
+	delete m_viewMatrix;
+	delete m_projMatrix;
+	delete[] m_frustumPlanes;
+}
+
+/*------base perspective camera-----*/
 HQBasePerspectiveCamera::HQBasePerspectiveCamera(
 			hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,//position
 			hqfloat32 upX, hqfloat32 upY, hqfloat32 upZ,//up direction
@@ -21,7 +37,8 @@ HQBasePerspectiveCamera::HQBasePerspectiveCamera(
 			hqfloat32 nearPlane, hqfloat32 farPlane, //near and far plane
 			HQRenderAPI renderAPI//renderer API (D3D or OpenGL)
 		)
-		: m_renderAPI(renderAPI)
+		:	m_viewProjMat(HQMatrix4::New()),
+			m_renderAPI(renderAPI)
 {
 	HQ_DECL_STACK_4VECTOR4( at, pos, direct, up);
 	at.Set(directX + posX, directY + posY, directZ + posZ, 1.0f);
@@ -29,14 +46,18 @@ HQBasePerspectiveCamera::HQBasePerspectiveCamera(
 	up.Set(upX, upY, upZ);
 
 	//calculate view matrix
-	HQMatrix4rLookAtLH(&pos, &at, &up, &this->m_viewMatrix);
+	HQMatrix4rLookAtLH(&pos, &at, &up, this->m_viewMatrix);
 
 	//calculate projection matrix
-	HQMatrix4rPerspectiveProjLH(fov, aspect_ratio, nearPlane, farPlane, &this->m_projMatrix, m_renderAPI);
+	HQMatrix4rPerspectiveProjLH(fov, aspect_ratio, nearPlane, farPlane, this->m_projMatrix, m_renderAPI);
 
 	//calculate view x projection matrix
-	HQMatrix4Multiply(&m_viewMatrix, &m_projMatrix, &m_viewProjMat);
+	HQMatrix4Multiply(m_viewMatrix, m_projMatrix, m_viewProjMat);
 
 	//calculate view frustum
-	HQMatrix4rGetFrustum(&m_viewProjMat, m_frustumPlanes, m_renderAPI);
+	HQMatrix4rGetFrustum(m_viewProjMat, m_frustumPlanes, m_renderAPI);
+}
+
+HQBasePerspectiveCamera::~HQBasePerspectiveCamera(){
+	delete m_viewProjMat;
 }
