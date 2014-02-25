@@ -25,7 +25,7 @@ COPYING.txt included with this distribution for more information.
 
 struct HQParameterD3D9
 {
-	CGparameter parameter;
+	CGparameter parameter[2];//parameter both in vertex shader and pixel shader
 	CGtype type;
 };
 
@@ -97,7 +97,7 @@ private:
 									 bool debugMode,
 									 hq_uint32 *pID);
 
-	CGparameter GetUniformParam(HQSharedPtr<HQShaderProgramD3D9>& pProgram,const char* parameterName);
+	HQSharedPtr<HQParameterD3D9> GetUniformParam(HQSharedPtr<HQShaderProgramD3D9>& pProgram,const char* parameterName);
 	hq_uint32 GetParameterIndex(HQSharedPtr<HQShaderProgramD3D9>& pProgram, 
 									const char *parameterName);
 public:

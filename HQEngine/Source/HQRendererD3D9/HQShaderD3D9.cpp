@@ -537,21 +537,22 @@ hq_uint32 HQShaderManagerD3D9::GetParameterIndex(HQSharedPtr<HQShaderProgramD3D9
 	hq_uint32 *pIndex = pProgram->parameterIndexes.GetItemPointer(parameterName);
 	if (pIndex == NULL)//không có
 	{
-		CGparameter param = NULL;
+		CGparameter paramInVS = NULL, paramInPS = NULL;
 		//cố tìm trong vertex shader
 		if(pProgram->vertexShader!=NULL)
-			param=cgGetNamedParameter(pProgram->vertexShader->program,parameterName);//get parameter handle
+			paramInVS=cgGetNamedParameter(pProgram->vertexShader->program,parameterName);//get parameter handle
 			
-		if(param==NULL && (pProgram->pixelShader!=NULL))//nếu không tìm thấy,tìm trong pixel shader
-			param=cgGetNamedParameter(pProgram->pixelShader->program,parameterName);
-		if(param==NULL)//vẫn không tìm thấy
+		if(pProgram->pixelShader!=NULL)//tìm tiếp trong pixel shader
+			paramInPS=cgGetNamedParameter(pProgram->pixelShader->program,parameterName);
+		if(paramInVS == NULL && paramInPS==NULL)//không tìm thấy
 		{
 			return HQ_NOT_AVAIL_ID;
 		}
 		//đã tìm thấy =>thêm vào danh sách
 		HQParameterD3D9* pNewParameter = new HQParameterD3D9();
-		pNewParameter->parameter=param;
-		pNewParameter->type=cgGetParameterType(param);//get parameter type
+		pNewParameter->parameter[0]=paramInVS;
+		pNewParameter->parameter[1]=paramInPS;
+		pNewParameter->type=cgGetParameterType(paramInVS == NULL? paramInPS: paramInVS);//get parameter type
 	
 		hq_uint32 paramIndex;
 		if(!pProgram->parameters.AddItem(pNewParameter , &paramIndex))
@@ -567,14 +568,14 @@ hq_uint32 HQShaderManagerD3D9::GetParameterIndex(HQSharedPtr<HQShaderProgramD3D9
 	}
 	return *pIndex;
 }
-inline CGparameter HQShaderManagerD3D9::GetUniformParam(HQSharedPtr<HQShaderProgramD3D9>& pProgram,const char* parameterName)
+inline HQSharedPtr<HQParameterD3D9> HQShaderManagerD3D9::GetUniformParam(HQSharedPtr<HQShaderProgramD3D9>& pProgram,const char* parameterName)
 {
 	hq_uint32 paramIndex = this->GetParameterIndex(pProgram , parameterName);
 
 	if(paramIndex == HQ_NOT_AVAIL_ID)
 		return NULL;
 
-	return pProgram->parameters.GetItemPointerNonCheck(paramIndex)->parameter;
+	return pProgram->parameters.GetItemPointerNonCheck(paramIndex);
 }
 
 /*-----------------------*/
@@ -589,7 +590,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformInt(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -598,7 +599,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniformInt(const char* parameterName,
 	}
 #endif
 	
-	cgSetParameterValueir(param,(int)numElements,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValueir(param->parameter[0],(int)numElements,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValueir(param->parameter[1],(int)numElements,pValues);
 
 	return HQ_OK;
 }
@@ -613,7 +617,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform2Int(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -622,7 +626,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform2Int(const char* parameterName,
 	}
 #endif
 	
-	cgSetParameterValueir(param,(int)numElements * 2,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValueir(param->parameter[0],(int)numElements * 2,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValueir(param->parameter[1],(int)numElements * 2,pValues);
 
 	return HQ_OK;
 }
@@ -637,7 +644,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform3Int(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -646,7 +653,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform3Int(const char* parameterName,
 	}
 #endif
 	
-	cgSetParameterValueir(param,(int)numElements * 3,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValueir(param->parameter[0],(int)numElements * 3,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValueir(param->parameter[1],(int)numElements * 3,pValues);
 
 	return HQ_OK;
 }
@@ -661,7 +671,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform4Int(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -670,7 +680,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform4Int(const char* parameterName,
 	}
 #endif
 	
-	cgSetParameterValueir(param,(int)numElements * 4,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValueir(param->parameter[0],(int)numElements * 4,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValueir(param->parameter[1],(int)numElements * 4,pValues);
 
 	return HQ_OK;
 }
@@ -685,7 +698,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformFloat(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -694,7 +707,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniformFloat(const char* parameterName,
 	}
 #endif
 	
-	cgSetParameterValuefr(param,(int)numElements,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValuefr(param->parameter[0],(int)numElements ,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValuefr(param->parameter[1],(int)numElements ,pValues);
 
 	return HQ_OK;
 }
@@ -709,7 +725,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform2Float(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -718,7 +734,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform2Float(const char* parameterName,
 	}
 #endif
 	
-	cgSetParameterValuefr(param,(int)numElements * 2,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValuefr(param->parameter[0],(int)numElements * 2,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValuefr(param->parameter[1],(int)numElements * 2,pValues);
 
 	return HQ_OK;
 }
@@ -733,7 +752,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform3Float(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -742,7 +761,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform3Float(const char* parameterName,
 	}
 #endif
 	
-	cgSetParameterValuefr(param,(int)numElements * 3,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValuefr(param->parameter[0],(int)numElements * 3,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValuefr(param->parameter[1],(int)numElements * 3,pValues);
 
 	return HQ_OK;
 }
@@ -757,7 +779,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform4Float(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -766,7 +788,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform4Float(const char* parameterName,
 	}
 #endif
 	
-	cgSetParameterValuefr(param,(int)numElements * 4,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValuefr(param->parameter[0],(int)numElements * 4,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValuefr(param->parameter[1],(int)numElements * 4,pValues);
 
 	return HQ_OK;
 }
@@ -781,7 +806,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -789,13 +814,12 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(const char* parameterName,
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
+
+	if (param->parameter[0])
+		cgD3D9SetUniformMatrixArray(param->parameter[0],0,numMatrices,(D3DMATRIX*)pMatrices);
+	if (param->parameter[1])
+		cgD3D9SetUniformMatrixArray(param->parameter[1],0,numMatrices,(D3DMATRIX*)pMatrices);
 	
-	HRESULT hr=cgD3D9SetUniformMatrixArray(param,0,numMatrices,(D3DMATRIX*)pMatrices);
-	if(FAILED(hr))
-	{
-		//Log("%s",cgD3D9TranslateHRESULT(hr));
-		return HQ_FAILED;
-	}
 
 	return HQ_OK;
 }
@@ -810,7 +834,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(const char* parameterName,
 #endif
 	
 
-	CGparameter param = this->GetUniformParam(activeProgram , parameterName);
+	HQSharedPtr<HQParameterD3D9> param = this->GetUniformParam(activeProgram , parameterName);
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
@@ -818,14 +842,12 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(const char* parameterName,
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
-	
-	HRESULT hr=cgD3D9SetUniformArray(param,0,numMatrices,pMatrices);
-	if(FAILED(hr))
-	{
-		//Log("%s",cgD3D9TranslateHRESULT(hr));
-		return HQ_FAILED;
-	}
 
+	if (param->parameter[0])
+		cgD3D9SetUniformArray(param->parameter[0],0,numMatrices,pMatrices);
+	if (param->parameter[1])
+		cgD3D9SetUniformArray(param->parameter[1],0,numMatrices,pMatrices);
+	
 	return HQ_OK;
 }
 
@@ -865,7 +887,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniformInt(hq_uint32 parameterIndex,
 	}
 #endif
 	
-	cgSetParameterValueir(param->parameter,(int)numElements,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValueir(param->parameter[0],(int)numElements ,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValueir(param->parameter[1],(int)numElements ,pValues);
 
 	return HQ_OK;
 }
@@ -889,7 +914,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform2Int(hq_uint32 parameterIndex,
 	}
 #endif
 	
-	cgSetParameterValueir(param->parameter,(int)numElements * 2,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValueir(param->parameter[0],(int)numElements * 2,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValueir(param->parameter[1],(int)numElements * 2,pValues);
 
 	return HQ_OK;
 }
@@ -913,7 +941,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform3Int(hq_uint32 parameterIndex,
 	}
 #endif
 	
-	cgSetParameterValueir(param->parameter,(int)numElements * 3,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValueir(param->parameter[0],(int)numElements * 3,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValueir(param->parameter[1],(int)numElements * 3,pValues);
 
 	return HQ_OK;
 }
@@ -937,8 +968,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform4Int(hq_uint32 parameterIndex,
 	}
 #endif
 	
-	cgSetParameterValueir(param->parameter,(int)numElements * 4,pValues);
-
+	if (param->parameter[0] != NULL)
+		cgSetParameterValueir(param->parameter[0],(int)numElements * 4,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValueir(param->parameter[1],(int)numElements * 4,pValues);
 	return HQ_OK;
 }
 
@@ -961,7 +994,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniformFloat(hq_uint32 parameterIndex,
 	}
 #endif
 	
-	cgSetParameterValuefr(param->parameter,(int)numElements,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValuefr(param->parameter[0],(int)numElements ,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValuefr(param->parameter[1],(int)numElements ,pValues);
 
 	return HQ_OK;
 }
@@ -985,7 +1021,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform2Float(hq_uint32 parameterIndex,
 	}
 #endif
 	
-	cgSetParameterValuefr(param->parameter,(int)numElements * 2,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValuefr(param->parameter[0],(int)numElements * 2,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValuefr(param->parameter[1],(int)numElements * 2,pValues);
 
 	return HQ_OK;
 }
@@ -1009,7 +1048,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform3Float(hq_uint32 parameterIndex,
 	}
 #endif
 	
-	cgSetParameterValuefr(param->parameter,(int)numElements * 3,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValuefr(param->parameter[0],(int)numElements * 3,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValuefr(param->parameter[1],(int)numElements * 3,pValues);
 
 	return HQ_OK;
 }
@@ -1033,7 +1075,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniform4Float(hq_uint32 parameterIndex,
 	}
 #endif
 	
-	cgSetParameterValuefr(param->parameter,(int)numElements * 4,pValues);
+	if (param->parameter[0] != NULL)
+		cgSetParameterValuefr(param->parameter[0],(int)numElements * 4,pValues);
+	if (param->parameter[1] != NULL)
+		cgSetParameterValuefr(param->parameter[1],(int)numElements * 4,pValues);
 
 	return HQ_OK;
 }
@@ -1064,15 +1109,11 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(hq_uint32 parameterIndex,
 	
 	//cgSetParameterValuefr(param->parameter,(int)numMatrices * 16,(hq_float32*)pMatrices);
 
+	if (param->parameter[0])
+		cgD3D9SetUniformMatrixArray(param->parameter[0],0,numMatrices,(D3DMATRIX*)pMatrices);
+	if (param->parameter[1])
+		cgD3D9SetUniformMatrixArray(param->parameter[1],0,numMatrices,(D3DMATRIX*)pMatrices);
 	
-	HRESULT hr =cgD3D9SetUniformMatrixArray(param->parameter,0,numMatrices,(D3DMATRIX*)pMatrices);
-#if defined _DEBUG || defined DEBUG
-	if(FAILED(hr))
-	{
-		this->Log("Error : SetUniformMatrix() failed . %s",cgD3D9TranslateHRESULT(hr));
-		return HQ_FAILED;
-	}
-#endif
 	
 	return HQ_OK;
 }
@@ -1099,14 +1140,10 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(hq_uint32 parameterIndex,
 	//cgSetParameterValuefr(param->parameter,(int)numMatrices * 12,(hq_float32*)pMatrices);
 
 	
-	HRESULT hr =cgD3D9SetUniformArray(param->parameter,0,numMatrices,pMatrices);
-#if defined _DEBUG || defined DEBUG
-	if(FAILED(hr))
-	{
-		this->Log("Error : SetUniformMatrix() failed . %s",cgD3D9TranslateHRESULT(hr));
-		return HQ_FAILED;
-	}
-#endif
+	if (param->parameter[0])
+		cgD3D9SetUniformArray(param->parameter[0],0,numMatrices,pMatrices);
+	if (param->parameter[1])
+		cgD3D9SetUniformArray(param->parameter[1],0,numMatrices,pMatrices);
 	
 	return HQ_OK;
 }
