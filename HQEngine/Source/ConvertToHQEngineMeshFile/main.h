@@ -28,6 +28,8 @@ COPYING.txt included with this distribution for more information.
 #define HQANIM_MAGIC_STR "HQEngineAnimFile"
 #define MAX_NUM_BONES_SUPPORTED 128
 
+#define FLAG_FLAT_FACES 0x1
+
 struct HQMeshFileHeader
 {
 	char magicString[16];
@@ -135,9 +137,9 @@ void CreateWindowHandle();
 void CreateDirect3dDevice();
 void CleanUpDirectX();
 
-void ConvertXToHQMeshFile(const char *dest, const char* source);
+void ConvertXToHQMeshFile(const char *dest, const char* source, int flags);
 
-void ConvertToHQMeshFile(const char *dest, const char* source);
+void ConvertToHQMeshFile(const char *dest, const char* source, int flags);
 
 char* GetAnimationFileName(const char* destMeshFile);
 

@@ -31,8 +31,18 @@ int main(int argc, char **argv)
 
 #endif
 
-	if (argc != 3)
+	if (argc < 3)
+	{
+		printf("usage: <input> [options] <output>\n");
 		return -1;
+	}
+
+	//parse options
+	int flags = 0;
+	for (int i = 2; i < argc - 1; ++i){
+		if (strcmp(argv[i], "-flat") == 0)
+			flags |= FLAG_FLAT_FACES;//flat faces model
+	}
 
 	//check if this is .x file
 	bool isXFile = false;
@@ -50,13 +60,13 @@ int main(int argc, char **argv)
 		CreateWindowHandle();
 		CreateDirect3dDevice();
 		
-		ConvertXToHQMeshFile(argv[2], argv[1]);
+		ConvertXToHQMeshFile(argv[argc - 1], argv[1], flags);
 		
 		CleanUpDirectX();
 	}
 	else
 	{
-		ConvertToHQMeshFile(argv[2], argv[1]);
+		ConvertToHQMeshFile(argv[argc - 1], argv[1], flags);
 	}
 
 	return 0;

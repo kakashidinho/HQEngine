@@ -112,8 +112,10 @@ void CreateDirect3dDevice()
 	}
 }
 
-void ConvertXToHQMeshFile(const char *dest, const char* source)
+void ConvertXToHQMeshFile(const char *dest, const char* source, int flags)
 {
+	//TO DO: flags 
+
 	FILE *f;
 	HRESULT hr;
 	AllocMeshHierarchy allocMeshHierarchy;

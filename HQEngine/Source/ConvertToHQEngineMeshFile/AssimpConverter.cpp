@@ -26,9 +26,16 @@ COPYING.txt included with this distribution for more information.
 void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene);
 void PrintVertexAttrDesc(HQVertexAttribDesc &desc);
 
-void ConvertToHQMeshFile(const char *dest, const char * source)
+void ConvertToHQMeshFile(const char *dest, const char * source, int flags)
 {
-	const aiScene * scene = aiImportFile(source , aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder  );
+
+	unsigned int aiFlags = aiProcess_Triangulate | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder ;
+	if (flags & FLAG_FLAT_FACES)
+		aiFlags |= aiProcess_GenNormals;
+	else
+		aiFlags |= aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals;
+
+	const aiScene * scene = aiImportFile(source , aiFlags );
 	
 	if (scene == NULL)
 		return;
