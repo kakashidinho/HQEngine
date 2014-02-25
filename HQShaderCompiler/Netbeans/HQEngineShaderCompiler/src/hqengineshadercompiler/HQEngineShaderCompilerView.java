@@ -965,7 +965,13 @@ public class HQEngineShaderCompilerView extends FrameView {
             cwd += "/";
 
         try{
-            System.load(cwd + "QEXT_glsl_compiler.dll");
+            try {
+                System.load(cwd + "QEXT_glsl_compiler.dll");
+            }catch (java.lang.UnsatisfiedLinkError ee){
+                //try to load x64 version
+                System.out.println("loading x64 version of glsl compiler");
+                System.load(cwd + "QEXT_glsl_compiler_x64.dll");
+            }
             
             glsl_compiler_ready = true;
         }
