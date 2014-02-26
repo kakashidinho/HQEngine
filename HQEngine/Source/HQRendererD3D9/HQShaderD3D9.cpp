@@ -326,11 +326,42 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromFileEx(HQShaderType type,
 	if (cgIsProgramCompiled(sobject->program) == CG_FALSE)
 		cgCompileProgram(sobject->program);
 	
-	
+	//check for errors by using D3DX
+	HRESULT hr;
 	if(debugMode)
-		cgD3D9LoadProgram(sobject->program,false,D3DXSHADER_DEBUG);
+		hr = cgD3D9LoadProgram(sobject->program,false,D3DXSHADER_DEBUG);
 	else
-		cgD3D9LoadProgram(sobject->program,false,0);
+		hr = cgD3D9LoadProgram(sobject->program,false,0);
+
+	if (FAILED(hr)){
+		//check for errors
+		ID3DXBuffer* byteCode = NULL;
+		ID3DXBuffer* errorMsg = NULL;
+		HRESULT hr;
+		DWORD compileFlags = debugMode? (D3DXSHADER_DEBUG): 0;
+
+		//get output from cg
+		const char * compiled_src = cgGetProgramString(sobject->program, CG_COMPILED_PROGRAM);
+
+		hr = D3DXAssembleShader(
+				compiled_src,
+				strlen(compiled_src),
+				NULL,
+				NULL,
+				compileFlags,
+				&byteCode,
+				&errorMsg);
+
+		if (errorMsg)
+			this->Log("Shader compile from file %s error ! Error message \"%s\"",fileName, errorMsg->GetBufferPointer());
+		else
+			this->Log("Shader compile from file %s error !", fileName);
+
+		delete sobject;
+		SafeRelease(byteCode);
+		SafeRelease(errorMsg);
+		return HQ_FAILED;
+	}
 
 	if (!this->shaderObjects.AddItem(sobject , pID))
 	{
@@ -373,10 +404,41 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 	if (cgIsProgramCompiled(sobject->program) == CG_FALSE)
 		cgCompileProgram(sobject->program);
 
+	HRESULT hr;
 	if(debugMode)
-		cgD3D9LoadProgram(sobject->program,false,D3DXSHADER_DEBUG);
+		hr = cgD3D9LoadProgram(sobject->program,false,D3DXSHADER_DEBUG);
 	else
-		cgD3D9LoadProgram(sobject->program,false,0);
+		hr = cgD3D9LoadProgram(sobject->program,false,0);
+
+	if (FAILED(hr)){
+		//check for errors
+		ID3DXBuffer* byteCode = NULL;
+		ID3DXBuffer* errorMsg = NULL;
+		HRESULT hr;
+		DWORD compileFlags = debugMode? (D3DXSHADER_DEBUG): 0;
+
+		//get output from cg
+		const char * compiled_src = cgGetProgramString(sobject->program, CG_COMPILED_PROGRAM);
+
+		hr = D3DXAssembleShader(
+				compiled_src,
+				strlen(compiled_src),
+				NULL,
+				NULL,
+				compileFlags,
+				&byteCode,
+				&errorMsg);
+
+		if (errorMsg)
+			this->Log("Shader compile from memory error ! Error message \"%s\"", errorMsg->GetBufferPointer());
+		else
+			this->Log("Shader compile from memory error !");
+
+		delete sobject;
+		SafeRelease(byteCode);
+		SafeRelease(errorMsg);
+		return HQ_FAILED;
+	}
 
 	if (!this->shaderObjects.AddItem(sobject , pID))
 	{
