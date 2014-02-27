@@ -26,6 +26,10 @@ using namespace pvrtexlib;
 
 inline hq_uint32 GetShaderStageIndex(HQShaderType type) 
 {
+#if defined DEBUG || defined _DEBUG
+	if (type == 0)//invalid shader type
+		return 2; 
+#endif
 	return type >> 29;
 }
 

@@ -491,7 +491,20 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , hq_uint32 textureID)
 #if defined _DEBUG || defined DEBUG
 	if (slot >= this->maxTextureUnits)
 	{
-		Log("SetTexture() Error : {slot=%u} out of range!", slot);
+		hquint32 textureSlot = slot & 0xfffffff;
+		switch (slot & 0xf0000000){
+			case HQ_VERTEX_SHADER:
+				Log("SetTexture() Error : Did you mistakenly bitwise OR %u with HQ_VERTEX_SHADER!", textureSlot);
+				break;
+			case HQ_PIXEL_SHADER:
+				Log("SetTexture() Error : Did you mistakenly bitwise OR %u with HQ_PIXEL_SHADER!", textureSlot);
+				break;
+			case HQ_GEOMETRY_SHADER:
+				Log("SetTexture() Error : Did you mistakenly bitwise OR %u with HQ_GEOMETRY_SHADER!", textureSlot);
+				break;
+			default:
+				Log("SetTexture() Error : {slot=%u} out of range!", slot);
+		}
 		return HQ_FAILED;
 	}
 #endif
@@ -551,7 +564,20 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , hq_uin
 #if defined _DEBUG || defined DEBUG
 	if (slot >= this->maxTextureUnits)
 	{
-		Log("SetTextureForPixelShader() Error : {slot=%u} out of range!", slot);
+		hquint32 textureSlot = slot & 0xfffffff;
+		switch (slot & 0xf0000000){
+			case HQ_VERTEX_SHADER:
+				Log("SetTextureForPixelShader() Error : Did you mistakenly bitwise OR %u with HQ_VERTEX_SHADER!", textureSlot);
+				break;
+			case HQ_PIXEL_SHADER:
+				Log("SetTextureForPixelShader() Error : Did you mistakenly bitwise OR %u with HQ_PIXEL_SHADER!", textureSlot);
+				break;
+			case HQ_GEOMETRY_SHADER:
+				Log("SetTextureForPixelShader() Error : Did you mistakenly bitwise OR %u with HQ_GEOMETRY_SHADER!", textureSlot);
+				break;
+			default:
+				Log("SetTextureForPixelShader() Error : {slot=%u} out of range!", slot);
+		}
 		return HQ_FAILED;
 	}
 #endif
