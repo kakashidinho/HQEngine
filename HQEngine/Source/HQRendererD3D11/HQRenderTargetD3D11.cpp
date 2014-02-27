@@ -487,7 +487,6 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTarget(const HQRenderTargetD
 	
 	HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDesc.renderTargetID);
 	
-#if defined _DEBUG || defined DEBUG
 	if (pRenderTarget == NULL)
 	{
 		//active default frame buffer
@@ -495,7 +494,6 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTarget(const HQRenderTargetD
 
 		return HQ_FAILED;
 	}
-#endif
 	
 	this->renderTargetWidth = pRenderTarget->width;
 	this->renderTargetHeight = pRenderTarget->height;

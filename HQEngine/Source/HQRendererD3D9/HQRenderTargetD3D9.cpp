@@ -432,14 +432,13 @@ HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTarget(const HQRenderTargetDe
 		return HQ_FAILED_DEVICE_LOST;
 	
 	HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDesc.renderTargetID);
-#if defined _DEBUG || defined DEBUG	
+
 	if (pRenderTarget == NULL)
 	{
 		//active default back buffer and depth stencil buffer
 		this->InvalidateRenderTargets();
 		return HQ_FAILED;
 	}
-#endif
 
 	this->renderTargetWidth = pRenderTarget->width;
 	this->renderTargetHeight = pRenderTarget->height;

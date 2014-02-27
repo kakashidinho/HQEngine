@@ -641,14 +641,12 @@ HQReturnVal HQRenderTargetManagerFBO::ActiveRenderTarget(const HQRenderTargetDes
 	HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDesc.renderTargetID);
 	HQActiveRenderTarget & activeRenderTarget =  this->activeRenderTargets[0];
 
-#if defined _DEBUG || defined DEBUG
 	if (pRenderTarget == NULL)
 	{
 		this->ActiveDefaultFrameBuffer();
 
 		return HQ_FAILED;
 	}
-#endif
 	
 	if(this->currentUseDefaultBuffer)
 		glBindFramebuffer(GL_FRAMEBUFFER , this->framebuffer);
