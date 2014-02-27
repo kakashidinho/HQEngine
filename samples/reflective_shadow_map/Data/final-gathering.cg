@@ -108,7 +108,7 @@ float computeShadowFactor(float2 texcoords, float fragmentDepth){
 
 //sampling from low resolution version of the scene. returned w component will tell that the sampling is sufficient or not
 float4 lowResSample(in pIn pixel, float4 sample_texcoords){
-	const float distanceMax = 0.01;
+	const float distanceMax = 0.1;
 	const float normalDotMin = 0.86;
 	
 	float4 fluxSample = float4(0.0, 0.0, 0.0, 0.0);
@@ -208,7 +208,9 @@ ps_3_0 ps_4_0 ps_5_0 float4 PS(
 	}
 	else
 	{
-#if 1
+#if 0
+		irradiance.xyz = float3(0.0);
+#else
 		//calculate indirect illumination directly
 		for (float u = H_SAMPLE_START; u < 1.0; u += H_SAMPLE_STEP)
 		{
