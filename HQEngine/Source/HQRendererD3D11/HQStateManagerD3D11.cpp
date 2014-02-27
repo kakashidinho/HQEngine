@@ -693,7 +693,7 @@ HQReturnVal HQStateManagerD3D11::SetSamplerState(hq_uint32 index , hq_uint32 sam
 #if defined DEBUG || defined _DEBUG
 		if (samplerIndex >= g_pD3DDev->GetCaps().maxVertexSamplers)
 		{
-			Log("SetSamplerState() Error : sampler slot is out of range!");
+			Log("SetSamplerState() Error : sampler slot=%u is out of range!", samplerIndex);
 			return HQ_FAILED;
 		}
 #endif
@@ -708,7 +708,7 @@ HQReturnVal HQStateManagerD3D11::SetSamplerState(hq_uint32 index , hq_uint32 sam
 #if defined DEBUG || defined _DEBUG
 		if (samplerIndex >= g_pD3DDev->GetCaps().maxGeometrySamplers)
 		{
-			Log("SetSamplerState() Error : sampler slot is out of range!");
+			Log("SetSamplerState() Error : sampler slot=%u is out of range!", samplerIndex);
 			return HQ_FAILED;
 		}
 #endif
@@ -723,7 +723,7 @@ HQReturnVal HQStateManagerD3D11::SetSamplerState(hq_uint32 index , hq_uint32 sam
 #if defined DEBUG || defined _DEBUG
 		if (samplerIndex >= g_pD3DDev->GetCaps().maxPixelSamplers)
 		{
-			Log("SetSamplerState() Error : sampler slot is out of range!");
+			Log("SetSamplerState() Error : sampler slot=%u is out of range!", samplerIndex);
 			return HQ_FAILED;
 		}
 #endif

@@ -217,7 +217,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 #if defined _DEBUG || defined DEBUG
 		if (resourceSlot >= g_pD3DDev->GetCaps().maxVertexTextures)
 		{
-			Log("SetTexture() Error : texture slot is out of range!");
+			Log("SetTexture() Error : texture slot=%u is out of range!", resourceSlot);
 			return HQ_FAILED;
 		}
 #endif
@@ -233,7 +233,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 #if defined _DEBUG || defined DEBUG
 		if (resourceSlot >= g_pD3DDev->GetCaps().maxGeometryTextures)
 		{
-			Log("SetTexture() Error : texture slot is out of range!");
+			Log("SetTexture() Error : texture slot=%u is out of range!", resourceSlot);
 			return HQ_FAILED;
 		}
 #endif
@@ -249,7 +249,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 #if defined _DEBUG || defined DEBUG
 		if (resourceSlot >= g_pD3DDev->GetCaps().maxPixelTextures)
 		{
-			Log("SetTexture() Error : texture slot is out of range!");
+			Log("SetTexture() Error : texture slot=%u is out of range!", resourceSlot);
 			return HQ_FAILED;
 		}
 #endif
@@ -279,7 +279,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 slot , hq_
 #if defined _DEBUG || defined DEBUG
 	if (slot >= g_pD3DDev->GetCaps().maxPixelTextures)
 	{
-		Log("SetTextureForPixelShader() Error : texture slot is out of range!");
+		Log("SetTextureForPixelShader() Error : texture slot=%u is out of range!", slot);
 		return HQ_FAILED;
 	}
 #endif

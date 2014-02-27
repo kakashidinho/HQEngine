@@ -699,7 +699,7 @@ HQReturnVal HQStateManagerD3D9::SetSamplerState(hq_uint32 index , hq_uint32 samp
 #if defined DEBUG || defined _DEBUG
 		if (samplerIndex >= this->maxVertexShaderSamplers)
 		{
-			Log("SetSamplerState() Error : sampler slot is out of range!");
+			Log("SetSamplerState() Error : sampler slot=%u is out of range!", samplerIndex);
 			return HQ_FAILED;
 		}
 #endif
@@ -710,7 +710,7 @@ HQReturnVal HQStateManagerD3D9::SetSamplerState(hq_uint32 index , hq_uint32 samp
 #if defined DEBUG || defined _DEBUG
 		if (samplerIndex >= this->maxPixelShaderSamplers)
 		{
-			Log("SetSamplerState() Error : sampler slot is out of range!");
+			Log("SetSamplerState() Error : sampler slot=%u is out of range!", samplerIndex);
 			return HQ_FAILED;
 		}
 #endif

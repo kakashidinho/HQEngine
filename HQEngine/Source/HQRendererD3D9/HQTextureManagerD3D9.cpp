@@ -159,7 +159,7 @@ HQReturnVal HQTextureManagerD3D9::SetTexture(hq_uint32 slot , hq_uint32 textureI
 	}
 	if (samplerSlot >= this->shaderStage[shaderStageIndex].maxSamplers)
 	{
-		Log("SetTexture() Error : sampler slot is out of range!");
+		Log("SetTexture() Error : sampler slot=%u is out of range!", samplerSlot);
 		return HQ_FAILED;
 	}
 #endif
@@ -186,7 +186,7 @@ HQReturnVal HQTextureManagerD3D9::SetTextureForPixelShader(hq_uint32 samplerSlot
 #if defined _DEBUG || defined DEBUG
 	if (samplerSlot >= this->shaderStage[shaderStageIndex].maxSamplers)
 	{
-		Log("SetTextureForPixelShader() Error : sampler slot is out of range!");
+		Log("SetTextureForPixelShader() Error : sampler slot=%u is out of range!", samplerSlot);
 		return HQ_FAILED;
 	}
 #endif

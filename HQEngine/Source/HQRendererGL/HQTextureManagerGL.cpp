@@ -491,7 +491,7 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , hq_uint32 textureID)
 #if defined _DEBUG || defined DEBUG
 	if (slot >= this->maxTextureUnits)
 	{
-		Log("SetTexture() Error : {slot} out of range!");
+		Log("SetTexture() Error : {slot=%u} out of range!", slot);
 		return HQ_FAILED;
 	}
 #endif
@@ -551,7 +551,7 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , hq_uin
 #if defined _DEBUG || defined DEBUG
 	if (slot >= this->maxTextureUnits)
 	{
-		Log("SetTextureForPixelShader() Error : {slot} out of range!");
+		Log("SetTextureForPixelShader() Error : {slot=%u} out of range!", slot);
 		return HQ_FAILED;
 	}
 #endif
