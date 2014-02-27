@@ -179,10 +179,10 @@ HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
 HQDeviceGL::~HQDeviceGL(){
 
 	SafeDeleteTypeCast(HQBaseShaderManagerGL*, shaderMan);
-	SafeDeleteTypeCast(HQTextureManagerGL*, textureMan);
 	SafeDeleteTypeCast(HQVertexStreamManagerGL*, vStreamMan);
 	SafeDeleteTypeCast(HQBaseRenderTargetManager*, renderTargetMan);
 	SafeDeleteTypeCast(HQStateManagerGL*, stateMan);
+	SafeDeleteTypeCast(HQTextureManagerGL*, textureMan);
 
 #ifdef WIN32
 	if(!this->IsWindowed())//fullscreen
