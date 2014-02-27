@@ -214,9 +214,11 @@ ps_3_0 ps_4_0 ps_5_0 float4 PS(
 		{
 			for (float v = V_SAMPLE_START; v < 1.0; v += V_SAMPLE_STEP){
 				//get two random number
-				float2 random = tex2Dlod(randomMap, float4(u, v, 0.0, 0.0)).xy;
-				float2 noiseUV = float2(random.x * SAMPLE_RADIUS * sin(2 * PI * random.y), 
-										random.x * SAMPLE_RADIUS * cos(2 * PI * random.y));
+				float4 random = tex2Dlod(randomMap, float4(u, v, 0.0, 0.0));
+				//random.yz are scaled down versions of sin and cos of 2 * PI * random number 2
+				random.yz = 2.0 * random.yz - 1.0;//scale back to original values between [0..1]
+				float2 noiseUV = float2(random.x * SAMPLE_RADIUS * random.y, 
+										random.x * SAMPLE_RADIUS * random.z);
 				
 				//sample pixel light
 				float4 sampleUV = float4(shadowMapUV + noiseUV, 0.0, 0.0);
@@ -235,7 +237,7 @@ ps_3_0 ps_4_0 ps_5_0 float4 PS(
 				irradianceP /= (1.0 + pow(length(toP), 4));
 				
 				//contribute to total indirect irradiance
-				irradiance.xyz += irradianceP / (5.0 + random.x * random.x);//weighted by  (random.x) ^ 2
+				irradiance.xyz += irradianceP / (5.0 + random.w);//weighted by  (random.x) ^ 2
 				
 			}//for (float v = V_SAMPLE_START; v < 1.0; v += V_SAMPLE_STEP)
 		}//for (float u = H_SAMPLE_START; u < 1.0; u += H_SAMPLE_STEP)

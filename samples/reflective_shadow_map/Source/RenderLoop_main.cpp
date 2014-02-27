@@ -183,7 +183,7 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetTexture(
 		width, height,
 		false,
-		HQ_RTFMT_RG_FLOAT32,
+		HQ_RTFMT_RGBA_FLOAT64,
 		HQ_MST_NONE,
 		HQ_TEXTURE_2D,
 		&decodeRT,
@@ -193,7 +193,7 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	HQSamplerStateDesc stDesc1(HQ_FM_MIN_MAG_MIP_POINT, HQ_TAM_CLAMP, HQ_TAM_CLAMP);
 	m_pRDevice->GetStateManager()->CreateSamplerState(stDesc1, &pointSamplerState);
 
-	//now decode the random numbers by render them to texture. result = (R=decoded number 1, G=decoded number 2)
+	//now decode the random numbers by render them to texture. result = (R=decoded number 1, G=sin(2*pi*decoded number 2), B=cos(2*pi*decoded number 2), A = decoded number 1 ^ 2)
 	m_pRDevice->GetRenderTargetManager()->ActiveRenderTarget(
 		decodeRT, 
 		HQ_NULL_ID);

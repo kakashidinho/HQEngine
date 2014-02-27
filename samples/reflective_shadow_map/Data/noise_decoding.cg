@@ -24,6 +24,7 @@ vs_2_0 vs_3_0 vOut VS(in vIn input){
 
 
 /*-----------pixel shader------------*/
+#define PI 3.141592654
 
 uniform sampler2D encoded_noise_map: TEXUNIT0;
 
@@ -41,9 +42,9 @@ float4 PS(in float2 texcoords: TEXCOORD0): COLOR0{
 	
 	float4 output;
 	output.x = S1;
-	output.y = S2; 
-	output.z = 0.0; 
-	output.w = 1.0;
+	output.y = 0.5 * sin(2.0 * PI * S2) + 0.5; //scale down to between [0..1]
+	output.z = 0.5 * cos(2.0 * PI * S2) + 0.5; //scale down to between [0..1]
+	output.w = S1 * S1;
 	
 	return output;
 }
