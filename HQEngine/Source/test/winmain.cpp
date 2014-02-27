@@ -43,7 +43,7 @@
 #	endif
 #elif defined (_NOOPTIMIZE)
 #	pragma comment(lib,"../../VS/Output/Release/ImagesLoader.lib")
-#	pragma comment(lib,"../../VS/Output/Release static CRT/HQAudio.lib")
+#	pragma comment(lib,"../../VS/Output/Release/HQAudio.lib")
 #	pragma comment(lib,"../../VS/Output/Release/HQEngine.lib")
 #	pragma comment(lib,"../../VS/Output/Release/HQUtil.lib")
 #	pragma comment(lib,"../../VS/Output/release noptimize/HQUtilMath.lib")
@@ -57,7 +57,7 @@
 #else
 #	pragma comment(lib,"../../VS/Output/Release/HQSceneManagement.lib")
 #	pragma comment(lib,"../../VS/Output/Release/ImagesLoader.lib")
-#	pragma comment(lib,"../../VS/Output/Release static CRT/HQAudio.lib")
+#	pragma comment(lib,"../../VS/Output/Release/HQAudio.lib")
 #	pragma comment(lib,"../../VS/Output/Release/HQEngine.lib")
 #	pragma comment(lib,"../../VS/Output/Release/HQUtil.lib")
 #	pragma comment(lib,"../../VS/Output/Release/HQUtilMath.lib")
@@ -145,7 +145,7 @@ struct OneTimeInit
 #if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #	if defined (_DEBUG) || defined(DEBUG)
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_crtBreakAlloc = 1058;
+	//_crtBreakAlloc = 177;
 
 #	endif
 #endif

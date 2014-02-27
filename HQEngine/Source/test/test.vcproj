@@ -241,7 +241,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y $(SolutionDir)\Libs\developer_runtime_dll\*.*  $(SolutionDir)\Output\$(ConfigurationName)\"
+				CommandLine="xcopy /q /y $(SolutionDir)\Libs\developer_runtime_dll\*.*  &quot;$(SolutionDir)\Output\$(ConfigurationName)\&quot;"
 			/>
 		</Configuration>
 		<Configuration

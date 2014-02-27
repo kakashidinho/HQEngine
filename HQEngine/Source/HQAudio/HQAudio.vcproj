@@ -328,6 +328,85 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release noptimize|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\..\libogg\include;..\..\..\libvorbis\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQAUDIO_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="HQAudioPCH.h"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
+				LinkIncremental="1"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+				TypeLibraryFile=""
+				ComponentFileName=""
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -376,6 +455,15 @@
 						CompileAsManaged="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release noptimize|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						CompileAsManaged="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\HQAudioBase.cpp"
@@ -410,6 +498,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release noptimize|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -455,6 +551,14 @@
 							PrecompiledHeaderThrough="..\HQAudioPCH.h"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="..\HQAudioPCH.h"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\openAL\HQAudioAL.cpp"
@@ -491,6 +595,14 @@
 							PrecompiledHeaderThrough="..\HQAudioPCH.h"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="..\HQAudioPCH.h"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\openAL\HQAudioStreamBufferAL.cpp"
@@ -521,6 +633,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="../HQAudioPCH.h"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -567,6 +687,14 @@
 							PrecompiledHeaderThrough="..\HQAudioPCH.h"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="..\HQAudioPCH.h"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\xaudio2\HQXAudioSource.cpp"
@@ -600,6 +728,15 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="..\HQAudioPCH.h"
+							AssemblerOutput="4"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -643,6 +780,14 @@
 							PrecompiledHeaderThrough="../HQAudioPCH.h"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="../HQAudioPCH.h"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\xaudio2\xFunctionPointers.cpp"
@@ -673,6 +818,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="..\HQAudioPCH.h"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
