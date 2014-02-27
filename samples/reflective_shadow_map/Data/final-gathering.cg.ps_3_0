@@ -1,0 +1,75 @@
+ps_3_0
+// cgc version 3.1.0013, build date Apr 18 2012
+// command line args: -d3d -DVPOSITION=POSITION -DVCOLOR=COLOR -DVNORMAL=NORMAL -DVTEXCOORD0=TEXCOORD0 -DVTEXCOORD1=TEXCOORD1 -DVTEXCOORD2=TEXCOORD2 -DVTEXCOORD3=TEXCOORD3 -DVTEXCOORD4=TEXCOORD4 -DVTEXCOORD5=TEXCOORD5 -DVTEXCOORD6=TEXCOORD6 -DVTEXCOORD7=TEXCOORD7 -DVTANGENT=TANGENT -DVBINORMAL=BINORMAL -DVBLENDWEIGHT=BLENDWEIGHT -DVBLENDINDICES=BLENDINDICES -DVPSIZE=PSIZE -profile ps_3_0
+// source file: E:\VS_Projects\HQEngine_Project_google_code\samples\global_illum\Data\final-gathering.cg
+//vendor NVIDIA Corporation
+//version 3.1.0.13
+//profile ps_3_0
+//program PS
+//semantic worldMat
+//semantic viewMat
+//semantic projMat
+//semantic lightViewMat
+//semantic lightProjMat
+//semantic lightPosition
+//semantic materialDiffuse
+//semantic depthMap : TEXUNIT0
+//semantic posMap : TEXUNIT1
+//semantic normalMap : TEXUNIT2
+//semantic fluxMap : TEXUNIT3
+//semantic randomMap : TEXUNIT4
+//semantic lowresFluxMap : TEXUNIT5
+//semantic lowresPosMap : TEXUNIT6
+//semantic lowresNormalMap : TEXUNIT7
+//var float3 input.posW : $vin.TEXCOORD0 : ATTR0 : 0 : 1
+//var float3 input.normalW : $vin.TEXCOORD1 : ATTR1 : 0 : 1
+//var float4 input.posLight : $vin.TEXCOORD2 : ATTR2 : 0 : 0
+//var float2 input.lowResTexCoords : $vin.TEXCOORD3 : ATTR3 : 0 : 1
+//var float3x4 worldMat :  : , 3 : -1 : 0
+//var float4x4 viewMat :  : , 4 : -1 : 0
+//var float4x4 projMat :  : , 4 : -1 : 0
+//var float4x4 lightViewMat :  : , 4 : -1 : 0
+//var float4x4 lightProjMat :  : , 4 : -1 : 0
+//var float3 lightPosition :  : c[0] : -1 : 1
+//var float4 materialDiffuse :  : c[1] : -1 : 1
+//var sampler2D depthMap : TEXUNIT0 : texunit 0 : -1 : 0
+//var sampler2D posMap : TEXUNIT1 : texunit 1 : -1 : 0
+//var sampler2D normalMap : TEXUNIT2 : texunit 2 : -1 : 0
+//var sampler2D fluxMap : TEXUNIT3 : texunit 3 : -1 : 0
+//var sampler2D randomMap : TEXUNIT4 : texunit 4 : -1 : 0
+//var sampler2D lowresFluxMap : TEXUNIT5 : texunit 5 : -1 : 1
+//var sampler2D lowresPosMap : TEXUNIT6 : texunit 6 : -1 : 0
+//var sampler2D lowresNormalMap : TEXUNIT7 : texunit 7 : -1 : 0
+//var float4 PS : $vout.COLOR : COL : -1 : 1
+//const c[2] = 128 0 0.0078125
+dcl_2d s0
+dcl_2d s3
+dcl_2d s5
+def c2, 128.00000000, 0.00000000, 0.00781250, 0
+dcl_texcoord0 v0.xyz
+dcl_texcoord1 v1.xyz
+dcl_texcoord3 v3.xy
+add r3.xyz, -v0, c0
+dp3 r0.w, r3, r3
+rsq r0.w, r0.w
+mul r4.xy, v3, c2.x
+mul r3.xyz, r0.w, r3
+dp3 r0.w, r3, v1
+mov r1.z, c2.y
+mov r1.xy, v3
+add r0.xyz, r1, c2.yzyw
+add r2.xyz, r1, c2.zzyw
+texldl r0.xyz, r0.xyzz, s5
+texldl r2.xyz, r2.xyzz, s5
+add r2.xyz, r2, -r0
+frc r4.xy, r4
+mad r2.xyz, r4.x, r2, r0
+add r0.xyz, r1, c2.zyyw
+texldl r1.xyz, r1.xyzz, s5
+texldl r0.xyz, r0.xyzz, s5
+add r0.xyz, r0, -r1
+mad r0.xyz, r4.x, r0, r1
+add r1.xyz, r2, -r0
+max r0.w, r0, c2.y
+mad r0.xyz, r4.y, r1, r0
+mul oC0, r0, c1

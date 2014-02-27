@@ -1,0 +1,89 @@
+uniform float4x4 viewMat;
+uniform float4x4 projMat;
+uniform float3x4 worldMat;
+
+#define HALF_PIXEL_OFFSET 0.5 / 512
+
+struct vIn{
+	float3 iPos: VPOSITION;
+	float3 iNormal: VNORMAL;
+};
+
+struct vOut{
+	float4 oPos : POSITION;
+	float3 oPosW : TEXCOORD0;//world space position
+	float2 oDepth : TEXCOORD1;
+	float3 oNormalW: TEXCOORD2;//world space normal
+};
+
+
+//vertex shader
+vs_2_0 vs_3_0 vOut VS(in vIn input){
+	vOut output;
+	
+	float3 posW = mul(worldMat, float4(input.iPos, 1.0));
+	float3 normalW = mul(worldMat, float4(input.iNormal, 0.0) );
+	normalW = normalize(normalW);
+	
+	float4 posV = mul(float4(posW, 1.0), viewMat);
+	
+	//projected position
+	output.oPos = mul(posV, projMat);
+	output.oPos.xy += float2(-HALF_PIXEL_OFFSET, HALF_PIXEL_OFFSET) * output.oPos.w * 2.0;//offset by half a pixel, because of  the way the texel map to pixel in D3D9.
+	
+	//depth
+	output.oDepth = output.oPos.zw;
+	
+	//world space position
+	output.oPosW = posW;
+	
+	//world space normal
+	output.oNormalW = normalW;
+	
+	return output;
+};
+
+
+uniform float3 lightPosition;
+uniform float3 lightDirection;
+uniform float4 lightDiffuse;
+uniform float lightFalloff;
+uniform float lightPCosHalfAngle;
+
+uniform float4 materialDiffuse;
+
+struct pOut{
+	float4 depth: COLOR0;//depth
+	float4 posW: COLOR1;//world space position
+	float4 normalW: COLOR2;//world space normal
+	float4 flux: COLOR3;//flux
+};
+
+//pixel shader
+ps_2_0 ps_3_0 pOut PS(
+	in float3 posW : TEXCOORD0,//world space position
+	in float2 depth: TEXCOORD1,//depth
+	in float3 normalW: TEXCOORD2 //world space normal
+	)
+{
+	pOut output;
+	
+	output.depth = float4(depth.x / depth.y);
+	//world space position normalized and scaled to a value between 0.0 and 1.0
+	output.posW = float4((posW + 10.0) / 20.0, 1.0);
+	
+	//world space normal scaled to a value between 0.0 and 1.0
+	output.normalW = float4((normalW + 1.0)/ 2.0, 0.0);
+	
+	//calculate flux
+	float3 lightVec = normalize(posW - lightPosition);
+	float cosLD = dot(lightVec, lightDirection);
+	float spot = pow(max(cosLD, 0), lightFalloff);
+	if (spot < lightPCosHalfAngle)
+		//out of light cone
+		output.flux = float4(0.0, 0.0, 0.0, 1.0);
+	else
+		output.flux = spot * lightDiffuse * materialDiffuse;
+	
+	return output;
+}
