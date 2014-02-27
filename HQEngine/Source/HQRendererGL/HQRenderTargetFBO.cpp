@@ -86,9 +86,16 @@ PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D;
 #	endif
 #endif
 
+//wrapper function of glFramebufferTexture2D. for debugging purpose
+inline void glFramebufferTexture2D_wrapper(GLenum target,  GLenum attachment,  GLenum textarget,  GLuint texture,  GLint level)
+{
+	//now attach new image
+	glFramebufferTexture2D( target, attachment, textarget, texture, level);
+}
+
 /*-------------------------*/
 
-struct HQDepthStencilBufferGL : public HQBaseCustomRenderBuffer
+struct HQDepthStencilBufferGL : public HQBaseCustomRenderBuffer, public HQResetable
 {
 	HQDepthStencilBufferGL(hq_uint32 _width ,hq_uint32 _height ,
 							HQMultiSampleType _multiSampleType,
@@ -161,11 +168,20 @@ struct HQDepthStencilBufferGL : public HQBaseCustomRenderBuffer
 		return HQ_OK;
 	}
 
+	void OnLost(){
+	}
+
+	void OnReset(){
+		//TO DO: recreate buffer
+	}
+
 	GLdepthStencilFormat format;
 	GLuint depthStencilName[2];//depth buffer name and stencil buffer name
 };
 
-struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture
+/*--------------------------------*/
+
+struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQResetable
 {
 	HQRenderTargetTextureGL(hq_uint32 _width ,hq_uint32 _height ,
 							HQMultiSampleType _multiSampleType,
@@ -248,9 +264,57 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture
 		return HQ_OK;
 	}
 
+	void OnLost(){
+	}
+
+	void OnReset(){
+		//TO DO: recreate render target and texture
+	}
+
 	GLint internalFormat;
 };
 
+/*----------------------------------*/
+struct HQRenderTargetGroupGL: public HQBaseRenderTargetGroup, public HQResetable
+{
+	HQRenderTargetGroupGL(hquint32 numRenderTargets, GLuint _defaultFBO)
+		: HQBaseRenderTargetGroup(numRenderTargets),
+		  draw_buffers (HQ_NEW GLenum[numRenderTargets]),
+		  framebuffer (0)
+	{
+		glGenFramebuffers(1 , &this->framebuffer);
+#ifndef GLES
+		if (g_pOGLDev->GetDeviceCaps().maxDrawBuffers == 1)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);
+			glDrawBuffer(GL_COLOR_ATTACHMENT0);//specify that we will draw to color attachment 0 of frame buffer
+			glBindFramebuffer(GL_FRAMEBUFFER, _defaultFBO);
+		}
+#endif
+	}
+	~HQRenderTargetGroupGL(){
+		delete[] draw_buffers;
+
+#if defined DEVICE_LOST_POSSIBLE
+		if (!g_pOGLDev->IsDeviceLost())
+#endif
+		{
+			if (this->framebuffer != 0)
+				glDeleteFramebuffers(1 , &framebuffer);
+		}
+	}
+
+	void OnLost(){
+	}
+	void OnReset(){
+		//TO DO: recreate frame buffer
+	}
+
+	GLenum *draw_buffers;//to disable/enable drawing slot
+	GLuint framebuffer;//opengl framebuffer object 
+};
+
+/*--------------HQRenderTargetManagerFBO----------------*/
 GLint HQRenderTargetManagerFBO::GetGLInternalFormat(HQRenderTargetFormat format)
 {
 	switch(format)
@@ -396,7 +460,7 @@ HQRenderTargetManagerFBO::HQRenderTargetManagerFBO(
 											   hq_uint32 maxActiveRenderTargets,
 											   HQBaseTextureManager *pTexMan,
 											   HQLogStream *logFileStream ,  bool flushLog)
-						: HQBaseRenderTargetManager(maxActiveRenderTargets ,
+						: HQBaseRenderTargetManagerGL(maxActiveRenderTargets ,
 										 pTexMan , logFileStream ,
 										 "GL Render Target Manager :" ,
 										 flushLog)
@@ -457,21 +521,7 @@ HQRenderTargetManagerFBO::HQRenderTargetManagerFBO(
 	//default frame buffer's size
 	this->renderTargetWidth = g_pOGLDev->GetWidth();
 	this->renderTargetHeight = g_pOGLDev->GetHeight();
-
-	this->buffers = new GLenum[this->maxActiveRenderTargets];
-	for(hq_uint32 i = 0; i < this->maxActiveRenderTargets ; ++i)
-		this->buffers[i] = GL_COLOR_ATTACHMENT0 + i;
-
-	this->framebuffer = 0;
-	glGenFramebuffers(1 , &this->framebuffer);
-#ifndef GLES
-	if (g_pOGLDev->GetDeviceCaps().maxDrawBuffers == 1)
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);
-		glDrawBuffer(GL_COLOR_ATTACHMENT0);
-		glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
-	}
-#endif
+	
 	Log("Init done!");
 }
 
@@ -480,15 +530,6 @@ HQRenderTargetManagerFBO::~HQRenderTargetManagerFBO()
 	this->RemoveAllRenderTarget();
 	this->RemoveAllDepthStencilBuffer();
 
-#if defined DEVICE_LOST_POSSIBLE
-	if (!g_pOGLDev->IsDeviceLost())
-#endif
-	{
-		if (this->framebuffer != 0)
-			glDeleteFramebuffers(1 , &framebuffer);
-	}
-
-	SafeDeleteArray(buffers);
 	Log("Released!");
 }
 
@@ -635,369 +676,159 @@ HQReturnVal HQRenderTargetManagerFBO::CreateDepthStencilBuffer(hq_uint32 width ,
 	return HQ_OK;
 }
 
-HQReturnVal HQRenderTargetManagerFBO::ActiveRenderTarget(const HQRenderTargetDesc &renderTargetDesc , 
-														hq_uint32 depthStencilBufferID  )
+HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetGroupImpl(
+											 const HQRenderTargetDesc *renderTargetDescs, 
+											 hq_uint32 depthStencilBufferID, 
+											 hq_uint32 numRenderTargets,
+											 HQBaseRenderTargetGroup **ppRenderTargetGroupOut)
 {
-	HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDesc.renderTargetID);
-	HQActiveRenderTarget & activeRenderTarget =  this->activeRenderTargets[0];
 
-	if (pRenderTarget == NULL)
-	{
-		this->ActiveDefaultFrameBuffer();
-
-		return HQ_FAILED;
-	}
-	
-	if(this->currentUseDefaultBuffer)
-		glBindFramebuffer(GL_FRAMEBUFFER , this->framebuffer);
-	this->renderTargetWidth = pRenderTarget->width;
-	this->renderTargetHeight = pRenderTarget->height;
-
-
-	if (pRenderTarget == activeRenderTarget.pRenderTarget)//no change in this slot
-	{
-		if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-		{
-			if (renderTargetDesc.cubeFace != activeRenderTarget.cubeFace)//different cube face
-			{
-				glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 ,
-					GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderTargetDesc.cubeFace ,
-					*(GLuint*)pRenderTarget->GetData() , 0);
-			}
-		}//if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-	}//if (pRenderTarget == activeRenderTarget.pRenderTarget)
-	else//different render target
-	{
-		if (pRenderTarget->IsTexture())
-		{
-			GLuint *pGLtex = (GLuint *)pRenderTarget->GetData();
-			if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-				glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 ,
-					GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderTargetDesc.cubeFace ,
-					*pGLtex , 0);
-			else
-				glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0  ,
-					GL_TEXTURE_2D , *pGLtex , 0);
-		}//if (pRenderTarget->IsTexture())
-
-		activeRenderTarget.pRenderTarget = pRenderTarget;
-	}//else of if (pRenderTarget == activeRenderTarget.pRenderTarget)
-
-	activeRenderTarget.cubeFace = renderTargetDesc.cubeFace;
-
-	//detach render target at slot <numRenderTargets> and higher
-	for (hq_uint32 i = 1 ; i < this->numActiveRenderTargets ; ++i)
-	{
-		this->DetachSlot(i);
-	}
-
-	this->numActiveRenderTargets = 1;
-
-	/*----active depth stencil buffer------------*/
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
-
-	if (pDepthStencilBuffer != this->pActiveDepthStencilBuffer)
-	{
-
-		if (pDepthStencilBuffer == NULL)
-		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , 0);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , 0);
-		}
-		else
-		{
-			GLuint *depthStencilName = (GLuint *)pDepthStencilBuffer->GetData();
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , depthStencilName[0]);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , depthStencilName[1]);
-		}
-
-		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
-	}
-	this->currentUseDefaultBuffer = false;
-#if	defined DEBUG || defined _DEBUG
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE)
-	{
-		this->Log("Warning : framebuffer incomplete!");
-	}
-#endif
-#ifndef GLES
-	if (g_pOGLDev->GetDeviceCaps().maxDrawBuffers > 1)
-		glDrawBuffers(1 , buffers);
-#endif
-
-	g_pOGLDev->SetViewPort(g_pOGLDev->GetViewPort());//reset viewport
-
-	return HQ_OK;
-}
-HQReturnVal HQRenderTargetManagerFBO::ActiveRenderTargets(const HQRenderTargetDesc *renderTargetDescs,
-											 hq_uint32 depthStencilBufferID,
-											 hq_uint32 numRenderTargets)
-{
-#if defined _DEBUG || defined DEBUG
 	if (numRenderTargets > this->maxActiveRenderTargets)
 	{
-		this->Log("Error : ActiveRenderTargets() failed because parameter <numRenderTargets> is larger than %d!" , this->maxActiveRenderTargets);
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because parameter <numRenderTargets> is larger than %d!" , this->maxActiveRenderTargets);
 		return HQ_FAILED;
 	}
-#endif
 
 	if (renderTargetDescs == NULL || numRenderTargets == 0)
 	{
-		//active default back buffer and depth stencil buffer
-		this->ActiveDefaultFrameBuffer();
-		return HQ_OK;
+		return HQ_FAILED_INVALID_PARAMETER;
 	}//if (renderTargetDescs == NULL || numRenderTargets == 0)
 
 	bool firstSlotInvalid = true;//indicate whether first render target in array is invalid or not
+	bool differentSize = false;//render targets don't have same size
+
+	HQRenderTargetGroupGL* newGroup = new HQRenderTargetGroupGL(numRenderTargets, defaultFBO);
+
+	//save current bound frame buffer
+	GLuint currentFBO;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&currentFBO);
 
 	for (hq_uint32 i = 0 ; i < numRenderTargets ; ++i)
 	{
 		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDescs[i].renderTargetID);
-		HQActiveRenderTarget & activeRenderTarget =  this->activeRenderTargets[i];
 
 		if (pRenderTarget == NULL)
 		{
 			if (i == 0)//first slot is invalid
 				break;
-			this->buffers[i] = GL_NONE;//disable fragment output
-			this->DetachSlot(i);
+			newGroup->draw_buffers[i] = GL_NONE;//disable fragment output
 			continue;
 		}
 		//now we know that first render target is valid , if not , this line can't be reached
 		if (firstSlotInvalid)
 		{
-			if(this->currentUseDefaultBuffer)
-				glBindFramebuffer(GL_FRAMEBUFFER , this->framebuffer);
 			firstSlotInvalid = false;//first render target is valid
 
-			this->renderTargetWidth = pRenderTarget->width;
-			this->renderTargetHeight = pRenderTarget->height;
+			glBindFramebuffer(GL_FRAMEBUFFER, newGroup->framebuffer);
+			newGroup->commonWidth = pRenderTarget->width;
+			newGroup->commonHeight = pRenderTarget->height;
+		}
+		else if (pRenderTarget->width != newGroup->commonWidth || pRenderTarget->height != newGroup->commonHeight)
+		{
+			//this render target has different size
+			differentSize = true;
+			break;//stop
 		}
 
 
-		if (pRenderTarget == activeRenderTarget.pRenderTarget)//no change in this slot
+		if (pRenderTarget->IsTexture())
 		{
-			if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-			{
-				if (renderTargetDescs[i].cubeFace != activeRenderTarget.cubeFace)//different cube face
-				{
-					glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
-						GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderTargetDescs[i].cubeFace ,
-						*(GLuint*)pRenderTarget->GetData() , 0);
-				}
-			}//if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-		}//if (pRenderTarget == activeRenderTarget.pRenderTarget)
-		else//different render target
-		{
-			if (pRenderTarget->IsTexture())
-			{
-				GLuint *pGLtex = (GLuint *)pRenderTarget->GetData();
-				if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-					glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
-						GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderTargetDescs[i].cubeFace ,
-						*pGLtex , 0);
-				else
-					glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
-						GL_TEXTURE_2D , *pGLtex , 0);
-			}//if (pRenderTarget->IsTexture())
+			GLuint *pGLtex = (GLuint *)pRenderTarget->GetData();
+			if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
+				glFramebufferTexture2D_wrapper(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
+					GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderTargetDescs[i].cubeFace ,
+					*pGLtex , 0);
+			else
+				glFramebufferTexture2D_wrapper(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
+					GL_TEXTURE_2D , *pGLtex , 0);
+		}//if (pRenderTarget->IsTexture())
 
-			this->buffers[i] = GL_COLOR_ATTACHMENT0 + i ;//enable fragment output to this render target
+		newGroup->draw_buffers[i] = GL_COLOR_ATTACHMENT0 + i ;//enable fragment output to this render target
 
-			activeRenderTarget.pRenderTarget = pRenderTarget;
-		}//else of if (pRenderTarget == activeRenderTarget.pRenderTarget)
+		newGroup->renderTargets[i].pRenderTarget = pRenderTarget;
 
-		activeRenderTarget.cubeFace = renderTargetDescs[i].cubeFace;
+		newGroup->renderTargets[i].cubeFace = renderTargetDescs[i].cubeFace;
 	}//for (i)
 
 	if (firstSlotInvalid)//first render target is invalid
 	{
-		this->ActiveDefaultFrameBuffer();
+		delete newGroup;
+		glBindFramebuffer(GL_FRAMEBUFFER, currentFBO);//restore old FBO
+
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because first render target is invalid!");
+
+		return HQ_FAILED_INVALID_PARAMETER;
+	}
+	if (differentSize)
+	{
+		delete newGroup;
+		glBindFramebuffer(GL_FRAMEBUFFER, currentFBO);//restore old FBO
+
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because render targets don't have same size!");
+		return HQ_FAILED_DIFFERENT_RENDER_TARGETS_SIZE;
+	}
+
+	/*----depth stencil buffer------------*/
+	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
+
+	if (pDepthStencilBuffer == NULL)
+	{
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , 0);
+	}
+	else
+	{
+		GLuint *depthStencilName = (GLuint *)pDepthStencilBuffer->GetData();
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , depthStencilName[0]);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , depthStencilName[1]);
+	}
+
+	newGroup->pDepthStencilBuffer = pDepthStencilBuffer;
+
+	//verify frame buffer object
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE)
+	{
+		delete newGroup;
+		glBindFramebuffer(GL_FRAMEBUFFER, currentFBO);//restore old FBO
+
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because of imcompatible render targets!");
 
 		return HQ_FAILED;
 	}
-	//detach render target at slot <numRenderTargets> and higher
-	for (hq_uint32 i = numRenderTargets ; i < this->numActiveRenderTargets ; ++i)
-	{
-		this->DetachSlot(i);
-	}
 
-	this->numActiveRenderTargets = numRenderTargets;
+	glBindFramebuffer(GL_FRAMEBUFFER, currentFBO);//restore old FBO
 
-	/*----active depth stencil buffer------------*/
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
-
-	if (pDepthStencilBuffer != this->pActiveDepthStencilBuffer)
-	{
-
-		if (pDepthStencilBuffer == NULL)
-		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , 0);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , 0);
-		}
-		else
-		{
-			GLuint *depthStencilName = (GLuint *)pDepthStencilBuffer->GetData();
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , depthStencilName[0]);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , depthStencilName[1]);
-		}
-
-		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
-	}
-	this->currentUseDefaultBuffer = false;
-#if	defined DEBUG || defined _DEBUG
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE)
-	{
-		this->Log("Warning : framebuffer incomplete!");
-	}
-#endif
-#ifndef GLES
-	if (g_pOGLDev->GetDeviceCaps().maxDrawBuffers > 1)
-		glDrawBuffers(this->numActiveRenderTargets , buffers);
-#endif
-
-	g_pOGLDev->SetViewPort(g_pOGLDev->GetViewPort());//reset viewport
+	*ppRenderTargetGroupOut = newGroup;
 
 	return HQ_OK;
 }
 
-HQReturnVal HQRenderTargetManagerFBO::RestoreRenderTargetsImpl(const HQSavedActiveRenderTargetsImpl &savedList)
+HQReturnVal HQRenderTargetManagerFBO::ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& base_group)
 {
-	bool firstSlotInvalid = true;//indicate whether first render target in array is invalid or not
+	HQRenderTargetGroupGL* group = static_cast <HQRenderTargetGroupGL*> (base_group.GetRawPointer());
 
-	for (hq_uint32 i = 0 ; i < savedList.numActiveRenderTargets ; ++i)
+	if (group == NULL)
 	{
-		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = savedList[i].pRenderTarget;
-		HQActiveRenderTarget & activeRenderTarget =  this->activeRenderTargets[i];
-
-		if (pRenderTarget == NULL)
-		{
-			if (i == 0)//first slot is invalid
-				break;
-			this->buffers[i] = GL_NONE;//disable fragment output
-			this->DetachSlot(i);
-			continue;
-		}
-		//now we know that first render target is valid , if not , this line can't be reached
-		if (firstSlotInvalid)
-		{
-			if(this->currentUseDefaultBuffer)
-				glBindFramebuffer(GL_FRAMEBUFFER , this->framebuffer);
-			firstSlotInvalid = false;//first render target is valid
-
-			this->renderTargetWidth = pRenderTarget->width;
-			this->renderTargetHeight = pRenderTarget->height;
-		}
-
-
-		if (pRenderTarget == activeRenderTarget.pRenderTarget)//no change in this slot
-		{
-			if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-			{
-				if (savedList[i].cubeFace != activeRenderTarget.cubeFace)//different cube face
-				{
-					glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
-						GL_TEXTURE_CUBE_MAP_POSITIVE_X + savedList[i].cubeFace ,
-						*(GLuint*)pRenderTarget->GetData() , 0);
-				}
-			}//if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-		}//if (pRenderTarget == activeRenderTarget.pRenderTarget)
-		else//different render target
-		{
-			if (pRenderTarget->IsTexture())
-			{
-				GLuint *pGLtex = (GLuint *)pRenderTarget->GetData();
-				if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-					glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
-						GL_TEXTURE_CUBE_MAP_POSITIVE_X + savedList[i].cubeFace ,
-						*pGLtex , 0);
-				else
-					glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
-						GL_TEXTURE_2D , *pGLtex , 0);
-			}//if (pRenderTarget->IsTexture())
-
-			this->buffers[i] = GL_COLOR_ATTACHMENT0 + i ;//enable fragment output to this render target
-
-			activeRenderTarget.pRenderTarget = pRenderTarget;
-		}//else of if (pRenderTarget == activeRenderTarget.pRenderTarget)
-
-		activeRenderTarget.cubeFace = savedList[i].cubeFace;
-	}//for (i)
-
-	if (firstSlotInvalid)//first render target is invalid
-	{
+		//active default back buffer and depth stencil buffer
 		this->ActiveDefaultFrameBuffer();
-
 		return HQ_OK;
 	}
-	//detach render target at slot <numRenderTargets> and higher
-	for (hq_uint32 i = savedList.numActiveRenderTargets ; i < this->numActiveRenderTargets ; ++i)
-	{
-		this->DetachSlot(i);
-	}
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, group->framebuffer);
 
-	this->numActiveRenderTargets = savedList.numActiveRenderTargets;
-
-	/*----active depth stencil buffer------------*/
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = savedList.pActiveDepthStencilBuffer;
-
-	if (pDepthStencilBuffer != this->pActiveDepthStencilBuffer)
-	{
-
-		if (pDepthStencilBuffer == NULL)
-		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , 0);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , 0);
-		}
-		else
-		{
-			GLuint *depthStencilName = (GLuint *)pDepthStencilBuffer->GetData();
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , depthStencilName[0]);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , depthStencilName[1]);
-		}
-
-		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
-	}
 	this->currentUseDefaultBuffer = false;
-#if	defined DEBUG || defined _DEBUG
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE)
-	{
-		this->Log("Warning : framebuffer incomplete!");
-	}
-#endif
+	this->renderTargetWidth = group->commonWidth;
+	this->renderTargetHeight = group->commonHeight;
+
 #ifndef GLES
 	if (g_pOGLDev->GetDeviceCaps().maxDrawBuffers > 1)
-		glDrawBuffers(this->numActiveRenderTargets , buffers);
+		glDrawBuffers(group->numRenderTargets , group->draw_buffers);
 #endif
 
 	g_pOGLDev->SetViewPort(g_pOGLDev->GetViewPort());//reset viewport
 
 	return HQ_OK;
-}
-
-void HQRenderTargetManagerFBO::DetachSlot(hq_uint32 i)
-{
-	HQActiveRenderTarget & activeRenderTarget =  this->activeRenderTargets[i];
-	if (activeRenderTarget.pRenderTarget != NULL)
-	{
-		//detach old render target
-		if (activeRenderTarget.pRenderTarget->IsTexture())
-		{
-			if(activeRenderTarget.pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-				glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
-									   GL_TEXTURE_CUBE_MAP_POSITIVE_X + activeRenderTarget.cubeFace ,
-									   0 , 0);
-			else {
-				glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
-									   GL_TEXTURE_2D , 0 , 0);
-			}
-
-		}
-
-		activeRenderTarget.pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer>::null;
-	}
 }
 
 void HQRenderTargetManagerFBO::ActiveDefaultFrameBuffer()
@@ -1008,7 +839,6 @@ void HQRenderTargetManagerFBO::ActiveDefaultFrameBuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER , defaultFBO);
 
 	this->currentUseDefaultBuffer = true;
-	this->numActiveRenderTargets = 0;
 
 	this->renderTargetWidth = g_pOGLDev->GetWidth();
 	this->renderTargetHeight = g_pOGLDev->GetHeight();
@@ -1052,115 +882,44 @@ HQReturnVal HQRenderTargetManagerFBO::GenerateMipmaps(hq_uint32 renderTargetText
 }
 
 
-HQReturnVal HQRenderTargetManagerFBO::RemoveRenderTarget(unsigned int renderTargetID)
-{
-	HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetID);
-	
-	if (pRenderTarget == NULL)
-		return HQ_FAILED_INVALID_ID;
+void HQRenderTargetManagerFBO::OnLost(){
+}
 
-#if defined DEVICE_LOST_POSSIBLE
-	bool call_GL_API = (!g_pOGLDev->IsDeviceLost());//must not call opengl when device is in "lost" state
-#else
-	bool call_GL_API = true;
-#endif
+void HQRenderTargetManagerFBO::OnReset(){
+	//reset render targets
+	HQItemManager<HQBaseCustomRenderBuffer>::Iterator ite1;
+	this->renderTargets.GetIterator(ite1);
 
-	if (this->currentUseDefaultBuffer && call_GL_API)
-		glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);//bind custom frame buffer so that render target will be detached from this fbo first before it's removed
-	
-	for (unsigned int i = 0 ; i < this->maxActiveRenderTargets ; ++i)
+	while (!ite1.IsAtEnd())
 	{
-		if (this->activeRenderTargets[i].pRenderTarget == pRenderTarget)
+		if (ite1->IsTexture())
 		{
-			if (call_GL_API)
-				this->DetachSlot(i);
-			else
-				this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer>::null;
+			HQRenderTargetTextureGL * rtex = static_cast<HQRenderTargetTextureGL*> (ite1.GetItemPointerNonCheck().GetRawPointer());
+			rtex->OnReset();
 		}
+		//TO DO handle other types of render target
+		++ite1;
 	}
 
-	HQReturnVal re = HQBaseRenderTargetManager::RemoveRenderTarget(renderTargetID);
+	//reset depth stencil buffers
+	HQItemManager<HQBaseCustomRenderBuffer>::Iterator ite2;
+	this->depthStencilBuffers.GetIterator(ite2);
 
-	if (this->currentUseDefaultBuffer && call_GL_API)
-		glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
-	
-	return re;
-}
-void HQRenderTargetManagerFBO::RemoveAllRenderTarget()
-{
-#if defined DEVICE_LOST_POSSIBLE
-	bool call_GL_API = (!g_pOGLDev->IsDeviceLost());//must not call opengl when device is in "lost" state
-#else
-	bool call_GL_API = true;
-#endif
-
-	if (call_GL_API)
-		glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);//bind frame buffer so that render targets will be detached from this fbo first before they're removed
-	
-	for (unsigned int i = 0 ; i < this->maxActiveRenderTargets ; ++i)
+	while (!ite2.IsAtEnd())
 	{
-		if (call_GL_API)
-			this->DetachSlot(i);
-		else
-			this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer>::null;
+		HQDepthStencilBufferGL * ds = static_cast<HQDepthStencilBufferGL*> (ite2.GetItemPointerNonCheck().GetRawPointer());
+		ds->OnReset();
+		++ite2;
 	}
-	
-	HQBaseRenderTargetManager::RemoveAllRenderTarget();
-	
-	if(call_GL_API)
-		glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
-	
-}
 
-HQReturnVal HQRenderTargetManagerFBO::RemoveDepthStencilBuffer(unsigned int bufferID)
-{
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(bufferID);
-	
-	if (pDepthStencilBuffer == NULL)
-		return HQ_FAILED_INVALID_ID;
+	//reset render target groups
+	HQItemManager<HQBaseRenderTargetGroup>::Iterator ite3;
+	this->rtGroups.GetIterator(ite3);
 
-#if defined DEVICE_LOST_POSSIBLE
-	bool call_GL_API = (!g_pOGLDev->IsDeviceLost());//must not call opengl when device is in "lost" state
-#else
-	bool call_GL_API = true;
-#endif
-
-	if (this->currentUseDefaultBuffer && call_GL_API)
-		glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);//bind custom frame buffer so that depth stencil buffer will be detached from this fbo first before it's removed
-	
-	//is this buffer currently the main depth stencil buffer of custom frame buffer?
-	if (this->pActiveDepthStencilBuffer == pDepthStencilBuffer)
+	while (!ite3.IsAtEnd())
 	{
-		this->pActiveDepthStencilBuffer = HQSharedPtr<HQBaseCustomRenderBuffer>::null;
-		if (call_GL_API)
-		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , 0);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , 0);
-		}
+		HQRenderTargetGroupGL * group = static_cast<HQRenderTargetGroupGL*> (ite3.GetItemPointerNonCheck().GetRawPointer());
+		group->OnReset();
+		++ite3;
 	}
-	HQReturnVal re =  HQBaseRenderTargetManager::RemoveDepthStencilBuffer(bufferID);
-	if (this->currentUseDefaultBuffer && call_GL_API)
-		glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
-	return re;
-}
-void HQRenderTargetManagerFBO::RemoveAllDepthStencilBuffer()
-{
-#if defined DEVICE_LOST_POSSIBLE
-	if (!g_pOGLDev->IsDeviceLost())
-	{
-#endif
-		glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);//bind custom frame buffer so that depth stencil buffer will be detached from this fbo first before it's removed
-		
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , 0);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_STENCIL_ATTACHMENT , GL_RENDERBUFFER , 0);
-
-		if (this->currentUseDefaultBuffer)
-			glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
-#if defined DEVICE_LOST_POSSIBLE
-	}
-#endif	
-
-	this->pActiveDepthStencilBuffer = HQSharedPtr<HQBaseCustomRenderBuffer>::null;
-	HQBaseRenderTargetManager::RemoveAllDepthStencilBuffer();
-
 }

@@ -67,6 +67,15 @@ extern HQ_DECL_CG_FUNC_PTR( cgGLLoadProgram ) ;
 extern HQ_DECL_CG_FUNC_PTR( cgGLUnbindProgram ) ;
 extern HQ_DECL_CG_FUNC_PTR( cgGLDisableProfile ) ;
 extern HQ_DECL_CG_FUNC_PTR( cgGLBindProgram ) ;
+extern HQ_DECL_CG_FUNC_PTR( cgGetArrayTotalSize);
+extern HQ_DECL_CG_FUNC_PTR( cgSetParameter1iv );
+extern HQ_DECL_CG_FUNC_PTR( cgSetParameter2iv );
+extern HQ_DECL_CG_FUNC_PTR( cgSetParameter3iv );
+extern HQ_DECL_CG_FUNC_PTR( cgSetParameter4iv );
+extern HQ_DECL_CG_FUNC_PTR( cgSetParameter1fv );
+extern HQ_DECL_CG_FUNC_PTR( cgSetParameter2fv );
+extern HQ_DECL_CG_FUNC_PTR( cgSetParameter3fv );
+extern HQ_DECL_CG_FUNC_PTR( cgSetParameter4fv );
 
 /*-----------end CG API function pointers definition------------*/
 
@@ -190,7 +199,7 @@ HQ_FORCE_INLINE hq_uint32 HQBaseShaderProgramGL::GetParameterIndex(const char *p
 }
 
 /*-------HQBaseShaderManagerGL - base class for all type of shader manager class------------*/
-class HQBaseShaderManagerGL : public HQShaderManager
+class HQBaseShaderManagerGL : public HQShaderManager, public HQResetable
 {
 public:
 	~HQBaseShaderManagerGL() {}

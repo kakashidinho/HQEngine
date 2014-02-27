@@ -86,6 +86,7 @@ struct HQDepthStencilBufferD3D : public HQBaseCustomRenderBuffer
 	ID3D11Device* pD3DDevice;
 };
 
+/*-----------------------------------------*/
 struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 {
 	HQRenderTargetTextureD3D(ID3D11Device* pD3DDevice,
@@ -281,6 +282,24 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 	ID3D11Device* pD3DDevice;
 };
 
+/*------------------------------*/
+struct HQRenderTargetGroupD3D11: public HQBaseRenderTargetGroup{
+public:
+	HQRenderTargetGroupD3D11(hquint32 numRenderTargets)
+		: HQBaseRenderTargetGroup(numRenderTargets),
+		  renderTargetViews(new ID3D11RenderTargetView *[numRenderTargets])
+	{
+	}
+	~HQRenderTargetGroupD3D11(){
+		delete[] renderTargetViews;
+	}
+
+	ID3D11RenderTargetView **renderTargetViews;//current active render target views
+	ID3D11DepthStencilView *pDepthStencilView;//current active depth stencil view
+};
+
+/*------------HQRenderTargetManagerD3D11------------------*/
+
 DXGI_FORMAT HQRenderTargetManagerD3D11::GetD3DFormat(HQRenderTargetFormat format)
 {
 	switch(format)
@@ -338,11 +357,8 @@ HQRenderTargetManagerD3D11::HQRenderTargetManagerD3D11(ID3D11Device * pD3DDevice
 	this->pD3DBackBuffer = pD3DBackBuffer;
 	this->pD3DDSBuffer = pD3DDSBuffer;
 	
-	this->numActiveRenderTargets = 1;
-	this->renderTargetViews[0] = this->pD3DBackBuffer;
+	this->renderTargetViews = &this->pD3DBackBuffer;
 	this->pDepthStencilView = this->pD3DDSBuffer;
-	for (int i = 1 ; i < 8 ; ++i)
-		this->renderTargetViews[i] = NULL;
 
 	this->renderTargetWidth = g_pD3DDev->GetWidth();
 	this->renderTargetHeight = g_pD3DDev->GetHeight();
@@ -481,105 +497,53 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateDepthStencilBuffer(hq_uint32 width
 	return HQ_OK;
 }
 
-HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTarget(const HQRenderTargetDesc &renderTargetDesc, 
-											 hq_uint32 depthStencilBufferID)
-{
-	
-	HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDesc.renderTargetID);
-	
-	if (pRenderTarget == NULL)
-	{
-		//active default frame buffer
-		this->ActiveDefaultFrameBuffer();
-
-		return HQ_FAILED;
-	}
-	
-	this->renderTargetWidth = pRenderTarget->width;
-	this->renderTargetHeight = pRenderTarget->height;
-
-	
-	if (pRenderTarget->IsTexture())
-	{
-		ID3D11RenderTargetView** ppRTView = (ID3D11RenderTargetView**)pRenderTarget->GetData();
-
-		if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-			this->renderTargetViews[0] = ppRTView [renderTargetDesc.cubeFace];
-		else
-			this->renderTargetViews[0] = ppRTView[0];
-	}//if (pRenderTarget->IsTexture())
-
-	this->activeRenderTargets[0].pRenderTarget = pRenderTarget;
-	this->activeRenderTargets[0].cubeFace = renderTargetDesc.cubeFace;
-	
-	//release old pointers
-	for (hq_uint32 i = 1 ; i < this->numActiveRenderTargets ; ++i)
-		this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
-
-	this->numActiveRenderTargets = 1;
-	
-	//active depth stencil buffer
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
-	if (this->currentUseDefaultBuffer || this->pActiveDepthStencilBuffer != pDepthStencilBuffer)
-	{
-		if (pDepthStencilBuffer == NULL)
-		{
-			this->pDepthStencilView = NULL;
-		}
-		else
-		{
-			this->pDepthStencilView = (ID3D11DepthStencilView *)pDepthStencilBuffer->GetData();
-		}
-
-		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
-	}
-	
-	this->currentUseDefaultBuffer = false;
-	
-	this->pD3DContext->OMSetRenderTargets(1 , this->renderTargetViews  , this->pDepthStencilView);
-	
-	g_pD3DDev->SetViewPort(g_pD3DDev->GetViewPort());//reset viewport
-
-	return HQ_OK;
-}
 
 
-HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargets(const HQRenderTargetDesc *renderTargetDescs, 
+HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetGroupImpl(
+											 const HQRenderTargetDesc *renderTargetDescs, 
 											 hq_uint32 depthStencilBufferID, 
-											 hq_uint32 numRenderTargets)
+											 hq_uint32 numRenderTargets,
+											 HQBaseRenderTargetGroup **ppRenderTargetGroupOut)
 {
-#if defined _DEBUG || defined DEBUG
+
 	if (numRenderTargets > this->maxActiveRenderTargets)
 	{
-		this->Log("Error : ActiveRenderTargets() failed because parameter <numRenderTargets> is larger than %d!" , this->maxActiveRenderTargets);
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because parameter <numRenderTargets> is larger than %d!" , this->maxActiveRenderTargets);
 		return HQ_FAILED;
 	}
-#endif
+
 
 	if (renderTargetDescs == NULL || numRenderTargets == 0)
 	{
-		//active default back buffer and depth stencil buffer
-		this->ActiveDefaultFrameBuffer();
-		return HQ_OK;
+		return HQ_FAILED_INVALID_PARAMETER;
 	}//if (renderTargetDescs == NULL || numRenderTargets == 0)
 	
 	bool allNull = true;//all render targets in array is invalid
+	bool differentSize = false;//render targets don't have same size
 	
+	HQRenderTargetGroupD3D11* newGroup = new HQRenderTargetGroupD3D11(numRenderTargets);
+
 	for (hq_uint32 i = 0 ; i < numRenderTargets ; ++i)
 	{
 		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDescs[i].renderTargetID);
 		if (pRenderTarget == NULL)
 		{
-			this->renderTargetViews[i] = NULL;
-			this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
+			newGroup->renderTargetViews[i] = NULL;
+			newGroup->renderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
 
 			continue;
 		}
 		if (allNull)//now we know that at least one render target is valid .If not , this line can't be reached
 		{
 			allNull = false;
-			this->renderTargetWidth = pRenderTarget->width;
-			this->renderTargetHeight = pRenderTarget->height;
+			newGroup->commonWidth = pRenderTarget->width;
+			newGroup->commonHeight = pRenderTarget->height;
+		}
+		else if (pRenderTarget->width != newGroup->commonWidth || pRenderTarget->height != newGroup->commonHeight)
+		{
+			//this render target has different size
+			differentSize = true;
+			break;//stop
 		}
 		
 		if (pRenderTarget->IsTexture())
@@ -587,49 +551,79 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargets(const HQRenderTarget
 			ID3D11RenderTargetView** ppRTView = (ID3D11RenderTargetView**)pRenderTarget->GetData();
 
 			if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-				this->renderTargetViews[i] = ppRTView [renderTargetDescs[i].cubeFace];
+				newGroup->renderTargetViews[i] = ppRTView [renderTargetDescs[i].cubeFace];
 			else
-				this->renderTargetViews[i] = ppRTView[0];
+				newGroup->renderTargetViews[i] = ppRTView[0];
 		}//if (pRenderTarget->IsTexture())
 
-		this->activeRenderTargets[i].pRenderTarget = pRenderTarget;
-		this->activeRenderTargets[i].cubeFace = renderTargetDescs[i].cubeFace;
+		newGroup->renderTargets[i].pRenderTarget = pRenderTarget;
+		newGroup->renderTargets[i].cubeFace = renderTargetDescs[i].cubeFace;
 	
 	}//for (i)
 
+	if (differentSize)
+	{
+		delete newGroup;
+
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because render targets don't have same size!");
+		return HQ_FAILED_DIFFERENT_RENDER_TARGETS_SIZE;
+	}
+
 	if (allNull)//all render targets is invalid
 	{
-		//active default frame buffer
-		this->ActiveDefaultFrameBuffer();
+		delete newGroup;
 
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because every specified render targets are invalid!");
 		return HQ_FAILED;
 	}
-	//release old pointers
-	for (hq_uint32 i = numRenderTargets ; i < this->numActiveRenderTargets ; ++i)
-		this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
-
-	this->numActiveRenderTargets = numRenderTargets;
 	
-	//active depth stencil buffer
+	// depth stencil buffer
 
 	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
-	if (this->currentUseDefaultBuffer || this->pActiveDepthStencilBuffer != pDepthStencilBuffer)
+	if (pDepthStencilBuffer == NULL)
 	{
-		if (pDepthStencilBuffer == NULL)
+		newGroup->pDepthStencilView = NULL;
+	}
+	else
+	{
+		if (pDepthStencilBuffer->width < newGroup->commonWidth || pDepthStencilBuffer->height < newGroup->commonHeight)
 		{
-			this->pDepthStencilView = NULL;
-		}
-		else
-		{
-			this->pDepthStencilView = (ID3D11DepthStencilView *)pDepthStencilBuffer->GetData();
+			delete newGroup;
+
+			this->Log("Error : CreateRenderTargetGroupImpl() failed because depth stencil buffer is too small!");
+			return HQ_FAILED_DEPTH_STENCIL_BUFFER_TOO_SMALL;
 		}
 
-		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
+		newGroup->pDepthStencilView = (ID3D11DepthStencilView *)pDepthStencilBuffer->GetData();
 	}
+
+	newGroup->pDepthStencilBuffer = pDepthStencilBuffer;
+
+	*ppRenderTargetGroupOut = newGroup;
+
+	return HQ_OK;
+}
+
+HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& base_group)
+{
+	HQRenderTargetGroupD3D11* group = static_cast <HQRenderTargetGroupD3D11*> (base_group.GetRawPointer());
+
+	if (group == NULL)
+	{
+		//active default back buffer and depth stencil buffer
+		this->ActiveDefaultFrameBuffer();
+		return HQ_OK;
+	}//if (group == NULL)
+	
+	this->renderTargetWidth = group->commonWidth;
+	this->renderTargetHeight = group->commonHeight;
+
+	this->renderTargetViews = group->renderTargetViews;
+	this->pDepthStencilView = group->pDepthStencilView;
 	
 	this->currentUseDefaultBuffer = false;
 	
-	this->pD3DContext->OMSetRenderTargets(this->numActiveRenderTargets , this->renderTargetViews  , this->pDepthStencilView);
+	this->pD3DContext->OMSetRenderTargets(group->numRenderTargets , group->renderTargetViews  , group->pDepthStencilView);
 	
 	g_pD3DDev->SetViewPort(g_pD3DDev->GetViewPort());//reset viewport
 
@@ -640,102 +634,21 @@ void HQRenderTargetManagerD3D11::ActiveDefaultFrameBuffer()
 {
 	if (this->currentUseDefaultBuffer)
 		return;
-	this->renderTargetViews[0] = this->pD3DBackBuffer;//default back buffer
-	this->pDepthStencilView = this->pD3DDSBuffer;//default depth stencil buffer
 	//active default back buffer
+	this->renderTargetViews = &this->pD3DBackBuffer;
+	this->pDepthStencilView = this->pD3DDSBuffer;
+
 	this->pD3DContext->OMSetRenderTargets(1 , this->renderTargetViews , this->pDepthStencilView);
-	
-	//release old pointers
-	for (hq_uint32 i = 0 ; i < this->numActiveRenderTargets ; ++i)
-		this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
-	
-	this->pActiveDepthStencilBuffer = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
-	
+		
 	this->currentUseDefaultBuffer = true;
 	
 	this->renderTargetWidth = g_pD3DDev->GetWidth();
 	this->renderTargetHeight = g_pD3DDev->GetHeight();
 
-	this->numActiveRenderTargets = 1;
-
 	g_pD3DDev->SetViewPort(g_pD3DDev->GetViewPort());//reset viewport
 }
 
 
-HQReturnVal HQRenderTargetManagerD3D11::RestoreRenderTargetsImpl(const HQSavedActiveRenderTargetsImpl &savedList)
-{
-	bool allNull = true;//all render targets in array is invalid
-	
-	for (hq_uint32 i = 0 ; i < savedList.numActiveRenderTargets ; ++i)
-	{
-		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = savedList[i].pRenderTarget;
-		if (pRenderTarget == NULL)
-		{
-			this->renderTargetViews[i] = NULL;
-			this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
-
-			continue;
-		}
-		if (allNull)//now we know that at least one render target is valid .If not , this line can't be reached
-		{
-			allNull = false;
-			this->renderTargetWidth = pRenderTarget->width;
-			this->renderTargetHeight = pRenderTarget->height;
-		}
-		
-		if (pRenderTarget->IsTexture())
-		{
-			ID3D11RenderTargetView** ppRTView = (ID3D11RenderTargetView**)pRenderTarget->GetData();
-
-			if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-				this->renderTargetViews[i] = ppRTView [savedList[i].cubeFace];
-			else
-				this->renderTargetViews[i] = ppRTView[0];
-		}//if (pRenderTarget->IsTexture())
-
-		this->activeRenderTargets[i].pRenderTarget = pRenderTarget;
-		this->activeRenderTargets[i].cubeFace = savedList[i].cubeFace;
-	
-	}//for (i)
-
-	if (allNull)//all render targets is invalid
-	{
-		//active default frame buffer
-		this->ActiveDefaultFrameBuffer();
-
-		return HQ_OK;;
-	}
-	//release old pointers
-	for (hq_uint32 i = savedList.numActiveRenderTargets ; i < this->numActiveRenderTargets ; ++i)
-		this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
-
-	this->numActiveRenderTargets = savedList.numActiveRenderTargets;
-	
-	//active depth stencil buffer
-
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = savedList.pActiveDepthStencilBuffer;
-	if (this->currentUseDefaultBuffer || this->pActiveDepthStencilBuffer != pDepthStencilBuffer)
-	{
-		if (pDepthStencilBuffer == NULL)
-		{
-			this->pDepthStencilView = NULL;
-		}
-		else
-		{
-			this->pDepthStencilView = (ID3D11DepthStencilView *)pDepthStencilBuffer->GetData();
-		}
-
-		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
-	}
-	
-	this->currentUseDefaultBuffer = false;
-	
-	this->pD3DContext->OMSetRenderTargets(this->numActiveRenderTargets , this->renderTargetViews  , this->pDepthStencilView);
-	
-	g_pD3DDev->SetViewPort(g_pD3DDev->GetViewPort());//reset viewport
-
-	return HQ_OK;
-}
 
 HQReturnVal HQRenderTargetManagerD3D11::GenerateMipmaps(hq_uint32 renderTargetTextureID)
 {

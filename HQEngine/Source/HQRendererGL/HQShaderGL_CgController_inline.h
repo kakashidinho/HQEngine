@@ -59,7 +59,10 @@ inline HQReturnVal HQBaseCgShaderController::ActiveProgramCg(HQSharedPtr<HQBaseS
 inline HQReturnVal HQBaseCgShaderController::SetUniformIntCg(CGparameter param, const hq_int32* pValues,
 								hq_uint32 numElements)
 {
-	cgSetParameterValueir(param,(int)numElements,pValues);
+	if (numElements == 1 || cgGetArrayTotalSize(param) == 0)
+		cgSetParameter1iv(param, pValues);
+	else
+		cgSetParameterValueir(param,(int)numElements,pValues);
 
 	return HQ_OK;
 }
@@ -67,7 +70,10 @@ inline HQReturnVal HQBaseCgShaderController::SetUniformIntCg(CGparameter param, 
 inline HQReturnVal HQBaseCgShaderController::SetUniform2IntCg(CGparameter param, const hq_int32* pValues,
 								hq_uint32 numElements)
 {
-	cgSetParameterValueir(param,(int)numElements * 2,pValues);
+	if (numElements == 1 || cgGetArrayTotalSize(param) == 0)
+		cgSetParameter2iv(param, pValues);
+	else
+		cgSetParameterValueir(param,(int)numElements * 2,pValues);
 
 	return HQ_OK;
 }
@@ -75,7 +81,10 @@ inline HQReturnVal HQBaseCgShaderController::SetUniform2IntCg(CGparameter param,
 inline HQReturnVal HQBaseCgShaderController::SetUniform3IntCg(CGparameter param, const hq_int32* pValues,
 								hq_uint32 numElements)
 {
-	cgSetParameterValueir(param,(int)numElements * 3,pValues);
+	if (numElements == 1 || cgGetArrayTotalSize(param) == 0)
+		cgSetParameter3iv(param, pValues);
+	else
+		cgSetParameterValueir(param,(int)numElements * 3,pValues);
 
 	return HQ_OK;
 }
@@ -83,7 +92,10 @@ inline HQReturnVal HQBaseCgShaderController::SetUniform3IntCg(CGparameter param,
 inline HQReturnVal HQBaseCgShaderController::SetUniform4IntCg(CGparameter param, const hq_int32* pValues,
 								hq_uint32 numElements)
 {
-	cgSetParameterValueir(param,(int)numElements * 4,pValues);
+	if (numElements == 1 || cgGetArrayTotalSize(param) == 0)
+		cgSetParameter4iv(param, pValues);
+	else
+		cgSetParameterValueir(param,(int)numElements * 4,pValues);
 
 	return HQ_OK;
 }
@@ -92,7 +104,10 @@ inline HQReturnVal HQBaseCgShaderController::SetUniform4IntCg(CGparameter param,
 inline HQReturnVal HQBaseCgShaderController::SetUniformFloatCg(CGparameter param, const hq_float32* pValues,
 									hq_uint32 numElements)
 {
-	cgSetParameterValuefr(param,(int)numElements,pValues);
+	if (numElements == 1 || cgGetArrayTotalSize(param) == 0)
+		cgSetParameter1fv(param, pValues);
+	else
+		cgSetParameterValuefr(param,(int)numElements,pValues);
 
 	return HQ_OK;
 }
@@ -100,7 +115,10 @@ inline HQReturnVal HQBaseCgShaderController::SetUniformFloatCg(CGparameter param
 inline HQReturnVal HQBaseCgShaderController::SetUniform2FloatCg(CGparameter param, const hq_float32* pValues,
 									hq_uint32 numElements)
 {
-	cgSetParameterValuefr(param,(int)numElements * 2,pValues);
+	if (numElements == 1 || cgGetArrayTotalSize(param) == 0)
+		cgSetParameter2fv(param, pValues);
+	else
+		cgSetParameterValuefr(param,(int)numElements * 2,pValues);
 
 	return HQ_OK;
 }
@@ -108,7 +126,10 @@ inline HQReturnVal HQBaseCgShaderController::SetUniform2FloatCg(CGparameter para
 inline HQReturnVal HQBaseCgShaderController::SetUniform3FloatCg(CGparameter param, const hq_float32* pValues,
 									hq_uint32 numElements)
 {
-	cgSetParameterValuefr(param,(int)numElements * 3,pValues);
+	if (numElements == 1 || cgGetArrayTotalSize(param) == 0)
+		cgSetParameter3fv(param, pValues);
+	else
+		cgSetParameterValuefr(param,(int)numElements * 3,pValues);
 
 	return HQ_OK;
 }
@@ -116,7 +137,10 @@ inline HQReturnVal HQBaseCgShaderController::SetUniform3FloatCg(CGparameter para
 inline HQReturnVal HQBaseCgShaderController::SetUniform4FloatCg(CGparameter param, const hq_float32* pValues,
 									hq_uint32 numElements)
 {
-	cgSetParameterValuefr(param,(int)numElements * 4,pValues);
+	if (numElements == 1 || cgGetArrayTotalSize(param) == 0)
+		cgSetParameter4fv(param, pValues);
+	else
+		cgSetParameterValuefr(param,(int)numElements * 4,pValues);
 
 	return HQ_OK;
 }

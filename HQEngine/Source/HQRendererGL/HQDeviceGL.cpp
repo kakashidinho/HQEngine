@@ -611,6 +611,7 @@ void HQDeviceGL::OnReset()
 	static_cast<HQVertexStreamManagerGL*> (this->vStreamMan)->OnReset();
 	static_cast<HQStateManagerGL*> (this->stateMan)->OnReset();
 	static_cast<HQBaseShaderManagerGL*>(this->shaderMan)->OnReset();
+	static_cast<HQBaseRenderTargetManagerGL*>(this->renderTargetMan)->OnReset();
 }
 
 #endif

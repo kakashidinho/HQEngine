@@ -67,9 +67,9 @@ struct HQBaseRenderTargetTexture : public HQBaseCustomRenderBuffer
 	HQSharedPtr<HQTexture> pTexture;
 };
 
-struct HQActiveRenderTarget
+struct HQRenderTargetInfo
 {
-	HQActiveRenderTarget()
+	HQRenderTargetInfo()
 	{
 		pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer>::null;
 		cubeFace = HQ_CTF_POS_X;
@@ -78,36 +78,35 @@ struct HQActiveRenderTarget
 	HQCubeTextureFace cubeFace;
 };
 
-class HQSavedActiveRenderTargetsImpl: public HQSavedActiveRenderTargets
+struct HQBaseRenderTargetGroup
 {
-public:
-	HQSavedActiveRenderTargetsImpl(hquint32 maxNumActiveRenderTargets)
+	HQBaseRenderTargetGroup(hquint32 _numRenderTargets)
+		: numRenderTargets(_numRenderTargets),
+		  renderTargets(HQ_NEW HQRenderTargetInfo[numRenderTargets])
 	{
-		this->activeRenderTargets =  HQ_NEW HQActiveRenderTarget[maxNumActiveRenderTargets];
-		numActiveRenderTargets = 0;
 	}
 
-	~HQSavedActiveRenderTargetsImpl()
+	virtual ~HQBaseRenderTargetGroup()
 	{
-		delete[] this->activeRenderTargets;
+		delete[] this->renderTargets;
 	}
 
-	const HQActiveRenderTarget& operator [] (hquint32 index) const
+	const HQRenderTargetInfo& operator [] (hquint32 index) const
 	{
-		return activeRenderTargets[index];
+		return renderTargets[index];
 	}
 
-	HQActiveRenderTarget& operator [] (hquint32 index)
+	HQRenderTargetInfo& operator [] (hquint32 index)
 	{
-		return activeRenderTargets[index];
+		return renderTargets[index];
 	}
 
+	const hquint32			   numRenderTargets;
+	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer;
+	hquint32 commonWidth;//common width of render targets in group
+	hquint32 commonHeight;//common width of render targets in group
 
-public:
-	hquint32			   numActiveRenderTargets;
-	HQSharedPtr<HQBaseCustomRenderBuffer> pActiveDepthStencilBuffer;
-private:
-	HQActiveRenderTarget * activeRenderTargets;
+	HQRenderTargetInfo * const renderTargets;
 };
 
 class HQBaseRenderTargetManager: public HQRenderTargetManager, public HQLoggableObject
@@ -115,14 +114,12 @@ class HQBaseRenderTargetManager: public HQRenderTargetManager, public HQLoggable
 protected:
 	bool currentUseDefaultBuffer;//is currently using default back buffer and depth stencil buffer
 	
-	hq_uint32 numActiveRenderTargets;//number of current active render targets;
+	hquint32 currentActiveRTGroup;//current active render targets group
 	hq_uint32 maxActiveRenderTargets;
-
-	HQSharedPtr<HQBaseCustomRenderBuffer> pActiveDepthStencilBuffer;//current active depth stencil buffer
-	HQActiveRenderTarget *activeRenderTargets;
 
 	HQItemManager<HQBaseCustomRenderBuffer> renderTargets;
 	HQItemManager<HQBaseCustomRenderBuffer> depthStencilBuffers;
+	HQItemManager<HQBaseRenderTargetGroup> rtGroups;
 	
 	
 	
@@ -199,21 +196,11 @@ public:
 		 :HQLoggableObject(logFileStream , logPrefix , flushLog)
 	{
 		this->currentUseDefaultBuffer = true;
-		this->numActiveRenderTargets = 0;
+		this->currentActiveRTGroup = HQ_NULL_ID;
 		this->maxActiveRenderTargets = maxActiveRenderTargets;
 		this->pTextureManager = pTexMan;
-
-		if(maxActiveRenderTargets > 0)
-		{
-			this->activeRenderTargets = HQ_NEW HQActiveRenderTarget[maxActiveRenderTargets];
-		}
-		else
-		{
-			this->activeRenderTargets = NULL;
-		}
 	}
 	~HQBaseRenderTargetManager() {
-		SafeDeleteArray(this->activeRenderTargets);
 	};
 	
 	virtual void OnLostDevice() {}
@@ -237,44 +224,10 @@ public:
 
 	inline hq_uint32 GetNumActiveRenderTargets()
 	{
-		return numActiveRenderTargets;
-	}
-
-	HQSavedActiveRenderTargets* CreateAndSaveRenderTargetsList()
-	{
-		HQSavedActiveRenderTargetsImpl *savedList = HQ_NEW HQSavedActiveRenderTargetsImpl(this->maxActiveRenderTargets);
-
-		this->SaveRenderTargetsList(savedList);
-
-		return savedList;
-	}
-
-	HQReturnVal SaveRenderTargetsList(HQSavedActiveRenderTargets* savedList)
-	{
-		HQSavedActiveRenderTargetsImpl *savedListImpl = dynamic_cast<HQSavedActiveRenderTargetsImpl *> (savedList);
-
-		if (savedListImpl == NULL)
-			return HQ_FAILED;
-
-
-		//copy the active render targets info
-		for (hquint32 i = 0; i < maxActiveRenderTargets; ++i)
-			(*savedListImpl)[i] = this->activeRenderTargets[i];
-
-		savedListImpl->pActiveDepthStencilBuffer = this->pActiveDepthStencilBuffer;
-		savedListImpl->numActiveRenderTargets = this->numActiveRenderTargets;
-
-		return HQ_OK;
-	}
-
-	HQReturnVal RestoreRenderTargets(const HQSavedActiveRenderTargets *savedList)
-	{
-		const HQSavedActiveRenderTargetsImpl *savedListImpl = dynamic_cast<const HQSavedActiveRenderTargetsImpl *> (savedList);
-
-		if (savedListImpl == NULL)
-			return HQ_FAILED;
-
-		return RestoreRenderTargetsImpl(*savedListImpl);
+		HQBaseRenderTargetGroup* group = rtGroups.GetItemRawPointer(this->currentActiveRTGroup);
+		if (group == NULL)
+			return 1;
+		return group->numRenderTargets;
 	}
 
 
@@ -284,17 +237,20 @@ public:
 		if(pRenderTarget == NULL)
 			return HQ_FAILED_INVALID_ID;
 		
+		//remove associated texture
 		pTextureManager->RemoveTexture(pRenderTarget->GetTextureID());
 		return (HQReturnVal)renderTargets.Remove(renderTargetID);
 	}
+
 	void RemoveAllRenderTarget()
 	{
-		this->ActiveRenderTargets(NULL , HQ_NOT_AVAIL_ID , 0);
+		this->ActiveRenderTargets(HQ_NOT_AVAIL_ID);
 		
 		HQItemManager<HQBaseCustomRenderBuffer>::Iterator ite;
 
 		this->renderTargets.GetIterator(ite);
 
+		//remove associated textures
 		while (!ite.IsAtEnd())
 		{
 			this->pTextureManager->RemoveTexture(ite->GetTextureID());
@@ -312,8 +268,70 @@ public:
 		this->depthStencilBuffers.RemoveAll();
 	}
 
+	HQReturnVal RemoveRenderTargetGroup(hq_uint32 groupID){
+		if (groupID == this->currentActiveRTGroup)
+			this->ActiveRenderTargets(HQ_NULL_ID);
+		return (HQReturnVal)rtGroups.Remove(groupID);
+	}
+	void RemoveAllRenderTargetGroup() {
+		this->ActiveRenderTargets(HQ_NULL_ID);
+		rtGroups.RemoveAll();
+	}
+
+	HQReturnVal CreateRenderTargetGroup(const HQRenderTargetDesc *renderTargetDescs , 
+									hq_uint32 depthStencilBufferID ,
+									hq_uint32 numRenderTargets,//number of render targers
+									hq_uint32 *pRenderTargetGroupID_out
+									)
+	{
+		HQBaseRenderTargetGroup* newGroup = NULL;
+		//call sub class method
+		HQReturnVal re = this->CreateRenderTargetGroupImpl(renderTargetDescs, depthStencilBufferID, numRenderTargets, &newGroup);
+		
+		if (HQFailed(re))
+		{
+			return re;
+		}
+
+		if (!this->rtGroups.AddItem(newGroup, pRenderTargetGroupID_out)){
+			delete newGroup;
+			return HQ_FAILED_MEM_ALLOC;
+		}
+
+		return re;
+	}
+
+	///
+	///Set the render targets in group {renderTargetGroupID} as main render targets	
+	///
+	HQReturnVal ActiveRenderTargets(hquint32 renderTargetGroupID) {
+		HQSharedPtr<HQBaseRenderTargetGroup> group = this->rtGroups.GetItemPointer(renderTargetGroupID);
+
+		if (group == NULL)
+		{
+			this->currentActiveRTGroup = HQ_NULL_ID;
+		}
+		else
+			this->currentActiveRTGroup = renderTargetGroupID;
+
+		//call sub class method
+		return this->ActiveRenderTargetsImpl(group);
+	}
+
+	///
+	///Get current render targets group
+	///
+	virtual hquint32 GetActiveRenderTargets() {
+		return this->currentActiveRTGroup;
+	}
+
 	//implement dependent
-	virtual HQReturnVal RestoreRenderTargetsImpl(const HQSavedActiveRenderTargetsImpl &savedList) = 0;
+	virtual HQReturnVal ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& group) = 0;
+	virtual HQReturnVal CreateRenderTargetGroupImpl(const HQRenderTargetDesc *renderTargetDescs , 
+									hq_uint32 depthStencilBufferID ,
+									hq_uint32 numRenderTargets,//number of render targers
+									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
+									) = 0;
 };
 
 
@@ -347,20 +365,20 @@ public:
 	{
 		return HQ_FAILED;
 	}
-	HQReturnVal ActiveRenderTarget(const HQRenderTargetDesc &renderTargetDesc , 
-									hq_uint32 depthStencilBufferID )
-	{
-		return HQ_FAILED;
-	}
-	HQReturnVal ActiveRenderTargets(const HQRenderTargetDesc *renderTargetDescs , 
-									hq_uint32 depthStencilBufferID ,
-								   hq_uint32 numRenderTargets = 1//number of render targers
-								   )
-	{
+
+
+	virtual HQReturnVal ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& group){
 		return HQ_FAILED;
 	}
 
-	virtual HQReturnVal RestoreRenderTargetsImpl(const HQSavedActiveRenderTargetsImpl &savedList) { return HQ_FAILED; }
+	virtual HQReturnVal CreateRenderTargetGroupImpl(const HQRenderTargetDesc *renderTargetDescs , 
+									hq_uint32 depthStencilBufferID ,
+									hq_uint32 numRenderTargets,//number of render targers
+									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
+									)
+	{
+		return HQ_FAILED;
+	}
 };
 
 #endif

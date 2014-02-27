@@ -41,6 +41,16 @@ typedef void (CGGLENTRY *pfcgGLLoadProgram)(CGprogram program);
 typedef void (CGGLENTRY *pfcgGLUnbindProgram)(CGprofile profile);
 typedef void (CGGLENTRY *pfcgGLDisableProfile)(CGprofile profile);
 typedef void (CGGLENTRY *pfcgGLBindProgram)(CGprogram program);
+typedef int (CGGLENTRY *pfcgGetArrayTotalSize)(CGparameter param);
+typedef void (CGGLENTRY *pfcgSetParameter1iv) ( CGparameter param, const int * v );
+typedef void (CGGLENTRY *pfcgSetParameter2iv) ( CGparameter param, const int * v );
+typedef void (CGGLENTRY *pfcgSetParameter3iv) ( CGparameter param, const int * v );
+typedef void (CGGLENTRY *pfcgSetParameter4iv) ( CGparameter param, const int * v );
+typedef void (CGGLENTRY *pfcgSetParameter1fv) ( CGparameter param, const float * v );
+typedef void (CGGLENTRY *pfcgSetParameter2fv) ( CGparameter param, const float * v );
+typedef void (CGGLENTRY *pfcgSetParameter3fv) ( CGparameter param, const float * v );
+typedef void (CGGLENTRY *pfcgSetParameter4fv) ( CGparameter param, const float * v );
+
 
 #ifdef WIN32
 #	define HQ_GET_CG_FUNC_PTR(lib , name) name = (pf##name) GetProcAddress(lib , #name)

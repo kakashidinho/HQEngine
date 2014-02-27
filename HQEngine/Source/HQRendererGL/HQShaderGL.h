@@ -194,7 +194,7 @@ public:
 	//for fixed funtion emulator
 	void NotifyFFRenderIfNeeded();
 
-	//device lost methods
+	//device lost handling methods
 	void OnLost() ;
 	void OnReset() ;
 	

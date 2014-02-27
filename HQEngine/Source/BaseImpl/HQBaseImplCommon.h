@@ -87,5 +87,11 @@ COPYING.txt included with this distribution for more information.
 
 
 /*-------------------------------*/
+//interface for handling resetable event
+class HQResetable {
+public:
+	virtual void OnLost() = 0;
+	virtual void OnReset() = 0;
+};
 
 #endif

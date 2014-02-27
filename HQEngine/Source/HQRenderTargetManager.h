@@ -68,23 +68,12 @@ public:
 										HQMultiSampleType multisampleType,
 										hq_uint32 *pDepthStencilBufferID_Out) = 0;
 	
-	///
-	///Set new main render target specified in {renderTargetDescs} .All other render targets will be deactivated. 
-	///Depth stencil buffer {depthStencilBufferID} will be used as main depth stencil buffer. 
-	///If ID of render target is invalid ,  default frame buffer and depth stencil buffer will be used as main render target and depth stencil buffer. 
-	///Else if {depthStencilBufferID} is not a valid id , no depth stencil buffer will be used. 
-	///Depth stencil buffer and render target must have the same multimsample type and width,height of depth stencil buffer must be larger than or equal to render target's. 
-	///If current viewport area can't fit in render area ,viewport will be resized to the same size as render target. 
-	///
-	virtual HQReturnVal ActiveRenderTarget(const HQRenderTargetDesc &renderTargetDesc , 
-									hq_uint32 depthStencilBufferID 
-								   )= 0;
 	
 	///
-	///Set new main render targets specified in {renderTargetDescs} array. 
+	///Create a group of render targets specified in {renderTargetDescs} array. 
 	///Depth stencil buffer {depthStencilBufferID} will be used as main depth stencil buffer. 
 	///If ID of render target in (ith) element of {renderTargetDescs} array is invalid , render target at (ith) slot will be deactivated. 
-	///If {renderTargetDescs} = NULL or {numRenderTargets} = 0 or all render target IDs is not valid , default frame buffer and depth stencil buffer will be used as main render target and depth stencil buffer. 
+	///If {renderTargetDescs} = NULL or {numRenderTargets} = 0 or all render target IDs is not valid , this method will return HQ_FAILED. 
 	///Else if {depthStencilBufferID} is not a valid id , no depth stencil buffer will be used. 
 	///Depth stencil buffer and render target must have the same multimsample type and width,height of depth stencil buffer must be larger than or equal to render target's. 
 	///Render targets must have compatible formats and same width and height. 
@@ -92,34 +81,34 @@ public:
 	///If current viewport area can't fit in render area ,viewport will be resized to the same size as render target. 
 	///return HQ_FAILED if [numRenderTargets} is larger than value retrieved by method GetMaxActiveRenderTargets()
 	///
-	virtual HQReturnVal ActiveRenderTargets(const HQRenderTargetDesc *renderTargetDescs , 
+	virtual HQReturnVal CreateRenderTargetGroup(const HQRenderTargetDesc *renderTargetDescs , 
 									hq_uint32 depthStencilBufferID ,
-								   hq_uint32 numRenderTargets = 1//number of render targers
+									hq_uint32 numRenderTargets,//number of render targers
+									hq_uint32 *pRenderTargetGroupID_out
 								   )= 0;
 
 	///
-	///Save the current active render targets and active depth buffer list so that they can be reactive by calling RestoreRenderTargets(). 
-	///The returned pointer must be released before destroying the render device
+	///Set the render targets in group {renderTargetGroupID} as main render targets	.
+	///Pass HQ_NOT_AVAIL_ID to switch to default render target
 	///
-	virtual HQSavedActiveRenderTargets* CreateAndSaveRenderTargetsList() = 0;
+	virtual HQReturnVal ActiveRenderTargets(hquint32 renderTargetGroupID) = 0;
 
 	///
-	///save the current active render targets and active depth buffer list so that they can be reactive by calling RestoreRenderTargets()
+	///Get current render targets group
 	///
-	virtual HQReturnVal SaveRenderTargetsList(HQSavedActiveRenderTargets* savedList) = 0;
+	virtual hquint32 GetActiveRenderTargets() = 0;
 
 	///
-	///restore from the saved active render targets and depth buffer list.
-	///
-	virtual HQReturnVal RestoreRenderTargets(const HQSavedActiveRenderTargets *savedList) = 0;
-	
-	///
-	///If render target is texture , it also will be removed from texture manager
+	///If render target is texture , it also will be removed from texture manager.
+	///If there is currently a render target group containing this render target, this render target will not be immediately destroyed
 	///
 	virtual HQReturnVal RemoveRenderTarget(hq_uint32 renderTargetID) =0;
 	virtual void RemoveAllRenderTarget() = 0;
 	
 	virtual HQReturnVal RemoveDepthStencilBuffer(hq_uint32 depthStencilBufferID) = 0;
 	virtual void RemoveAllDepthStencilBuffer() = 0;
+
+	virtual HQReturnVal RemoveRenderTargetGroup(hq_uint32 groupID) = 0;
+	virtual void RemoveAllRenderTargetGroup() = 0;
 };
 #endif

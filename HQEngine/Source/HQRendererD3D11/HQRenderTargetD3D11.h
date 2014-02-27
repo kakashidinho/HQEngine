@@ -26,7 +26,7 @@ private:
 	ID3D11RenderTargetView* pD3DBackBuffer;//default back buffer
 	ID3D11DepthStencilView* pD3DDSBuffer;//default depth stencil buffer
 
-	ID3D11RenderTargetView *renderTargetViews[8];//current active render target views
+	ID3D11RenderTargetView **renderTargetViews;//current active render target views
 	ID3D11DepthStencilView *pDepthStencilView;//current active depth stencil view
 	
 public:
@@ -70,31 +70,22 @@ public:
 										HQDepthStencilFormat format,
 										HQMultiSampleType multisampleType,
 										hq_uint32 *pDepthStencilBufferID_Out);
-	//Set new main render target specified in <renderTargetDescs> .
-	//Depth stencil buffer <depthStencilBufferID >will be used as main depth stencil buffer.
-	//If ID of render target is invalid ,  default frame buffer and depth stencil buffer will be used as main render target and depth stencil buffer.
-	//Else if <depthStencilBufferID> is not a valid id , no depth stencil buffer will be used.
-	//Depth stencil buffer and render target must have the same multimsample type and width,height of depth stencil buffer must be larger than or equal to render target's.
-	//If current viewport area can't fit in render area ,viewport will be resized to the same size as render target
-	HQReturnVal ActiveRenderTarget(const HQRenderTargetDesc &renderTargetDesc , 
-									hq_uint32 depthStencilBufferID 
-								   );
-	//Set new main render targets specified in <renderTargetDescs> array.
-	//Depth stencil buffer <depthStencilBufferID >will be used as main depth stencil buffer.
-	//If <renderTargetDescs> = NULL or <numRenderTargets> = 0 or all render target IDs is not valid , default frame buffer and depth stencil buffer will be used as main render target and depth stencil buffer.
-	//If ID of render target in (ith) element of <renderTargetDescs> array is invalid , render target at (ith) slot will be deactivated
-	//Else if <depthStencilBufferID> is not a valid id , no depth stencil buffer will be used.
-	//Depth stencil buffer and render target must have the same multimsample type and width,height of depth stencil buffer must be larger than or equal render target.
-	//All render targets must have compatible formats and the same width x height.
-	//return HQ_FAILED if <numRenderTargets> is larger than value retrieved by method GetMaxActiveRenderTargets()
-	HQReturnVal ActiveRenderTargets(const HQRenderTargetDesc *renderTargetDescs , 
-							hq_uint32 depthStencilBufferID ,
-							hq_uint32 numRenderTargets = 1//number of render targers
-							);
+	
 
 	void ActiveDefaultFrameBuffer();
 
-	HQReturnVal RestoreRenderTargetsImpl(const HQSavedActiveRenderTargetsImpl &savedList);
+	///
+	///see HQBaseRenderTargetManager base class
+	///
+	HQReturnVal ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& group);
+	///
+	///see HQBaseRenderTargetManager base class
+	///
+	HQReturnVal CreateRenderTargetGroupImpl(const HQRenderTargetDesc *renderTargetDescs , 
+									hq_uint32 depthStencilBufferID ,
+									hq_uint32 numRenderTargets,//number of render targers
+									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
+									) ;
 
 	
 	static DXGI_FORMAT GetD3DFormat(HQRenderTargetFormat format);

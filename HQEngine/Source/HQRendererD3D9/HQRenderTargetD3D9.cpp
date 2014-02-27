@@ -173,6 +173,7 @@ struct HQRenderTargetTextureD3D9 : public HQBaseRenderTargetTexture
 	LPDIRECT3DDEVICE9 pD3DDevice;
 };
 
+/*----------------HQRenderTargetManagerD3D9-----------*/
 D3DFORMAT HQRenderTargetManagerD3D9::GetD3DFormat(HQRenderTargetFormat format)
 {
 	switch(format)
@@ -227,7 +228,9 @@ HQRenderTargetManagerD3D9::HQRenderTargetManagerD3D9(LPDIRECT3DDEVICE9 pD3DDevic
 {
 	this->pD3DDevice = pD3DDevice;
 	this->pD3DBackBuffer = NULL;
-	
+
+	this->activeRenderTargets = HQ_NEW HQRenderTargetInfo[maxActiveRenderTargets];
+	this->numActiveRenderTargets = 0;
 
 	this->OnResetDevice();
 
@@ -236,6 +239,7 @@ HQRenderTargetManagerD3D9::HQRenderTargetManagerD3D9(LPDIRECT3DDEVICE9 pD3DDevic
 
 HQRenderTargetManagerD3D9::~HQRenderTargetManagerD3D9()
 {
+	delete[] this->activeRenderTargets;
 	OnLostDevice();
 	Log("Released!");
 }
@@ -425,109 +429,29 @@ HQReturnVal HQRenderTargetManagerD3D9::CreateDepthStencilBuffer(hq_uint32 width 
 	return HQ_OK;
 }
 
-HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTarget(const HQRenderTargetDesc &renderTargetDesc , 
-														  hq_uint32 depthStencilBufferID )
-{
-	if (g_pD3DDev->GetFlags() & DEVICE_LOST)
-		return HQ_FAILED_DEVICE_LOST;
-	
-	HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDesc.renderTargetID);
 
-	if (pRenderTarget == NULL)
-	{
-		//active default back buffer and depth stencil buffer
-		this->InvalidateRenderTargets();
-		return HQ_FAILED;
-	}
-
-	this->renderTargetWidth = pRenderTarget->width;
-	this->renderTargetHeight = pRenderTarget->height;
-	
-	if (pRenderTarget == this->activeRenderTargets[0].pRenderTarget)//no change 
-	{
-		if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-		{
-			if (renderTargetDesc.cubeFace != this->activeRenderTargets[0].cubeFace)//different cube face
-			{
-				LPDIRECT3DSURFACE9* pD3DSurfaces = (LPDIRECT3DSURFACE9*)pRenderTarget->GetData();
-				pD3DDevice->SetRenderTarget( 0 , pD3DSurfaces[ renderTargetDesc.cubeFace ]);
-			}//if (renderTargetDesc.cubeFace != this->activeRenderTargets[0].cubeFace)
-		}//if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-	}//pRenderTarget == this->activeRenderTargets[0].pRenderTarget
-	else//different render target
-	{
-		if (pRenderTarget->IsTexture())
-		{
-			LPDIRECT3DSURFACE9* pD3DSurfaces = (LPDIRECT3DSURFACE9*)pRenderTarget->GetData();
-
-			if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-				pD3DDevice->SetRenderTarget( 0 , pD3DSurfaces[ renderTargetDesc.cubeFace ]);
-			else
-				pD3DDevice->SetRenderTarget( 0 , pD3DSurfaces[0]);
-		}//if (pRenderTarget->IsTexture())
-	}//else of if (pRenderTarget == this->activeRenderTargets[0].pRenderTarget)
-	
-	this->activeRenderTargets[0].pRenderTarget = pRenderTarget;
-	this->activeRenderTargets[0].cubeFace = renderTargetDesc.cubeFace;
-
-	
-	
-	//deactive other render targets
-	for (hq_uint32 i = 1 ; i < this->numActiveRenderTargets ; ++i)
-	{
-		if (this->activeRenderTargets[i].pRenderTarget != NULL)
-		{
-			this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
-			pD3DDevice->SetRenderTarget(i , NULL);
-		}
-	}
-	
-
-	this->numActiveRenderTargets = 1;
-	
-	//active depth stencil buffer
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
-	if (this->currentUseDefaultBuffer || this->pActiveDepthStencilBuffer != pDepthStencilBuffer)
-	{
-		if (pDepthStencilBuffer == NULL)
-		{
-			pD3DDevice->SetDepthStencilSurface(NULL);
-		}
-		else
-		{
-			pD3DDevice->SetDepthStencilSurface((LPDIRECT3DSURFACE9)pDepthStencilBuffer->GetData());
-		}
-
-		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
-	}
-	this->currentUseDefaultBuffer = false;
-
-	this->ResetViewPort();
-	return HQ_OK;
-}
-
-HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargets(const HQRenderTargetDesc *renderTargetDescs, 
+HQReturnVal HQRenderTargetManagerD3D9::CreateRenderTargetGroupImpl(
+											 const HQRenderTargetDesc *renderTargetDescs, 
 											 hq_uint32 depthStencilBufferID, 
-											 hq_uint32 numRenderTargets)
+											 hq_uint32 numRenderTargets,
+											 HQBaseRenderTargetGroup **ppRenderTargetGroupOut)
+
 {
-	if (g_pD3DDev->GetFlags() & DEVICE_LOST)
-		return HQ_FAILED_DEVICE_LOST;
-#if defined _DEBUG || defined DEBUG
 	if (numRenderTargets > this->maxActiveRenderTargets)
 	{
-		this->Log("Error : ActiveRenderTargets() failed because parameter <numRenderTargets> is larger than %d!" , this->maxActiveRenderTargets);
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because parameter <numRenderTargets> is larger than %d!" , this->maxActiveRenderTargets);
 		return HQ_FAILED;
 	}
-#endif
 
 	if (renderTargetDescs == NULL || numRenderTargets == 0)
 	{
-		//active default back buffer and depth stencil buffer
-		this->InvalidateRenderTargets();
-		return HQ_OK;
+		return HQ_FAILED_INVALID_PARAMETER;
 	}//if (renderTargetDescs == NULL || numRenderTargets == 0)
 	
 	bool allNull = true;//all render targets in array is invalid
+	bool differentSize = false;//render targets don't have same size
+
+	HQBaseRenderTargetGroup* newGroup = new HQBaseRenderTargetGroup(numRenderTargets);
 	
 	for (hq_uint32 i = 0 ; i < numRenderTargets ; ++i)
 	{
@@ -535,116 +459,93 @@ HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargets(const HQRenderTargetD
 		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDescs[i].renderTargetID);
 		if (pRenderTarget == NULL)
 		{
-			pD3DDevice->SetRenderTarget(i , NULL);
-			this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
+			newGroup->renderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
 			continue;
 		}
 		if (allNull)//now we know that at least one render target is valid .If not , this line can't be reached
 		{
 			allNull = false;
-			this->renderTargetWidth = pRenderTarget->width;
-			this->renderTargetHeight = pRenderTarget->height;
+			newGroup->commonWidth = pRenderTarget->width;
+			newGroup->commonHeight = pRenderTarget->height;
+		}
+		else if (pRenderTarget->width != newGroup->commonWidth || pRenderTarget->height != newGroup->commonHeight)
+		{
+			//this render target has different size
+			differentSize = true;
+			break;//stop
 		}
 		
-		if (pRenderTarget == this->activeRenderTargets[i].pRenderTarget)//no change 
-		{
-			if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-			{
-				if (renderTargetDescs[i].cubeFace != this->activeRenderTargets[i].cubeFace)//different cube face
-				{
-					LPDIRECT3DSURFACE9* pD3DSurfaces = (LPDIRECT3DSURFACE9*)pRenderTarget->GetData();
-					pD3DDevice->SetRenderTarget( i , pD3DSurfaces[ renderTargetDescs[i].cubeFace ]);
-				}//if (renderTargetDescs[i].cubeFace != this->activeRenderTargets[i].cubeFace)
-			}//if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-		}//pRenderTarget == this->activeRenderTargets[i].pRenderTarget
-		else//different render target
-		{
-			if (pRenderTarget->IsTexture())
-			{
-				LPDIRECT3DSURFACE9* pD3DSurfaces = (LPDIRECT3DSURFACE9*)pRenderTarget->GetData();
-
-				if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-					pD3DDevice->SetRenderTarget( i , pD3DSurfaces[ renderTargetDescs[i].cubeFace ]);
-				else
-					pD3DDevice->SetRenderTarget( i , pD3DSurfaces[0]);
-			}//if (pRenderTarget->IsTexture())
-		}//else of if (pRenderTarget == this->activeRenderTargets[i].pRenderTarget)
-		
-		this->activeRenderTargets[i].pRenderTarget = pRenderTarget;
-		this->activeRenderTargets[i].cubeFace = renderTargetDescs[i].cubeFace;
+		newGroup->renderTargets[i].pRenderTarget = pRenderTarget;
+		newGroup->renderTargets[i].cubeFace = renderTargetDescs[i].cubeFace;
 	}//for (i)
 
-	
-	
-	//deactive other render targets
-	for (hq_uint32 i = numRenderTargets ; i < this->numActiveRenderTargets ; ++i)
+	if (differentSize)
 	{
-		if (this->activeRenderTargets[i].pRenderTarget != NULL)
-		{
-			this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
-			pD3DDevice->SetRenderTarget(i , NULL);
-		}
-	}
-	//all render targets are invalid , so we need to active default frame buffer
-	if (allNull && !this->currentUseDefaultBuffer)
-	{
-		this->ResetToDefaultFrameBuffer();
+		delete newGroup;
 
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because render targets don't have same size!");
+		return HQ_FAILED_DIFFERENT_RENDER_TARGETS_SIZE;
+	}
+
+	if (allNull)//all render targets is invalid
+	{
+		delete newGroup;
+
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because every specified render targets are invalid!");
 		return HQ_FAILED;
 	}
-
-	this->numActiveRenderTargets = numRenderTargets;
 	
-	//active depth stencil buffer
+	// depth stencil buffer
 	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
-	if (this->currentUseDefaultBuffer || this->pActiveDepthStencilBuffer != pDepthStencilBuffer)
+	if (pDepthStencilBuffer != NULL)
 	{
-		if (pDepthStencilBuffer == NULL)
+		if (pDepthStencilBuffer->width < newGroup->commonWidth || pDepthStencilBuffer->height < newGroup->commonHeight)
 		{
-			pD3DDevice->SetDepthStencilSurface(NULL);
-		}
-		else
-		{
-			pD3DDevice->SetDepthStencilSurface((LPDIRECT3DSURFACE9)pDepthStencilBuffer->GetData());
-		}
+			delete newGroup;
 
-		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
+			this->Log("Error : CreateRenderTargetGroupImpl() failed because depth stencil buffer is too small!");
+			return HQ_FAILED_DEPTH_STENCIL_BUFFER_TOO_SMALL;
+		}
 	}
-	this->currentUseDefaultBuffer = false;
 
-	this->ResetViewPort();
+	newGroup->pDepthStencilBuffer = pDepthStencilBuffer;
+
+	*ppRenderTargetGroupOut = newGroup;
+
 	return HQ_OK;
 }
 
-HQReturnVal HQRenderTargetManagerD3D9::RestoreRenderTargetsImpl(const HQSavedActiveRenderTargetsImpl &savedList)
+HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& group)
 {
-	bool allNull = true;//all render targets in array is invalid
+	if (g_pD3DDev->GetFlags() & DEVICE_LOST)
+		return HQ_FAILED_DEVICE_LOST;
+
+	if (group == NULL)
+	{
+		//active default back buffer and depth stencil buffer
+		this->InvalidateRenderTargets();
+		return HQ_OK;
+	}
 	
-	for (hq_uint32 i = 0 ; i < savedList.numActiveRenderTargets ; ++i)
+	for (hq_uint32 i = 0 ; i < group->numRenderTargets ; ++i)
 	{
 		
-		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = savedList[i].pRenderTarget;
+		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = group->renderTargets[i].pRenderTarget;
 		if (pRenderTarget == NULL)
 		{
 			pD3DDevice->SetRenderTarget(i , NULL);
 			this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer> ::null;
 			continue;
 		}
-		if (allNull)//now we know that at least one render target is valid .If not , this line can't be reached
-		{
-			allNull = false;
-			this->renderTargetWidth = pRenderTarget->width;
-			this->renderTargetHeight = pRenderTarget->height;
-		}
 		
 		if (pRenderTarget == this->activeRenderTargets[i].pRenderTarget)//no change 
 		{
 			if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
 			{
-				if (savedList[i].cubeFace != this->activeRenderTargets[i].cubeFace)//different cube face
+				if (group->renderTargets[i].cubeFace != this->activeRenderTargets[i].cubeFace)//different cube face
 				{
 					LPDIRECT3DSURFACE9* pD3DSurfaces = (LPDIRECT3DSURFACE9*)pRenderTarget->GetData();
-					pD3DDevice->SetRenderTarget( i , pD3DSurfaces[ savedList[i].cubeFace ]);
+					pD3DDevice->SetRenderTarget( i , pD3DSurfaces[ group->renderTargets[i].cubeFace ]);
 				}//if (renderTargetDescs[i].cubeFace != this->activeRenderTargets[i].cubeFace)
 			}//if (pRenderTarget->IsTexture() && pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
 		}//pRenderTarget == this->activeRenderTargets[i].pRenderTarget
@@ -655,20 +556,20 @@ HQReturnVal HQRenderTargetManagerD3D9::RestoreRenderTargetsImpl(const HQSavedAct
 				LPDIRECT3DSURFACE9* pD3DSurfaces = (LPDIRECT3DSURFACE9*)pRenderTarget->GetData();
 
 				if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
-					pD3DDevice->SetRenderTarget( i , pD3DSurfaces[ savedList[i].cubeFace ]);
+					pD3DDevice->SetRenderTarget( i , pD3DSurfaces[ group->renderTargets[i].cubeFace ]);
 				else
 					pD3DDevice->SetRenderTarget( i , pD3DSurfaces[0]);
 			}//if (pRenderTarget->IsTexture())
 		}//else of if (pRenderTarget == this->activeRenderTargets[i].pRenderTarget)
 		
 		this->activeRenderTargets[i].pRenderTarget = pRenderTarget;
-		this->activeRenderTargets[i].cubeFace = savedList[i].cubeFace;
+		this->activeRenderTargets[i].cubeFace = group->renderTargets[i].cubeFace;
 	}//for (i)
 
 	
 	
 	//deactive other render targets
-	for (hq_uint32 i = savedList.numActiveRenderTargets ; i < this->numActiveRenderTargets ; ++i)
+	for (hq_uint32 i = group->numRenderTargets ; i < this->numActiveRenderTargets ; ++i)
 	{
 		if (this->activeRenderTargets[i].pRenderTarget != NULL)
 		{
@@ -676,18 +577,11 @@ HQReturnVal HQRenderTargetManagerD3D9::RestoreRenderTargetsImpl(const HQSavedAct
 			pD3DDevice->SetRenderTarget(i , NULL);
 		}
 	}
-	//all render targets are invalid , so we need to active default frame buffer
-	if (allNull && !this->currentUseDefaultBuffer)
-	{
-		this->ResetToDefaultFrameBuffer();
 
-		return HQ_OK;
-	}
-
-	this->numActiveRenderTargets = savedList.numActiveRenderTargets;;
+	this->numActiveRenderTargets = group->numRenderTargets;
 	
 	//active depth stencil buffer
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = savedList.pActiveDepthStencilBuffer;
+	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = group->pDepthStencilBuffer;
 	if (this->currentUseDefaultBuffer || this->pActiveDepthStencilBuffer != pDepthStencilBuffer)
 	{
 		if (pDepthStencilBuffer == NULL)
@@ -702,9 +596,10 @@ HQReturnVal HQRenderTargetManagerD3D9::RestoreRenderTargetsImpl(const HQSavedAct
 		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
 	}
 	this->currentUseDefaultBuffer = false;
+	this->renderTargetWidth = group->commonWidth;
+	this->renderTargetHeight = group->commonHeight;
 
 	this->ResetViewPort();
-
 	return HQ_OK;
 }
 
