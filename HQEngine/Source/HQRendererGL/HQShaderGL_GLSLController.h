@@ -36,7 +36,7 @@ protected:
 	void BindUniformBlockGLSL(GLuint program);
 	void BindSamplerUnitGLSL(HQBaseShaderProgramGL* pProgram , HQLinkedList<HQUniformSamplerGL>& samplerList);
 	
-	void GetPredefineMacroGLSL(std::string & macroDefList , const HQShaderMacro * pDefines);//convert HQShaderMacro array to GLSL macro definition
+	void GetPredefineMacroGLSL(std::string & macroDefList , const HQShaderMacro * pDefines, bool ignoreVersion);//convert HQShaderMacro array to GLSL macro definition
 
 
 	HQReturnVal DeActiveProgramGLSL();

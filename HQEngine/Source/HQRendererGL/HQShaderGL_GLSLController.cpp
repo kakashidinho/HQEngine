@@ -14,6 +14,8 @@ COPYING.txt included with this distribution for more information.
 #include "HQShaderGL_GLSLController_inline.h"
 #include "HQShaderGL_UBO.h"
 
+#include <string>
+
 const char semanticKeywords[] =
 	"\
 #define VPOSITION\n\
@@ -100,7 +102,7 @@ HQBaseGLSLShaderController::~HQBaseGLSLShaderController()
 	SafeDelete(pVParser);
 }
 
-void HQBaseGLSLShaderController::GetPredefineMacroGLSL(std::string & macroDef , const HQShaderMacro * pDefines)
+void HQBaseGLSLShaderController::GetPredefineMacroGLSL(std::string & macroDef , const HQShaderMacro * pDefines, bool ignoreVersion)
 {
 	if(pDefines == NULL)
 		return;
@@ -203,12 +205,49 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 
 	sobject->shader = glCreateShader(shaderType);
 
+	std::string processed_src = source;
+	std::string version_string = "";
+	/*------ Remove #version---------*/ 
+	{
+		size_t pos1 = processed_src.find("#");
+		if (pos1 != std::string::npos)
+		{
+			size_t pos2 = processed_src.find("version", pos1);
+			if (pos2 != std::string::npos)
+			{
+				bool found = true;
+				for (size_t i = pos1 + 1; i < pos2; ++i)//make sure only white spaces are between "#" and "version"
+				{
+					char c = processed_src[i];
+					if (c != ' ' && c != '\t' && c != '\r')
+					{
+						found = false;
+						break;
+					}
+				}
+				
+				if (found)
+				{
+					size_t pos3 = processed_src.find("\n", pos2 + 7);
+					version_string.assign(source + pos1, pos3 - pos1 + 1); 
+					for (size_t i = pos1; i < pos3; ++i)
+					{
+						processed_src[i] = ' ';//remove from the source
+					}
+				}
+
+			}//if (pos2 != std::string::npos)
+		}//if (pos1 != std::string::npos)
+	}
+
 	/*---create macro definition list---------*/
 	std::string macroDefList;
-	this->GetPredefineMacroGLSL(macroDefList , pDefines);
+	this->GetPredefineMacroGLSL(macroDefList , pDefines, version_string.size() != 0);
+
 
 	/*--------set shader source---------*/
 	const GLchar* sourceArray[] = {
+		version_string.c_str(),
 		macroDefList.c_str(),
 #ifdef GLES
 		"#define HQEXT_GLSL_ES\n",
@@ -218,13 +257,13 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 		semanticKeywords,
 		samplerKeywords,
 		"#line 0 0\n",
-		source
+		processed_src.c_str()
 	};
 
 	if (type != HQ_VERTEX_SHADER)
 		sourceArray[2] = "";//only vertex shader need semantic definitions
 
-	glShaderSource(sobject->shader, 6, (const GLchar**)sourceArray, NULL);
+	glShaderSource(sobject->shader, 7, (const GLchar**)sourceArray, NULL);
 	glCompileShader(sobject->shader);
 
 	GLint compileOK;
