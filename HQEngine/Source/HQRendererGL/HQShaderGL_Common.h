@@ -29,8 +29,8 @@ COPYING.txt included with this distribution for more information.
 
 #ifdef CG_IMPLICIT_LINK
 
-#include <Cg/cg.h>
-#include <Cg/cgGL.h>
+#include "Cg/cg.h"
+#include "Cg/cgGL.h"
 
 #ifdef WIN32
 #	pragma comment( lib, "cg.lib" )
@@ -76,6 +76,8 @@ extern HQ_DECL_CG_FUNC_PTR( cgSetParameter1fv );
 extern HQ_DECL_CG_FUNC_PTR( cgSetParameter2fv );
 extern HQ_DECL_CG_FUNC_PTR( cgSetParameter3fv );
 extern HQ_DECL_CG_FUNC_PTR( cgSetParameter4fv );
+extern HQ_DECL_CG_FUNC_PTR( cgGLEnableProgramProfiles );
+extern HQ_DECL_CG_FUNC_PTR( cgGetString );
 
 /*-----------end CG API function pointers definition------------*/
 

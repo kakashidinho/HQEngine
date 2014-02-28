@@ -15,8 +15,8 @@ COPYING.txt included with this distribution for more information.
 
 #define CG_EXPLICIT
 #define CGGL_EXPLICIT
-#include <Cg/cg.h>
-#include <Cg/cgGL.h>
+#include "Cg/cg.h"
+#include "Cg/cgGL.h"
 
 
 typedef CGerror (CGENTRY* pfcgGetError) (void);
@@ -33,14 +33,6 @@ typedef CGprogram (CGENTRY *pfcgCombinePrograms3)(const CGprogram exe1, const CG
 typedef void (CGENTRY *pfcgDestroyProgram)(CGprogram program);
 typedef void (CGENTRY *pfcgSetParameterValueir)(CGparameter param, int nelements, const int *vals);
 typedef void (CGENTRY *pfcgSetParameterValuefr)(CGparameter param, int nelements, const float *vals);
-typedef CGbool (CGGLENTRY *pfcgGLIsProfileSupported)(CGprofile profile);
-typedef CGprofile (CGENTRY *pfcgGLGetLatestProfile)(CGGLenum profile_type);
-typedef void (CGGLENTRY *pfcgGLSetOptimalOptions)(CGprofile profile);
-typedef void (CGGLENTRY *pfcgGLSetDebugMode)(CGbool debug);
-typedef void (CGGLENTRY *pfcgGLLoadProgram)(CGprogram program);
-typedef void (CGGLENTRY *pfcgGLUnbindProgram)(CGprofile profile);
-typedef void (CGGLENTRY *pfcgGLDisableProfile)(CGprofile profile);
-typedef void (CGGLENTRY *pfcgGLBindProgram)(CGprogram program);
 typedef int (CGGLENTRY *pfcgGetArrayTotalSize)(CGparameter param);
 typedef void (CGGLENTRY *pfcgSetParameter1iv) ( CGparameter param, const int * v );
 typedef void (CGGLENTRY *pfcgSetParameter2iv) ( CGparameter param, const int * v );
@@ -50,6 +42,16 @@ typedef void (CGGLENTRY *pfcgSetParameter1fv) ( CGparameter param, const float *
 typedef void (CGGLENTRY *pfcgSetParameter2fv) ( CGparameter param, const float * v );
 typedef void (CGGLENTRY *pfcgSetParameter3fv) ( CGparameter param, const float * v );
 typedef void (CGGLENTRY *pfcgSetParameter4fv) ( CGparameter param, const float * v );
+typedef const char * (CGGLENTRY *pfcgGetString) ( CGenum _enum );
+typedef CGbool (CGGLENTRY *pfcgGLIsProfileSupported)(CGprofile profile);
+typedef CGprofile (CGENTRY *pfcgGLGetLatestProfile)(CGGLenum profile_type);
+typedef void (CGGLENTRY *pfcgGLSetOptimalOptions)(CGprofile profile);
+typedef void (CGGLENTRY *pfcgGLSetDebugMode)(CGbool debug);
+typedef void (CGGLENTRY *pfcgGLLoadProgram)(CGprogram program);
+typedef void (CGGLENTRY *pfcgGLUnbindProgram)(CGprofile profile);
+typedef void (CGGLENTRY *pfcgGLDisableProfile)(CGprofile profile);
+typedef void (CGGLENTRY *pfcgGLBindProgram)(CGprogram program);
+typedef void (CGGLENTRY *pfcgGLEnableProgramProfiles) ( CGprogram program );
 
 
 #ifdef WIN32

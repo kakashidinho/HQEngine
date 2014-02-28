@@ -15,8 +15,8 @@ COPYING.txt included with this distribution for more information.
 #include "../HQShaderManager.h"
 #include "../BaseImpl/HQShaderParameterIndexTable.h"
 #include "../HQLoggableObject.h"
-#include <Cg/cg.h>
-#include <Cg/cgD3D9.h>
+#include "Cg/cg.h"
+#include "Cg/cgD3D9.h"
 #include <d3d9.h>
 
 #pragma comment( lib, "cg.lib" )		

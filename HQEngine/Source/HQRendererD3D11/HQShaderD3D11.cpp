@@ -208,7 +208,9 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	this->cgContext=cgCreateContext();
-	
+	const char* version = cgGetString(CG_VERSION);
+	this->Log("Cg library loaded. Version is %s", version);
+
 	cgD3D11SetDevice(this->cgContext , pD3DDevice);
 	
 	this->featureLevel = featureLevel;

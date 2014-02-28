@@ -51,14 +51,6 @@ HQ_DECL_CG_FUNC_PTR( cgCombinePrograms3 ) ;
 HQ_DECL_CG_FUNC_PTR( cgDestroyProgram ) ;
 HQ_DECL_CG_FUNC_PTR( cgSetParameterValueir ) ;
 HQ_DECL_CG_FUNC_PTR( cgSetParameterValuefr ) ;
-HQ_DECL_CG_FUNC_PTR( cgGLGetLatestProfile ) ;
-HQ_DECL_CG_FUNC_PTR( cgGLIsProfileSupported ) ;
-HQ_DECL_CG_FUNC_PTR( cgGLSetOptimalOptions ) ;
-HQ_DECL_CG_FUNC_PTR( cgGLSetDebugMode ) ;
-HQ_DECL_CG_FUNC_PTR( cgGLLoadProgram ) ;
-HQ_DECL_CG_FUNC_PTR( cgGLUnbindProgram ) ;
-HQ_DECL_CG_FUNC_PTR( cgGLDisableProfile ) ;
-HQ_DECL_CG_FUNC_PTR( cgGLBindProgram ) ;
 HQ_DECL_CG_FUNC_PTR( cgGetArrayTotalSize);
 HQ_DECL_CG_FUNC_PTR( cgSetParameter1iv );
 HQ_DECL_CG_FUNC_PTR( cgSetParameter2iv );
@@ -68,6 +60,16 @@ HQ_DECL_CG_FUNC_PTR( cgSetParameter1fv );
 HQ_DECL_CG_FUNC_PTR( cgSetParameter2fv );
 HQ_DECL_CG_FUNC_PTR( cgSetParameter3fv );
 HQ_DECL_CG_FUNC_PTR( cgSetParameter4fv );
+HQ_DECL_CG_FUNC_PTR( cgGetString );
+HQ_DECL_CG_FUNC_PTR( cgGLGetLatestProfile ) ;
+HQ_DECL_CG_FUNC_PTR( cgGLIsProfileSupported ) ;
+HQ_DECL_CG_FUNC_PTR( cgGLSetOptimalOptions ) ;
+HQ_DECL_CG_FUNC_PTR( cgGLSetDebugMode ) ;
+HQ_DECL_CG_FUNC_PTR( cgGLLoadProgram ) ;
+HQ_DECL_CG_FUNC_PTR( cgGLUnbindProgram ) ;
+HQ_DECL_CG_FUNC_PTR( cgGLDisableProfile ) ;
+HQ_DECL_CG_FUNC_PTR( cgGLBindProgram ) ;
+HQ_DECL_CG_FUNC_PTR( cgGLEnableProgramProfiles );
 
 #endif//ifndef CG_IMPLICIT_LINK
 
@@ -109,6 +111,9 @@ HQBaseCgShaderController::HQBaseCgShaderController()
 	this->InitCgLibrary();
 
 	this->cgContext=cgCreateContext();
+
+	const char* version = cgGetString(CG_VERSION);
+	g_pShaderMan->Log("Cg library loaded. Version is %s", version);
 
 	this->cgVertexProfile=cgGLGetLatestProfile(CG_GL_VERTEX );
 	this->cgFragmentProfile=cgGLGetLatestProfile(CG_GL_FRAGMENT );
@@ -236,6 +241,7 @@ void HQBaseCgShaderController::InitCgLibrary()
 	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLUnbindProgram ) ;
 	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLDisableProfile ) ;
 	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLBindProgram ) ;
+	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLEnableProgramProfiles );
 
 	HQ_GET_CG_FUNC_PTR( cgLibHandle , cgGetArrayTotalSize);
 	HQ_GET_CG_FUNC_PTR( cgLibHandle , cgSetParameter1iv );
@@ -246,6 +252,7 @@ void HQBaseCgShaderController::InitCgLibrary()
 	HQ_GET_CG_FUNC_PTR( cgLibHandle , cgSetParameter2fv );
 	HQ_GET_CG_FUNC_PTR( cgLibHandle , cgSetParameter3fv );
 	HQ_GET_CG_FUNC_PTR( cgLibHandle , cgSetParameter4fv );
+	HQ_GET_CG_FUNC_PTR( cgLibHandle , cgGetString );
 
 #endif//ifndef CG_IMPLICIT_LINK
 }

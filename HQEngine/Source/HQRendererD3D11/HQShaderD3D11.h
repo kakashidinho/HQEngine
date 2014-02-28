@@ -17,8 +17,8 @@ COPYING.txt included with this distribution for more information.
 #include "HQLoggableObject.h"
 
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-#include <Cg/cg.h>
-#include <Cg/cgD3D11.h>
+#include "Cg/cg.h"
+#include "Cg/cgD3D11.h"
 #endif
 #include <d3d11.h>
 

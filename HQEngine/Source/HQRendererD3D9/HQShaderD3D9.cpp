@@ -71,7 +71,9 @@ HQShaderManagerD3D9::HQShaderManagerD3D9(LPDIRECT3DDEVICE9 pD3DDevice,HQLogStrea
 #if defined(DEBUG)||defined(_DEBUG)
 	cgSetErrorCallback(cgErrorCallBack);
 #endif
-	Log("Init done!");
+
+	const char* version = cgGetString(CG_VERSION);
+	Log("Init done! Cg library version is %s", version);
 }
 
 HQShaderManagerD3D9::~HQShaderManagerD3D9()

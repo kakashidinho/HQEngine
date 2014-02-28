@@ -53,6 +53,7 @@ inline HQReturnVal HQBaseCgShaderController::DeActiveProgramCg(HQSharedPtr<HQBas
 inline HQReturnVal HQBaseCgShaderController::ActiveProgramCg(HQSharedPtr<HQBaseShaderProgramGL>& pProgram)
 {
 	cgGLBindProgram(pProgram->program);
+	cgGLEnableProgramProfiles(pProgram->program);
 	return HQ_OK;
 }
 /*-----------------------*/
