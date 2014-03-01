@@ -91,7 +91,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y glut32.dll  $(SolutionDir)\Output\$(ConfigurationName)\"
+				CommandLine="xcopy /q /y glut32.dll  $(SolutionDir)\Output\$(ConfigurationName)\ &amp; xcopy /q /y $(SolutionDir)\Output\$(ConfigurationName)\$(TargetFileName) $(SolutionDir)\..\Netbeans\HQEngineShaderCompiler\  "
 			/>
 		</Configuration>
 		<Configuration
@@ -245,7 +245,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y glut32.dll  $(SolutionDir)\Output\$(ConfigurationName)\"
+				CommandLine="xcopy /q /y glut32.dll  $(SolutionDir)\Output\$(ConfigurationName)\ &amp; xcopy /q /y $(SolutionDir)\Output\$(ConfigurationName)\$(TargetFileName) $(SolutionDir)\..\Netbeans\HQEngineShaderCompiler\  "
 			/>
 		</Configuration>
 		<Configuration
@@ -402,7 +402,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y glut32.dll  $(SolutionDir)\Output\$(ConfigurationName)\"
+				CommandLine="xcopy /q /y glut32.dll  $(SolutionDir)\Output\$(ConfigurationName)\ &amp; xcopy /q /y $(SolutionDir)\Output\$(ConfigurationName)\$(TargetFileName) $(SolutionDir)\..\Netbeans\HQEngineShaderCompiler\  "
 			/>
 		</Configuration>
 		<Configuration
@@ -481,7 +481,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y glut64.dll  $(SolutionDir)\Output\$(ConfigurationName)\"
+				CommandLine="xcopy /q /y glut64.dll  $(SolutionDir)\Output\$(ConfigurationName)\ &amp; xcopy /q /y $(SolutionDir)\Output\$(ConfigurationName)\$(TargetFileName) $(SolutionDir)\..\Netbeans\HQEngineShaderCompiler\  "
 			/>
 		</Configuration>
 	</Configurations>

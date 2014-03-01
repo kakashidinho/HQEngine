@@ -1052,11 +1052,11 @@ public class HQEngineShaderCompilerView extends FrameView {
 
         try{
             try {
-                System.load(cwd + "QEXT_glsl_compiler.dll");
+                System.load(cwd + "HQEXT_glsl_compiler.dll");
             }catch (java.lang.UnsatisfiedLinkError ee){
                 //try to load x64 version
                 System.out.println("loading x64 version of glsl compiler");
-                System.load(cwd + "QEXT_glsl_compiler_x64.dll");
+                System.load(cwd + "HQEXT_glsl_compiler_x64.dll");
             }
             
             glsl_compiler_ready = true;
@@ -1067,7 +1067,7 @@ public class HQEngineShaderCompilerView extends FrameView {
             
             try
             {
-                System.load(cwd + "libQEXT_glsl_compiler.jnilib");
+                System.load(cwd + "libHQEXT_glsl_compiler.jnilib");
                 
                 glsl_compiler_ready = true;
             }
@@ -1076,7 +1076,7 @@ public class HQEngineShaderCompilerView extends FrameView {
                 e2.printStackTrace();
                 
                 try{
-                    System.load("/usr/local/lib/libQEXT_glsl_compiler.jnilib");
+                    System.load("/usr/local/lib/libHQEXT_glsl_compiler.jnilib");
                     
                     glsl_compiler_ready = true;
                 }

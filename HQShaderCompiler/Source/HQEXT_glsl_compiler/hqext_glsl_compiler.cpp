@@ -16,6 +16,7 @@ COPYING.txt included with this distribution for more information.
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
 #ifdef __APPLE__
 
 #define GL_GEOMETRY_SHADER 0x8DD9
@@ -269,8 +270,43 @@ JNIEXPORT jstring JNICALL Java_hqengineshadercompiler_HQEngineShaderCompilerView
 
 	const char *cMacros = env->GetStringUTFChars(macros , &isCopy);
 
+	std::string processed_src = source;
+	std::string version_string_in_src = "";
+	/*------ Remove #version in original source---------*/ 
+	{
+		size_t pos1 = processed_src.find("#");
+		if (pos1 != std::string::npos)
+		{
+			size_t pos2 = processed_src.find("version", pos1);
+			if (pos2 != std::string::npos)
+			{
+				bool found = true;
+				for (size_t i = pos1 + 1; i < pos2; ++i)//make sure only white spaces are between "#" and "version"
+				{
+					char c = processed_src[i];
+					if (c != ' ' && c != '\t' && c != '\r')
+					{
+						found = false;
+						break;
+					}
+				}
+				
+				if (found)
+				{
+					size_t pos3 = processed_src.find("\n", pos2 + 7);
+					version_string_in_src.assign(source + pos1, pos3 - pos1 + 1); 
+					for (size_t i = pos1; i < pos3; ++i)
+					{
+						processed_src[i] = ' ';//remove from the source
+					}
+				}
+
+			}//if (pos2 != std::string::npos)
+		}//if (pos1 != std::string::npos)
+	}
+
 	const GLchar* sourceArray[] = {
-		"",
+		version_string_in_src.c_str(),
 		cMacros,
 #ifdef GLES
 		"#define HQEXT_GLSL_ES\n",
@@ -280,9 +316,9 @@ JNIEXPORT jstring JNICALL Java_hqengineshadercompiler_HQEngineShaderCompilerView
 		semanticKeywords,
 		samplerKeywords,
 		"#line 0 0\n",
-		source
+		processed_src.c_str()
 	};
-	if (versionDeclare != NULL)//NULL if user doesn't specify version
+	if (versionDeclare != NULL)//use version in source if user doesn't specify version
 		sourceArray[0] = versionDeclare;
 	if (shaderTypeGL != GL_VERTEX_SHADER)
 		sourceArray[3] = "";//only vertex shader need sematic definitions
