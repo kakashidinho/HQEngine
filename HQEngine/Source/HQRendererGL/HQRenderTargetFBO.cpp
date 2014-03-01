@@ -209,7 +209,7 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 		HQTextureManagerGL *pTextureMan = (HQTextureManagerGL *)g_pOGLDev->GetTextureManager();
 		GLenum format, type;//get texture's pixel format and pixel data type
 		HQRenderTargetManagerFBO::GetGLImageFormat(this->internalFormat , format , type);
-#ifndef GLES
+#if 0 && !defined GLES
 		GLclampf priority = 1.0f;
 		glPrioritizeTextures(1 , (GLuint*)this->pTexture->pData , &priority);
 #endif
@@ -351,9 +351,9 @@ GLint HQRenderTargetManagerFBO::GetGLInternalFormat(HQRenderTargetFormat format)
 			return GL_LUMINANCE8UI_EXT;
 		}
 	case HQ_RTFMT_A_UINT8:
-		if (GLEW_EXT_texture_integer)
+		if (GLEW_EXT_texture_integer && !GLEW_VERSION_4_1)
 		{
-			return GL_LUMINANCE8UI_EXT;
+			return GL_LUMINANCE8UI_EXT;//this is deprecated
 		}
 	case HQ_RTFMT_RGBA_FLOAT64:
 		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
