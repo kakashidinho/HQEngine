@@ -1,0 +1,272 @@
+/*---------------vertex shader-------------*/
+uniform float3x4 worldMat;
+uniform float4x4 viewMat;
+uniform float4x4 projMat;
+uniform float4x4 lightViewMat;//light camera's view matrix
+uniform float4x4 lightProjMat;//light camera's projection matrix
+
+
+struct vIn{
+	float3 iPos: VPOSITION;
+	float3 iNormal: VNORMAL;
+};
+
+struct vOut{
+	float4 oPos : POSITION;//clip space position
+	float3 oPosW : TEXCOORD0;//world space position
+	float3 oNormalW: TEXCOORD1;//world space normal
+	float4 oPosLight: TEXCOORD2;//projected position in light camera's clip space
+	float2 oLowResTexCoords : TEXCOORD3;//texcoords for low res textures
+};
+
+
+//scale normalized coordinate to a texcoord value between [0..1]
+float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+	
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = - normalizeCoords.y * 0.5 + 0.5;
+	
+	return scaled;
+}
+
+//scale normalized coordinate to a texcoord value between [0..1]. OpenGL version
+glslv glslf float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+	
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = normalizeCoords.y * 0.5 + 0.5;
+	
+	return scaled;
+}
+
+//vertex shader
+vOut vs_main(in vIn input){
+	vOut output;
+	
+	float3 posW = mul(worldMat, float4(input.iPos, 1.0));
+	float3 normalW = mul(worldMat, float4(input.iNormal, 0.0) );
+	normalW = normalize(normalW);
+	
+	float4 posV = mul(float4(posW, 1.0), viewMat);
+	
+	//projected position
+	output.oPos = mul(posV, projMat);
+	output.oLowResTexCoords.xy = output.oPos.xy / output.oPos.w;//normalized clip space
+	//scale to [0..1]
+	output.oLowResTexCoords.xy = scaleToTexcoord(output.oLowResTexCoords.xy);
+	
+	//world space position
+	output.oPosW = posW;
+	
+	//world space normal
+	output.oNormalW = normalW;
+	
+	//light camera's clip space position
+	float4 posLightV = mul(float4(posW, 1.0), lightViewMat);
+	output.oPosLight = mul(posLightV, lightProjMat);
+	
+	return output;
+};
+
+/*---------pixel shader------------------------------*/
+#define NUM_V_SAMPLES 20 //number of vertical samples for indirect illumination
+#define NUM_H_SAMPLES 20 //number of horizontal samples for indirect illumination
+#define V_SAMPLE_STEP   (1.0 / NUM_V_SAMPLES)
+#define H_SAMPLE_STEP   (1.0 / NUM_H_SAMPLES)
+#define V_SAMPLE_START (0.5 * V_SAMPLE_STEP)
+#define H_SAMPLE_START (0.5 * H_SAMPLE_STEP)
+#define SAMPLE_RADIUS 0.3 //sampling radius
+
+#define PI 3.141592654
+#define DEPTH_BIAS 0.0005
+#define SHADOW_MAP_SIZE 512
+#define LOW_RES_SIZE 128
+
+uniform float3 lightPosition;
+uniform float4 materialDiffuse;
+
+uniform sampler2D depthMap : TEXUNIT0;//depth texture
+uniform sampler2D posMap : TEXUNIT1;//position texture in light view
+uniform sampler2D normalMap : TEXUNIT2;//normal texture in light view
+uniform sampler2D fluxMap : TEXUNIT3; //flux texture
+uniform sampler2D randomMap : TEXUNIT4;//texture containing random numbers
+uniform sampler2D lowresFluxMap : TEXUNIT5;//indirect illumination in camera low res view
+uniform sampler2D lowresPosMap : TEXUNIT6;//position in camera low res view
+uniform sampler2D lowresNormalMap : TEXUNIT7;//normal in camera low res view
+
+
+struct pIn{
+	float3 posW : TEXCOORD0;//world space position
+	float3 normalW: TEXCOORD1; //world space normal
+	float4 posLight: TEXCOORD2; //projected position in light camera's clip space
+	float2 lowResTexCoords : TEXCOORD3; //texcoords for low res textures
+};
+
+//compute shadow factor
+float computeShadowFactor(float2 texcoords, float fragmentDepth){
+	float2 texelPos = texcoords * SHADOW_MAP_SIZE; 
+	const float dx = 1.0 / SHADOW_MAP_SIZE;
+	
+	//filtering between 4 nearest neighbors
+	float2 lerpFactor = frac(texelPos);
+	
+	float s0 = tex2D(depthMap, texcoords).r + DEPTH_BIAS < fragmentDepth ? 0.0 : 1.0;
+	return s0;
+	/*float s1 = tex2D(depthMap, texcoords + float2(dx, 0.0)).r + DEPTH_BIAS < fragmentDepth ? 0.0 : 1.0;
+	float s2 = tex2D(depthMap, texcoords + float2(0.0, dx)).r + DEPTH_BIAS < fragmentDepth ? 0.0 : 1.0;
+	float s3 = tex2D(depthMap, texcoords + float2(dx, dx)).r + DEPTH_BIAS < fragmentDepth ? 0.0 : 1.0;
+	
+	float shadowFactor = lerp(
+						lerp(s0, s1, lerpFactor.x),
+						lerp(s2, s3, lerpFactor.x),
+						lerpFactor.y);
+						
+						
+	return shadowFactor;*/
+}
+
+//sampling from low resolution version of the scene. returned w component will tell that the sampling is sufficient or not
+float4 lowResSample(in pIn pixel, float4 sample_texcoords){
+	const float distanceMax = 0.1;
+	const float normalDotMin = 0.86;
+	
+	float4 fluxSample = float4(0.0, 0.0, 0.0, 0.0);
+	float3 lowresPos, lowresNormal;
+		
+	fluxSample.xyz = tex2Dlod(lowresFluxMap, sample_texcoords).xyz;
+	lowresPos = tex2Dlod(lowresPosMap, sample_texcoords).xyz;
+	lowresNormal = tex2Dlod(lowresNormalMap, sample_texcoords).xyz;
+	//scale back from [0..1]
+	lowresPos = 20.0 * lowresPos - float3(10.0);
+	lowresNormal = 2.0 * lowresNormal - float3(1.0);
+	
+	//calculate different between position, normal of the shading pixel and the sampled pixel
+	float distance = length(lowresPos - pixel.posW);
+	float normalDot = max(dot(lowresNormal, pixel.normalW), 0.0);
+	
+	if (distance < distanceMax && normalDot > normalDotMin)
+	{
+		fluxSample.w = 1.0;//valid sample
+	}
+	
+	return fluxSample;
+}
+
+//average 4 samplings from low resolution version of the scene. returned w component will that tell the sampling is sufficient or not
+float4 averageLowResSamples(in pIn pixel)
+{
+	float4 re = float4 (0.0, 0.0, 0.0, 0.0);
+
+	float2 texelPos = pixel.lowResTexCoords * LOW_RES_SIZE; 
+	const float dx = 1.0 / LOW_RES_SIZE;
+	
+	//filtering between 4 nearest neighbors
+	float2 lerpFactor = frac(texelPos);
+	
+	float validSamples = 0;
+	float4 fluxSamples[4];
+	
+	float4 texcoords = float4(pixel.lowResTexCoords, 0.0, 0.0);
+	
+	fluxSamples[0] = lowResSample(pixel, texcoords);
+	validSamples += fluxSamples[0].w;//this will increase by 1 if the sample is valid
+	
+	fluxSamples[1] = lowResSample(pixel, texcoords + float4(dx, 0.0, 0.0, 0.0));
+	validSamples += fluxSamples[1].w;//this will increase by 1 if the sample is valid
+	
+	fluxSamples[2] = lowResSample(pixel, texcoords + float4(0.0, dx, 0.0, 0.0));
+	validSamples += fluxSamples[2].w;//this will increase by 1 if the sample is valid
+	
+	fluxSamples[3] = lowResSample(pixel, texcoords + float4(dx, dx, 0.0, 0.0));
+	validSamples += fluxSamples[3].w;//this will increase by 1 if the sample is valid
+	
+	if (validSamples >= 4)
+	{
+		re.xyz = lerp(
+						lerp(fluxSamples[0].xyz, fluxSamples[1].xyz, lerpFactor.x),
+						lerp(fluxSamples[2].xyz, fluxSamples[3].xyz, lerpFactor.x),
+						lerpFactor.y);
+		re.w = 1.0;//valid samples
+	}
+	
+	return re;
+}
+
+
+
+//pixel shader
+float4 ps_main(
+	 in pIn input
+	) : COLOR
+{
+	//calculate texcoords in shadow map
+	float2 shadowMapUV = input.posLight.xy / input.posLight.w;
+	//scale to [0..1]
+	shadowMapUV = scaleToTexcoord(shadowMapUV);
+	
+	//fragment depth with respect to light source
+	float fragmentDepth = input.posLight.z / input.posLight.w;
+	
+	//shadow factor
+	float shadowFactor = computeShadowFactor(shadowMapUV, fragmentDepth);
+	
+	//direct illumination
+	float4 directI = float4(tex2D(fluxMap, shadowMapUV).xyz * shadowFactor, 1.0);
+	float3 toLight = normalize(lightPosition - input.posW);
+	directI *= max(dot(toLight, input.normalW), 0);
+	
+	/*-----calculate indirect illumination---------*/
+	float4 irradiance = directI;
+	
+	//check if we can average from 4 low res samples
+	float4 avg_lowres_flux = averageLowResSamples(input); 
+	
+	if (avg_lowres_flux.w == 1.0)//valid
+	{
+		irradiance.xyz += avg_lowres_flux.xyz;
+	}
+	else
+	{
+#if 0
+		irradiance.xyz = float3(0.0);
+#else
+		//calculate indirect illumination directly
+		for (float u = H_SAMPLE_START; u < 1.0; u += H_SAMPLE_STEP)
+		{
+			for (float v = V_SAMPLE_START; v < 1.0; v += V_SAMPLE_STEP){
+				//get two random number
+				float4 random = tex2Dlod(randomMap, float4(u, v, 0.0, 0.0));
+				//random.yz are scaled down versions of sin and cos of 2 * PI * random number 2
+				random.yz = 2.0 * random.yz - 1.0;//scale back to original values between [0..1]
+				float2 noiseUV = float2(random.x * SAMPLE_RADIUS * random.y, 
+										random.x * SAMPLE_RADIUS * random.z);
+				
+				//sample pixel light
+				float4 sampleUV = float4(shadowMapUV + noiseUV, 0.0, 0.0);
+				float3 light_position = tex2Dlod(posMap, sampleUV).xyz;
+				float3 light_normal = tex2Dlod(normalMap, sampleUV).xyz;
+				float4 light_flux = tex2Dlod(fluxMap, sampleUV);
+				//scale back from [0.0 .. 1.0]
+				light_position = 20.0 * light_position - 10.0;
+				light_normal = 2.0 * light_normal - 1.0;
+				
+				//vector to sampled pixel light
+				float3 toP = normalize(light_position - input.posW);
+				
+				//irradiance due to this pixel light
+				float3 irradianceP = light_flux.xyz * max(dot(light_normal, -toP), 0.0) * max(dot(input.normalW, toP), 0.0);
+				irradianceP /= (1.0 + pow(length(toP), 4));
+				
+				//contribute to total indirect irradiance
+				irradiance.xyz += irradianceP / (5.0 + random.w);//weighted by  (random.x) ^ 2
+				
+			}//for (float v = V_SAMPLE_START; v < 1.0; v += V_SAMPLE_STEP)
+		}//for (float u = H_SAMPLE_START; u < 1.0; u += H_SAMPLE_STEP)
+#endif
+	}//if (avg_lowres_flux.w == 1.0)
+	
+	float4 output = irradiance * materialDiffuse;
+	
+	return output;
+}

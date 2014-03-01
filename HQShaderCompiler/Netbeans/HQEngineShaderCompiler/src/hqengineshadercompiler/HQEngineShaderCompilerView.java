@@ -70,6 +70,8 @@ public class HQEngineShaderCompilerView extends FrameView {
     private final int SCM_CG = 0;
     private final int SCM_GLSL = 1 ;//compile source ngôn ngữ GLSL hoặc GLSL ES
     private final int SCM_HLSL = 2;//compile source directX HLSL.
+    private final int SCM_CG2GLSL = 3;//translate from Cg to GLSL
+    private final int SCM_CG2GLSL_ES = 4;//translate from Cg to GLSL ES
     
     
     private class TextAreaOutputStream extends OutputStream
@@ -97,12 +99,16 @@ public class HQEngineShaderCompilerView extends FrameView {
             Object item = evt.getItem();
 
             
-           if (item.equals("SCM_CG"))
+            if (item.equals("SCM_CG"))
                 compileMode = SCM_CG;
             else if (item.equals("SCM_GLSL"))
                 compileMode = SCM_GLSL;
             else if (item.equals("SCM_HLSL"))
                 compileMode = SCM_HLSL;
+            else if (item.equals("SCM_CG2GLSL"))
+                compileMode = SCM_CG2GLSL;
+            else if (item.equals("SCM_CG2GLSL_ES"))
+                compileMode = SCM_CG2GLSL_ES;
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {
 
@@ -112,7 +118,6 @@ public class HQEngineShaderCompilerView extends FrameView {
                     saveFileButton.setEnabled(outputCheckBox.isSelected());
                     outputCheckBox.setEnabled(true);
                     entryNameTextField.setEnabled(true);
-                    profileOptionTextField.setEnabled(true);
                     profileTextField.setEnabled(true);
                     argsTextField.setEnabled(true);
                     glslVersionTextField.setEnabled(false);
@@ -134,7 +139,7 @@ public class HQEngineShaderCompilerView extends FrameView {
                         glslShaderTypeList.setEnabled(true);
                         glslMacrosTestField.setEnabled(true);
                     }
-                    else
+                    else if (compileMode == SCM_HLSL)
                     {
                         saveFileButton.setEnabled(outputCheckBox.isSelected());
                         outputCheckBox.setEnabled(true);
@@ -143,6 +148,16 @@ public class HQEngineShaderCompilerView extends FrameView {
                         argsTextField.setEnabled(true);
                         glslVersionTextField.setEnabled(false);
                         glslShaderTypeList.setEnabled(false);
+                        glslMacrosTestField.setEnabled(false);
+                    }
+                    else if (compileMode == SCM_CG2GLSL || compileMode == SCM_CG2GLSL_ES){
+                        saveFileButton.setEnabled(outputCheckBox.isSelected());
+                        outputCheckBox.setEnabled(true);
+                        entryNameTextField.setEnabled(true);
+                        profileTextField.setEnabled(false);
+                        argsTextField.setEnabled(true);
+                        glslVersionTextField.setEnabled(true);
+                        glslShaderTypeList.setEnabled(true);
                         glslMacrosTestField.setEnabled(false);
                     }
                 }
@@ -455,7 +470,7 @@ public class HQEngineShaderCompilerView extends FrameView {
             }
         });
 
-        compileModeList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "SCM_CG", "SCM_GLSL", "SCM_HLSL" }));
+        compileModeList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "SCM_CG", "SCM_GLSL", "SCM_HLSL", "SCM_CG2GLSL", "SCM_CG2GLSL_ES" }));
         compileModeList.setName("compileModeList"); // NOI18N
 
         jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
@@ -490,7 +505,7 @@ public class HQEngineShaderCompilerView extends FrameView {
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1008, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1028, Short.MAX_VALUE))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -519,33 +534,35 @@ public class HQEngineShaderCompilerView extends FrameView {
                             .addComponent(jLabel2))
                         .addGap(24, 24, 24)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(profileOptionTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                            .addComponent(profileOptionTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
                             .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(entryNameTextField, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(profileTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)))
                         .addGap(18, 18, 18)
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(glslVersionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel8)
-                                .addGap(18, 18, 18)
-                                .addComponent(glslShaderTypeList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(compileButton)
                             .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(argsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(argsTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
                             .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
-                                .addComponent(glslMacrosTestField, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(glslMacrosTestField))
                             .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(compileModeList, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel7)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(glslVersionTextField))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mainPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(compileModeList, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(54, 54, 54)
+                                .addComponent(jLabel8)
+                                .addGap(18, 18, 18)
+                                .addComponent(glslShaderTypeList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -565,7 +582,7 @@ public class HQEngineShaderCompilerView extends FrameView {
                     .addComponent(outputPathText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(outputCheckBox)
                     .addComponent(saveFileButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(compileModeList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -630,7 +647,7 @@ public class HQEngineShaderCompilerView extends FrameView {
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 852, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 878, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -772,10 +789,13 @@ public class HQEngineShaderCompilerView extends FrameView {
                     if (st.hasMoreTokens())
                     {
                         args.add("-po");
+                        StringBuilder sb = new StringBuilder();
                         do
                         {
-                            args.add(st.nextToken());
+                            sb.append(st.nextToken());
+                            sb.append(",");
                         }while (st.hasMoreTokens());
+                        args.add(sb.toString());
                     }
                     
 
@@ -863,6 +883,72 @@ public class HQEngineShaderCompilerView extends FrameView {
                     pb.redirectErrorStream(true);
 
                     p = pb.start();
+                    break;
+                case SCM_CG2GLSL: case SCM_CG2GLSL_ES:
+                {
+                    if (this.entryNameTextField.getText().equals(""))
+                    {
+                        javax.swing.JOptionPane.showMessageDialog(this.getFrame() , "entry name string is empty!",
+                            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        break ;
+                    }
+                    String shaderType = (String)this.glslShaderTypeList.getSelectedItem();
+                    profile = "";
+                    
+                    
+                    if (shaderType.equals("GL_VERTEX_SHADER"))
+                    {
+                        profile = "glslv";
+                    }
+                    else if (shaderType.equals("GL_FRAGMENT_SHADER"))
+                    {
+                        profile = "glslf";
+                    }
+                    else{
+                        javax.swing.JOptionPane.showMessageDialog(this.getFrame() , "unsupported shader type in this mode!",
+                            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        break ;
+                    }
+                    String glslVersion = this.glslVersionTextField.getText();
+                    if (profile.length() > 0)
+                    {
+                        args.add("-profile");
+                        args.add(profile);
+                    }
+                    if (glslVersion.length() > 0)
+                    {
+                        args.add("-version");
+                        args.add(glslVersion);
+                    }
+                    if (compileMode == SCM_CG2GLSL_ES)
+                        args.add("-glsles");
+                    
+                    args.add("-entry");
+                    args.add(this.entryNameTextField.getText());
+                    
+
+                    if (this.outputFile)
+                    {
+                        args.add("-o");
+                        if (isWindows)
+                            args.add("\"" + this.savePath + "\"");
+                        else
+                            args.add(this.savePath.replaceAll(" ", "\\ "));
+                    }
+                    if (isWindows)
+                           args.add("\"" + this.sourcePath + "\"");
+                    else
+                        args.add(this.sourcePath.replaceAll(" ", "\\ "));
+                    
+                    args.set(0, "HQEXT_cg2glsl");
+                    cmd = new String[args.size()];
+                    args.toArray(cmd);
+                    pb = new ProcessBuilder(cmd);
+                    pb.redirectErrorStream(true);
+                    
+                    
+                    p = pb.start();
+                }
                     break;
             }
             if (p != null)

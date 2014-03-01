@@ -1,0 +1,36 @@
+#version 120
+uniform vec3 lightPosition;
+uniform vec3 lightDirection;
+uniform vec4 lightDiffuse;
+uniform float lightFalloff;
+uniform float lightPCosHalfAngle;
+uniform vec4 materialDiffuse;
+varying vec3 xlv_TEXCOORD0;
+varying vec2 xlv_TEXCOORD1;
+varying vec3 xlv_TEXCOORD2;
+void main ()
+{
+  vec4 tmpvar_1;
+  vec4 tmpvar_2;
+  tmpvar_2 = vec4((xlv_TEXCOORD1.x / xlv_TEXCOORD1.y));
+  vec4 tmpvar_3;
+  tmpvar_3.w = 1.0;
+  tmpvar_3.xyz = ((xlv_TEXCOORD0 + 10.0) / 20.0);
+  vec4 tmpvar_4;
+  tmpvar_4.w = 0.0;
+  tmpvar_4.xyz = ((xlv_TEXCOORD2 + 1.0) / 2.0);
+  float tmpvar_5;
+  tmpvar_5 = pow (max (dot (
+    normalize((xlv_TEXCOORD0 - lightPosition))
+  , lightDirection), 0.0), lightFalloff);
+  if ((tmpvar_5 < lightPCosHalfAngle)) {
+    tmpvar_1 = vec4(0.0, 0.0, 0.0, 1.0);
+  } else {
+    tmpvar_1 = ((tmpvar_5 * lightDiffuse) * materialDiffuse);
+  };
+  gl_FragData[0] = tmpvar_2;
+  gl_FragData[1] = tmpvar_3;
+  gl_FragData[2] = tmpvar_4;
+  gl_FragData[3] = tmpvar_1;
+}
+

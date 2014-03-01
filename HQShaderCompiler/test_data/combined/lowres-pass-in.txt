@@ -1,0 +1,147 @@
+/*---------------vertex shader-------------*/
+uniform float3x4 worldMat;
+uniform float4x4 viewMat;
+uniform float4x4 projMat;
+uniform float4x4 lightViewMat;//light camera's view matrix
+uniform float4x4 lightProjMat;//light camera's projection matrix
+
+
+struct vIn{
+	float3 iPos: VPOSITION;
+	float3 iNormal: VNORMAL;
+};
+
+struct vOut{
+	float4 oPos : POSITION;//clip space position
+	float3 oPosW : TEXCOORD0;//world space position
+	float3 oNormalW: TEXCOORD1;//world space normal
+	float4 oPosLight: TEXCOORD2;//projected position in light camera's clip space
+};
+
+
+//vertex shader
+vOut vs_main(in vIn input){
+	vOut output;
+	
+	float3 posW = mul(worldMat, float4(input.iPos, 1.0));
+	float3 normalW = mul(worldMat, float4(input.iNormal, 0.0) );
+	normalW = normalize(normalW);
+	
+	float4 posV = mul(float4(posW, 1.0), viewMat);
+	
+	//projected position
+	output.oPos = mul(posV, projMat);
+	
+	//world space position
+	output.oPosW = posW;
+	
+	//world space normal
+	output.oNormalW = normalW;
+	
+	//light camera's clip space position
+	float4 posLightV = mul(float4(posW, 1.0), lightViewMat);
+	output.oPosLight = mul(posLightV, lightProjMat);
+	
+	return output;
+};
+
+
+/*---------pixel shader------------------------------*/
+#define NUM_V_SAMPLES 20 //number of vertical samples for indirect illumination
+#define NUM_H_SAMPLES 20 //number of horizontal samples for indirect illumination
+#define V_SAMPLE_STEP   (1.0 / NUM_V_SAMPLES)
+#define H_SAMPLE_STEP   (1.0 / NUM_H_SAMPLES)
+#define V_SAMPLE_START (0.5 * V_SAMPLE_STEP)
+#define H_SAMPLE_START (0.5 * H_SAMPLE_STEP)
+#define SAMPLE_RADIUS 0.3 //sampling radius
+
+#define PI 3.141592654
+
+struct pOut{
+	float4 irradiance: COLOR0;//irradiance
+	float4 posW: COLOR1;//world space position
+	float4 normalW: COLOR2;//world space normal
+};
+
+//scale normalized coordinate to a texcoord value between [0..1]
+float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+	
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = - normalizeCoords.y * 0.5 + 0.5;
+	
+	return scaled;
+}
+
+//scale normalized coordinate to a texcoord value between [0..1]. OpenGL version
+glslf float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+	
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = normalizeCoords.y * 0.5 + 0.5;
+	
+	return scaled;
+}
+
+//randomMap is texture containing random numbers
+uniform sampler2D randomMap : TEXUNIT0;
+uniform sampler2D normalMap : TEXUNIT2;//normal texture
+uniform sampler2D fluxMap : TEXUNIT3; //flux texture
+
+//pixel shader
+pOut ps_main(
+	uniform sampler2D posMap : TEXUNIT1,//position texture
+	in float3 posW : TEXCOORD0,//world space position
+	in float3 normalW: TEXCOORD1, //world space normal
+	in float4 posLight: TEXCOORD2 //projected position in light camera's clip space
+	)
+{
+	pOut output;
+	
+	//world space position normalized and scaled to a value between 0.0 and 1.0
+	output.posW = float4((posW + float3(10.0)) / 20.0, 1.0);
+	
+	//world space normal scaled to a value between 0.0 and 1.0
+	output.normalW = float4((normalW + float3(1.0))/ 2.0, 0.0);
+	
+	//calculate texcoords in reflective shadow map
+	float2 shadowMapUV = posLight.xy / posLight.w;
+	shadowMapUV = scaleToTexcoord(shadowMapUV);
+	
+	output.irradiance = float4(0.0, 0.0, 0.0, 1.0);
+	
+	//sample indirect illumination
+	for (float u = H_SAMPLE_START; u < 1.0; u += H_SAMPLE_STEP)
+	{
+		for (float v = V_SAMPLE_START; v < 1.0; v += V_SAMPLE_STEP){
+			//get two random number
+			float4 random = tex2Dlod(randomMap, float4(u, v, 0.0, 0.0));
+			//random.yz are scaled down versions of sin and cos of 2 * PI * random number 2
+			random.yz = 2.0 * random.yz - 1.0;//scale back to original values between [0..1]
+			float2 noiseUV = float2(random.x * SAMPLE_RADIUS * random.y, 
+									random.x * SAMPLE_RADIUS * random.z);
+			
+			//sample pixel light
+			float4 sampleUV = float4(shadowMapUV + noiseUV, 0.0, 0.0);
+			float3 light_position = tex2Dlod(posMap, sampleUV).xyz;
+			float3 light_normal = tex2Dlod(normalMap, sampleUV).xyz;
+			float4 light_flux = tex2Dlod(fluxMap, sampleUV);
+			//scale back from [0.0 .. 1.0]
+			light_position = 20.0 * light_position - 10.0;
+			light_normal = 2.0 * light_normal - 1.0;
+			
+			//vector to sampled pixel light
+			float3 toP = normalize(light_position - posW);
+			
+			//irradiance due to this pixel light
+			float3 irradiance = light_flux.xyz * max(dot(light_normal, -toP), 0.0) * max(dot(normalW, toP), 0.0);
+			irradiance /= (1.0 + pow(length(toP), 4));
+			
+			//contribute to total indirect irradiance
+			output.irradiance.xyz += irradiance / (5.0 + random.w);//weighted by  (random.x) ^ 2
+			
+		}
+	}
+	
+	return output;
+}

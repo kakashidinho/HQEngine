@@ -1,0 +1,48 @@
+#version 120
+uniform vec4 worldMat[3];
+uniform mat4 viewMat;
+uniform mat4 projMat;
+uniform mat4 lightViewMat;
+uniform mat4 lightProjMat;
+attribute vec3 xlat_attrib_VPOSITION;
+attribute vec3 xlat_attrib_VNORMAL;
+varying vec3 xlv_TEXCOORD0;
+varying vec3 xlv_TEXCOORD1;
+varying vec4 xlv_TEXCOORD2;
+varying vec2 xlv_TEXCOORD3;
+void main ()
+{
+  vec3 vec_1;
+  vec3 vec_2;
+  vec2 tmpvar_3;
+  vec4 tmpvar_4;
+  tmpvar_4.w = 1.0;
+  tmpvar_4.xyz = xlat_attrib_VPOSITION;
+  vec_2.x = dot (worldMat[0], tmpvar_4);
+  vec_2.y = dot (worldMat[1], tmpvar_4);
+  vec_2.z = dot (worldMat[2], tmpvar_4);
+  vec4 tmpvar_5;
+  tmpvar_5.w = 0.0;
+  tmpvar_5.xyz = xlat_attrib_VNORMAL;
+  vec_1.x = dot (worldMat[0], tmpvar_5);
+  vec_1.y = dot (worldMat[1], tmpvar_5);
+  vec_1.z = dot (worldMat[2], tmpvar_5);
+  vec4 tmpvar_6;
+  tmpvar_6.w = 1.0;
+  tmpvar_6.xyz = vec_2;
+  vec4 tmpvar_7;
+  tmpvar_7 = ((tmpvar_6 * viewMat) * projMat);
+  tmpvar_3 = (tmpvar_7.xy / tmpvar_7.w);
+  vec2 scaled_8;
+  scaled_8 = ((tmpvar_3 * vec2(0.5, 0.5)) + vec2(0.5, 0.5));
+  tmpvar_3 = scaled_8;
+  vec4 tmpvar_9;
+  tmpvar_9.w = 1.0;
+  tmpvar_9.xyz = vec_2;
+  gl_Position = tmpvar_7;
+  xlv_TEXCOORD0 = vec_2;
+  xlv_TEXCOORD1 = normalize(vec_1);
+  xlv_TEXCOORD2 = ((tmpvar_9 * lightViewMat) * lightProjMat);
+  xlv_TEXCOORD3 = scaled_8;
+}
+
