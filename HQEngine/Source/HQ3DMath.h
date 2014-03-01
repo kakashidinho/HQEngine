@@ -230,8 +230,8 @@ HQ_UTIL_MATH_API HQ_FORCE_INLINE HQVector4* HQVector4Neg(const HQVector4* pV1,HQ
 
 HQ_UTIL_MATH_API HQVector4* HQVector4Normalize(const HQVector4* in,HQVector4* out);
 HQ_UTIL_MATH_API HQVector4* HQVector4Cross(const HQVector4* v1,const HQVector4 *v2,HQVector4* out);
-HQ_UTIL_MATH_API HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix4* mat,HQVector4* out);
-HQ_UTIL_MATH_API HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix3x4* mat,HQVector4* out);
+HQ_UTIL_MATH_API HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix4* mat,HQVector4* out);//biến đổi vector với ma trận 4x4 row major
+HQ_UTIL_MATH_API HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix3x4* mat,HQVector4* out);//biến đổi vector với 1 ma trận  3x4 (coi như ma trận 4x4 column major với hàng cuối là 0 0 0 1)
 HQ_UTIL_MATH_API HQVector4* HQVector4Transform(const HQVector4* v1,const HQQuaternion* quat,HQVector4* out);
 HQ_UTIL_MATH_API HQVector4* HQVector4Transform(const HQVector4* v1,const HQOBB* box,HQVector4* out);//biến đổi vào không gian tọa độ có các trục là các trục của hình hộp OBB
 HQ_UTIL_MATH_API HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix4* mat,HQVector4* out);//biến đổi vector (x,y,z,0) với ma trận 4x4 row major

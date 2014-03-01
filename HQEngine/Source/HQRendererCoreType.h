@@ -162,7 +162,8 @@ typedef enum HQShaderType
 ///(tương đương với "#define {name} {definition}" trong mã nguồn shader) 
 ///trước khi compile shader. 
 ///Lưu ý với glsl nếu {name} = "version" thì {definition} phải là version của glsl .Macro này phải là macro đầu tiên
-///Ví dụ {definition] = "120" tương đương "#version 120"
+///Ví dụ {definition] = "120" tương đương "#version 120".
+///Lưu ý version macro sẽ bị bỏ qua nếu đã có version định sẵn trong source 
 ///
 struct HQShaderMacro
 {

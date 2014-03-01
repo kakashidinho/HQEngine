@@ -34,7 +34,7 @@ protected:
 };
 
 
-//base perspective camera. Note: the matrices will be Left-Hand and row-major based
+//base perspective camera. Note: the matrices will be Left-Hand and column-major based
 class HQSCENEMANAGEMENT_API HQBasePerspectiveCamera : public HQBaseCamera
 {
 public :

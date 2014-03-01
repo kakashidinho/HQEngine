@@ -49,19 +49,19 @@ HQBasePerspectiveCamera::HQBasePerspectiveCamera(
 	up.Set(upX, upY, upZ);
 
 	//calculate view matrix
-	HQMatrix4rLookAtLH(&pos, &at, &up, this->m_viewMatrix);
+	HQMatrix4cLookAtLH(&pos, &at, &up, this->m_viewMatrix);
 	m_xAxis->Set(this->m_viewMatrix->_11, this->m_viewMatrix->_21, this->m_viewMatrix->_31, 0.f);
 	m_yAxis->Set(this->m_viewMatrix->_12, this->m_viewMatrix->_22, this->m_viewMatrix->_32, 0.f);
 	m_zAxis->Set(this->m_viewMatrix->_13, this->m_viewMatrix->_23, this->m_viewMatrix->_33, 0.f);
 
 	//calculate projection matrix
-	HQMatrix4rPerspectiveProjLH(fov, aspect_ratio, nearPlane, farPlane, this->m_projMatrix, m_renderAPI);
+	HQMatrix4cPerspectiveProjLH(fov, aspect_ratio, nearPlane, farPlane, this->m_projMatrix, m_renderAPI);
 
 	//calculate view x projection matrix
-	HQMatrix4Multiply(m_viewMatrix, m_projMatrix, m_viewProjMat);
+	HQMatrix4Multiply(m_projMatrix, m_viewMatrix, m_viewProjMat);
 
 	//calculate view frustum
-	HQMatrix4rGetFrustum(m_viewProjMat, m_frustumPlanes, m_renderAPI);
+	HQMatrix4cGetFrustum(m_viewProjMat, m_frustumPlanes, m_renderAPI);
 }
 
 HQBasePerspectiveCamera::~HQBasePerspectiveCamera(){
@@ -117,11 +117,11 @@ void HQCamera::Update(hqfloat32 dt ,bool updateChilds, bool parentChanged  )
 
 	//update matrices and frustum
 	//calculate view matrix
-	HQMatrix4rView(&newX, &newY, &newZ, &newPos, m_viewMatrix);
+	HQMatrix4cView(&newX, &newY, &newZ, &newPos, m_viewMatrix);
 
 	//calculate view x projection matrix
-	HQMatrix4Multiply(m_viewMatrix, m_projMatrix, m_viewProjMat);
+	HQMatrix4Multiply(m_projMatrix, m_viewMatrix, m_viewProjMat);
 
 	//calculate view frustum
-	HQMatrix4rGetFrustum(m_viewProjMat, m_frustumPlanes, m_renderAPI);
+	HQMatrix4cGetFrustum(m_viewProjMat, m_frustumPlanes, m_renderAPI);
 }
