@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\..;..\..\..\glsl_optimizer\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,9 +63,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glsl_optimizer_lib-win32.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)_D.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="..\..\..\Cg\lib;..\..\..\glsl_optimizer\lib\win32"
 				ModuleDefinitionFile="HQRendererGLDef.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -120,7 +121,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\..;..\..\..\glsl_optimizer\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -141,9 +142,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glsl_optimizer_lib-win32.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="..\..\..\Cg\lib;..\..\..\glsl_optimizer\lib\win32"
 				ModuleDefinitionFile="HQRendererGLDef.def"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -200,7 +202,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\..;..\..\..\glsl_optimizer\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -222,9 +224,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glsl_optimizer_lib-win32.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="..\..\..\Cg\lib;..\..\..\glsl_optimizer\lib\win32"
 				ModuleDefinitionFile="HQRendererGLDef.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -279,7 +282,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\..;..\..\..\glsl_optimizer\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_DEBUG_LAYER;GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -301,9 +304,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glsl_optimizer_lib-win32.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)_D.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="..\..\..\Cg\lib;..\..\..\glsl_optimizer\lib\win32"
 				ModuleDefinitionFile="HQRendererGLDef.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -358,7 +362,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\..;..\..\..\glsl_optimizer\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;_STATIC_CRT"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -379,9 +383,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glsl_optimizer_lib-win32-static-crt.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="..\..\..\Cg\lib;..\..\..\glsl_optimizer\lib\win32"
 				ModuleDefinitionFile="HQRendererGLDef.def"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -436,7 +441,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\..;..\..\..\glsl_optimizer\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;_STATIC_CRT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -458,9 +463,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glsl_optimizer_lib-win32-static-crt.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)_D.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="..\..\..\Cg\lib;..\..\..\glsl_optimizer\lib\win32"
 				ModuleDefinitionFile="HQRendererGLDef.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"

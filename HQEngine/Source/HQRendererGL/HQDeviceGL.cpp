@@ -172,6 +172,8 @@ HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
 	this->shaderMan = NULL;
 	this->stateMan = NULL;
 
+	this->usingCoreProfile = false;//core profile will not supported some deprecated features
+
 	g_pOGLDev=this;
 }
 //***********************************
@@ -1046,7 +1048,10 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 				}
 			}
 			else if (version_major >= 3)
+			{
 				this->Log("Using OpenGL version %d.%d core profile!", version_major, version_minor);
+				usingCoreProfile = true;
+			}
 		}
 	}
 

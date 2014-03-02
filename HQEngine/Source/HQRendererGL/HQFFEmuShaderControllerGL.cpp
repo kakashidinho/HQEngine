@@ -19,6 +19,13 @@ COPYING.txt included with this distribution for more information.
 
 #include "../BaseImpl/BaseImplShaderString/HQFFEmuShaderGL.h"
 
+#ifdef WIN32
+#include <string>
+#include <sstream>
+
+#include "glsl_optimizer.h"
+#endif
+
 #define MAX_LIGHTS 4
 
 #define PARAMETERS_DIRTY_MASK 0x0000ffff
@@ -253,11 +260,56 @@ struct HQFixedFunctionShaderGL: public HQA16ByteObject
 
 private:
 
+#ifdef WIN32
+	bool optimizeGLSL(GLenum glshaderType, const char **sourceArray, int sourceArrayLen, std::string &optimized_source){
+		//combine source array
+		std::stringstream ss ;
+		for (int i = 0; i < sourceArrayLen; ++i){
+			ss << sourceArray[i];
+		}
+
+		std::string source = ss.str();
+
+		glslopt_ctx*  glsl_optContext = glslopt_initialize(kGlslTargetOpenGL);
+
+		glslopt_shader_type shaderType = glshaderType == GL_VERTEX_SHADER? kGlslOptShaderVertex : kGlslOptShaderFragment;
+
+		bool success = true;
+		glslopt_shader* shader = glslopt_optimize(glsl_optContext, shaderType, source.c_str(), 0);
+
+		if(glslopt_get_status(shader))
+		{
+			optimized_source = glslopt_get_output(shader);
+		}
+		else
+		{
+			const char * log = glslopt_get_log(shader);//for debugging
+			success = false;
+
+		}
+		glslopt_shader_delete(shader);
+
+		glslopt_cleanup(glsl_optContext);
+
+		return success;
+	}
+#endif
+
 	HQReturnVal CreateShader(GLenum shaderType,
 								  const char** sourceArray,
 								  GLuint sourceSize,
 								  GLuint & shaderOut)
 	{
+#ifdef WIN32
+		//optimize it before sending to opengl
+		std::string opt_code;
+		if (optimizeGLSL(shaderType, sourceArray, sourceSize, opt_code))
+		{
+			*sourceArray = opt_code.c_str();
+			sourceSize = 1;
+		}
+#endif
+
 		shaderOut = glCreateShader(shaderType);
 
 		glShaderSource(shaderOut, sourceSize, (const GLchar**)sourceArray, NULL);

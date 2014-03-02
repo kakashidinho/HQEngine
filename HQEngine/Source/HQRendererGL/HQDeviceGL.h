@@ -119,6 +119,7 @@ protected:
 	GLenum primitiveMode;
 	GLenum primitiveLookupTable[HQ_PRI_NUM_PRIMITIVE_MODE];
 
+	bool usingCoreProfile;
 	HQDeviceEnumGL *pEnum;
 public:
 #ifdef WIN32
@@ -164,6 +165,10 @@ public:
 	hquint32 GetClearStencilVal() const
 	{
 		return clearStencil;
+	}
+
+	bool isUsingCoreProfile() const {
+		return usingCoreProfile;
 	}
 
 #ifndef GLES
