@@ -169,8 +169,7 @@ Game::Game()
 	this->audio = HQCreateAudioDevice(HQ_DEFAULT_SPEED_OF_SOUND , logFile, true);
 	this->audio->SetListenerVolume(1.0f);
 	hquint32 audiobufferID;
-//#define audioFile "../test/audio/battletoads-double-dragons-2.ogg"
-#define audioFile "../test/audio/crysis_warhead_menu.ogg"
+#define audioFile "../test/audio/battletoads-double-dragons-2.ogg"
 	//this->audio->CreateAudioBufferFromFile(audioFile, &audiobufferID);
 
 	//this->audio->CreateStreamAudioBufferFromFile(audioFile, 5, 65536,  &audiobufferID);
@@ -178,8 +177,8 @@ Game::Game()
 	
 	TRACE("here %s %d", __FILE__, __LINE__);
 
-	//HQAudioSourceInfo info = {HQ_AUDIO_PCM, 16, 1};
-	HQAudioSourceInfo info = {HQ_AUDIO_PCM, 16, 2};
+	HQAudioSourceInfo info = {HQ_AUDIO_PCM, 16, 1};
+	//HQAudioSourceInfo info = {HQ_AUDIO_PCM, 16, 2};
 	this->audio->CreateSource(info, audiobufferID, &music);
 
 	TRACE("here %s %d", __FILE__, __LINE__);
