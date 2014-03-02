@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew-1.6.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
 				PreprocessorDefinitions="GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -120,7 +120,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew-1.6.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
 				PreprocessorDefinitions="GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -197,7 +197,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew-1.6.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
 				PreprocessorDefinitions="GLEW_STATIC"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -276,7 +276,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew-1.6.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
 				PreprocessorDefinitions="GLEW_STATIC"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -354,7 +354,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew-1.6.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
 				PreprocessorDefinitions="GLEW_STATIC"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -433,7 +433,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew-1.6.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
 				PreprocessorDefinitions="GLEW_STATIC"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -494,7 +494,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\HQEngine\Source\HQRendererGL\glew-1.6.0\src\glew.c"
+				RelativePath="..\..\..\HQEngine\Source\HQRendererGL\glew\src\glew.c"
 				>
 			</File>
 			<File
