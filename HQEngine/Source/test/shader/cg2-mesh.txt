@@ -66,14 +66,11 @@ vOut VS(uniform sampler2D texture0 : TEXUNIT3,
 }
 
 
-struct CBUFFER  
-{
-	float3x4 rotation;
-	float4x4 viewProj;
-} ;
 
-
-uniform CBUFFER cbuffer : BUFFER[11];
+uniform cbuffer {
+	float3x4 rotation2;
+	float4x4 viewProj2;
+} : BUFFER[11];
 
 vs_4_0 vs_5_0 vOut2 VS(uniform sampler2D texture0 : TEXUNIT3,
 	in vIn input)
@@ -86,10 +83,10 @@ vs_4_0 vs_5_0 vOut2 VS(uniform sampler2D texture0 : TEXUNIT3,
 	output.texcoord = input.texcoord0 ;
 	output.position.w = 1.0;
 	float4 pos = float4(input.position.xyz , 1.0);
-	output.position.x = dot(pos , cbuffer.rotation[0]);
-	output.position.y = dot(pos , cbuffer.rotation[1]);
-	output.position.z = dot(pos , cbuffer.rotation[2]);
-	output.position = mul(output.position , cbuffer.viewProj);
+	output.position.x = dot(pos , rotation2[0]);
+	output.position.y = dot(pos , rotation2[1]);
+	output.position.z = dot(pos , rotation2[2]);
+	output.position = mul(output.position , viewProj2);
 	return output;
 }
 
