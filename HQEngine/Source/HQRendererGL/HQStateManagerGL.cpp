@@ -613,12 +613,20 @@ HQReturnVal HQStateManagerGL::SetSamplerState(hq_uint32 index , hq_uint32 sample
 		if (currentTexture == NULL)
 			currentBoundTex = 0;
 		else
-			currentBoundTex = *((GLuint*)pTextureGL->pData);
+			currentBoundTex = *((GLuint*)currentTexture->pData);
 
 
 		GLuint *pTextureName = (GLuint *) pTextureGL->pData;
 		if (currentBoundTex != *pTextureName)
 			glBindTexture(target , *pTextureName);
+
+#if 0 && defined _DEBUG
+		//check the correctness
+		GLuint realBoundTex;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&realBoundTex);
+		if (realBoundTex != *pTextureName)
+			assert(false);
+#endif
 
 		/*-----------set sampler state------------*/
 
