@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="release_no_optimize|Win32">
+      <Configuration>release_no_optimize</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AE221275-1CA1-4F6D-A78E-4BF33BCF3C08}</ProjectGuid>
+    <RootNamespace>global_illum</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60315.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)..\VS2012_Desk_bin_$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)..\VS2012_Desk_bin_$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">
+    <OutDir>$(SolutionDir)..\VS2012_Desk_bin_$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../HQEngine/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>HQEngineD.lib;HQUtilMathD.lib;HQUtilD.lib;HQSceneManagement.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../HQEngine/VS/Output/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y $(SolutionDir)\..\..\..\HQEngine\VS\Output\$(Configuration)\*.dll  $(OutDir)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../HQEngine/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>HQEngine.lib;HQUtilMath.lib;HQUtil.lib;HQSceneManagement.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../HQEngine/VS/Output/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y $(SolutionDir)\..\..\..\HQEngine\VS\Output\$(Configuration)\*.dll  $(OutDir)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../HQEngine/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>HQEngine.lib;HQUtilMath.lib;HQUtil.lib;HQSceneManagement.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../HQEngine/VS/Output/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences />
+      <EnableCOMDATFolding />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y $(SolutionDir)\..\..\..\HQEngine\VS\Output\$(Configuration)\*.dll  $(OutDir)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\main.cpp" />
+    <ClCompile Include="..\Source\RenderLoop_depth_pass.cpp" />
+    <ClCompile Include="..\Source\RenderLoop_final_pass.cpp" />
+    <ClCompile Include="..\Source\RenderLoop_lowres_pass.cpp" />
+    <ClCompile Include="..\Source\RenderLoop_main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Data\depth-pass.cg">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\Data\final-gathering.cg">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\Data\lowres-pass.cg">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\Data\noise_decoding.cg">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\RenderLoop.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,5 +1,6 @@
+#pragma pack_matrix(column_major)
 /*---------------vertex shader-------------*/
-uniform float3x4 worldMat;
+uniform float4x3 worldMat;
 uniform float4x4 viewMat;
 uniform float4x4 projMat;
 uniform float4x4 lightViewMat;//light camera's view matrix
@@ -20,12 +21,32 @@ struct vOut{
 };
 
 
+//scale normalized coordinate to a texcoord value between [0..1]
+float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+	
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = - normalizeCoords.y * 0.5 + 0.5;
+	
+	return scaled;
+}
+
+//scale normalized coordinate to a texcoord value between [0..1]. OpenGL version
+glslv glslf float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+	
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = normalizeCoords.y * 0.5 + 0.5;
+	
+	return scaled;
+}
+
 //vertex shader
 vOut VS(in vIn input){
 	vOut output;
 	
-	float3 posW = mul(worldMat, float4(input.iPos, 1.0));
-	float3 normalW = mul(worldMat, float4(input.iNormal, 0.0) );
+	float3 posW = mul(float4(input.iPos, 1.0), worldMat);
+	float3 normalW = mul(float4(input.iNormal, 0.0), worldMat );
 	normalW = normalize(normalW);
 	
 	float4 posV = mul(float4(posW, 1.0), viewMat);
@@ -33,8 +54,8 @@ vOut VS(in vIn input){
 	//projected position
 	output.oPos = mul(posV, projMat);
 	output.oLowResTexCoords.xy = output.oPos.xy / output.oPos.w;//normalized clip space
-	output.oLowResTexCoords.x = 0.5f * output.oLowResTexCoords.x + 0.5;//scale to [0..1]
-	output.oLowResTexCoords.y = -0.5f * output.oLowResTexCoords.y + 0.5;//scale to [0..1]
+	//scale to [0..1]
+	output.oLowResTexCoords.xy = scaleToTexcoord(output.oLowResTexCoords.xy);
 	
 	//world space position
 	output.oPosW = posW;
@@ -176,14 +197,14 @@ float4 averageLowResSamples(in pIn pixel)
 
 
 //pixel shader
-ps_3_0 ps_4_0 ps_5_0 float4 PS(
+float4 PS(
 	 in pIn input
 	) : COLOR
 {
 	//calculate texcoords in shadow map
 	float2 shadowMapUV = input.posLight.xy / input.posLight.w;
-	shadowMapUV.x = shadowMapUV.x * 0.5 + 0.5;
-	shadowMapUV.y = - shadowMapUV.y * 0.5 + 0.5;
+	//scale to [0..1]
+	shadowMapUV = scaleToTexcoord(shadowMapUV);
 	
 	//fragment depth with respect to light source
 	float fragmentDepth = input.posLight.z / input.posLight.w;

@@ -40,7 +40,14 @@ SpotLight::~SpotLight()
 
 /*----------RenderLoop----------*/
 //constructor
-RenderLoop::RenderLoop(){
+RenderLoop::RenderLoop(const char* _renderAPI)
+{
+	strcpy(this->m_renderAPI_name, _renderAPI);
+	if (strcmp(m_renderAPI_name, "GL") == 0)
+		this->m_renderAPI_type = HQ_RA_OGL;
+	else
+		this->m_renderAPI_type = HQ_RA_D3D;
+
 	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
 
 
@@ -64,7 +71,7 @@ RenderLoop::RenderLoop(){
 			HQToRadian(37),
 			1.0f,
 			1.0f, 1000.0f,
-			HQ_RA_D3D
+			this->m_renderAPI_type
 		);
 
 	//create light object
@@ -75,7 +82,7 @@ RenderLoop::RenderLoop(){
 			HQToRadian(90),
 			2.0f,
 			1000.f,
-			HQ_RA_D3D);
+			this->m_renderAPI_type);
 
 	//add all to containers
 	m_scene->AddChild(m_model);
@@ -103,11 +110,11 @@ RenderLoop::RenderLoop(){
 	//m_pRDevice->GetStateManager()->SetFillMode(HQ_FILL_WIREFRAME);
 
 	//point sampling state
-	HQSamplerStateDesc stDesc1(HQ_FM_MIN_MAG_MIP_POINT, HQ_TAM_CLAMP, HQ_TAM_CLAMP);
+	HQSamplerStateDesc stDesc1(HQ_FM_MIN_MAG_POINT, HQ_TAM_CLAMP, HQ_TAM_CLAMP);
 	m_pRDevice->GetStateManager()->CreateSamplerState(stDesc1, &point_sstate);
 
 	//black border color sampling state
-	HQSamplerStateDesc stDesc2(HQ_FM_MIN_MAG_MIP_LINEAR, HQ_TAM_BORDER, HQ_TAM_BORDER, 1, HQColorRGBA(0.f, 0.f, 0.f, 1.f));
+	HQSamplerStateDesc stDesc2(HQ_FM_MIN_MAG_LINEAR, HQ_TAM_BORDER, HQ_TAM_BORDER, 1, HQColorRGBA(0.f, 0.f, 0.f, 1.f));
 	m_pRDevice->GetStateManager()->CreateSamplerState(stDesc2, &border_sstate);
 
 }
@@ -133,17 +140,17 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	//create decoding shader program
 	m_pRDevice->GetShaderManager()->CreateShaderFromFile(
 		HQ_VERTEX_SHADER,
-		"../Data/noise_decoding.cg",
+		API_BASED_SHADER_MODE(this->m_renderAPI_type),
+		API_BASED_VSHADER_FILE(this->m_renderAPI_type, "noise_decoding"),
 		NULL,
-		false,
 		"VS",
 		&vid);
 
 	m_pRDevice->GetShaderManager()->CreateShaderFromFile(
 		HQ_PIXEL_SHADER,
-		"../Data/noise_decoding.cg",
+		API_BASED_SHADER_MODE(this->m_renderAPI_type),
+		API_BASED_FSHADER_FILE(this->m_renderAPI_type, "noise_decoding"),
 		NULL,
-		false,
 		"PS",
 		&pid);
 
@@ -179,7 +186,7 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	m_pRDevice->GetVertexStreamManager()->CreateVertexInputLayout(vAttrDescs, 2, vid, &vInputLayout);
 
 	//create render target to hold the decoded random numbers 
-	hquint32 decodeRT;
+	hquint32 decodeRT, decodeRTGroupID;
 	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetTexture(
 		width, height,
 		false,
@@ -188,23 +195,31 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 		HQ_TEXTURE_2D,
 		&decodeRT,
 		&m_noise_map);
+	//create render target group
+	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetGroup(
+			&HQRenderTargetDesc(decodeRT),
+			HQ_NULL_ID,
+			1,
+			&decodeRTGroupID
+		);
 
 	//point sampling state
 	HQSamplerStateDesc stDesc1(HQ_FM_MIN_MAG_MIP_POINT, HQ_TAM_CLAMP, HQ_TAM_CLAMP);
 	m_pRDevice->GetStateManager()->CreateSamplerState(stDesc1, &pointSamplerState);
 
 	//now decode the random numbers by render them to texture. result = (R=decoded number 1, G=sin(2*pi*decoded number 2), B=cos(2*pi*decoded number 2), A = decoded number 1 ^ 2)
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTarget(
-		decodeRT, 
-		HQ_NULL_ID);
+	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(decodeRTGroupID);
 
 	m_pRDevice->GetShaderManager()->ActiveProgram(program);
 
 	m_pRDevice->GetVertexStreamManager()->SetVertexBuffer(vBuffer, 0, 6 * sizeof(float));
 	m_pRDevice->GetVertexStreamManager()->SetVertexInputLayout(vInputLayout);
 
-	m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER| 0, pointSamplerState);
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_PIXEL_SHADER| 0, encoded_noise_map);
+	if (strcmp(m_renderAPI_name, "GL") == 0)
+		m_pRDevice->GetStateManager()->SetSamplerState(encoded_noise_map, pointSamplerState);
+	else
+		m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER| 0, pointSamplerState);
+	m_pRDevice->GetTextureManager()->SetTextureForPixelShader(0, encoded_noise_map);
 
 	m_pRDevice->SetPrimitiveMode(HQ_PRI_TRIANGLE_STRIP);
 	//draw full screen quad
@@ -213,7 +228,6 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	m_pRDevice->BeginRender(HQ_TRUE, HQ_FALSE, HQ_FALSE, HQ_TRUE);
 	m_pRDevice->DrawPrimitive(2, 0);
 	m_pRDevice->EndRender();
-	m_pRDevice->DisplayBackBuffer();//for debugging
 
 	//clean up
 	m_pRDevice->GetVertexStreamManager()->RemoveVertexBuffer(vBuffer);
@@ -223,14 +237,14 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	m_pRDevice->GetShaderManager()->DestroyShader(pid);
 
 	//switch to default render target
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTarget(
-		HQ_NULL_ID,
-		HQ_NULL_ID);
+	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(HQ_NULL_ID);
 
 	//switch back to default shader program
 	m_pRDevice->GetShaderManager()->ActiveProgram(HQ_NOT_USE_SHADER);
 
 	m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER| 0, 0);
+
+	m_pRDevice->DisplayBackBuffer();//for debugging
 }
 
 //rendering loop

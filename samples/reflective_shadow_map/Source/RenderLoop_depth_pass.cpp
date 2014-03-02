@@ -2,6 +2,8 @@
 
 //initilize resources for depth pass rendering
 void RenderLoop::DepthPassInit(){
+	HQRenderTargetDesc depth_pass_renderTargets[4];
+
 	//depth render target
 	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetTexture(
 		DEPTH_PASS_RT_WIDTH, DEPTH_PASS_RT_HEIGHT,
@@ -50,21 +52,29 @@ void RenderLoop::DepthPassInit(){
 			&depth_pass_depth_buffer
 		);
 
+	//create render target group
+	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetGroup(
+			depth_pass_renderTargets,
+			depth_pass_depth_buffer,
+			4,
+			&depth_pass_rtGroupID
+		);
+
 	//create shader program
 	hquint32 vid, pid;
 	m_pRDevice->GetShaderManager()->CreateShaderFromFile(
 		HQ_VERTEX_SHADER,
-		"../Data/depth-pass.cg",
+		API_BASED_SHADER_MODE(this->m_renderAPI_type),
+		API_BASED_VSHADER_FILE(this->m_renderAPI_type, "depth-pass"),
 		NULL,
-		false,
 		"VS",
 		&vid);
 
 	m_pRDevice->GetShaderManager()->CreateShaderFromFile(
 		HQ_PIXEL_SHADER,
-		"../Data/depth-pass.cg",
+		API_BASED_SHADER_MODE(this->m_renderAPI_type),
+		API_BASED_FSHADER_FILE(this->m_renderAPI_type, "depth-pass"),
 		NULL,
-		false,
 		"PS",
 		&pid);
 
@@ -75,11 +85,7 @@ void RenderLoop::DepthPassInit(){
 
 void RenderLoop::DepthPassRender(HQTime dt){
 	//switch to offscreen render targets
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(
-		depth_pass_renderTargets,
-		depth_pass_depth_buffer,
-		4
-		);
+	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(depth_pass_rtGroupID);
 
 	//set viewport
 	const HQViewPort viewport = {0, 0, DEPTH_PASS_RT_WIDTH, DEPTH_PASS_RT_HEIGHT};
@@ -96,7 +102,7 @@ void RenderLoop::DepthPassRender(HQTime dt){
 	m_pRDevice->GetShaderManager()->SetUniform4Float("lightDiffuse", m_light->diffuseColor, 1);
 
 	//set light camera's matrices
-	m_pRDevice->GetShaderManager()->SetUniformMatrix("worldMat", m_model->GetWorldTransform());
+	this->SetUniformMatrix3x4("worldMat", m_model->GetWorldTransform());
 	m_pRDevice->GetShaderManager()->SetUniformMatrix("viewMat", m_light->lightCam().GetViewMatrix(), 1);
 	m_pRDevice->GetShaderManager()->SetUniformMatrix("projMat", m_light->lightCam().GetProjectionMatrix(), 1);
 
@@ -111,9 +117,7 @@ void RenderLoop::DepthPassRender(HQTime dt){
 	m_pRDevice->EndRender();
 
 	//switch to default render target
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTarget(
-		HQ_NULL_ID,
-		HQ_NULL_ID);
+	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(HQ_NULL_ID);
 
 	m_pRDevice->GetShaderManager()->ActiveProgram(HQ_NOT_USE_SHADER);
 

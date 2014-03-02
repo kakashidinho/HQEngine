@@ -11,6 +11,12 @@
 #define LOWRES_RT_HEIGHT 128 //offscreen render target size
 
 
+#define STR_CONCAT(str1, str2) str1 str2
+#define DATA_FILE(fileName) STR_CONCAT("../Data/",fileName)
+#define API_BASED_VSHADER_FILE(api, fileName) (api == HQ_RA_D3D? STR_CONCAT(DATA_FILE(fileName),".cg") : STR_CONCAT(DATA_FILE(fileName),"-compiled-cg.glslv"))
+#define API_BASED_FSHADER_FILE(api, fileName) (api == HQ_RA_D3D? STR_CONCAT(DATA_FILE(fileName),".cg") : STR_CONCAT(DATA_FILE(fileName),"-compiled-cg.glslf"))
+#define API_BASED_SHADER_MODE(api) (api == HQ_RA_D3D ? HQ_SCM_CG: HQ_SCM_GLSL)
+
 /*------basic light structure---------*/
 struct BaseLight{
 	BaseLight(const HQColor& diffuse,
@@ -55,7 +61,7 @@ private:
 /*-------rendering loop-----------*/
 class RenderLoop: public HQEngineRenderDelegate{
 public:
-	RenderLoop();
+	RenderLoop(const char* renderAPI);
 	~RenderLoop();
 
 	void Render(HQTime dt);
@@ -70,6 +76,14 @@ private:
 	void LowresPassRender(HQTime dt);
 	void FinalPassRender(HQTime dt);
 
+	//based on API, different method will be used
+	void SetUniformMatrix3x4(const char *uniform_var_name, const HQMatrix3x4& value) {
+		if (this->m_renderAPI_type == HQ_RA_D3D)
+			m_pRDevice->GetShaderManager()->SetUniformMatrix(uniform_var_name, value);
+		else
+			m_pRDevice->GetShaderManager()->SetUniform4Float(uniform_var_name, value, 3);
+	}
+
 	HQMeshNode* m_model;
 	HQRenderDevice *m_pRDevice;
 	HQCamera * m_camera;
@@ -78,13 +92,13 @@ private:
 	SpotLight * m_light;
 
 	//for depth pass rendering
-	HQRenderTargetDesc depth_pass_renderTargets[4];
+	hquint32 depth_pass_rtGroupID;//depth pass render targets group
 	hquint32 depth_pass_rtTextures[4];//textures associating with render targets
 	hquint32 depth_pass_depth_buffer;//depth buffer for depth pass
 	hquint32 depth_pass_program;//shader program
 
 	//for low res rendering
-	HQRenderTargetDesc lowres_pass_rTargets[3];//render targets
+	hquint32 lowres_pass_rtGroupID;//render targets
 	hquint32 lowres_pass_rtTextures[3];//textures associating with this render targets
 	hquint32 lowres_depth_buffer;//depth buffer for lowres pass
 	hquint32 lowres_pass_program;//shader program
@@ -96,6 +110,9 @@ private:
 	hquint32 m_noise_map;//noise map texture
 	hquint32 point_sstate;//point sampling state
 	hquint32 border_sstate;//black border sampling state
+
+	char m_renderAPI_name[6];//"D3D9" or "GL"
+	HQRenderAPI m_renderAPI_type;
 };
 
 #endif

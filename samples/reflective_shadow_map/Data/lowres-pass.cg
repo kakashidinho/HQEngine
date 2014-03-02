@@ -1,5 +1,6 @@
+#pragma pack_matrix(column_major)
 /*---------------vertex shader-------------*/
-uniform float3x4 worldMat;
+uniform float4x3 worldMat;
 uniform float4x4 viewMat;
 uniform float4x4 projMat;
 uniform float4x4 lightViewMat;//light camera's view matrix
@@ -23,8 +24,8 @@ struct vOut{
 vOut VS(in vIn input){
 	vOut output;
 	
-	float3 posW = mul(worldMat, float4(input.iPos, 1.0));
-	float3 normalW = mul(worldMat, float4(input.iNormal, 0.0) );
+	float3 posW = mul(float4(input.iPos, 1.0), worldMat);
+	float3 normalW = mul(float4(input.iNormal, 0.0), worldMat );
 	normalW = normalize(normalW);
 	
 	float4 posV = mul(float4(posW, 1.0), viewMat);
@@ -68,9 +69,28 @@ struct pOut{
 	float4 normalW: COLOR2;//world space normal
 };
 
+//scale normalized coordinate to a texcoord value between [0..1]
+float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+	
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = - normalizeCoords.y * 0.5 + 0.5;
+	
+	return scaled;
+}
+
+//scale normalized coordinate to a texcoord value between [0..1]. OpenGL version
+glslf float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+	
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = normalizeCoords.y * 0.5 + 0.5;
+	
+	return scaled;
+}
 
 //pixel shader
-ps_3_0 ps_4_0 ps_5_0 pOut PS(
+pOut PS(
 	in float3 posW : TEXCOORD0,//world space position
 	in float3 normalW: TEXCOORD1, //world space normal
 	in float4 posLight: TEXCOORD2 //projected position in light camera's clip space
@@ -86,8 +106,7 @@ ps_3_0 ps_4_0 ps_5_0 pOut PS(
 	
 	//calculate texcoords in reflective shadow map
 	float2 shadowMapUV = posLight.xy / posLight.w;
-	shadowMapUV.x = shadowMapUV.x * 0.5 + 0.5;
-	shadowMapUV.y = - shadowMapUV.y * 0.5 + 0.5;
+	shadowMapUV = scaleToTexcoord(shadowMapUV);
 	
 	output.irradiance = float4(0.0, 0.0, 0.0, 1.0);
 	
@@ -124,5 +143,7 @@ ps_3_0 ps_4_0 ps_5_0 pOut PS(
 		}
 	}
 	
+	output.irradiance = clamp(output.irradiance, float4(0.0), float4(1.0));
+
 	return output;
 }

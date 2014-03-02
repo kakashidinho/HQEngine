@@ -2,6 +2,8 @@
 
 void RenderLoop::LowresPassInit()
 {
+	HQRenderTargetDesc lowres_pass_rTargets[3];
+
 	//illumination buffer
 	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetTexture(
 		LOWRES_RT_WIDTH, LOWRES_RT_HEIGHT,
@@ -40,21 +42,29 @@ void RenderLoop::LowresPassInit()
 			&lowres_depth_buffer
 		);
 
+	//create render target group
+	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetGroup(
+			lowres_pass_rTargets,
+			lowres_depth_buffer,
+			3,
+			&lowres_pass_rtGroupID
+		);
+
 	//shader program
 	hquint32 vid, pid;
 	m_pRDevice->GetShaderManager()->CreateShaderFromFile(
 		HQ_VERTEX_SHADER,
-		"../Data/lowres-pass.cg",
+		API_BASED_SHADER_MODE(this->m_renderAPI_type),
+		API_BASED_VSHADER_FILE(this->m_renderAPI_type, "lowres-pass"),
 		NULL,
-		false,
 		"VS",
 		&vid);
 
 	m_pRDevice->GetShaderManager()->CreateShaderFromFile(
 		HQ_PIXEL_SHADER,
-		"../Data/lowres-pass.cg",
+		API_BASED_SHADER_MODE(this->m_renderAPI_type),
+		API_BASED_FSHADER_FILE(this->m_renderAPI_type, "lowres-pass"),
 		NULL,
-		false,
 		"PS",
 		&pid);
 
@@ -65,11 +75,7 @@ void RenderLoop::LowresPassInit()
 
 void RenderLoop::LowresPassRender(HQTime dt){
 	//switch to offscreen render targets
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(
-		lowres_pass_rTargets,
-		lowres_depth_buffer,
-		3
-		);
+	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(lowres_pass_rtGroupID);
 
 	//set viewport
 	const HQViewPort viewport = {0, 0, LOWRES_RT_WIDTH, LOWRES_RT_HEIGHT};
@@ -82,19 +88,30 @@ void RenderLoop::LowresPassRender(HQTime dt){
 	m_pRDevice->GetShaderManager()->SetUniformMatrix("lightViewMat", m_light->lightCam().GetViewMatrix());
 	m_pRDevice->GetShaderManager()->SetUniformMatrix("lightProjMat", m_light->lightCam().GetProjectionMatrix());
 	//set light camera's matrices
-	m_pRDevice->GetShaderManager()->SetUniformMatrix("worldMat", m_model->GetWorldTransform());
+	this->SetUniformMatrix3x4("worldMat", m_model->GetWorldTransform());
 	m_pRDevice->GetShaderManager()->SetUniformMatrix("viewMat", m_camera->GetViewMatrix(), 1);
 	m_pRDevice->GetShaderManager()->SetUniformMatrix("projMat", m_camera->GetProjectionMatrix(), 1);
 	
+	if (strcmp(this->m_renderAPI_name, "GL") != 0)
+	{
+		//set sampling states
+		m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER | 0, point_sstate);//point sampling state
+		m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER | 1, border_sstate);//black border state
+		m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER | 2, border_sstate);//black border state
+		m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER | 3, border_sstate);//black border state
+	}
+	else{
+		//set textures' sampling states
+		m_pRDevice->GetStateManager()->SetSamplerState(m_noise_map, point_sstate);//point sampling state
+		m_pRDevice->GetStateManager()->SetSamplerState(depth_pass_rtTextures[1], border_sstate);//black border state
+		m_pRDevice->GetStateManager()->SetSamplerState(depth_pass_rtTextures[2], border_sstate);//black border state
+		m_pRDevice->GetStateManager()->SetSamplerState(depth_pass_rtTextures[3], border_sstate);//black border state
+	}
 	//set textures
-	m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER | 0, point_sstate);//point sampling state
-	m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER | 1, border_sstate);//black border state
-	m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER | 2, border_sstate);//black border state
-	m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER | 3, border_sstate);//black border state
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_PIXEL_SHADER | 0, m_noise_map);
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_PIXEL_SHADER | 1, depth_pass_rtTextures[1]);
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_PIXEL_SHADER | 2, depth_pass_rtTextures[2]);
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_PIXEL_SHADER | 3, depth_pass_rtTextures[3]);
+	m_pRDevice->GetTextureManager()->SetTextureForPixelShader(0, m_noise_map);
+	m_pRDevice->GetTextureManager()->SetTextureForPixelShader(1, depth_pass_rtTextures[1]);
+	m_pRDevice->GetTextureManager()->SetTextureForPixelShader(2, depth_pass_rtTextures[2]);
+	m_pRDevice->GetTextureManager()->SetTextureForPixelShader(3, depth_pass_rtTextures[3]);
 
 	//start rendering
 	m_pRDevice->BeginRender(HQ_TRUE, HQ_TRUE, HQ_FALSE);
@@ -107,9 +124,7 @@ void RenderLoop::LowresPassRender(HQTime dt){
 	m_pRDevice->EndRender();
 
 	//switch to default render target
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTarget(
-		HQ_NULL_ID,
-		HQ_NULL_ID);
+	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(HQ_NULL_ID);
 
 	m_pRDevice->GetShaderManager()->ActiveProgram(HQ_NOT_USE_SHADER);
 }

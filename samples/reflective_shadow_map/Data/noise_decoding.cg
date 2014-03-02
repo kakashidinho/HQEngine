@@ -1,3 +1,4 @@
+#pragma pack_matrix(column_major)
 struct vOut{
 	float4 position: POSITION;
 	float2 texcoords: TEXCOORD0;
@@ -8,12 +9,23 @@ struct vIn{
 	float2 texcoords: VTEXCOORD0;
 };
 
+
 /*--------pass through vertex shader---------*/
+vOut VS(in vIn input){
+	vOut output;
+	
+	output.position = float4(input.position.xy, 0.0, 1.0);
+	
+	output.texcoords = input.texcoords;
+	
+	return output;
+}
+
 vs_2_0 vs_3_0 vOut VS(in vIn input){
 	vOut output;
 	
 	output.position = float4(input.position.xy, 0.0, 1.0);
-	//half pixel offset
+	//half pixel offset needed in Direct3D 9
 	float2 offset = 0.5 / input.position.zw;
 	output.position.xy -= float2(offset.x, -offset.y);
 	

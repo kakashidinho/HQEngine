@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(SolutionDir)/../../../HQEngine/Source"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -119,7 +119,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="$(SolutionDir)/../../../HQEngine/Source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -197,7 +197,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories="$(SolutionDir)/../../../HQEngine/Source"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -244,7 +244,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS\Output\Release noptimize\*.dll&quot;  $(OutDir)\"
+				CommandLine="xcopy /q /y $(SolutionDir)\..\..\..\HQEngine\VS\Output\$(ConfigurationName)\*.dll  $(OutDir)\"
 			/>
 		</Configuration>
 	</Configurations>
@@ -276,6 +276,134 @@
 				RelativePath="..\Source\RenderLoop_main.cpp"
 				>
 			</File>
+			<Filter
+				Name="shaders"
+				>
+				<File
+					RelativePath="..\Data\depth-pass.cg"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release_no_optimize|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\Data\final-gathering.cg"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release_no_optimize|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\Data\lowres-pass.cg"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release_no_optimize|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\Data\noise_decoding.cg"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release_no_optimize|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
