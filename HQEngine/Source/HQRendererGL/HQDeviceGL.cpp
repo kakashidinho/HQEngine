@@ -13,6 +13,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceGLPCH.h"
 #include "HQDeviceGL.h"
 #include <string.h>
+#include <string>
 
 
 #if defined _DEBUG || defined DEBUG
@@ -266,6 +267,34 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 
 	this->SetLogStream(logFileStream);
 
+	//scan addtional options
+	int shaderManagerType = COMBINE_SHADER_MANAGER;
+	std::string core_profile = "";
+	
+	if (additionalSettings != NULL)
+	{
+		size_t len = strlen(additionalSettings);
+	
+		char *options = new char[len + 1];
+		char *token;
+		options[len] = '\0';
+		strncpy(options , additionalSettings , len);
+		
+		token = strtok(options , " ");
+		while (token != NULL)
+		{
+			if (!strcmp(token , "GLSL-only"))
+				shaderManagerType = GLSL_SHADER_MANAGER;
+			else if (!strcmp(token , "CG-only"))
+				shaderManagerType = CG_SHADER_MANAGER;
+			else if (!strncmp(token, "Core-GL", 7))
+				core_profile = token + 7;
+			token = strtok(NULL , " ");
+		}
+
+		delete[] options;
+	}
+
 #ifdef WIN32
 	//get device context
 	hDC=GetDC(input);
@@ -373,7 +402,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 #endif
 
 #ifndef IOS
-	int result=this->SetupPixelFormat();
+	int result=this->SetupPixelFormat(core_profile.c_str());
 #endif
 
 #ifdef WIN32
@@ -539,31 +568,6 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	}
 	else glDisable(GL_MULTISAMPLE_ARB);
 #endif
-	//scan addtional options
-	int shaderManagerType = COMBINE_SHADER_MANAGER;
-	
-	if (additionalSettings != NULL)
-	{
-		size_t len = strlen(additionalSettings);
-	
-		char *options = new char[len + 1];
-		char *token;
-		options[len] = '\0';
-		strncpy(options , additionalSettings , len);
-		
-		token = strtok(options , " ");
-		while (token != NULL)
-		{
-			if (!strcmp(token , "GLSL-only"))
-				shaderManagerType = GLSL_SHADER_MANAGER;
-			else if (!strcmp(token , "CG-only"))
-				shaderManagerType = CG_SHADER_MANAGER;
-				
-			token = strtok(NULL , " ");
-		}
-
-		delete[] options;
-	}
 	this->OnFinishInitDevice(shaderManagerType);
 
 	this->flags |= RUNNING;
@@ -941,7 +945,7 @@ void HQDeviceGL::SetClearStencilVal(hq_uint32 val){
 //********************
 //setup pixel
 //********************
-int HQDeviceGL::SetupPixelFormat()
+int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 {
 #ifdef WIN32
 	PIXELFORMATDESCRIPTOR pixFmt;
@@ -977,6 +981,12 @@ int HQDeviceGL::SetupPixelFormat()
 		int msampleEnable=GL_FALSE;
 		if(pEnum->selectedMulSampleType > 0 && WGLEW_ARB_multisample && GLEW_ARB_multisample)
 			msampleEnable=GL_TRUE;
+		int version_major = 1, version_minor = 0;
+		const char* minorStart = strchr(coreProfile, '.');
+		if(minorStart != NULL)
+			sscanf(minorStart + 1, "%d", &version_minor);
+		sscanf(coreProfile, "%d", &version_major);
+
 		int iAttributes[] = { WGL_DRAW_TO_WINDOW_ARB,GL_TRUE,
 						WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
 						WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
@@ -996,8 +1006,8 @@ int HQDeviceGL::SetupPixelFormat()
 						WGL_SWAP_METHOD_ARB,WGL_SWAP_EXCHANGE_ARB,
 						WGL_SAMPLE_BUFFERS_ARB,msampleEnable,
 						WGL_SAMPLES_ARB, (int)pEnum->selectedMulSampleType ,
-						WGL_CONTEXT_MAJOR_VERSION_ARB, 4,//request core profile 4.2
-						WGL_CONTEXT_MINOR_VERSION_ARB, 2,//request core profile 4.2
+						WGL_CONTEXT_MAJOR_VERSION_ARB, version_major,//request core profile 4.2
+						WGL_CONTEXT_MINOR_VERSION_ARB, version_minor,//request core profile 4.2
 						WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 						0, 0 };
 		if(!WGLEW_ARB_multisample)
@@ -1007,10 +1017,12 @@ int HQDeviceGL::SetupPixelFormat()
 			iAttributes[28]=0;
 			iAttributes[29]=0;
 		}
-		if (!WGLEW_ARB_create_context_profile || !GLEW_VERSION_4_2)
+		if (!WGLEW_ARB_create_context_profile || !GLEW_VERSION_4_2 || version_major < 3)
 		{
 			iAttributes[30] = iAttributes[31] = iAttributes[32] = iAttributes[33] = 0;
 			iAttributes[34] = iAttributes[35] = 0;
+			version_major = 1;version_minor = 0;
+
 		}
 		if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
 			1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
@@ -1018,11 +1030,24 @@ int HQDeviceGL::SetupPixelFormat()
 			iAttributes[24] = iAttributes[25]=0;//WGL_PIXEL_TYPE_ARB
 
 			if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
-				1, &ipixelFormat, &numFormats)==FALSE)
-				return -2;//still failed
+				1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
+			{
+				//remove requested version
+				iAttributes[30] = iAttributes[31] = iAttributes[32] = iAttributes[33] = 0;
+				iAttributes[34] = iAttributes[35] = 0;
+
+				if (version_major >= 3)
+					this->Log("Warning : Cannot create device using version %d.%d core profile!", version_major, version_minor);
+
+				if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
+				1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
+				{
+					return -2;//still failed
+				}
+			}
+			else if (version_major >= 3)
+				this->Log("Using OpenGL version %d.%d core profile!", version_major, version_minor);
 		}
-		if(numFormats<1)
-			return -2;
 	}
 
 	if(SetPixelFormat(hDC,ipixelFormat,&pixFmt)==FALSE)

@@ -80,7 +80,7 @@ class HQDeviceGL:public HQBaseRenderDevice
 protected:
 	~HQDeviceGL();
 #ifndef IOS
-	int SetupPixelFormat();
+	int SetupPixelFormat(const char* coreProfile);
 #endif
 
 #if defined DEVICE_LOST_POSSIBLE
