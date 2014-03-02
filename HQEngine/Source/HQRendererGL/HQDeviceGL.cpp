@@ -996,6 +996,9 @@ int HQDeviceGL::SetupPixelFormat()
 						WGL_SWAP_METHOD_ARB,WGL_SWAP_EXCHANGE_ARB,
 						WGL_SAMPLE_BUFFERS_ARB,msampleEnable,
 						WGL_SAMPLES_ARB, (int)pEnum->selectedMulSampleType ,
+						WGL_CONTEXT_MAJOR_VERSION_ARB, 4,//request core profile 4.2
+						WGL_CONTEXT_MINOR_VERSION_ARB, 2,//request core profile 4.2
+						WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 						0, 0 };
 		if(!WGLEW_ARB_multisample)
 		{
@@ -1004,10 +1007,15 @@ int HQDeviceGL::SetupPixelFormat()
 			iAttributes[28]=0;
 			iAttributes[29]=0;
 		}
+		if (!WGLEW_ARB_create_context_profile || !GLEW_VERSION_4_2)
+		{
+			iAttributes[30] = iAttributes[31] = iAttributes[32] = iAttributes[33] = 0;
+			iAttributes[34] = iAttributes[35] = 0;
+		}
 		if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
 			1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
 		{
-			iAttributes[24] = iAttributes[25]=0;
+			iAttributes[24] = iAttributes[25]=0;//WGL_PIXEL_TYPE_ARB
 
 			if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
 				1, &ipixelFormat, &numFormats)==FALSE)

@@ -52,6 +52,9 @@ typedef void (CGGLENTRY *pfcgGLUnbindProgram)(CGprofile profile);
 typedef void (CGGLENTRY *pfcgGLDisableProfile)(CGprofile profile);
 typedef void (CGGLENTRY *pfcgGLBindProgram)(CGprogram program);
 typedef void (CGGLENTRY *pfcgGLEnableProgramProfiles) ( CGprogram program );
+typedef void (CGGLENTRY *pfcgGLSetContextGLSLVersion) ( CGcontext context, CGGLglslversion version );
+typedef CGGLglslversion (CGGLENTRY *pfcgGLGetGLSLVersion) (const char *version_string);
+typedef CGGLglslversion (CGGLENTRY *pfcgGLGetContextGLSLVersion) ( CGcontext context );
 
 
 #ifdef WIN32

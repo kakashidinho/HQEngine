@@ -21,10 +21,17 @@ const char HQFFEmuShaderGL[] = "\
 /* Vertex Attributes */\n\
 \n\
 //uniform vertex input structure\n\
+#if __VERSION__ >= 130\n\
+in vec3 aPosition;\n\
+in vec4 aColor;\n\
+in vec3 aNormal;\n\
+in vec2 aTexcoords;\n\
+#else\n\
 attribute vec3 aPosition;\n\
 attribute vec4 aColor;\n\
 attribute vec3 aNormal;\n\
 attribute vec2 aTexcoords;\n\
+#endif\n\
 \n\
 /* Matrix Uniforms */\n\
 \n\
@@ -61,8 +68,13 @@ uniform float uNormalize;\n\
 	\n\
 \n\
 //uniform vertex output structure\n\
+#if __VERSION__ >= 130\n\
+out lowp vec4 vColor;\n\
+out mediump	vec2 vTexcoords;\n\
+#else\n\
 varying lowp vec4 vColor;\n\
 varying mediump	vec2 vTexcoords;\n\
+#endif\n\
 \n\
 vec4 lightEquation(int lidx, vec3 gWorldNormal, vec3 gWorldPos)\n\
 {		\n\
@@ -165,8 +177,15 @@ void main()\n\
 \n\
 \n\
 /*---------------pixel shader----------*/\n\
+#if __VERSION__ >= 130\n\
+in lowp vec4 vColor;\n\
+in mediump	vec2 vTexcoords;\n\
+out lowp vec4 color0;\n\
+#define gl_FragColor color0\n\
+#else\n\
 varying lowp vec4 vColor;\n\
 varying mediump	vec2 vTexcoords;\n\
+#endif\n\
 \n\
 uniform sampler2D texture0 ;\n\
 \n\

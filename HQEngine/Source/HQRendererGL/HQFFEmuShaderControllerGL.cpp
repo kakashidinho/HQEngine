@@ -301,6 +301,11 @@ private:
 
 		size_t sourceArrayCount;
 
+		char version_line[] = "#version 110\n#define highp\n#define lowp\n#define mediump\n";
+
+		if (GLEW_VERSION_3_0)
+			strncpy(version_line, "#version 130", 12);
+
 		//create vertex shader
 		if (vshader == 0)//only create when it is not created before
 		{
@@ -308,7 +313,7 @@ private:
 #ifdef GLES
 				"#version 100\n"
 #else
-				"#version 110\n#define highp\n#define lowp\n#define mediump\n",
+				version_line,
 #endif
 				"#define VERTEX_SHADER\n",
 				light? lightingDefine: "",
@@ -332,7 +337,7 @@ private:
 #ifdef GLES
 				"#version 100\n"
 #else
-				"#define highp\n#define lowp\n#define mediump\n",
+				version_line,
 #endif
 				"#define FRAGMENT_SHADER\n",
 				texture? textureDefine: "",

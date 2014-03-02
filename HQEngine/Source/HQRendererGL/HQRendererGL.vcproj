@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;glew-1.6.0\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;glew-1.6.0\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -200,7 +200,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;glew-1.6.0\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
 				PreprocessorDefinitions="WIN32;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -279,7 +279,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;glew-1.6.0\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_DEBUG_LAYER;GLEW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -358,7 +358,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;glew-1.6.0\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;_STATIC_CRT"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -436,7 +436,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;glew-1.6.0\include&quot;;..;..\..\.."
+				AdditionalIncludeDirectories="&quot;glew\include&quot;;..;..\..\.."
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;_STATIC_CRT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -871,7 +871,7 @@
 				Name="glew"
 				>
 				<File
-					RelativePath=".\glew-1.6.0\src\glew.c"
+					RelativePath=".\glew\src\glew.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

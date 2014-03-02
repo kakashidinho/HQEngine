@@ -6,10 +6,17 @@
 /* Vertex Attributes */
 
 //uniform vertex input structure
+#if __VERSION__ >= 130
+in vec3 aPosition;
+in vec4 aColor;
+in vec3 aNormal;
+in vec2 aTexcoords;
+#else
 attribute vec3 aPosition;
 attribute vec4 aColor;
 attribute vec3 aNormal;
 attribute vec2 aTexcoords;
+#endif
 
 /* Matrix Uniforms */
 
@@ -46,8 +53,13 @@ uniform float uNormalize;
 	
 
 //uniform vertex output structure
+#if __VERSION__ >= 130
+out lowp vec4 vColor;
+out mediump	vec2 vTexcoords;
+#else
 varying lowp vec4 vColor;
 varying mediump	vec2 vTexcoords;
+#endif
 
 vec4 lightEquation(int lidx, vec3 gWorldNormal, vec3 gWorldPos)
 {		
@@ -150,8 +162,15 @@ void main()
 
 
 /*---------------pixel shader----------*/
+#if __VERSION__ >= 130
+in lowp vec4 vColor;
+in mediump	vec2 vTexcoords;
+out lowp vec4 color0;
+#define gl_FragColor color0
+#else
 varying lowp vec4 vColor;
 varying mediump	vec2 vTexcoords;
+#endif
 
 uniform sampler2D texture0 ;
 

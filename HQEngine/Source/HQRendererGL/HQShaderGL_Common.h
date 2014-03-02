@@ -78,6 +78,9 @@ extern HQ_DECL_CG_FUNC_PTR( cgSetParameter3fv );
 extern HQ_DECL_CG_FUNC_PTR( cgSetParameter4fv );
 extern HQ_DECL_CG_FUNC_PTR( cgGLEnableProgramProfiles );
 extern HQ_DECL_CG_FUNC_PTR( cgGetString );
+extern HQ_DECL_CG_FUNC_PTR( cgGLSetContextGLSLVersion );
+extern HQ_DECL_CG_FUNC_PTR( cgGLGetGLSLVersion );
+extern HQ_DECL_CG_FUNC_PTR( cgGLGetContextGLSLVersion );
 
 /*-----------end CG API function pointers definition------------*/
 

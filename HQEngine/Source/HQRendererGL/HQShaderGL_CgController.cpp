@@ -70,6 +70,9 @@ HQ_DECL_CG_FUNC_PTR( cgGLUnbindProgram ) ;
 HQ_DECL_CG_FUNC_PTR( cgGLDisableProfile ) ;
 HQ_DECL_CG_FUNC_PTR( cgGLBindProgram ) ;
 HQ_DECL_CG_FUNC_PTR( cgGLEnableProgramProfiles );
+HQ_DECL_CG_FUNC_PTR( cgGLSetContextGLSLVersion );
+HQ_DECL_CG_FUNC_PTR( cgGLGetGLSLVersion );
+HQ_DECL_CG_FUNC_PTR( cgGLGetContextGLSLVersion );
 
 #endif//ifndef CG_IMPLICIT_LINK
 
@@ -126,6 +129,15 @@ HQBaseCgShaderController::HQBaseCgShaderController()
 		this->cgFragmentProfile=CG_PROFILE_GLSLF;
 	if(cgGLIsProfileSupported(CG_PROFILE_GLSLG)==CG_TRUE)
 		this->cgGeometryProfile=CG_PROFILE_GLSLG;
+
+	//set glsl version
+	const GLubyte * glsl_string = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+	CGGLglslversion versionEnum = cgGLGetGLSLVersion((const char*)glsl_string);
+	//set compiler output to lastest version of GLSL
+	//debugging, get current version set in the context
+	CGGLglslversion current_setVersionEnum = cgGLGetContextGLSLVersion(this->cgContext);
+	cgGLSetContextGLSLVersion(this->cgContext, versionEnum);
 
 #if defined(DEBUG)||defined(_DEBUG)
 
@@ -242,6 +254,10 @@ void HQBaseCgShaderController::InitCgLibrary()
 	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLDisableProfile ) ;
 	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLBindProgram ) ;
 	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLEnableProgramProfiles );
+	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLSetContextGLSLVersion );
+	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLGetGLSLVersion );
+	HQ_GET_CG_FUNC_PTR( cgGLLibHandle , cgGLGetContextGLSLVersion );
+
 
 	HQ_GET_CG_FUNC_PTR( cgLibHandle , cgGetArrayTotalSize);
 	HQ_GET_CG_FUNC_PTR( cgLibHandle , cgSetParameter1iv );
