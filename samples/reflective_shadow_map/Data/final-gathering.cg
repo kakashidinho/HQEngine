@@ -112,11 +112,10 @@ float computeShadowFactor(float2 texcoords, float fragmentDepth){
 	//filtering between 4 nearest neighbors
 	float2 lerpFactor = frac(texelPos);
 	
-	float s0 = tex2D(depthMap, texcoords).r + DEPTH_BIAS < fragmentDepth ? 0.0 : 1.0;
-	return s0;
-	/*float s1 = tex2D(depthMap, texcoords + float2(dx, 0.0)).r + DEPTH_BIAS < fragmentDepth ? 0.0 : 1.0;
-	float s2 = tex2D(depthMap, texcoords + float2(0.0, dx)).r + DEPTH_BIAS < fragmentDepth ? 0.0 : 1.0;
-	float s3 = tex2D(depthMap, texcoords + float2(dx, dx)).r + DEPTH_BIAS < fragmentDepth ? 0.0 : 1.0;
+	float s0 = (tex2D(depthMap, texcoords).r + DEPTH_BIAS) < fragmentDepth ? 0.0 : 1.0;
+	float s1 = (tex2D(depthMap, texcoords + float2(dx, 0.0)).r + DEPTH_BIAS) < fragmentDepth ? 0.0 : 1.0;
+	float s2 = (tex2D(depthMap, texcoords + float2(0.0, dx)).r + DEPTH_BIAS) < fragmentDepth ? 0.0 : 1.0;
+	float s3 = (tex2D(depthMap, texcoords + float2(dx, dx)).r + DEPTH_BIAS) < fragmentDepth ? 0.0 : 1.0;
 	
 	float shadowFactor = lerp(
 						lerp(s0, s1, lerpFactor.x),
@@ -124,7 +123,7 @@ float computeShadowFactor(float2 texcoords, float fragmentDepth){
 						lerpFactor.y);
 						
 						
-	return shadowFactor;*/
+	return shadowFactor;
 }
 
 //sampling from low resolution version of the scene. returned w component will tell that the sampling is sufficient or not
@@ -194,6 +193,15 @@ float4 averageLowResSamples(in pIn pixel)
 	return re;
 }
 
+//get normalized depth in range [0..1]
+float getNormDepth(float4 clipPos){
+	return clipPos.z / clipPos.w;
+}
+
+//get normalized depth in range [0..1]. OpenGL version 
+glslf float getNormDepth(float4 clipPos){
+	return 0.5 * (clipPos.z / clipPos.w) + 0.5;
+}
 
 
 //pixel shader
@@ -207,7 +215,7 @@ float4 PS(
 	shadowMapUV = scaleToTexcoord(shadowMapUV);
 	
 	//fragment depth with respect to light source
-	float fragmentDepth = input.posLight.z / input.posLight.w;
+	float fragmentDepth = getNormDepth(input.posLight);
 	
 	//shadow factor
 	float shadowFactor = computeShadowFactor(shadowMapUV, fragmentDepth);
@@ -220,6 +228,7 @@ float4 PS(
 	/*-----calculate indirect illumination---------*/
 	float4 irradiance = directI;
 	
+#if 1
 	//check if we can average from 4 low res samples
 	float4 avg_lowres_flux = averageLowResSamples(input); 
 	
@@ -229,9 +238,6 @@ float4 PS(
 	}
 	else
 	{
-#if 0
-		irradiance.xyz = float3(0.0);
-#else
 		//calculate indirect illumination directly
 		for (float u = H_SAMPLE_START; u < 1.0; u += H_SAMPLE_STEP)
 		{
@@ -264,8 +270,8 @@ float4 PS(
 				
 			}//for (float v = V_SAMPLE_START; v < 1.0; v += V_SAMPLE_STEP)
 		}//for (float u = H_SAMPLE_START; u < 1.0; u += H_SAMPLE_STEP)
-#endif
 	}//if (avg_lowres_flux.w == 1.0)
+#endif
 	
 	float4 output = irradiance * materialDiffuse;
 	

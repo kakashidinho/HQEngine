@@ -71,16 +71,27 @@ struct pOut{
 	float4 flux: COLOR3;//flux
 };
 
+//get normalized depth in range [0..1]
+float getNormDepth(float2 clipDepth){
+	return clipDepth.x / clipDepth.y;
+}
+
+//get normalized depth in range [0..1]. OpenGL version 
+glslf float getNormDepth(float2 clipDepth){
+	return 0.5 * (clipDepth.x / clipDepth.y) + 0.5;
+}
+
+
 //pixel shader
 pOut PS(
 	in float3 posW : TEXCOORD0,//world space position
-	in float2 depth: TEXCOORD1,//depth
+	in float2 depth: TEXCOORD1,//depth in clip space
 	in float3 normalW: TEXCOORD2 //world space normal
 	)
 {
 	pOut output;
 	
-	output.depth = float4(depth.x / depth.y);
+	output.depth = getNormDepth(depth);//get normalized depth in range [0..1]
 	//world space position normalized and scaled to a value between 0.0 and 1.0
 	output.posW = float4((posW + 10.0) / 20.0, 1.0);
 	
