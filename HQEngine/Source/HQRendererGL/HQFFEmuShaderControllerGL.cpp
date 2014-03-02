@@ -19,7 +19,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "../BaseImpl/BaseImplShaderString/HQFFEmuShaderGL.h"
 
-#ifdef WIN32
+#ifdef OPTIMIZE_GLSL
 #include <string>
 #include <sstream>
 
@@ -260,7 +260,7 @@ struct HQFixedFunctionShaderGL: public HQA16ByteObject
 
 private:
 
-#ifdef WIN32
+#ifdef OPTIMIZE_GLSL
 	bool optimizeGLSL(GLenum glshaderType, const char **sourceArray, int sourceArrayLen, std::string &optimized_source){
 		//combine source array
 		std::stringstream ss ;
@@ -300,7 +300,7 @@ private:
 								  GLuint sourceSize,
 								  GLuint & shaderOut)
 	{
-#ifdef WIN32
+#ifdef OPTIMIZE_GLSL
 		//optimize it before sending to opengl
 		std::string opt_code;
 		if (optimizeGLSL(shaderType, sourceArray, sourceSize, opt_code))
