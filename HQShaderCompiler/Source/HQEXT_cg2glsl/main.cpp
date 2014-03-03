@@ -295,12 +295,14 @@ bool compileSrc(const char* src_file, const char *entry,
     // convert from cg to glsl
     res = res && Hlsl2Glsl_Translate( parser,  entry,  etVersion, options);
 
+	//print info
+    const char*  parserLog = Hlsl2Glsl_GetInfoLog(parser);
+	fprintf(stdout, parserLog);
+
 	bool success = true;
     // check for error
     if (res == 0)
     {
-        const char*  parserErrors = Hlsl2Glsl_GetInfoLog(parser);
-		fprintf(stderr, parserErrors);
 
 		success = false;
     }
