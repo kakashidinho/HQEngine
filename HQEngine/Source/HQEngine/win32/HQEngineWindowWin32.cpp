@@ -13,13 +13,46 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEnginePCH.h"
 #include "../HQEngineWindow.h"
 #include "string.h"
+
 #include <iostream>
+#if _MSC_VER < 1700
+#include <hash_map>
+#define hash_map_type stdext::hash_map
+#else
+#include <unordered_map>
+#define hash_map_type std::unordered_map
+#endif
 
 #define USE_KEY_HOOK 0
 #define HQ_WINDOW_STYLE WS_OVERLAPPEDWINDOW & (~(WS_MAXIMIZEBOX | WS_THICKFRAME))
 
 extern HINSTANCE ge_module;
 
+struct KeyPressedFlag{
+	KeyPressedFlag():
+		pressed(false)
+	{
+	}
+	KeyPressedFlag(bool _pressed)
+		: pressed(_pressed)
+	{
+	}
+
+	operator bool() const {return pressed;}
+	KeyPressedFlag & operator = (KeyPressedFlag& _flag){
+		this->pressed = _flag.pressed;
+		return *this;
+	}
+
+	KeyPressedFlag & operator = (bool _pressed){
+		this->pressed = _pressed;
+		return *this;
+	}
+
+	bool pressed;
+};
+//for detecting repeat key press
+static hash_map_type<UINT, KeyPressedFlag> g_keyPressed;
 static unsigned char g_mouseInputBuffer[40];
 
 #if USE_KEY_HOOK
@@ -263,9 +296,18 @@ void RawInputMessage(WPARAM wParam, LPARAM lParam)
 				}//switch (keyData.VKey)
 
 				if (keyData.Flags & RI_KEY_BREAK)//key up
+				{
 					HQEngineApp::GetInstance()->GetKeyListener()->KeyReleased(keyCode);
+					g_keyPressed[keyCode] = false;
+				}
 				else
-					HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode);
+				{
+					if (g_keyPressed[keyCode] == false)
+					{
+						g_keyPressed[keyCode] = true;
+						HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode);
+					}
+				}
 
 			}//else if (rawInput->header.dwType == RIM_TYPEKEYBOARD)
 		}//else
@@ -477,6 +519,8 @@ HQEngineWindow::HQEngineWindow(const char *title, const char *settingFileDir ,  
 	{
 		//do something?
 	}
+
+	g_keyPressed.clear();//reset hash table
 #endif
 	/*--- save the current sticky/toggle/filter key settings so they can be restored later--*/
     SystemParametersInfo(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &g_oldStickyKeys, 0);
