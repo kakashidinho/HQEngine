@@ -32,6 +32,7 @@ FILTERKEYS g_oldFilterKeys = {sizeof(FILTERKEYS), 0};//for disable filter shortc
 void RawInputMessage(WPARAM wParam, LPARAM lParam);
 bool KeyDownMessage(WPARAM wParam, LPARAM lParam);
 bool KeyUpMessage(WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK LowLevelKeyboardProc( int nCode, WPARAM wParam, LPARAM lParam );//low level keyboard hook
 
 
 /*-------window procedure--------------*/
@@ -42,9 +43,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_ACTIVATEAPP:
         // g_windowActive is used to control if the Windows key is filtered by the keyboard hook or not.
         if( wParam == TRUE )
-            g_windowActive  = true;           
+		{
+			//re-register keyboard hook
+			if (g_keyboardHook == NULL)
+				g_keyboardHook = SetWindowsHookEx( WH_KEYBOARD_LL,  LowLevelKeyboardProc, ge_module, 0 );
+			
+
+			g_windowActive  = true;  
+		}
         else 
-            g_windowActive  = false;           
+		{
+			if (g_keyboardHook != NULL)
+			{
+				UnhookWindowsHookEx(g_keyboardHook);//unregister keyboard hook
+				g_keyboardHook = NULL;
+			}
+			g_windowActive  = false;   
+		}
         break;
 	case WM_INPUT://raw input
 		RawInputMessage(wParam , lParam);
