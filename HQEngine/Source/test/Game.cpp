@@ -155,7 +155,7 @@ Game::Game()
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	logFile = HQCreateDebugLogStream();
 #elif defined WIN32
-	logFile = HQCreateFileLogStream("../test/log/log.txt");
+	logFile = HQCreateFileLogStream("../test/log.txt");
 #elif defined ANDROID
 	logFile = HQCreateLogCatStream();
 #else
