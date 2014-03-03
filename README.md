@@ -23,6 +23,8 @@ Sample status
 ----------------------------
 - Included Reflective Shadow Map sample. 
 	* This sample implements a global illumination approximating algorithm. Currently it runs very inefficiently, since a lot of operations are done at every pixels. 
+	* If you cannot run this sample or it shows nothing on the screen. You may try to change the renderer to Direct3D by modify this line in main.cpp:
+		* const char renderAPI[] = "GL" to const char renderAPI[] = "D3D9"
 
 Prerequisites
 ----------------------------
