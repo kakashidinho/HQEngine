@@ -17,7 +17,7 @@ Current status
 	* Template hash table, memory alignment, linked list, stack.  (this removes the dependence of C++ STL in some platforms not supporting it, or not supporting C++11)
 	* Skeleton animation. 
 	* Scene graph.
-- The current main maintained platform are Windows and its variances (Phone/Metro). Android has also been maintained occasionally. IOS and Mac OSX currently have fewer maintenances due to limited resources. Linux was supported initially, but dropped because of limited documents about low level APIs.
+- The current main maintained platforms are Windows and its variances (Phone/Metro). Android has also been maintained occasionally. IOS and Mac OSX currently have fewer maintenances due to limited resources. Linux was supported initially, but dropped because of limited documents about low level APIs.
 	
 Sample status
 ----------------------------
