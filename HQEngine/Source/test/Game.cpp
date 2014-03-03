@@ -991,9 +991,11 @@ void Game::MouseReleased( HQMouseKeyCodeType button, const HQPointi &point)
 }
 void Game::MouseMove( const HQPointi &point) 
 {
+#if 0
 	char info[256];
 	sprintf(info , "%d , %d\n", point.x, point.y);
 	OutputDebugStringA(info);
+#endif
 }
 void Game::MouseWheel( hq_float32 delta, const HQPointi &point)
 {

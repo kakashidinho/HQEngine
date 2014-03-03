@@ -15,18 +15,20 @@ COPYING.txt included with this distribution for more information.
 #include "string.h"
 #include <iostream>
 
+#define USE_KEY_HOOK 0
 #define HQ_WINDOW_STYLE WS_OVERLAPPEDWINDOW & (~(WS_MAXIMIZEBOX | WS_THICKFRAME))
 
 extern HINSTANCE ge_module;
 
-unsigned char g_mouseInputBuffer[40];
+static unsigned char g_mouseInputBuffer[40];
 
-
-HHOOK g_keyboardHook = NULL;//for disable window key
-bool g_windowActive;//for disable window key
-STICKYKEYS g_oldStickyKeys = {sizeof(STICKYKEYS), 0};//for disable sticky shortcuy key
-TOGGLEKEYS g_oldToggleKeys = {sizeof(TOGGLEKEYS), 0};//for disable toggle shortcuy key
-FILTERKEYS g_oldFilterKeys = {sizeof(FILTERKEYS), 0};//for disable filter shortcuy key  
+#if USE_KEY_HOOK
+static HHOOK g_keyboardHook = NULL;//for disable window key
+static bool g_windowActive;//for disable window key
+#endif
+static STICKYKEYS g_oldStickyKeys = {sizeof(STICKYKEYS), 0};//for disable sticky shortcuy key
+static TOGGLEKEYS g_oldToggleKeys = {sizeof(TOGGLEKEYS), 0};//for disable toggle shortcuy key
+static FILTERKEYS g_oldFilterKeys = {sizeof(FILTERKEYS), 0};//for disable filter shortcuy key  
 
 /*-------function prototypes-----------*/
 void RawInputMessage(WPARAM wParam, LPARAM lParam);
@@ -44,21 +46,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         // g_windowActive is used to control if the Windows key is filtered by the keyboard hook or not.
         if( wParam == TRUE )
 		{
+#if USE_KEY_HOOK
 			//re-register keyboard hook
 			if (g_keyboardHook == NULL)
 				g_keyboardHook = SetWindowsHookEx( WH_KEYBOARD_LL,  LowLevelKeyboardProc, ge_module, 0 );
 			
 
-			g_windowActive  = true;  
+			g_windowActive  = true; 
+#endif
 		}
         else 
 		{
+#if USE_KEY_HOOK
 			if (g_keyboardHook != NULL)
 			{
 				UnhookWindowsHookEx(g_keyboardHook);//unregister keyboard hook
 				g_keyboardHook = NULL;
 			}
 			g_windowActive  = false;   
+#endif
 		}
         break;
 	case WM_INPUT://raw input
@@ -237,11 +243,36 @@ void RawInputMessage(WPARAM wParam, LPARAM lParam)
 					listener->MouseWheel((hqfloat32)(SHORT)mouseData.usButtonData, point);
 
 			}//if (rawInput->header.dwType == RIM_TYPEMOUSE)
+			else if (rawInput->header.dwType == RIM_TYPEKEYBOARD)//keyboard
+			{
+				RAWKEYBOARD &keyData = rawInput->data.keyboard;
+				USHORT scanCode = keyData.MakeCode;
+				HQKeyCodeType keyCode = keyData.VKey;
+
+				switch (keyData.VKey)
+				{
+				case VK_CONTROL:
+					keyCode = (scanCode & 0xe000) != 0 ? HQKeyCode::RCONTROL : HQKeyCode::LCONTROL;
+					break;
+				case VK_MENU:
+					keyCode = (scanCode & 0xe000) != 0 ? HQKeyCode::RALT : HQKeyCode::LALT;
+					break;
+				case VK_SHIFT:
+					keyCode = MapVirtualKey(scanCode, MAPVK_VSC_TO_VK_EX);
+					break;
+				}//switch (keyData.VKey)
+
+				if (keyData.Flags & RI_KEY_BREAK)//key up
+					HQEngineApp::GetInstance()->GetKeyListener()->KeyReleased(keyCode);
+				else
+					HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode);
+
+			}//else if (rawInput->header.dwType == RIM_TYPEKEYBOARD)
 		}//else
 	}//if (GET_RAWINPUT_CODE_WPARAM(wParam) == RIM_INPUT)
 
 }
-/*--------handle key down message------------------*/
+/*--------handle legacy key down message------------------*/
 bool KeyDownMessage(WPARAM wParam, LPARAM lParam)
 {
 	if (lParam & 0x40000000)//this message is repeated
@@ -275,7 +306,7 @@ bool KeyDownMessage(WPARAM wParam, LPARAM lParam)
 
 	return false;//message handling chain will continue
 }
-/*--------handle key up message------------------*/
+/*--------handle legacy key up message------------------*/
 bool KeyUpMessage(WPARAM wParam, LPARAM lParam)
 {
 	switch (wParam)
@@ -306,6 +337,7 @@ bool KeyUpMessage(WPARAM wParam, LPARAM lParam)
 	return false;//message handling chain will continue
 }
 
+#if USE_KEY_HOOK
 /*-----low level keyboard hook----------------------*/
 LRESULT CALLBACK LowLevelKeyboardProc( int nCode, WPARAM wParam, LPARAM lParam )
 {
@@ -329,6 +361,7 @@ LRESULT CALLBACK LowLevelKeyboardProc( int nCode, WPARAM wParam, LPARAM lParam )
     else
         return CallNextHookEx( g_keyboardHook, nCode, wParam, lParam );
 }
+#endif//#if USE_KEY_HOOK
 
 /*----------disable window accessibility keys------*/
 void AllowAccessibilityShortcutKeys( bool allowKeys )
@@ -428,10 +461,23 @@ HQEngineWindow::HQEngineWindow(const char *title, const char *settingFileDir ,  
 		throw std::bad_alloc();
 	}
 
+#if USE_KEY_HOOK
+	//performance problem
 	/*-----disable window key--------------*/
 	if (g_keyboardHook == NULL)
 		g_keyboardHook = SetWindowsHookEx( WH_KEYBOARD_LL,  LowLevelKeyboardProc, ge_module, 0 );
+#else
+	RAWINPUTDEVICE rid;
+	rid.usUsagePage = 1; 
+	rid.usUsage = 6;//keyboard 
+	rid.dwFlags = RIDEV_NOLEGACY | RIDEV_NOHOTKEYS | RIDEV_APPKEYS;
+	rid.hwndTarget = m_window;
 
+	if (RegisterRawInputDevices(&rid, 1, sizeof(RAWINPUTDEVICE)) == FALSE) 
+	{
+		//do something?
+	}
+#endif
 	/*--- save the current sticky/toggle/filter key settings so they can be restored later--*/
     SystemParametersInfo(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &g_oldStickyKeys, 0);
     SystemParametersInfo(SPI_GETTOGGLEKEYS, sizeof(TOGGLEKEYS), &g_oldToggleKeys, 0);
@@ -442,11 +488,25 @@ HQEngineWindow::HQEngineWindow(const char *title, const char *settingFileDir ,  
 
 HQEngineWindow::~HQEngineWindow()
 {
+#if USE_KEY_HOOK
 	if (g_keyboardHook != NULL)
 	{
 		UnhookWindowsHookEx(g_keyboardHook);
 		g_keyboardHook = NULL;
 	}
+#else
+	RAWINPUTDEVICE rid;
+	rid.usUsagePage = 1; 
+	rid.usUsage = 6;//keyboard 
+	rid.dwFlags = RIDEV_REMOVE;
+	rid.hwndTarget = m_window;
+
+	//remove raw keyboard
+	if (RegisterRawInputDevices(&rid, 1, sizeof(RAWINPUTDEVICE)) == FALSE) 
+	{
+		//do something?
+	}
+#endif
 	//restore shortcut keys setting
 	AllowAccessibilityShortcutKeys(true);
 
