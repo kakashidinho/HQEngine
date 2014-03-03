@@ -44,6 +44,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQUtilMath", "..\Source\HQUtilMath\HQUtilMath.vcproj", "{8CE14C97-6121-46CA-862D-130322FB0143}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQAudio", "..\Source\HQAudio\HQAudio.vcproj", "{8A6976E1-EE62-4BC1-8865-DDA506640A28}"
+	ProjectSection(ProjectDependencies) = postProject
+		{05907671-E330-415C-BF60-BAB7B1895E37} = {05907671-E330-415C-BF60-BAB7B1895E37}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQEngineDeployDll", "..\Source\HQEngineDeployDll\HQEngineDeployDll.csproj", "{EF7BDAC5-1186-4571-9BF9-9111D6ABDBC7}"
 EndProject
