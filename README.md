@@ -4,7 +4,7 @@ Description and Goals
 ----------------------------
 - This project goal is a cross platform C++ 3D game framework, allowing as much code re-use as possible across many platforms (Windows, Windows Phone, Android, IOS, Mac OSX, ...).
 - To achieve this, many platform-specific functionalities have been hidden by abstract layers, including rendering API, audio API, file system, window API, threading, etc.
-- Although there are a few of open source projects out there with same goals. One example is Ogre 3D. Often, I found them lack support for some platforms. For instance, Ogre has only supported Android recently, they didn't before. Moreover, I have been working with this hobby project since my undergraduate days, and still have motivation to improve it.
+- Although there are a few of open source projects out there with same goals. One example is Ogre 3D. Often, I found them lack support for some platforms. For instance, Ogre has only supported Android recently, they didn't before. Moreover, I have been working with this hobby project since my undergraduate days, and still have motivation to evolve it.
 
 Current status
 ----------------------------
