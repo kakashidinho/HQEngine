@@ -6,3 +6,4 @@
 *.idb
 libogg/xcode/build
 libvorbis/xcode/build
+xcuserdata
