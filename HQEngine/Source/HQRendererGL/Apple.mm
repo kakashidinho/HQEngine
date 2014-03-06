@@ -46,10 +46,11 @@ GLboolean GLEW_ARB_texture_rg;
 GLboolean GLEW_NV_gpu_shader4;
 GLboolean GLEW_EXT_gpu_shader4;
 GLboolean GLEW_ARB_uniform_buffer_object;
-#ifdef IOS
 GLboolean GLEW_OES_compressed_ETC1_RGB8_texture;
 GLboolean GLEW_IMG_texture_compression_pvrtc;
-#endif
+GLboolean GLEW_EXT_texture_rg;
+GLboolean GLEW_OES_texture_half_float;
+GLboolean GLEW_OES_texture_float;
 
 
 #ifndef GL_UNIFORM_BUFFER
@@ -129,7 +130,6 @@ int glewInit()
 	GLEW_ARB_multisample = gluCheckExtension ((const GLubyte*)"GL_ARB_multisample",strExt);
 	GLEW_EXT_texture_filter_anisotropic = gluCheckExtension ((const GLubyte*)"GL_EXT_texture_filter_anisotropic",strExt);
 	GLEW_NV_multisample_filter_hint  = gluCheckExtension ((const GLubyte*)"GL_NV_multisample_filter_hint",strExt);
-	GLEW_OES_texture_non_power_of_two = gluCheckExtension ((const GLubyte*)"GL_OES_texture_npot",strExt);
 	GLEW_EXT_texture_compression_s3tc = gluCheckExtension ((const GLubyte*)"GL_EXT_texture_compression_s3tc",strExt);
 	GLEW_EXT_geometry_shader4 = gluCheckExtension ((const GLubyte*)"GL_EXT_geometry_shader4",strExt);
 	GLEW_ARB_draw_buffers = gluCheckExtension ((const GLubyte*)"GL_ARB_draw_buffers",strExt);
@@ -140,15 +140,20 @@ int glewInit()
 	GLEW_NV_gpu_shader4 = gluCheckExtension ((const GLubyte*)"GL_NV_gpu_shader4",strExt);
 	GLEW_EXT_gpu_shader4 = gluCheckExtension ((const GLubyte*)"GL_EXT_gpu_shader4",strExt);
 	GLEW_ARB_uniform_buffer_object = gluCheckExtension ((const GLubyte*)"GL_ARB_uniform_buffer_object",strExt);
-#ifdef IOS
-	GLEW_EXT_framebuffer_object = true;
-	GLEW_ARB_texture_float = gluCheckExtension ((const GLubyte*)"GL_OES_texture_float",strExt);
-	GLEW_EXT_packed_depth_stencil = gluCheckExtension ((const GLubyte*)"GL_OES_packed_depth_stencil",strExt);
+	GLEW_ARB_texture_float = gluCheckExtension ((const GLubyte*)"GL_ARB_texture_float",strExt);
+		
+	GLEW_OES_texture_non_power_of_two = (GLEW_VERSION_2_0 || gluCheckExtension ((const GLubyte*)"GL_APPLE_texture_2D_limited_npot",strExt)) && 
+										gluCheckExtension ((const GLubyte*)"GL_OES_texture_npot",strExt);
 	GLEW_OES_compressed_ETC1_RGB8_texture = gluCheckExtension ((const GLubyte*)"GL_OES_compressed_ETC1_RGB8_texture",strExt);
 	GLEW_IMG_texture_compression_pvrtc = gluCheckExtension ((const GLubyte*)"GL_IMG_texture_compression_pvrtc",strExt);
+	GLEW_OES_texture_half_float = gluCheckExtension ((const GLubyte*)"GL_OES_texture_half_float",strExt);
+	GLEW_OES_texture_float = gluCheckExtension ((const GLubyte*)"GL_OES_texture_float",strExt);
+	GLEW_EXT_texture_rg = gluCheckExtension ((const GLubyte*)"GL_EXT_texture_rg",strExt);
+#ifdef IOS
+	GLEW_EXT_framebuffer_object = true;
+	GLEW_EXT_packed_depth_stencil = gluCheckExtension ((const GLubyte*)"GL_OES_packed_depth_stencil",strExt);
 #else
 	GLEW_EXT_framebuffer_object = gluCheckExtension ((const GLubyte*)"GL_EXT_framebuffer_object",strExt);
-	GLEW_ARB_texture_float = gluCheckExtension ((const GLubyte*)"GL_ARB_texture_float",strExt);
 	GLEW_EXT_packed_depth_stencil = gluCheckExtension ((const GLubyte*)"GL_EXT_packed_depth_stencil",strExt);
 #endif
     
