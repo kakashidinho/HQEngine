@@ -1,0 +1,475 @@
+Tlibogg (static)
+v6
+r0
+t352036854.156148
+cCheck dependencies
+cCompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/bitwise.o /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/framing.o /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/bitwise.o /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/framing.o /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+cLibtool /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/libogg.a normal x86_64
+cLibtool /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/libogg.a normal i386
+cCreateUniversalBinary /Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/libogg.a normal x86_64\ i386
+
+N../../HQEngine/XCode/libs/Release/libogg.a
+t1330344054
+s63420
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
+c000000005228144B00000000000000AA
+t1378358347
+s170
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/SDKSettings.plist
+c0000000053174B3F00000000000004B3
+t1394035519
+s1203
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/CoreServices/SystemVersion.plist
+c0000000053174B3F00000000000001DE
+t1394035519
+s478
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004C5342BA00000000000000EE
+t1280524986
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/inttypes.h
+c000000004AC59C8100000000000027D1
+t1254464641
+s10193
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdio.h
+c000000004AC59C820000000000004174
+t1254464642
+s16756
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdlib.h
+c000000004AC59C820000000000002DF5
+t1254464642
+s11765
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/string.h
+c000000004AC59C820000000000001731
+t1254464642
+s5937
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/sys/types.h
+c000000004C4DE4B40000000000002905
+t1280173236
+s10501
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h
+c000000004AC59DB70000000000000C7E
+t1254464951
+s3198
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stddef.h
+c000000004AC59DB70000000000003197
+t1254464951
+s12695
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h
+c000000004AC59DB7000000000000190C
+t1254464951
+s6412
+
+N/Users/hackintosh/Documents/HQEngine/HQEngine/XCode/libs/Release/libogg.a
+t2
+s0
+
+N/Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c
+c000000005317530E0000000000005B70
+t1394037518
+s23408
+
+N/Users/hackintosh/Documents/HQEngine/libogg/src/framing.c
+c000000005317530E0000000000010593
+t1394037518
+s66963
+
+N/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/bitwise.o
+t1394043680
+s5560
+
+N/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/framing.o
+t1394043680
+s9756
+
+N/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a
+t1394043680
+s17424
+
+N/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/ogg.LinkFileList
+c0000000053176B1F00000000000000FC
+t1394043679
+s252
+
+N/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/bitwise.o
+t1394043680
+s10608
+
+N/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/framing.o
+t1394043680
+s14212
+
+N/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a
+t1394043680
+s26928
+
+N/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/ogg.LinkFileList
+c0000000053176B1F0000000000000100
+t1394043679
+s256
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../../HQEngine/XCode/libs/Release/libogg.a
+t2
+s0
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../include/ogg/ogg.h
+c000000004F4B6EA200000000000020F3
+t1330343586
+s8435
+i<stddef.h>
+i<ogg/os_types.h>
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../include/ogg/os_types.h
+c000000004E3A0CFE00000000000010B3
+t1312427262
+s4275
+i<stdint.h>
+i<sys/types.h>
+i<sys/types.h>
+i<inttypes.h>
+i<sys/types.h>
+i<inttypes.h>
+i<ogg/config_types.h>
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c
+c000000004E3A18780000000000005B70
+t1312430200
+s23408
+i<string.h>
+i<stdlib.h>
+i<limits.h>
+i<ogg/ogg.h>
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c
+c000000004E3A1B400000000000010593
+t1312430912
+s66963
+i<stdlib.h>
+i<string.h>
+i<ogg/ogg.h>
+i<stdio.h>
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/bitwise.o
+t1330344053
+s5720
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/framing.o
+t1330344053
+s10300
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a
+t1330344053
+s18128
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/ogg.LinkFileList
+c000000004F4B6CF40000000000000106
+t1330343156
+s262
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/bitwise.o
+t1330344053
+s5956
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/framing.o
+t1330344053
+s10428
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/libogg.a
+t1330344054
+s18496
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/ogg.LinkFileList
+c000000004F4B6CF40000000000000104
+t1330343156
+s260
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/bitwise.o
+t1330344053
+s10368
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/framing.o
+t1330344053
+s14252
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a
+t1330344053
+s26728
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/ogg.LinkFileList
+c000000004F4B6CF4000000000000010A
+t1330343156
+s266
+
+N/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Release/libogg.a
+t1330340820
+s63420
+
+CBuild AST from /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c
+r0
+
+CBuild AST from /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c
+r0
+
+CCheck dependencies
+r0
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependencies6c96db9fa2c7b841^05e1e69fa2c7b841^---0#1#1#--18"Check dependencies36"4843E9D0-AC8D-467C-BE9E-B29460688C6F-
+
+CCompileC "build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/bitwise.o" /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c normal i386 c com.apple.compilers.gcc.4_2
+s352036853.035410
+e352036853.311358
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/i386/bitwise.o
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c352036853#352036853#0(0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c8630527424#993"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O3 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -fvisibility=hidden -mmacosx-version-min=10.6 "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/ogg.hmap" -F../../HQEngine/XCode/libs/Release -I../../HQEngine/XCode/libs/Release/include "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources" -ffast-math -falign-loops=16 -c /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/bitwise.o"0#
+
+CCompileC "build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/framing.o" /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c normal i386 c com.apple.compilers.gcc.4_2
+s352036853.311431
+e352036853.705364
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/i386/framing.o
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c352036853#352036853#0(0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c8630747712#993"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O3 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -fvisibility=hidden -mmacosx-version-min=10.6 "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/ogg.hmap" -F../../HQEngine/XCode/libs/Release -I../../HQEngine/XCode/libs/Release/include "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources/i386" "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources" -ffast-math -falign-loops=16 -c /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/framing.o"0#
+
+CCompileC "build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/bitwise.o" /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c normal ppc c com.apple.compilers.gcc.4_2
+s352036853.313100
+e352036853.535192
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/bitwise.o
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c
+xnormal
+xppc
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c352036853#352036853#0(0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c8628975232#1000"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch ppc -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O3 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mtune=G4 -fvisibility=hidden -mmacosx-version-min=10.6 "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/ogg.hmap" -F../../HQEngine/XCode/libs/Release -I../../HQEngine/XCode/libs/Release/include "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources/ppc" "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources" -ffast-math -falign-loops=16 -c /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/bitwise.o"0#
+
+CCompileC "build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/framing.o" /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c normal ppc c com.apple.compilers.gcc.4_2
+s352036853.535279
+e352036853.960027
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/framing.o
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c
+xnormal
+xppc
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c352036853#352036853#0(0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c8626459840#1000"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch ppc -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O3 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mtune=G4 -fvisibility=hidden -mmacosx-version-min=10.6 "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/ogg.hmap" -F../../HQEngine/XCode/libs/Release -I../../HQEngine/XCode/libs/Release/include "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources/ppc" "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources" -ffast-math -falign-loops=16 -c /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/framing.o"0#
+
+CCompileC "build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/bitwise.o" /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c normal x86_64 c com.apple.compilers.gcc.4_2
+s352036852.719902
+e352036853.035329
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/bitwise.o
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c352036852#352036853#0(0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c8639560128#999"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O3 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -fvisibility=hidden -mmacosx-version-min=10.6 "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/ogg.hmap" -F../../HQEngine/XCode/libs/Release -I../../HQEngine/XCode/libs/Release/include "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources/x86_64" "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources" -ffast-math -falign-loops=16 -c /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/bitwise.c -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/bitwise.o"0#
+
+CCompileC "build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/framing.o" /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c normal x86_64 c com.apple.compilers.gcc.4_2
+s352036852.721580
+e352036853.160725
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/framing.o
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@79"Compile /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c352036852#352036853#0(0"0(0#0#71"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c8639026400#999"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O3 -D__MACOSX__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -fvisibility=hidden -mmacosx-version-min=10.6 "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/ogg.hmap" -F../../HQEngine/XCode/libs/Release -I../../HQEngine/XCode/libs/Release/include "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources/x86_64" "-I/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/DerivedSources" -ffast-math -falign-loops=16 -c /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../src/framing.c -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/framing.o"0#
+
+CCompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/bitwise.o /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+s415736480.112589
+e415736480.372020
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/i386/bitwise.o
+x/Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c
+d/Users/hackintosh/Documents/HQEngine/libogg/include/ogg/ogg.h
+d/Users/hackintosh/Documents/HQEngine/libogg/include/ogg/os_types.h
+oclang: warning: argument unused during compilation: '-falign-loops=16'
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection65"Compile /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c201"CompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/bitwise.o /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c normal i386 c com.apple.compilers.llvm.clang.1_0.compilerf4f91ca0a2c7b841^4b3d5fa0a2c7b841^-71"clang: warning: argument unused during compilation: '-falign-loops=16'-0#0#1#-19%DVTDocumentLocation2@73"file://localhost/Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c0000000000000000^2371"CompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/bitwise.o /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/hackintosh/Documents/HQEngine/libogg/xcode    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -Wno-trigraphs -fpascal-strings -O3 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -D__MACOSX__ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -mmacosx-version-min=10.8 -fvisibility=hidden -Wno-sign-conversion -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/ogg.hmap -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/DerivedSources/i386 -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/DerivedSources -F/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release -ffast-math -falign-loops=16 -MMD -MT dependencies -MF /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/bitwise.d --serialize-diagnostics /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/bitwise.dia -c /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c -o /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/bitwise.o36"0D7BA480-968C-406C-96A2-CBC546B08C42-
+bF2C7CD3B-4380-4DB9-833A-E4B0ADD61578
+
+CCompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/framing.o /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+s415736480.283829
+e415736480.595139
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/i386/framing.o
+x/Users/hackintosh/Documents/HQEngine/libogg/src/framing.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/hackintosh/Documents/HQEngine/libogg/src/framing.c
+d/Users/hackintosh/Documents/HQEngine/libogg/include/ogg/ogg.h
+d/Users/hackintosh/Documents/HQEngine/libogg/include/ogg/os_types.h
+oclang: warning: argument unused during compilation: '-falign-loops=16'
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection65"Compile /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c201"CompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/framing.o /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler12dc48a0a2c7b841^846198a0a2c7b841^-71"clang: warning: argument unused during compilation: '-falign-loops=16'-0#0#1#-19%DVTDocumentLocation2@73"file://localhost/Users/hackintosh/Documents/HQEngine/libogg/src/framing.c0000000000000000^2371"CompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/framing.o /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/hackintosh/Documents/HQEngine/libogg/xcode    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -arch i386 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -Wno-trigraphs -fpascal-strings -O3 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -D__MACOSX__ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -mmacosx-version-min=10.8 -fvisibility=hidden -Wno-sign-conversion -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/ogg.hmap -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/DerivedSources/i386 -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/DerivedSources -F/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release -ffast-math -falign-loops=16 -MMD -MT dependencies -MF /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/framing.d --serialize-diagnostics /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/framing.dia -c /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c -o /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/framing.o36"2370C04D-71B6-4F34-8A4A-DED4B2AD31AB-
+bF2C7CD3B-4380-4DB9-833A-E4B0ADD61578
+
+CCompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/bitwise.o /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler
+s415736479.904426
+e415736480.110102
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/bitwise.o
+x/Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c
+d/Users/hackintosh/Documents/HQEngine/libogg/include/ogg/ogg.h
+d/Users/hackintosh/Documents/HQEngine/libogg/include/ogg/os_types.h
+oclang: warning: argument unused during compilation: '-falign-loops=16'
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection65"Compile /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c205"CompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/bitwise.o /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compilere8a4e79fa2c7b841^77641ca0a2c7b841^-71"clang: warning: argument unused during compilation: '-falign-loops=16'-0#0#1#-19%DVTDocumentLocation2@73"file://localhost/Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c0000000000000000^2385"CompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/bitwise.o /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/hackintosh/Documents/HQEngine/libogg/xcode    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -Wno-trigraphs -fpascal-strings -O3 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -D__MACOSX__ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -mmacosx-version-min=10.8 -fvisibility=hidden -Wno-sign-conversion -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/ogg.hmap -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/DerivedSources/x86_64 -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/DerivedSources -F/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release -ffast-math -falign-loops=16 -MMD -MT dependencies -MF /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/bitwise.d --serialize-diagnostics /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/bitwise.dia -c /Users/hackintosh/Documents/HQEngine/libogg/src/bitwise.c -o /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/bitwise.o36"6CF39CF9-6DF1-4965-BF61-D3F67859C483-
+bF2C7CD3B-4380-4DB9-833A-E4B0ADD61578
+
+CCompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/framing.o /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler
+s415736479.905242
+e415736480.282109
+r1
+xCompileC
+xbuild/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/framing.o
+x/Users/hackintosh/Documents/HQEngine/libogg/src/framing.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/hackintosh/Documents/HQEngine/libogg/src/framing.c
+d/Users/hackintosh/Documents/HQEngine/libogg/include/ogg/ogg.h
+d/Users/hackintosh/Documents/HQEngine/libogg/include/ogg/os_types.h
+oclang: warning: argument unused during compilation: '-falign-loops=16'
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection65"Compile /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c205"CompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/framing.o /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler99d9e79fa2c7b841^f12948a0a2c7b841^-71"clang: warning: argument unused during compilation: '-falign-loops=16'-0#0#1#-19%DVTDocumentLocation2@73"file://localhost/Users/hackintosh/Documents/HQEngine/libogg/src/framing.c0000000000000000^2385"CompileC build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/framing.o /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/hackintosh/Documents/HQEngine/libogg/xcode    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -Wno-trigraphs -fpascal-strings -O3 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-shorten-64-to-32 -Wpointer-sign -Wno-newline-eof -D__MACOSX__ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -mmacosx-version-min=10.8 -fvisibility=hidden -Wno-sign-conversion -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/ogg.hmap -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/DerivedSources/x86_64 -I/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/DerivedSources -F/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release -ffast-math -falign-loops=16 -MMD -MT dependencies -MF /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/framing.d --serialize-diagnostics /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/framing.dia -c /Users/hackintosh/Documents/HQEngine/libogg/src/framing.c -o /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/framing.o36"E8A9415D-F010-40C6-AC44-7CD54AEE53B6-
+bF2C7CD3B-4380-4DB9-833A-E4B0ADD61578
+
+CCreateUniversalBinary ../../HQEngine/XCode/libs/Release/libogg.a normal "x86_64 i386 ppc"
+s352036854.036395
+e352036854.156110
+r1
+xCreateUniversalBinary
+x../../HQEngine/XCode/libs/Release/libogg.a
+xnormal
+xx86_64 i386 ppc
+lSLF07#2@89"CreateUniversalBinary ../../HQEngine/XCode/libs/Release/libogg.a normal "x86_64 i386 ppc"352036854#352036854#0(0"0(0#0#70"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/x86_64 i386 ppc8625889504#544"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    /Developer/usr/bin/libtool -static "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a" "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a" "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/libogg.a" -o ../../HQEngine/XCode/libs/Release/libogg.a0#
+
+CCreateUniversalBinary /Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/libogg.a normal x86_64\ i386
+s415736480.661436
+e415736480.714170
+r1
+xCreateUniversalBinary
+x/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/libogg.a
+xnormal
+xx86_64 i386
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection116"Create universal binary /Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/libogg.a84"CreateUniversalBinary ../../HQEngine/XCode/libs/Release/libogg.a normal x86_64\ i386df6ea9a0a2c7b841^e0d5b6a0a2c7b841^---0#0#1#-19%DVTDocumentLocation2@108"file://localhost/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/libogg.a00382c9bdcffdf42^512"CreateUniversalBinary ../../HQEngine/XCode/libs/Release/libogg.a normal x86_64\ i386    cd /Users/hackintosh/Documents/HQEngine/libogg/xcode    libtool -static /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/libogg.a /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/libogg.a -o /Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release/libogg.a36"13FF95B8-37E9-4C37-970F-344DCA26CB90-
+bF2C7CD3B-4380-4DB9-833A-E4B0ADD61578
+
+CCreateUniversalBinary /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../../HQEngine/XCode/libs/Release/libogg.a normal "x86_64 i386 ppc"
+s352033939.822526
+e352033939.971807
+r1
+xCreateUniversalBinary
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../../HQEngine/XCode/libs/Release/libogg.a
+xnormal
+xx86_64 i386 ppc
+lSLF07#2@89"CreateUniversalBinary ../../HQEngine/XCode/libs/Release/libogg.a normal "x86_64 i386 ppc"352033939#352033939#0(0"0(0#0#70"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/x86_64 i386 ppc8630578016#599"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    /Developer/usr/bin/libtool -static "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a" "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a" "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/libogg.a" -o /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/../../HQEngine/XCode/libs/Release/libogg.a0#
+
+CCreateUniversalBinary /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Release/libogg.a normal "x86_64 i386 ppc"
+s352033620.282036
+e352033620.432058
+r1
+xCreateUniversalBinary
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Release/libogg.a
+xnormal
+xx86_64 i386 ppc
+lSLF07#2@69"CreateUniversalBinary build/Release/libogg.a normal "x86_64 i386 ppc"352033620#352033620#0(0"0(0#0#70"/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/x86_64 i386 ppc8629575328#579"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    /Developer/usr/bin/libtool -static "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a" "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a" "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/libogg.a" -o /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Release/libogg.a0#
+
+CLibtool "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a" normal i386
+s352036853.705440
+e352036853.890971
+r1
+xLibtool
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a
+xnormal
+xi386
+lSLF07#2@96"Libtool "build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a" normal i386352036853#352036853#0(0"0(0#0#0"8640114720#522"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/libtool -static -arch_only i386 -syslibroot /Developer/SDKs/MacOSX10.6.sdk -L../../HQEngine/XCode/libs/Release -filelist "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/ogg.LinkFileList" -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a"0#
+
+CLibtool "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/libogg.a" normal ppc
+s352036853.960096
+e352036854.036321
+r1
+xLibtool
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/libogg.a
+xnormal
+xppc
+lSLF07#2@94"Libtool "build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/libogg.a" normal ppc352036853#352036854#0(0"0(0#0#0"8608135360#519"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/libtool -static -arch_only ppc -syslibroot /Developer/SDKs/MacOSX10.6.sdk -L../../HQEngine/XCode/libs/Release -filelist "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/ogg.LinkFileList" -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/ppc/libogg.a"0#
+
+CLibtool "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a" normal x86_64
+s352036853.160806
+e352036853.313039
+r1
+xLibtool
+x/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a
+xnormal
+xx86_64
+lSLF07#2@100"Libtool "build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a" normal x86_64352036853#352036853#0(0"0(0#0#0"8639851360#528"    cd /Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/libtool -static -arch_only x86_64 -syslibroot /Developer/SDKs/MacOSX10.6.sdk -L../../HQEngine/XCode/libs/Release -filelist "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/ogg.LinkFileList" -o "/Volumes/Entertainment/VS_Projects/libogg-1.3.0/macosx/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a"0#
+
+CLibtool /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/libogg.a normal i386
+s415736480.606768
+e415736480.651672
+r1
+xLibtool
+x/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/i386/libogg.a
+xnormal
+xi386
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection95"Libtool build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/libogg.a normal i38695"Libtool build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/libogg.a normal i386b16f9ba0a2c7b841^bbd6a6a0a2c7b841^---0#0#1#--787"Libtool build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/libogg.a normal i386    cd /Users/hackintosh/Documents/HQEngine/libogg/xcode    setenv MACOSX_DEPLOYMENT_TARGET 10.8    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only i386 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -L/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release -filelist /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/ogg.LinkFileList -o /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/i386/libogg.a36"35F20D6A-7692-434E-8D96-9A9510716A9B-
+bF2C7CD3B-4380-4DB9-833A-E4B0ADD61578
+
+CLibtool /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/libogg.a normal x86_64
+s415736480.605901
+e415736480.621879
+r1
+xLibtool
+x/Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg (static).build/Objects-normal/x86_64/libogg.a
+xnormal
+xx86_64
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection99"Libtool build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/libogg.a normal x86_6499"Libtool build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/libogg.a normal x86_640d389ba0a2c7b841^473e9fa0a2c7b841^---0#0#1#--797"Libtool build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/libogg.a normal x86_64    cd /Users/hackintosh/Documents/HQEngine/libogg/xcode    setenv MACOSX_DEPLOYMENT_TARGET 10.8    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only x86_64 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -L/Users/hackintosh/Documents/HQEngine/libogg/xcode/../../HQEngine/XCode/libs/Release -filelist /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/ogg.LinkFileList -o /Users/hackintosh/Documents/HQEngine/libogg/xcode/build/Ogg.build/Release/libogg\ (static).build/Objects-normal/x86_64/libogg.a36"D376A08B-166C-4E19-B205-22B8A88B3B1B-
+bF2C7CD3B-4380-4DB9-833A-E4B0ADD61578
+
