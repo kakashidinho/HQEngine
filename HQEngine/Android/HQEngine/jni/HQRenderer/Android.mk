@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := HQRenderer
 
 LOCAL_SRC_FILES := Android.cpp AndroidGLES.cpp HQDeviceEnumGL.cpp HQDeviceGL.cpp HQDeviceGL_caps.cpp HQFixedFunctionShaderManagerGL.cpp HQRenderTargetFBO.cpp HQShaderGL.cpp  HQShaderGL_Common.cpp HQShaderGL_GLSLController.cpp HQShaderGL_GLSL_VarParser.cpp HQStateManagerGL.cpp HQTextureManagerGL.cpp HQVertexStreamManagerGL.cpp HQVertexStreamManagerPreShaderGL.cpp ../BaseImpl/HQTextureManagerBaseImpl.cpp ../HQEngineRenderer/HQRenderer.cpp ../HQEngineRenderer/HQRenderDeviceDebugLayer.cpp ../HQEngineRenderer/HQReturnValDebugString.cpp\
-				   HQFFShaderControllerGL.cpp
+				   HQFFEmuShaderControllerGL.cpp
 
 LOCAL_CPP_FEATURES := exceptions rtti
 

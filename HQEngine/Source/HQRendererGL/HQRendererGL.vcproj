@@ -1455,6 +1455,14 @@
 				RelativePath=".\targetver.h"
 				>
 			</File>
+			<Filter
+				Name="glew"
+				>
+				<File
+					RelativePath=".\glew\include\GL\glew.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

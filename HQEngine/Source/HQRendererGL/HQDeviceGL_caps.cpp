@@ -121,13 +121,15 @@ hq_uint32 HQDeviceGL::GetMaxShaderStageSamplers(HQShaderType shaderStage)
 
 /*-----------render target caps--------------------*/
 
-bool HQDeviceGL::IsRTTFormatSupported(HQRenderTargetFormat format , HQTextureType textureType ,bool hasMipmaps)
+bool HQDeviceGL::IsRTTFormatSupported(HQRenderTargetFormat hqformat , HQTextureType textureType ,bool hasMipmaps)
 {
-	GLint internalFormat = HQRenderTargetManagerFBO::GetGLInternalFormat(format);
+	GLint internalFormat;
+	GLenum format, type;
+	HQRenderTargetManagerFBO::GetGLImageFormat(hqformat, internalFormat, format, type);
 	if (internalFormat == 0)
 		return false;
 
-	return pEnum->caps.rttInternalFormat[format];
+	return pEnum->caps.rttInternalFormat[hqformat];
 }
 bool HQDeviceGL::IsDSFormatSupported(HQDepthStencilFormat format)
 {
@@ -136,10 +138,13 @@ bool HQDeviceGL::IsDSFormatSupported(HQDepthStencilFormat format)
 		return false;
 	return pEnum->caps.dsFormat[format];
 }
-bool HQDeviceGL::IsRTTMultisampleTypeSupported(HQRenderTargetFormat format , HQMultiSampleType multisampleType , HQTextureType textureType)
+bool HQDeviceGL::IsRTTMultisampleTypeSupported(HQRenderTargetFormat hqformat , HQMultiSampleType multisampleType , HQTextureType textureType)
 {
-	GLint internalFormat = HQRenderTargetManagerFBO::GetGLInternalFormat(format);
-	if (internalFormat == 0 || g_pOGLDev->GetDeviceCaps().rttInternalFormat[format] == false)
+	GLint internalFormat;
+	GLenum format, type;
+	HQRenderTargetManagerFBO::GetGLImageFormat(hqformat, internalFormat, format, type);
+	const Caps& device_caps = this->GetDeviceCaps();
+	if (internalFormat == 0 || device_caps.rttInternalFormat[hqformat] == false)
 		return false;
 	if (multisampleType != HQ_MST_NONE)//multisample texture not supported yet
 		return false;

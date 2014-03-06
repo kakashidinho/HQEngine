@@ -15021,6 +15021,38 @@ typedef void (GLAPIENTRY * PFNGLADDSWAPHINTRECTWINPROC) (GLint x, GLint y, GLsiz
 
 #endif /* GL_WIN_swap_hint */
 
+/* ----------------------------- GL_OES_texture_float----------------------- */
+#ifndef GL_OES_texture_float
+#define GL_OES_texture_float 1
+
+#define GLEW_OES_texture_float GLEW_GET_VAR(__GLEW_OES_texture_float)
+
+#endif /* GL_OES_texture_float */
+
+
+/* ----------------------------- GL_OES_texture_half_float----------------------- */
+#ifndef GL_OES_texture_half_float
+#define GL_OES_texture_half_float 1
+
+#define GL_HALF_FLOAT_OES                0x8D61
+
+#define GLEW_OES_texture_half_float GLEW_GET_VAR(__GLEW_OES_texture_half_float)
+
+#endif /* GL_OES_texture_half_float */
+
+
+/* ----------------------------- GL_EXT_texture_rg ------------------------------ */
+
+#ifndef GL_EXT_texture_rg
+#define GL_EXT_texture_rg 1
+
+#define GL_RED_EXT                 0x1903
+#define GL_RG_EXT                  0x8227
+
+#define GLEW_EXT_texture_rg GLEW_GET_VAR(__GLEW_EXT_texture_rg)
+
+#endif /* GL_EXT_texture_rg */
+
 /* ------------------------------------------------------------------------- */
 
 #if defined(GLEW_MX) && defined(_WIN32)
@@ -17981,6 +18013,9 @@ GLEW_VAR_EXPORT GLboolean __GLEW_SUN_vertex;
 GLEW_VAR_EXPORT GLboolean __GLEW_WIN_phong_shading;
 GLEW_VAR_EXPORT GLboolean __GLEW_WIN_specular_fog;
 GLEW_VAR_EXPORT GLboolean __GLEW_WIN_swap_hint;
+GLEW_VAR_EXPORT GLboolean __GLEW_OES_texture_float;
+GLEW_VAR_EXPORT GLboolean __GLEW_OES_texture_half_float;
+GLEW_VAR_EXPORT GLboolean __GLEW_EXT_texture_rg;
 
 #ifdef GLEW_MX
 }; /* GLEWContextStruct */

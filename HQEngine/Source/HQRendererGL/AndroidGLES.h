@@ -45,7 +45,6 @@ extern GLboolean GLEW_VERSION_4_1;
 extern GLboolean GLEW_ARB_multisample;
 extern GLboolean GLEW_EXT_texture_filter_anisotropic;
 extern GLboolean GLEW_NV_multisample_filter_hint;
-extern GLboolean GLEW_OES_texture_non_power_of_two;//full support for none power of two texture
 extern GLboolean GLEW_EXT_texture_compression_s3tc;
 extern GLboolean GLEW_EXT_geometry_shader4;
 extern GLboolean GLEW_EXT_framebuffer_object;
@@ -59,10 +58,15 @@ extern GLboolean GLEW_ARB_texture_rg;
 extern GLboolean GLEW_NV_gpu_shader4;
 extern GLboolean GLEW_EXT_gpu_shader4;
 extern GLboolean GLEW_ARB_uniform_buffer_object;
+
+//opengl es extensions
 extern GLboolean GLEW_OES_mapbuffer;
 extern GLboolean GLEW_OES_compressed_ETC1_RGB8_texture;
 extern GLboolean GLEW_IMG_texture_compression_pvrtc;
-
+extern GLboolean GLEW_OES_texture_non_power_of_two;//full support for none power of two texture
+extern GLboolean GLEW_EXT_texture_rg;
+extern GLboolean GLEW_OES_texture_half_float;
+extern GLboolean GLEW_OES_texture_float;
 
 typedef void (GL_APIENTRYP PFNGLBINDRENDERBUFFEROESPROC) (GLenum target, GLuint renderbuffer);
 typedef void (GL_APIENTRYP PFNGLDELETERENDERBUFFERSOESPROC) (GLsizei n, const GLuint* renderbuffers);
@@ -92,16 +96,6 @@ extern PFNGLFRAMEBUFFERTEXTURE2DOESPROC android_glFramebufferTexture2D;
 
 #define GL_TEXTURE_BUFFER 0x8C2A
 
-#if GL_OES_texture_float
-#	define GL_LUMINANCE32F_ARB GL_FLOAT
-#else
-#	define GL_LUMINANCE32F_ARB 0
-#endif
-#if GL_OES_texture_half_float
-#	define GL_LUMINANCE16F_ARB GL_HALF_FLOAT_OES
-#else
-#	define GL_LUMINANCE16F_ARB 0
-#endif
 #define GL_DEPTH24_STENCIL8_EXT GL_DEPTH24_STENCIL8_OES
 #define GL_DEPTH_COMPONENT24 GL_DEPTH_COMPONENT24_OES
 #define GL_DEPTH_COMPONENT32 0
@@ -119,6 +113,16 @@ extern PFNGLFRAMEBUFFERTEXTURE2DOESPROC android_glFramebufferTexture2D;
 #ifndef GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
 #	define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT -1
 #endif
+
+#define GL_LUMINANCE32F_ARB 0x8818
+#define GL_LUMINANCE16F_ARB 0x881E
+#define GL_RED_INTEGER 0x8D94
+#define GL_RED 0x1903
+#define GL_RG 0x8227
+#define GL_LUMINANCE8UI_EXT 0x8D80
+#define GL_LUMINANCE_INTEGER_EXT 0x8D9C
+#define GL_RGBA32F 0x8814
+#define GL_RGBA16F 0x881A
 #define GL_R8 0x8229
 #define GL_R16 0x822A
 #define GL_RG8 0x822B
@@ -139,6 +143,15 @@ extern PFNGLFRAMEBUFFERTEXTURE2DOESPROC android_glFramebufferTexture2D;
 #define GL_RG16UI 0x823A
 #define GL_RG32I 0x823B
 #define GL_RG32UI 0x823C
+
+#ifndef GL_OES_texture_half_float
+#	define GL_HALF_FLOAT_OES                0x8D61
+#endif
+
+#ifndef GL_EXT_texture_rg
+#	define GL_RED_EXT                 0x1903
+#	define GL_RG_EXT                  0x8227
+#endif
 
 #if GL_OES_framebuffer_object
 

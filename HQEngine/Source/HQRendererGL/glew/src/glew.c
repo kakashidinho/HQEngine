@@ -3221,6 +3221,9 @@ GLboolean __GLEW_SUN_vertex = GL_FALSE;
 GLboolean __GLEW_WIN_phong_shading = GL_FALSE;
 GLboolean __GLEW_WIN_specular_fog = GL_FALSE;
 GLboolean __GLEW_WIN_swap_hint = GL_FALSE;
+GLboolean __GLEW_OES_texture_float = GL_FALSE;
+GLboolean __GLEW_OES_texture_half_float = GL_FALSE;
+GLboolean __GLEW_EXT_texture_rg = GL_FALSE;
 
 #endif /* !GLEW_MX */
 
@@ -11316,6 +11319,17 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
   CONST_CAST(GLEW_WIN_swap_hint) = _glewSearchExtension("GL_WIN_swap_hint", extStart, extEnd);
   if (glewExperimental || GLEW_WIN_swap_hint) CONST_CAST(GLEW_WIN_swap_hint) = !_glewInit_GL_WIN_swap_hint(GLEW_CONTEXT_ARG_VAR_INIT);
 #endif /* GL_WIN_swap_hint */
+
+#ifdef GL_OES_texture_float
+  CONST_CAST(GLEW_OES_texture_float) = _glewSearchExtension("GL_OES_texture_float", extStart, extEnd);
+#endif /* GL_OES_texture_float */
+#ifdef GL_OES_texture_half_float
+  CONST_CAST(GLEW_OES_texture_half_float) = _glewSearchExtension("GL_OES_texture_half_float", extStart, extEnd);
+#endif /* GL_OES_texture_half_float */
+#ifdef GL_EXT_texture_rg
+  CONST_CAST(GLEW_EXT_texture_rg) = _glewSearchExtension("GL_EXT_texture_rg", extStart, extEnd);
+#endif /* GL_EXT_texture_rg */
+
 
   return GLEW_OK;
 }

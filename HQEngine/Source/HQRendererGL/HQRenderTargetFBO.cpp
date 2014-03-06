@@ -183,13 +183,13 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 {
 	HQRenderTargetTextureGL(hq_uint32 _width ,hq_uint32 _height ,
 							HQMultiSampleType _multiSampleType,
-							GLint internalFormat , hq_uint32 _numMipmaps,
+							HQRenderTargetFormat hqFormat , hq_uint32 _numMipmaps,
 							hq_uint32 _textureID , HQSharedPtr<HQTexture> _pTex)
 		: HQBaseRenderTargetTexture(_width , _height ,
 							_multiSampleType, _numMipmaps,
 							_textureID , _pTex)
 	{
-		this->internalFormat = internalFormat;
+		this->hqFormat = hqFormat;
 
 	}
 	~HQRenderTargetTextureGL()
@@ -205,8 +205,9 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 	HQReturnVal Init()
 	{
 		HQTextureManagerGL *pTextureMan = (HQTextureManagerGL *)g_pOGLDev->GetTextureManager();
+		GLint internalFormat; 
 		GLenum format, type;//get texture's pixel format and pixel data type
-		HQRenderTargetManagerFBO::GetGLImageFormat(this->internalFormat , format , type);
+		HQRenderTargetManagerFBO::GetGLImageFormat(this->hqFormat, internalFormat , format , type);
 #if 0 && !defined GLES
 		GLclampf priority = 1.0f;
 		glPrioritizeTextures(1 , (GLuint*)this->pTexture->pData , &priority);
@@ -223,7 +224,7 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 				int h = this->height;
 				for(hq_uint32 i = 0; i < this->numMipmaps ; ++i)
 				{
-					glTexImage2D(GL_TEXTURE_2D , i , this->internalFormat , w , h,
+					glTexImage2D(GL_TEXTURE_2D , i , internalFormat , w , h,
 						0 , format , type , NULL);
 
 					if (w > 1)
@@ -245,7 +246,7 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 				int w = this->width;
 				for(hq_uint32 i = 0; i < this->numMipmaps ; ++i)
 				{
-					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face , i , this->internalFormat , w , w,
+					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face , i , internalFormat , w , w,
 						0 , format , type , NULL);
 
 					if (w > 1)
@@ -269,7 +270,7 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 		//TO DO: recreate render target and texture
 	}
 
-	GLint internalFormat;
+	HQRenderTargetFormat hqFormat;
 };
 
 /*----------------------------------*/
@@ -313,102 +314,163 @@ struct HQRenderTargetGroupGL: public HQBaseRenderTargetGroup, public HQResetable
 };
 
 /*--------------HQRenderTargetManagerFBO----------------*/
-GLint HQRenderTargetManagerFBO::GetGLInternalFormat(HQRenderTargetFormat format)
+
+void HQRenderTargetManagerFBO::GetGLImageFormat(HQRenderTargetFormat hqformat, GLint&  internalFormat , GLenum &format , GLenum &type)
 {
-	switch(format)
+	internalFormat = format = type = 0;
+	switch(hqformat)
 	{
 	case HQ_RTFMT_R_FLOAT32:
 		if (GLEW_VERSION_3_0)
-			return GL_R32F;
-		if (GLEW_ARB_texture_float)
+		{
+			internalFormat = GL_R32F;
+			format = GL_RED; type = GL_FLOAT;
+		}
+		else if (GLEW_ARB_texture_float)
 		{
 			if (GLEW_ARB_texture_rg)
-				return GL_R32F;
-			return GL_LUMINANCE32F_ARB;
+			{
+				internalFormat = GL_R32F;
+				format = GL_RED; type = GL_FLOAT;
+			}
+			else
+			{
+				internalFormat = GL_LUMINANCE32F_ARB;	
+				format = GL_LUMINANCE; type = GL_FLOAT;
+			}
+		}
+		else if (GLEW_OES_texture_float)
+		{
+			if (GLEW_EXT_texture_rg)
+				internalFormat = format = GL_RED_EXT;
+			else
+				internalFormat = format = GL_LUMINANCE;
+			type = GL_FLOAT; 
 		}
 		break;
 	case HQ_RTFMT_R_FLOAT16:
 		if (GLEW_VERSION_3_0)
-			return GL_R16F;
-		if (GLEW_ARB_texture_float)
+		{
+			internalFormat = GL_R16F;	
+			format = GL_RED; type = GL_FLOAT;
+		}
+		else if (GLEW_ARB_texture_float)
 		{
 			if (GLEW_ARB_texture_rg)
-				return GL_R16F;
-			return GL_LUMINANCE16F_ARB;
+			{
+				internalFormat = GL_R16F;
+				format = GL_RED; type = GL_FLOAT;
+			}
+			else
+			{
+				internalFormat = GL_LUMINANCE16F_ARB;
+				format = GL_LUMINANCE; type = GL_FLOAT;
+			}
+		}
+		else if (GLEW_OES_texture_half_float)
+		{
+			if (GLEW_EXT_texture_rg)
+				internalFormat = format = GL_RED_EXT;
+			else
+				internalFormat = format = GL_LUMINANCE;
+			type = GL_HALF_FLOAT_OES; 
 		}
 		break;
 	case HQ_RTFMT_RGBA_32:
-		return GL_RGBA8;
+		internalFormat = GL_RGBA8;
+		format = GL_RGBA; type = GL_UNSIGNED_BYTE;
+		break;
 	case HQ_RTFMT_R_UINT8:
 		if (GLEW_VERSION_3_0)
-			return GL_R8UI;
-		if (GLEW_EXT_texture_integer)
+		{
+			internalFormat = GL_R8UI;
+			format = GL_RED_INTEGER ; type = GL_UNSIGNED_BYTE;
+		}
+		else if (GLEW_EXT_texture_integer)
 		{
 			if(GLEW_ARB_texture_rg)
-				return GL_R8UI;
-			return GL_LUMINANCE8UI_EXT;
+			{
+				internalFormat = GL_R8UI;
+				format = GL_RED_INTEGER ; type = GL_UNSIGNED_BYTE;
+			}
+			else
+			{
+				internalFormat = GL_LUMINANCE8UI_EXT;
+				format = GL_LUMINANCE_INTEGER_EXT ; type = GL_UNSIGNED_BYTE;
+			}
 		}
+		break;
 	case HQ_RTFMT_A_UINT8:
 		if (GLEW_EXT_texture_integer && !GLEW_VERSION_4_1)
 		{
-			return GL_LUMINANCE8UI_EXT;//this is deprecated
+			internalFormat = GL_LUMINANCE8UI_EXT;//this is deprecated
+			format = GL_LUMINANCE_INTEGER_EXT ; type = GL_UNSIGNED_BYTE;
 		}
+		break;
 	case HQ_RTFMT_RGBA_FLOAT64:
 		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
-			return GL_RGBA16F;
+		{
+			internalFormat = GL_RGBA16F;
+			format = GL_RGBA; type = GL_FLOAT;
+		}
+		else if (GLEW_OES_texture_half_float)
+		{
+			internalFormat = format = GL_RGBA;
+			type = GL_HALF_FLOAT_OES; 
+		}
+		break;
 	case HQ_RTFMT_RG_FLOAT32:
 		if (GLEW_VERSION_3_0)
-			return GL_RG16F;
-		if (GLEW_ARB_texture_float)
+		{
+			internalFormat = GL_RG16F;
+			format = GL_RG; type = GL_FLOAT;
+		}
+		else if (GLEW_ARB_texture_float)
 		{
 			if (GLEW_ARB_texture_rg)
-				return GL_RG16F;
+			{
+				internalFormat = GL_RG16F;
+				format = GL_RG; type = GL_FLOAT;
+			}
 		}
+		else if (GLEW_OES_texture_half_float && GLEW_EXT_texture_rg)
+		{
+			internalFormat = format = GL_RG_EXT;
+			type = GL_HALF_FLOAT_OES; 
+		}
+		break;
 	case HQ_RTFMT_RGBA_FLOAT128:
 		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
-			return GL_RGBA32F;
+		{
+			internalFormat = GL_RGBA32F;
+			format = GL_RGBA; type = GL_FLOAT;
+		}
+		else if (GLEW_OES_texture_float)
+		{
+			internalFormat = format = GL_RGBA;
+			type = GL_FLOAT; 
+		}
+		break;
 	case HQ_RTFMT_RG_FLOAT64:
 		if (GLEW_VERSION_3_0)
-			return GL_RG32F;
-		if (GLEW_ARB_texture_float)
+		{
+			internalFormat = GL_RG32F;
+			format = GL_RG; type = GL_FLOAT;
+		}
+		else if (GLEW_ARB_texture_float)
 		{
 			if (GLEW_ARB_texture_rg)
-				return GL_RG32F;
+			{
+				internalFormat = GL_RG32F;
+				format = GL_RG; type = GL_FLOAT;
+			}
 		}
-	}
-	return 0;
-}
-
-void HQRenderTargetManagerFBO::GetGLImageFormat(GLint internalFormat , GLenum &format , GLenum &type)
-{
-	switch (internalFormat){
-		case GL_LUMINANCE32F_ARB: case GL_LUMINANCE16F_ARB:
-			format = GL_LUMINANCE;
-			type = GL_FLOAT;
-			break;
-		case GL_LUMINANCE8UI_EXT:
-			format = GL_LUMINANCE_INTEGER_EXT ;
-			type = GL_UNSIGNED_BYTE;
-			break;
-		case GL_R8UI:
-			format = GL_RED_INTEGER ;
-			type = GL_UNSIGNED_BYTE;
-			break;
-		case GL_R32F: case GL_R16F:
-			format = GL_RED;
-			type = GL_FLOAT;
-			break;
-		case GL_RG32F: case GL_RG16F:
-			format = GL_RG;
-			type = GL_FLOAT;
-			break;
-		case GL_RGBA32F: case GL_RGBA16F:
-			format = GL_RGBA;
-			type = GL_FLOAT;
-			break;
-		default:
-			format = GL_RGBA;
-			type = GL_UNSIGNED_BYTE;
+		else if (GLEW_OES_texture_half_float && GLEW_EXT_texture_rg)
+		{
+			internalFormat = format = GL_RG_EXT;
+			type = GL_FLOAT; 
+		}
+		break;
 	}
 }
 
@@ -590,15 +652,13 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 	if (textureType == HQ_TEXTURE_CUBE)
 		height = width;
 
-	GLint internalFormat = HQRenderTargetManagerFBO::GetGLInternalFormat(format);
-
 	hq_uint32 numMipmaps = 1;
 	if (hasMipmaps)
 		numMipmaps = HQBaseTextureManager::CalculateFullNumMipmaps(width , height);
 
 	HQRenderTargetTextureGL *pNewRenderTarget =
 		new HQRenderTargetTextureGL(width , height ,
-									multisampleType ,internalFormat ,
+									multisampleType ,format ,
 									numMipmaps , textureID , pNewTex
 									);
 	if (pNewRenderTarget == NULL)

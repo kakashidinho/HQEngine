@@ -61,8 +61,7 @@ public:
 	~HQRenderTargetManagerFBO();
 	
 	/*----------helper methods-------------*/
-	static GLint GetGLInternalFormat(HQRenderTargetFormat format);
-	static void GetGLImageFormat(GLint internalFormat , GLenum &format , GLenum &type);
+	static void GetGLImageFormat(HQRenderTargetFormat hqformat, GLint& internalFormat , GLenum &format , GLenum &type);
 	static GLdepthStencilFormat GetGLFormat(HQDepthStencilFormat format);
 	
 	//generate full range mipmaps for render target texture <renderTargetTextureID>

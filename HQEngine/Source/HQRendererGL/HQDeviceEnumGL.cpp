@@ -1150,13 +1150,12 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 		for (int i = 0; i < NUM_RTT_FORMAT; ++i) {
 			glGenTextures(1, &texture);
 			glBindTexture(GL_TEXTURE_2D, texture);
-			internalFmt = HQRenderTargetManagerFBO::GetGLInternalFormat((HQRenderTargetFormat) i );
+			HQRenderTargetManagerFBO::GetGLImageFormat((HQRenderTargetFormat) i, internalFmt , format , dataType );
 			if (internalFmt == 0)
 			{
 				caps.rttInternalFormat[i] = false;
 			}
 			else {
-				HQRenderTargetManagerFBO::GetGLImageFormat(internalFmt , format , dataType);
 				glTexImage2D(GL_TEXTURE_2D,
 							 0, internalFmt,
 							 1, 1,
@@ -1217,14 +1216,13 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 		for (int i = 0; i < NUM_RTT_FORMAT; ++i) {
 			glGenTextures(1, &texture);
 			glBindTexture(GL_TEXTURE_2D, texture);
-			internalFmt = HQRenderTargetManagerFBO::GetGLInternalFormat((HQRenderTargetFormat) i );
+			HQRenderTargetManagerFBO::GetGLImageFormat((HQRenderTargetFormat) i, internalFmt , format , dataType );
 			if (internalFmt == 0)
 			{
 				caps.rttInternalFormat[i] = false;
 			}
 			else {
 
-				HQRenderTargetManagerFBO::GetGLImageFormat(internalFmt , format , dataType);
 				glTexImage2D(GL_TEXTURE_2D,
 							 0, internalFmt,
 							 1, 1,
