@@ -9,9 +9,6 @@
 /* Begin PBXBuildFile section */
 		D6FDD8DD18C7A61D00825C3C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8DC18C7A61D00825C3C /* Cocoa.framework */; };
 		D6FDD8E718C7A61D00825C3C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D6FDD8E518C7A61D00825C3C /* InfoPlist.strings */; };
-		D6FDD8F218C7A61D00825C3C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8F118C7A61D00825C3C /* XCTest.framework */; };
-		D6FDD8F318C7A61D00825C3C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8DC18C7A61D00825C3C /* Cocoa.framework */; };
-		D6FDD8F618C7A61D00825C3C /* HQEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8D918C7A61D00825C3C /* HQEngine.framework */; };
 		D6FDD93B18C7A7CE00825C3C /* Apple.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD90818C7A7CE00825C3C /* Apple.h */; };
 		D6FDD93C18C7A7CE00825C3C /* Apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD90918C7A7CE00825C3C /* Apple.mm */; };
 		D6FDD93D18C7A7CE00825C3C /* cgFunctionPointers.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD90A18C7A7CE00825C3C /* cgFunctionPointers.h */; };
@@ -296,8 +293,6 @@
 		D6FDDB8C18C7C39900825C3C /* HQEngineWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDDB8518C7C39900825C3C /* HQEngineWindow.h */; };
 		D6FDDC2118C7D0F900825C3C /* HQEngineAppOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = D6FDDB7F18C7C39800825C3C /* HQEngineAppOSX.mm */; };
 		D6FDDC2718C7D24900825C3C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8DC18C7A61D00825C3C /* Cocoa.framework */; };
-		D6FDDC4118C7D24A00825C3C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8F118C7A61D00825C3C /* XCTest.framework */; };
-		D6FDDC4218C7D24A00825C3C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8DC18C7A61D00825C3C /* Cocoa.framework */; };
 		D6FDDC5418C7D28B00825C3C /* winmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDDC1F18C7D03B00825C3C /* winmain.cpp */; };
 		D6FDDC5518C7D28B00825C3C /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDDB9218C7CF1700825C3C /* Game.cpp */; };
 		D6FDDC7518C7D85A00825C3C /* test-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6FDDC7418C7D85A00825C3C /* test-Info.plist */; };
@@ -306,20 +301,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D6FDD8F418C7A61D00825C3C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D6FDD8D018C7A61D00825C3C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D6FDD8D818C7A61D00825C3C;
-			remoteInfo = HQEngine;
-		};
-		D6FDDC4318C7D24A00825C3C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D6FDD8D018C7A61D00825C3C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D6FDDC2518C7D24900825C3C;
-			remoteInfo = test;
-		};
 		D6FDDC5618C7D2C700825C3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D6FDD8D018C7A61D00825C3C /* Project object */;
@@ -338,7 +319,6 @@
 		D6FDD8E418C7A61D00825C3C /* HQEngine-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HQEngine-Info.plist"; sourceTree = "<group>"; };
 		D6FDD8E618C7A61D00825C3C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D6FDD8E818C7A61D00825C3C /* HQEngine-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HQEngine-Prefix.pch"; sourceTree = "<group>"; };
-		D6FDD8F018C7A61D00825C3C /* HQEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HQEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6FDD8F118C7A61D00825C3C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		D6FDD90818C7A7CE00825C3C /* Apple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Apple.h; path = ../../../Source/HQRendererGL/Apple.h; sourceTree = "<group>"; };
 		D6FDD90918C7A7CE00825C3C /* Apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Apple.mm; path = ../../../Source/HQRendererGL/Apple.mm; sourceTree = "<group>"; };
@@ -647,7 +627,6 @@
 		D6FDDB9318C7CF1700825C3C /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../../Source/test/Game.h; sourceTree = "<group>"; };
 		D6FDDC1F18C7D03B00825C3C /* winmain.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = winmain.cpp; path = ../../Source/test/winmain.cpp; sourceTree = "<group>"; };
 		D6FDDC2618C7D24900825C3C /* test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = test.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D6FDDC4018C7D24A00825C3C /* testTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = testTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6FDDC7418C7D85A00825C3C /* test-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "test-Info.plist"; path = "HQEngine/test-Info.plist"; sourceTree = "<group>"; };
 		D6FDDC7A18C7DE6F00825C3C /* test */ = {isa = PBXFileReference; lastKnownFileType = folder; name = test; path = HQEngine/Resources/test; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -663,31 +642,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D6FDD8ED18C7A61D00825C3C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D6FDD8F618C7A61D00825C3C /* HQEngine.framework in Frameworks */,
-				D6FDD8F318C7A61D00825C3C /* Cocoa.framework in Frameworks */,
-				D6FDD8F218C7A61D00825C3C /* XCTest.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D6FDDC2318C7D24900825C3C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				D6FDDC7618C7D91D00825C3C /* HQEngine.framework in Frameworks */,
 				D6FDDC2718C7D24900825C3C /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D6FDDC3D18C7D24A00825C3C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D6FDDC4218C7D24A00825C3C /* Cocoa.framework in Frameworks */,
-				D6FDDC4118C7D24A00825C3C /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -709,9 +669,7 @@
 			isa = PBXGroup;
 			children = (
 				D6FDD8D918C7A61D00825C3C /* HQEngine.framework */,
-				D6FDD8F018C7A61D00825C3C /* HQEngineTests.xctest */,
 				D6FDDC2618C7D24900825C3C /* test.app */,
-				D6FDDC4018C7D24A00825C3C /* testTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1431,24 +1389,6 @@
 			productReference = D6FDD8D918C7A61D00825C3C /* HQEngine.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		D6FDD8EF18C7A61D00825C3C /* HQEngineTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D6FDD90418C7A61D00825C3C /* Build configuration list for PBXNativeTarget "HQEngineTests" */;
-			buildPhases = (
-				D6FDD8EC18C7A61D00825C3C /* Sources */,
-				D6FDD8ED18C7A61D00825C3C /* Frameworks */,
-				D6FDD8EE18C7A61D00825C3C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D6FDD8F518C7A61D00825C3C /* PBXTargetDependency */,
-			);
-			name = HQEngineTests;
-			productName = HQEngineTests;
-			productReference = D6FDD8F018C7A61D00825C3C /* HQEngineTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		D6FDDC2518C7D24900825C3C /* test */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D6FDDC4D18C7D24A00825C3C /* Build configuration list for PBXNativeTarget "test" */;
@@ -1467,24 +1407,6 @@
 			productReference = D6FDDC2618C7D24900825C3C /* test.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D6FDDC3F18C7D24A00825C3C /* testTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D6FDDC5018C7D24A00825C3C /* Build configuration list for PBXNativeTarget "testTests" */;
-			buildPhases = (
-				D6FDDC3C18C7D24A00825C3C /* Sources */,
-				D6FDDC3D18C7D24A00825C3C /* Frameworks */,
-				D6FDDC3E18C7D24A00825C3C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D6FDDC4418C7D24A00825C3C /* PBXTargetDependency */,
-			);
-			name = testTests;
-			productName = testTests;
-			productReference = D6FDDC4018C7D24A00825C3C /* testTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1493,14 +1415,6 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = LHQ;
-				TargetAttributes = {
-					D6FDD8EF18C7A61D00825C3C = {
-						TestTargetID = D6FDD8D818C7A61D00825C3C;
-					};
-					D6FDDC3F18C7D24A00825C3C = {
-						TestTargetID = D6FDD8D818C7A61D00825C3C;
-					};
-				};
 			};
 			buildConfigurationList = D6FDD8D318C7A61D00825C3C /* Build configuration list for PBXProject "HQEngine" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1516,9 +1430,7 @@
 			projectRoot = "";
 			targets = (
 				D6FDD8D818C7A61D00825C3C /* HQEngine */,
-				D6FDD8EF18C7A61D00825C3C /* HQEngineTests */,
 				D6FDDC2518C7D24900825C3C /* test */,
-				D6FDDC3F18C7D24A00825C3C /* testTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1533,26 +1445,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D6FDD8EE18C7A61D00825C3C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D6FDDC2418C7D24900825C3C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				D6FDDC7B18C7DE6F00825C3C /* test in Resources */,
 				D6FDDC7518C7D85A00825C3C /* test-Info.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D6FDDC3E18C7D24A00825C3C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1704,13 +1602,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D6FDD8EC18C7A61D00825C3C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D6FDDC2218C7D24900825C3C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1720,26 +1611,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D6FDDC3C18C7D24A00825C3C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		D6FDD8F518C7A61D00825C3C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D6FDD8D818C7A61D00825C3C /* HQEngine */;
-			targetProxy = D6FDD8F418C7A61D00825C3C /* PBXContainerItemProxy */;
-		};
-		D6FDDC4418C7D24A00825C3C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D6FDDC2518C7D24900825C3C /* test */;
-			targetProxy = D6FDDC4318C7D24A00825C3C /* PBXContainerItemProxy */;
-		};
 		D6FDDC5718C7D2C700825C3C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D6FDD8D818C7A61D00825C3C /* HQEngine */;
@@ -1886,46 +1760,6 @@
 			};
 			name = Release;
 		};
-		D6FDD90518C7A61D00825C3C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/HQEngine.framework/Versions/A/HQEngine";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "HQEngine/HQEngine-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "HQEngineTests/HQEngineTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		D6FDD90618C7A61D00825C3C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/HQEngine.framework/Versions/A/HQEngine";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "HQEngine/HQEngine-Prefix.pch";
-				INFOPLIST_FILE = "HQEngineTests/HQEngineTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 		D6FDDC4E18C7D24A00825C3C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1961,51 +1795,6 @@
 			};
 			name = Release;
 		};
-		D6FDDC5118C7D24A00825C3C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/HQEngine.framework/Versions/A/HQEngine";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "test/test-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INFOPLIST_FILE = "testTests/testTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		D6FDDC5218C7D24A00825C3C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/HQEngine.framework/Versions/A/HQEngine";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "test/test-Prefix.pch";
-				INFOPLIST_FILE = "testTests/testTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2027,15 +1816,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D6FDD90418C7A61D00825C3C /* Build configuration list for PBXNativeTarget "HQEngineTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D6FDD90518C7A61D00825C3C /* Debug */,
-				D6FDD90618C7A61D00825C3C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		D6FDDC4D18C7D24A00825C3C /* Build configuration list for PBXNativeTarget "test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2043,14 +1823,7 @@
 				D6FDDC4F18C7D24A00825C3C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-		};
-		D6FDDC5018C7D24A00825C3C /* Build configuration list for PBXNativeTarget "testTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D6FDDC5118C7D24A00825C3C /* Debug */,
-				D6FDDC5218C7D24A00825C3C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

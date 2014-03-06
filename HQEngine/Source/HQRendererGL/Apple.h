@@ -65,7 +65,8 @@ extern GLboolean GLEW_ARB_uniform_buffer_object;
 //opengl es extensions
 extern GLboolean GLEW_OES_texture_non_power_of_two;//full support for none power of two texture
 extern GLboolean GLEW_OES_compressed_ETC1_RGB8_texture;
-extern GLboolean GLEW_IMG_texture_compression_pvrtc;extern GLboolean GLEW_EXT_texture_rg;
+extern GLboolean GLEW_IMG_texture_compression_pvrtc;
+extern GLboolean GLEW_EXT_texture_rg;
 extern GLboolean GLEW_OES_texture_half_float;
 extern GLboolean GLEW_OES_texture_float;
 
