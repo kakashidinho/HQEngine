@@ -92,7 +92,7 @@ typedef struct HQOSXRenderDeviceInitInput {
 	: nsView(nil) , isWindowed(true)
 	{}
 	
-	const NSView *nsView;
+	NSView *nsView;
 	bool isWindowed;
 } *HQRenderDeviceInitInput;
 

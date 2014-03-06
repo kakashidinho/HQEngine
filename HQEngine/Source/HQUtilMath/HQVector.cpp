@@ -26,8 +26,8 @@ const float4 _4Threes = {3.0f , 3.0f ,3.0f ,3.0f};
 const float4 _4Zeros = {0.0f , 0.0f , 0.0f , 0.0f};
 const float4 _4Ones = {1.0f , 1.0f , 1.0f , 1.0f};
 const float4 _3Zeros_1One = {0.0f , 0.0f ,0.0f , 1.0f};
-const HQ_ALIGN16 hq_int32 Mask[4]={0xffffffff,0xffffffff,0xffffffff,0x00000000};
-const HQ_ALIGN16 hq_int32 Mask2[4]={0x00000000,0x00000000,0x00000000,0xffffffff};
+const HQ_ALIGN16 hq_uint32 Mask[4]={0xffffffff,0xffffffff,0xffffffff,0x00000000};
+const HQ_ALIGN16 hq_uint32 Mask2[4]={0x00000000,0x00000000,0x00000000,0xffffffff};
 
 #endif
 

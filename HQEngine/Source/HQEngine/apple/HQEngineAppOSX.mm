@@ -8,7 +8,7 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#include "../stdafx.h"
+#include "../HQEnginePCH.h"
 #include "../../HQEngineApp.h"
 #include "../HQEngineWindow.h"
 #include "../HQDefaultDataStream.h"

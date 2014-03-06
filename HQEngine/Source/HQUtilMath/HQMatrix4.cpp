@@ -652,7 +652,7 @@ HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix3x4* pM2,HQMatri
 	HQDXMatrix4MultiplyMatrix3x4(pM1->m, pM2->m, pOut->m);
 
 #else
-	static const HQ_ALIGN16 hq_int32 _3Zeros_1One_Masks[4]={0x00000000,0x00000000,0x00000000,0xffffffff};
+	static const HQ_ALIGN16 hq_uint32 _3Zeros_1One_Masks[4]={0x00000000,0x00000000,0x00000000,0xffffffff};
 
 	float4 xmm[3],re,row , e,masks;
 	

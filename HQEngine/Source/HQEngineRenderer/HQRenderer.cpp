@@ -21,7 +21,7 @@ COPYING.txt included with this distribution for more information.
 HQRenderDeviceDebugLayer debugLayer;
 #endif
 
-#ifdef _STATIC_RENDERER_LIB_/*---function declare-----*/
+#ifdef _NO_DYNAMIC_LOAD_RENDERER_LIB_/*---function declare-----*/
 extern "C" {
 #if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 	extern HQReturnVal CreateDevice(hModule pDll,LPHQRenderDevice *ppDev,bool flushDebugLog , bool debugLayer);
@@ -62,7 +62,7 @@ HQRenderer::HQRenderer(bool debugLayer)
 : debug(debugLayer)
 #endif
 {
-#ifndef _STATIC_RENDERER_LIB_
+#ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 	pDll=NULL;
 #endif
 	pDevice=NULL;
@@ -88,7 +88,7 @@ HQRenderDevice * HQRenderer::GetDevice()
 
 void HQRenderer::Release()
 {
-#ifndef _STATIC_RENDERER_LIB_
+#ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 #	ifdef WIN32
     pReleaseDevice ReleaseDevice = (pReleaseDevice)GetProcAddress(pDll,"ReleaseDevice");
 #	elif defined (LINUX) || defined __APPLE__
@@ -99,7 +99,7 @@ void HQRenderer::Release()
 	{
         ReleaseDevice(&pDevice);
 	}
-#ifndef _STATIC_RENDERER_LIB_
+#ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 	if(pDll)
 	{
 #	ifdef WIN32
@@ -111,11 +111,11 @@ void HQRenderer::Release()
 	}
 #endif
 }
-#if defined WIN32
 
-#if !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM
+
 HQReturnVal HQRenderer::CreateD3DDevice9(bool flushDebugLog){
-#ifndef _STATIC_RENDERER_LIB_
+#if defined WIN32 && !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM
+#ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 	if(pDll != NULL && APIType != D3D9_API)
 	{
 		FreeLibrary(pDll);
@@ -150,12 +150,16 @@ HQReturnVal HQRenderer::CreateD3DDevice9(bool flushDebugLog){
 		return re;
 	}
 	return HQ_OK;
+#else
+    return HQ_FAILED;
+    
+#endif//#if defined WIN32 && !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM
 }
 
 #if 0
 
 HQReturnVal HQRenderer::CreateD3DDevice10(bool flushDebugLog){
-#ifndef _STATIC_RENDERER_LIB_
+#ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 	if(pDll != NULL && APIType != D3D10_API)
 	{
 		FreeLibrary(pDll);
@@ -196,10 +200,9 @@ HQReturnVal HQRenderer::CreateD3DDevice10(bool flushDebugLog){
 }
 #endif
 
-#endif //#if !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM
-
 HQReturnVal HQRenderer::CreateD3DDevice11(bool flushDebugLog){
-#ifndef _STATIC_RENDERER_LIB_
+#if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+#ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 	if(pDll != NULL && APIType != D3D11_API)
 	{
 		FreeLibrary(pDll);
@@ -237,17 +240,19 @@ HQReturnVal HQRenderer::CreateD3DDevice11(bool flushDebugLog){
 		return re;
 	}
 	return HQ_OK;
+#else
+    return HQ_FAILED;
+#endif//#if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 }
-#endif
 
-#if !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM//windows phone doesn't support opengl es
 #ifdef LINUX
 HQReturnVal HQRenderer::CreateGLDevice(Display *dpy , bool flushDebugLog)
 #else
 HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
 #endif
 {
-#ifndef _STATIC_RENDERER_LIB_
+#if !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM//windows phone doesn't support opengl es
+#ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 	if(pDll != NULL && APIType != GL_API)
 	{
 #	ifdef WIN32
@@ -283,9 +288,9 @@ HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
 #	endif
 		if(!pDll)
 		{
-#ifndef WIN32
+#   ifndef WIN32
 			printf("%s" , dlerror());
-#endif
+#   endif
 			return HQ_FAILED_LOAD_LIBRARY;
 		}
 		APIType = GL_API;
@@ -302,7 +307,7 @@ HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
 		return HQ_FAILED_LOAD_LIBRARY;
 #elif defined WIN32
 	hModule pDll = GetModuleHandle(NULL);
-#endif
+#endif//#ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 
 #ifdef WIN32
 	HQReturnVal re=CreateDevice(pDll,&pDevice,flushDebugLog , debug);
@@ -319,6 +324,7 @@ HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
 		return re;
 	}
 	return HQ_OK;
+#else
+    return HQ_FAILED;
+#endif//#if !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM/
 }
-
-#endif//#if !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM

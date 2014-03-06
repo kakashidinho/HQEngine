@@ -2,7 +2,7 @@
 #define _GAME_H_
 #ifdef __APPLE__
 #include "HQEngine/HQEngineApp.h"
-#include "HQEngine/HQMesh.h"
+#include "HQEngine/HQMeshNode.h"
 #else
 
 #ifdef USE_DIRECTX_MATH
@@ -139,7 +139,7 @@ public:
 	
 #endif //#if	defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	
-	int m_offsetX, m_offsetY;
+	hquint32 m_offsetX, m_offsetY;
 
 	HQEngineApp::RenderDevice *pDevice;
 

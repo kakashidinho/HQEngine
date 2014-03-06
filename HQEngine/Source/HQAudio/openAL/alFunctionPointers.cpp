@@ -11,6 +11,8 @@ COPYING.txt included with this distribution for more information.
 #include "../HQAudioPCH.h"
 #include "alFunctionPointers.h"
 
+#ifndef IMPLICIT_LINK
+
 #ifdef WIN32
 #	define DLL_HANDLE HMODULE
 #	define LoadDll LoadLibraryA
@@ -323,3 +325,5 @@ void ReleaseALFunctionPointers()
 		al_lib = NULL;
 	}
 }
+
+#endif //#ifndef IMPLICIT_LINK

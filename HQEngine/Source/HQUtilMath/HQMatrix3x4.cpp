@@ -96,7 +96,7 @@ HQMatrix3x4* HQMatrix3x4Scale(hq_float32 s[3], HQMatrix3x4 *out){
 //******************************************************
 //nhân 2 ma trận
 //******************************************************
-static const HQ_ALIGN16 hq_int32 _3Zeros_1One_Masks[4]={0x00000000,0x00000000,0x00000000,0xffffffff};
+static const HQ_ALIGN16 hq_uint32 _3Zeros_1One_Masks[4]={0x00000000,0x00000000,0x00000000,0xffffffff};
 
 HQMatrix3x4& HQMatrix3x4::operator *=(const HQMatrix3x4 &m){
 	

@@ -154,7 +154,7 @@ Game::Game()
 
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	logFile = HQCreateDebugLogStream();
-#elif defined WIN32
+#elif defined WIN32 || defined __APPLE__
 	logFile = HQCreateFileLogStream("../test/log.txt");
 #elif defined ANDROID
 	logFile = HQCreateLogCatStream();
@@ -196,7 +196,7 @@ Game::Game()
 #endif
 	params.logStream = logFile;
 	params.platformSpecific = NULL;
-	params.rendererAdditionalSetting = NULL;
+	params.rendererAdditionalSetting = "GLSL-only";
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	params.rendererSettingFileDir = "../../Setting.txt";
 #else

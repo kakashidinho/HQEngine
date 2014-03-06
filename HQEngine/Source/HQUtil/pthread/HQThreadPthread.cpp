@@ -13,6 +13,9 @@ COPYING.txt included with this distribution for more information.
 #define _GNU_SOURCE
 #include <pthread.h>
 #include <sched.h>
+#include <string.h>
+#include <stdio.h>
+#include <errno.h>
 
 #ifndef HAS_PTHREAD_SETNAME_NP
 #	define pthread_setname_np(...)

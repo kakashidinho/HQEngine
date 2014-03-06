@@ -1281,7 +1281,7 @@ hq_float32 HQQuaternion::Dot(const HQQuaternion& q2)const{
 //Nghịch đảo
 //*************************************
 
-static const HQ_ALIGN16 hq_int32 Quatmask[4]={0x80000000,0x80000000,0x80000000,0x00000000};//- - - +
+static const HQ_ALIGN16 hq_uint32 Quatmask[4]={0x80000000,0x80000000,0x80000000,0x00000000};//- - - +
 HQQuaternion& HQQuaternion::Inverse(){
 
 #ifdef CMATH

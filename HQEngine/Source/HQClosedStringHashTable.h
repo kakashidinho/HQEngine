@@ -83,7 +83,7 @@ public:
 	T& GetItem(const char* key , bool &isFound)
 	{
 		hq_uint32 foundIndex;
-		if (isFound = this->Find(key , foundIndex))
+		if ((isFound = this->Find(key , foundIndex)) == true)
 		{
 			return this->GetItemNonCheck(foundIndex);
 		}
@@ -94,7 +94,7 @@ public:
 	const T& GetItem(const char* key , bool &isFound) const
 	{
 		hq_uint32 foundIndex;
-		if (isFound = this->Find(key , foundIndex))
+		if ((isFound = this->Find(key , foundIndex)) == true)
 		{
 			return this->GetItemNonCheck(foundIndex);
 		}

@@ -43,6 +43,7 @@ extern GLboolean GLEW_VERSION_3_2;
 extern GLboolean GLEW_VERSION_3_3;
 extern GLboolean GLEW_VERSION_4_0;
 extern GLboolean GLEW_VERSION_4_1;
+extern GLboolean GLEW_VERSION_4_2;
 
 extern GLboolean GLEW_ARB_multisample;
 extern GLboolean GLEW_EXT_texture_filter_anisotropic;
@@ -67,6 +68,24 @@ extern GLboolean GLEW_IMG_texture_compression_pvrtc;
 #endif
 
 #define GL_TEXTURE_BUFFER 0x8C2A
+#define GL_RGBA16F 0x881A
+#define GL_RGBA32F 0x8814
+#define GL_RED_INTEGER 0x8D94
+
+#ifndef GL_UNIFORM_BUFFER
+
+#define GL_MAX_UNIFORM_BUFFER_BINDINGS 0x8A2F
+#define GL_UNIFORM_BUFFER 0x8A11
+#define GL_INVALID_INDEX 0xFFFFFFFF
+
+typedef GLuint (* PFNGLGETUNIFORMBLOCKINDEXPROC) (GLuint program, const GLchar* uniformBlockName);
+typedef void (* PFNGLUNIFORMBLOCKBINDINGPROC) (GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
+typedef void (*PFNGLBINDBUFFERBASEPROC) (GLenum target, GLuint index, GLuint buffer);
+extern PFNGLBINDBUFFERBASEPROC glBindBufferBase;
+extern PFNGLGETUNIFORMBLOCKINDEXPROC glGetUniformBlockIndex;
+extern PFNGLUNIFORMBLOCKBINDINGPROC glUniformBlockBinding;
+
+#endif//#ifndef GL_UNIFORM_BUFFER
 
 #ifdef IOS 
 

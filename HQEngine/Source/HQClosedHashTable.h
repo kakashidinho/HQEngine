@@ -457,7 +457,7 @@ template <class Key ,class T ,class HashFunction , class ProbingFunction , class
 T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItem(const Key& key , bool &isFound)
 {
 	hq_uint32 foundIndex;
-	if (isFound = this->Find(key , foundIndex))
+	if ((isFound = this->Find(key , foundIndex)) == true)
 	{
 		return this->GetItemNonCheck(foundIndex);
 	}
@@ -468,7 +468,7 @@ template <class Key ,class T ,class HashFunction , class ProbingFunction , class
 const T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItem(const Key& key , bool &isFound) const
 {
 	hq_uint32 foundIndex;
-	if (isFound = this->Find(key , foundIndex))
+	if ((isFound = this->Find(key , foundIndex)) == true)
 	{
 		return this->GetItemNonCheck(foundIndex);
 	}
@@ -478,7 +478,7 @@ const T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual ,
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
 T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItem(hq_uint32 bucketIndex , bool &isFound)
 {
-	if (isFound = (bucketIndex < this->m_numBuckets  && m_buckets[bucketIndex].m_isEmpty == 0))
+	if ((isFound = (bucketIndex < this->m_numBuckets  && m_buckets[bucketIndex].m_isEmpty == 0)) == true)
 		return this->GetItemNonCheck(bucketIndex);
 	else
 		return this->m_invalidValue;
@@ -486,7 +486,7 @@ T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , Memor
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
 const T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItem(hq_uint32 bucketIndex , bool &isFound) const
 {
-	if (isFound = (bucketIndex < this->m_numBuckets  && m_buckets[bucketIndex].m_isEmpty == 0))
+	if ((isFound = (bucketIndex < this->m_numBuckets  && m_buckets[bucketIndex].m_isEmpty == 0)) == true)
 		return this->GetItemNonCheck(bucketIndex);
 	else
 		return this->m_invalidValue;

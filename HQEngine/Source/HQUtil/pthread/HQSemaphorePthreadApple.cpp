@@ -11,7 +11,11 @@ COPYING.txt included with this distribution for more information.
 #include "../HQUtilPCH.h"
 #include "../../HQSemaphore.h"
 #include "../../HQMutex.h"
+
 #include <semaphore.h>
+#include <string.h>
+#include <stdio.h>
+#include <errno.h>
 
 static char nameBuffer[12];
 static unsigned int num = 0;

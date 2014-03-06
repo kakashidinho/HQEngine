@@ -1138,7 +1138,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 
 	GLuint attributes[18] = {
 		NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFAColorSize, R + G + B,
+		NSOpenGLPFAColorSize, static_cast<GLuint>(R + G + B),
 		NSOpenGLPFAAlphaSize, A,
 		NSOpenGLPFADepthSize, D,
 		NSOpenGLPFAStencilSize, S,
@@ -1147,7 +1147,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 		NSOpenGLPFANoRecovery,
 		NSOpenGLPFAMultisample,
 		NSOpenGLPFASampleBuffers ,1 ,
-		NSOpenGLPFASamples , (int)pEnum->selectedMulSampleType ,
+		NSOpenGLPFASamples , pEnum->selectedMulSampleType ,
 		0
 	};
 
