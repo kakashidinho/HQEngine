@@ -1,0 +1,126 @@
+//uniform sampler2D texture0 TEXUNIT99;
+/*agaba				gfdllf *
+asdgdg
+*/
+/*#define TEX 1
+
+
+#define VTEXUNIT3
+#define VTEXCOORD6
+#define VCOLOR
+#define VPOSITION
+#define VPSIZE
+#define TEXUNIT3
+*/
+
+
+#ifdef UNIFORM_BUFFER
+
+#	extension GL_EXT_gpu_shader4 : enable
+#	extension GL_EXT_bindable_uniform : enable
+#	extension GL_ARB_uniform_buffer_object : enable
+//#extension GL_EXT_texture_buffer_object : enable
+
+layout(std140) uniform;
+
+uniform ubuffer11
+{
+	mat3x4 rotation;
+	mat4 viewProj;
+};
+
+#elif defined TEXTURE_BUFFER
+
+#	if __VERSION__ < 140
+#		extension GL_EXT_gpu_shader4 : enable
+#	endif
+
+uniform samplerBuffer textureBuffer TEXUNIT11;
+
+#else
+
+#	ifdef HQEXT_GLSL_ES
+uniform vec4 rotation[3];
+#	else
+uniform mat3x4 rotation;
+#	endif
+uniform mat4 viewProj;
+
+#endif
+
+
+
+uniform sampler2D texture0 TEXUNIT3;
+
+attribute float psize VPSIZE;
+attribute vec3 position VPOSITION;
+attribute vec2 texcoord0 VTEXCOORD6;
+attribute vec4 color0 VCOLOR;
+
+#ifdef HQEXT_GLSL_ES
+varying highp vec4 color;
+varying mediump vec2 texcoord;
+#else
+varying vec4 color;
+varying vec2 texcoord;
+#endif
+
+
+void main()
+{
+#if TEXTURE_COLOR 
+		color = texture2DLod(texture0 , texcoord0 , 0.0) ;
+#else
+		color = vec4(1,1,1,1);
+#endif
+#ifdef TEXTURE_BUFFER
+	mat3x4 rotation;
+	mat4 viewProj;
+		
+	for (int i = 0 ; i < 3 ; ++i)
+	{
+		rotation[i].xyzw = texelFetch (textureBuffer, i ).xyzw;
+		//rotation[i].x = texelFetch (textureBuffer, 4 * i ).x;
+		//rotation[i].y = texelFetch (textureBuffer, 4 * i  + 1).x;
+		//rotation[i].z = texelFetch (textureBuffer, 4 * i  + 2).x;
+		//rotation[i].w = texelFetch (textureBuffer, 4 * i  + 3).x;
+	}
+	
+	for (int i = 0 ; i < 4 ; ++i)
+	{
+		viewProj[i].xyzw = texelFetch (textureBuffer, i + 3).xyzw;
+		//viewProj[i].x = texelFetch (textureBuffer, 4 * i + 12).x;
+		//viewProj[i].y = texelFetch (textureBuffer, 4 * i + 13).x;
+		//viewProj[i].z = texelFetch (textureBuffer, 4 * i + 14).x;
+		//viewProj[i].w = texelFetch (textureBuffer, 4 * i + 15).x;
+	}
+#endif
+	
+	texcoord = texcoord0;
+	vec4 pos = vec4(position , 1.0);
+#ifdef ORIGIN
+	gl_Position = vec4( 0.0 , 0.0 , 0.0, 1.0);
+	gl_PointSize = 100.0;
+#else
+#ifdef HQEXT_GLSL_ES
+	gl_Position.x = dot (pos , rotation[0]);
+	gl_Position.y = dot (pos , rotation[1]);
+	gl_Position.z = dot (pos , rotation[2]);
+#else
+	gl_Position.xyz = pos * rotation;
+#endif
+	gl_Position.w = 1.0;
+	
+	gl_Position = viewProj * gl_Position;
+	
+	//gl_Position =  gl_Position * viewProj ;
+	/*
+	gl_Position.x = dot ( pos , viewProj[0]);
+	gl_Position.y = dot ( pos , viewProj[1]);
+	gl_Position.z = dot ( pos , viewProj[2]);
+	gl_Position.w = dot ( pos , viewProj[3]);
+	*/
+	gl_PointSize = psize;
+#endif
+}
+ 

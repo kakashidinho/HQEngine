@@ -1,6 +1,14 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 #ifdef __APPLE__
+#	include <TargetConditionals.h>
+#	if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR //ios
+#   else
+#       define APPLE_FRAMEWORK
+#   endif
+#endif
+
+#ifdef APPLE_FRAMEWORK
 #include "HQEngine/HQEngineApp.h"
 #include "HQEngine/HQMeshNode.h"
 #else
@@ -20,7 +28,7 @@
 #endif
 
 #ifndef DISABLE_AUDIO
-#ifdef __APPLE__
+#ifdef APPLE_FRAMEWORK
 #include "HQEngine/HQAudio.h"
 #else
 #include "../HQAudio.h"

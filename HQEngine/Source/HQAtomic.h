@@ -66,7 +66,7 @@ inline const T HQAtomic<T>::operator = (const T& val)
 
 #if defined WIN32 || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 #	include "HQAtomicWin32.h"
-#elif defined HQ_ANDROID_PLATFORM
+#elif defined HQ_ANDROID_PLATFORM || defined HQ_IPHONE_PLATFORM || defined HQ_MAC_PLATFORM
 #	include "HQAtomicGCC.h"
 #else
 

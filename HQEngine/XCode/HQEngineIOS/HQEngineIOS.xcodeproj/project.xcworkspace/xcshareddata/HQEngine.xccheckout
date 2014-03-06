@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C2134895-9F7A-4A7E-99C6-65384BB2E095</string>
+	<key>IDESourceControlProjectName</key>
+	<string>HQEngine</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>969EAE58-6415-43B6-BBDF-1E651BE0A67B</key>
+		<string>https://github.com/kakashidinho/HQEngine.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>XCode/HQEngine/HQEngine.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>969EAE58-6415-43B6-BBDF-1E651BE0A67B</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/kakashidinho/HQEngine.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>969EAE58-6415-43B6-BBDF-1E651BE0A67B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>969EAE58-6415-43B6-BBDF-1E651BE0A67B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>HQEngine</string>
+		</dict>
+	</array>
+</dict>
+</plist>

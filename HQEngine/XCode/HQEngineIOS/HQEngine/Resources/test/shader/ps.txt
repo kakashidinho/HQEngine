@@ -1,0 +1,16 @@
+
+uniform sampler2D texture1 TEXUNIT5;
+
+#ifdef HQEXT_GLSL_ES
+varying highp vec4 color;
+varying mediump vec2 texcoord;
+#else
+varying vec4 color;
+varying vec2 texcoord;
+#endif
+
+//out vec4 gl_FragColor; 
+void main()
+{
+	gl_FragColor =  texture2D(texture1 , texcoord);
+}
