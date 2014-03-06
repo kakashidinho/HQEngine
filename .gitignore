@@ -4,3 +4,5 @@
 *.suo
 *.pdb
 *.idb
+libogg/xcode/build
+libvorbis/xcode/build
