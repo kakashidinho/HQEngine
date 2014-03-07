@@ -300,11 +300,13 @@ HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 slot , hq_
 /*
 Load texture from file
 */
-HQReturnVal HQTextureManagerD3D11::LoadTextureFromFile(HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex)
 {
 	if(!pD3DDevice)
 		return HQ_FAILED;
 
+	const char nullStreamName[] = "";
+	const char *streamName = dataStream->GetName() != NULL? dataStream->GetName(): nullStreamName;
 
 	//các thông tin cơ sở
 	hq_uint32 w,h;//width,height
@@ -315,8 +317,9 @@ HQReturnVal HQTextureManagerD3D11::LoadTextureFromFile(HQTexture * pTex)
 
 	//load bitmap file
 	int result; 
+
 	
-	result = bitmap.Load(pTex->fileName);
+	result = bitmap.LoadFromStream(dataStream);
 	
 	char errBuffer[128];
 
@@ -324,27 +327,15 @@ HQReturnVal HQTextureManagerD3D11::LoadTextureFromFile(HQTexture * pTex)
 	{
 		if(result == IMG_FAIL_BAD_FORMAT)
 		{
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-			/*---dùng d3dx function-----*/
-			if(pTex->type == HQ_TEXTURE_2D && 
-				!FAILED(D3DX11CreateTextureFromFileA(
-				pD3DDevice,pTex->fileName, NULL, NULL,
-				(ID3D11Resource**)&((HQTextureResourceD3D11*)pTex->pData)->pTexture , 
-				NULL)
-				))
-			{
-				if(this->CreateShaderResourceView(pTex)== HQ_OK)
-					return HQ_OK;
-			}
-#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+			//TO DO
 		}
 		else if (result == IMG_FAIL_NOT_ENOUGH_CUBE_FACES)
 		{
-			Log("Load cube texture from file %s error : File doesn't have enough 6 cube faces!",pTex->fileName);
+			Log("Load cube texture from stream %s error : File doesn't have enough 6 cube faces!",streamName);
 			return HQ_FAILED_NOT_ENOUGH_CUBE_FACES;
 		}
 		bitmap.GetErrorDesc(result,errBuffer);
-		Log("Load texture from file %s error : %s",pTex->fileName,errBuffer);
+		Log("Load texture from stream %s error : %s",streamName,errBuffer);
 		return HQ_FAILED;
 	}
 	w=bitmap.GetWidth();
@@ -356,7 +347,7 @@ HQReturnVal HQTextureManagerD3D11::LoadTextureFromFile(HQTexture * pTex)
 
 	if(complex.dwComplexFlags & SURFACE_COMPLEX_VOLUME)//it's volume texture
 	{
-		Log("Load texture from file error :can't load volume texture",errBuffer);
+		Log("Load texture from stream %s error : can't load volume texture", streamName);
 		return HQ_FAILED;
 	}
 
@@ -417,7 +408,7 @@ HQReturnVal HQTextureManagerD3D11::LoadTextureFromFile(HQTexture * pTex)
 /*
 Load cube texture from 6 files
 */
-HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromFiles(const char *fileNames[6] , HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex)
 {
 	if(!pD3DDevice)
 		return HQ_FAILED;
@@ -433,19 +424,19 @@ HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromFiles(const char *fileName
 	//load bitmap files
 	int result;
 
-	result=bitmap.LoadCubeFaces(fileNames ,ORIGIN_TOP_LEFT, this->generateMipmap);
+	result=bitmap.LoadCubeFaces(dataStreams ,ORIGIN_TOP_LEFT, this->generateMipmap);
 	
 	char errBuffer[128];
 	
 	if(result == IMG_FAIL_CANT_GENERATE_MIPMAPS)
 	{
-		Log("Load cube texture from files %s warning : can't generate mipmaps",pTex->fileName);
+		Log("Load cube texture from streams warning : can't generate mipmaps");
 		this->generateMipmap = false;
 	}
 	else if(result!=IMG_OK)
 	{
 		bitmap.GetErrorDesc(result,errBuffer);
-		Log("Load cube texture from files %s error : %s",pTex->fileName,errBuffer);
+		Log("Load cube texture from streams error : %s",errBuffer);
 		return HQ_FAILED;
 	}
 	w=bitmap.GetWidth();
@@ -631,10 +622,7 @@ HQReturnVal HQTextureManagerD3D11::CreateTexture(bool changeAlpha,hq_uint32 numM
 		if (!g_pD3DDev->IsNpotTextureFullySupported(pTex->type))//only 1 mipmap level is allowed
 		{
 			t2DDesc.MipLevels = 1;
-			if (pTex->fileName != NULL)
-				Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture from file %s",pTex->fileName);
-			else
-				Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture ");
+			Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture ");
 		}
 	}
 	
@@ -648,8 +636,6 @@ HQReturnVal HQTextureManagerD3D11::CreateTexture(bool changeAlpha,hq_uint32 numM
 
 		if(FAILED(pD3DDevice->CreateTexture2D(&t2DDesc , NULL , (ID3D11Texture2D**)&pT->pTexture)))
 		{
-			if (pTex->fileName != NULL)
-				Log("Failed to create new texture from file %s",pTex->fileName);
 			return HQ_FAILED;
 		}
 	}

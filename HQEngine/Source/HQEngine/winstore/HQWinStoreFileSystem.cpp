@@ -207,7 +207,7 @@ namespace HQWinStoreFileSystem
 	}
 
 	//create file path string by concatenating with current directory, remove ".." and replacing '/' with '\\'
-	static Platform::String^ CreateFixPathString(const wchar_t *wString)
+	static Platform::String^ CreateFixedPathString(const wchar_t *wString)
 	{
 		if (wString == NULL)
 			return nullptr;
@@ -308,7 +308,7 @@ namespace HQWinStoreFileSystem
 
 	
 	//create file path string by concatenating with current directory, remove ".." and replacing '/' with '\\'
-	static Platform::String^ CreateFixPathString(const char *cstring)
+	static Platform::String^ CreateFixedPathString(const char *cstring)
 	{
 		if (cstring == NULL)
 			return nullptr;
@@ -329,7 +329,7 @@ namespace HQWinStoreFileSystem
 		size_t convertedChars = 0;
 		mbstowcs_s(&convertedChars, wString, newsize, cstring, _TRUNCATE);
 
-		Platform::String^ refString = CreateFixPathString(wString);
+		Platform::String^ refString = CreateFixedPathString(wString);
 
 		delete[] wString;
 
@@ -392,7 +392,7 @@ namespace HQWinStoreFileSystem
 
 	Windows::Storage::StorageFile ^ OpenFile(const char *fileName)
 	{
-		Platform::String^ refFileName = CreateFixPathString( fileName);
+		Platform::String^ refFileName = CreateFixedPathString( fileName);
 	
 		return OpenFile(refFileName);
 	}
@@ -405,7 +405,7 @@ namespace HQWinStoreFileSystem
 		using namespace Windows::Storage;
 		using namespace Windows::Foundation;
 
-		Platform::String^ refFileName = CreateFixPathString( fileName);
+		Platform::String^ refFileName = CreateFixedPathString( fileName);
 	
 		auto folder = Windows::Storage::ApplicationData::Current->LocalFolder;
 
@@ -435,7 +435,7 @@ namespace HQWinStoreFileSystem
 			return nullptr;
 		using namespace Windows::Storage;
 		
-		Platform::String^ refFileName = CreateFixPathString( fileName);
+		Platform::String^ refFileName = CreateFixedPathString( fileName);
 		auto folder = Windows::Storage::ApplicationData::Current->LocalFolder;
 
 		auto file = OpenFile(folder, refFileName);
@@ -486,11 +486,11 @@ namespace HQWinStoreFileSystem
 		
 		
 		auto datareader = HQWinStoreUtil:: Wait(create_task(file->OpenAsync(FileAccessMode::Read))
-			.then([] (Streams::IRandomAccessStream ^ stream) -> BufferedDataReader*
+			.then([filename] (Streams::IRandomAccessStream ^ stream) -> BufferedDataReader*
 		{
 			if (stream == nullptr)
 				return nullptr;
-			return new BufferedDataReader(stream);
+			return new BufferedDataReader(stream, filename);
 		}));
 #endif
 
@@ -520,11 +520,11 @@ namespace HQWinStoreFileSystem
 	
 	void SetCurrentDir(const wchar_t *dir)
 	{
-		g_currentDir = (CreateFixPathString( dir));
+		g_currentDir = (CreateFixedPathString( dir));
 	}
 	void SetCurrentDir(const char *dir)
 	{
-		g_currentDir = (CreateFixPathString(dir));
+		g_currentDir = (CreateFixedPathString(dir));
 	}
 
 	/*-------------for easy porting from standard C io---------------*/
@@ -567,7 +567,7 @@ namespace HQWinStoreFileSystem
 #if USE_WIN32_HANDLE
 	BufferedDataReader::BufferedDataReader(const char *fileName)
 	{
-		Platform::String^ refFileName = CreateFixPathString( fileName);
+		Platform::String^ refFileName = CreateFixedPathString( fileName);
 
 		this->fileHandle = OpenFileHandleForRead(refFileName);
 
@@ -585,11 +585,18 @@ namespace HQWinStoreFileSystem
 		this->totalSize = fileInfo.EndOfFile.LowPart;
 
 		this->currentPointer.QuadPart = 0;
+
+		//copy name
+		size_t nameLen = strlen(fileName);
+		name = new char[nameLen + 1]
+		strncpy(name, fileName, nameLen);
+		name[nameLen] = '\0';
 		
 	}
 	BufferedDataReader::~BufferedDataReader()
 	{
 		Close();
+		delete[] name;
 	}
 
 
@@ -693,7 +700,7 @@ namespace HQWinStoreFileSystem
 		return 0;
 	}
 #else
-	BufferedDataReader::BufferedDataReader(Windows::Storage::Streams::IRandomAccessStream ^stream)
+	BufferedDataReader::BufferedDataReader(Windows::Storage::Streams::IRandomAccessStream ^stream, const char* _name)
 		: reader(nullptr)
 	{
 		this->stream = stream;
@@ -705,11 +712,25 @@ namespace HQWinStoreFileSystem
 		this->buffer = ref new Platform::Array<byte>(this->bufferSize);
 
 		this->ResetStream(0);
+
+		//copy name
+		if (_name != NULL)
+		{
+			size_t nameLen = strlen(_name);
+			name = new char[nameLen + 1]
+			strncpy(name, _name, nameLen);
+			name[nameLen] = '\0';
+		}
+		else
+			name = NULL;
 		
 	}
 	BufferedDataReader::~BufferedDataReader()
 	{
 		Close();
+
+		if (name != NULL)
+			delete[] name;
 	}
 
 	bool BufferedDataReader::FillBuffer()

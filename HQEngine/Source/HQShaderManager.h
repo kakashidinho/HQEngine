@@ -48,8 +48,8 @@ public:
 	///
 	///{pDefines} - pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần {name} và {definition} là NULL để chỉ kết thúc dãy
 	///
-	virtual HQReturnVal CreateShaderFromFile(HQShaderType type,
-									 const char* fileName,
+	virtual HQReturnVal CreateShaderFromStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
@@ -65,14 +65,14 @@ public:
 									 const char* entryFunctionName,
 									 hq_uint32 *pID)=0;
 
-	HQReturnVal CreateShaderFromFile(HQShaderType type,
-									 const char* fileName,
+	HQReturnVal CreateShaderFromStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
 									 hq_uint32 *pID)
 	{
-		return CreateShaderFromFile(type,
-									 fileName,
+		return CreateShaderFromStream(type,
+									 dataStream,
 									 NULL,//ko dùng predefined macro
 									 isPreCompiled,
 									 entryFunctionName,
@@ -98,9 +98,9 @@ public:
 	///
 	///{pDefines} - pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần {name} và {definition} là NULL để chỉ kết thúc dãy
 	///
-	virtual HQReturnVal CreateShaderFromFile(HQShaderType type,
+	virtual HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
-									 const char* fileName,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
 									 hq_uint32 *pID)=0;
@@ -114,15 +114,15 @@ public:
 									 const HQShaderMacro * pDefines,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
 									 hq_uint32 *pID)=0;
-	HQReturnVal CreateShaderFromFile(HQShaderType type,
+	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
-									 const char* fileName,
+									 HQDataReaderStream* dataStream,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
 									 hq_uint32 *pID)
 	{
-		return CreateShaderFromFile(type,
+		return CreateShaderFromStream(type,
 									compileMode,
-									 fileName,
+									 dataStream,
 									 NULL,//ko dùng predefined macro
 									 entryFunctionName,
 									 pID);
@@ -145,8 +145,8 @@ public:
 	///
 	///tạo shader từ mã đã compile
 	///
-	virtual HQReturnVal CreateShaderFromByteCodeFile(HQShaderType type,
-									 const char* file,
+	virtual HQReturnVal CreateShaderFromByteCodeStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 hq_uint32 *pID)=0;
 
 	///

@@ -632,8 +632,11 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , hq_uin
 /*
 Load texture from file
 */
-HQReturnVal HQTextureManagerGL::LoadTextureFromFile(HQTexture * pTex)
+HQReturnVal HQTextureManagerGL::LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex)
 {
+	const char nullStreamName[] = "";
+	const char *streamName = dataStream->GetName() != NULL? dataStream->GetName(): nullStreamName;
+
 	//các thông tin cơ sở
 	hq_uint32 w,h;//width,height
 	short bpp;//bits per pixel
@@ -642,7 +645,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromFile(HQTexture * pTex)
 	ImgOrigin origin;//vị trí pixel đầu
 
 	//load bitmap file
-	int result=bitmap.Load(pTex->fileName);
+	int result=bitmap.LoadFromStream(dataStream);
 
 	char errBuffer[128];
 
@@ -650,11 +653,11 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromFile(HQTexture * pTex)
 	{
 		if (result == IMG_FAIL_NOT_ENOUGH_CUBE_FACES)
 		{
-			Log("Load cube texture from file %s error : File doesn't have enough 6 cube faces!",pTex->fileName);
+			Log("Load cube texture from stream %s error : File doesn't have enough 6 cube faces!",dataStream);
 			return HQ_FAILED_NOT_ENOUGH_CUBE_FACES;
 		}
 		bitmap.GetErrorDesc(result,errBuffer);
-		Log("Load texture from file %s error : %s",pTex->fileName,errBuffer);
+		Log("Load texture from stream %s error : %s",dataStream,errBuffer);
 		return HQ_FAILED;
 	}
 	w=bitmap.GetWidth();
@@ -666,7 +669,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromFile(HQTexture * pTex)
 
 	if(complex.dwComplexFlags & SURFACE_COMPLEX_VOLUME)//it's volume texture
 	{
-		Log("Load texture from file error :can't load volume texture",errBuffer);
+		Log("Load texture from stream %s error :can't load volume texture", dataStream);
 		return HQ_FAILED;
 	}
 
@@ -689,7 +692,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromFile(HQTexture * pTex)
 		{
 			if (pTex->type == HQ_TEXTURE_CUBE)
 			{
-				Log("Load cube texture from files %s error : Dimension need to be power of 2");
+				Log("Load cube texture from streams %s error : Dimension need to be power of 2", dataStream);
 				return HQ_FAILED;
 			}
 			Log("Now trying to resize image dimesions to power of two dimensions");
@@ -821,7 +824,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromFile(HQTexture * pTex)
 /*
 Load cube texture from 6 files
 */
-HQReturnVal HQTextureManagerGL::LoadCubeTextureFromFiles(const char *fileNames[6] , HQTexture * pTex)
+HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex)
 {
 	//các thông tin cơ sở
 	hq_uint32 w,h;//width,height
@@ -831,19 +834,19 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromFiles(const char *fileNames[6
 	ImgOrigin origin;//vị trí pixel đầu
 
 	//load bitmap file
-	int result=bitmap.LoadCubeFaces(fileNames , ORIGIN_TOP_LEFT , this->generateMipmap);
+	int result=bitmap.LoadCubeFaces(dataStreams , ORIGIN_TOP_LEFT , this->generateMipmap);
 
 	char errBuffer[128];
 
 	if(result == IMG_FAIL_CANT_GENERATE_MIPMAPS)
 	{
-		Log("Load cube texture from files %s warning : can't generate mipmaps",pTex->fileName);
+		Log("Load cube texture from streams warning : can't generate mipmaps");
 		this->generateMipmap = false;
 	}
 	else if(result!=IMG_OK)
 	{
 		bitmap.GetErrorDesc(result,errBuffer);
-		Log("Load cube texture from files %s error : %s",pTex->fileName,errBuffer);
+		Log("Load cube texture from streams error : %s",errBuffer);
 		return HQ_FAILED;
 	}
 	w=bitmap.GetWidth();
@@ -925,7 +928,7 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromFiles(const char *fileNames[6
 		}
 		if(needResize)
 		{
-			Log("Load cube texture from files %s error : Dimension need to be power of 2");
+			Log("Load cube texture from streams error : Dimension need to be power of 2");
 			return HQ_FAILED;
 		}//if (need resize)
 	}//if (must power of two)
@@ -1061,10 +1064,7 @@ HQReturnVal HQTextureManagerGL::Create2DTexture(hq_uint32 numMipmaps,HQTexture *
 		if (!g_pOGLDev->IsNpotTextureFullySupported(HQ_TEXTURE_2D))//only 1 mipmap level is allowed
 		{
 			onlyFirstLevel = true;
-			if (pTex->fileName != NULL)
-				Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture from file %s",pTex->fileName);
-			else
-				Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture ");
+			Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture ");
 		}
 	}
 
@@ -1146,10 +1146,7 @@ HQReturnVal HQTextureManagerGL::CreateCubeTexture(hq_uint32 numMipmaps,HQTexture
 		if (!g_pOGLDev->IsNpotTextureFullySupported(HQ_TEXTURE_CUBE))//only 1 mipmap level is allowed
 		{
 			onlyFirstLevel = true;
-			if (pTex->fileName != NULL)
-				Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture from file %s",pTex->fileName);
-			else
-				Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture ");
+			Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture ");
 		}
 	}
 

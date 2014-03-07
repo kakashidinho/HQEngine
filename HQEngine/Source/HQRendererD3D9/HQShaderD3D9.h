@@ -79,8 +79,8 @@ private:
 	char ** GetPredefineMacroArguments(const HQShaderMacro * pDefines);//convert HQShaderMacro array to Cg compiler command arguments
 	void DeAlloc(char **ppC);//delete arguments array
 
-	HQReturnVal CreateShaderFromFileEx(HQShaderType type,
-									 const char* fileName,
+	HQReturnVal CreateShaderFromStreamEx(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
 									 const char **args,
@@ -109,8 +109,8 @@ public:
 
 	HQReturnVal ActiveProgram(hq_uint32 programID);
 
-	HQReturnVal CreateShaderFromFile(HQShaderType type,
-									 const char* fileName,
+	HQReturnVal CreateShaderFromStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
@@ -122,9 +122,9 @@ public:
 									 const char* entryFunctionName,
 									 hq_uint32 *pID);
 
-	HQReturnVal CreateShaderFromFile(HQShaderType type,
+	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
-									 const char* fileName,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
 									 hq_uint32 *pID);
@@ -139,8 +139,8 @@ public:
 	///
 	///tạo shader từ mã đã compile
 	///
-	HQReturnVal CreateShaderFromByteCodeFile(HQShaderType type,
-									 const char* file,
+	HQReturnVal CreateShaderFromByteCodeStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 hq_uint32 *pID)
 	{
 		return HQ_FAILED;

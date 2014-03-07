@@ -298,8 +298,8 @@ void HQShaderManagerD3D9::DeAlloc(char **ppC)
 }
 
 
-HQReturnVal HQShaderManagerD3D9::CreateShaderFromFileEx(HQShaderType type,
-									 const char* fileName,
+HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
 									 const char **args,
@@ -315,9 +315,19 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromFileEx(HQShaderType type,
 	{
 		return HQ_FAILED;
 	}
+	const char nullStreamName[] = "";
+	const char *streamName = dataStream->GetName() != NULL? dataStream->GetName(): nullStreamName;
+
+	char * streamContent = new char [dataStream->TotalSize() + 1];
+	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
+	streamContent[dataStream->TotalSize()] = '0';
+
 	HQShaderObjectD3D9 *sobject= new HQShaderObjectD3D9();
-	sobject->program=cgCreateProgramFromFile(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
-												 fileName,profile,entryFunctionName,args);
+	sobject->program=cgCreateProgram(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
+												 streamContent,profile,entryFunctionName,args);
+	
+	delete[] streamContent;
+	
 	if(sobject->program==NULL)
 	{
 		delete sobject;
@@ -355,9 +365,9 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromFileEx(HQShaderType type,
 				&errorMsg);
 
 		if (errorMsg)
-			this->Log("Shader compile from file %s error ! Error message \"%s\"",fileName, errorMsg->GetBufferPointer());
+			this->Log("Shader compile from stream %s error ! Error message \"%s\"",streamName, errorMsg->GetBufferPointer());
 		else
-			this->Log("Shader compile from file %s error !", fileName);
+			this->Log("Shader compile from stream %s error !", streamName);
 
 		delete sobject;
 		SafeRelease(byteCode);
@@ -450,15 +460,15 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 
 	return HQ_OK;
 }
-HQReturnVal HQShaderManagerD3D9::CreateShaderFromFile(HQShaderType type,
-										const char* fileName,
+HQReturnVal HQShaderManagerD3D9::CreateShaderFromStream(HQShaderType type,
+										HQDataReaderStream* dataStream,
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
 										hq_uint32 *pID)
 {
 	char ** args = this->GetPredefineMacroArguments(pDefines);
-	HQReturnVal re = this->CreateShaderFromFileEx(type,fileName,isPreCompiled , entryFunctionName ,(const char**)args ,false , pID);
+	HQReturnVal re = this->CreateShaderFromStreamEx(type,dataStream,isPreCompiled , entryFunctionName ,(const char**)args ,false , pID);
 	this->DeAlloc(args);
 	return re;
 }
@@ -476,9 +486,9 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemory(HQShaderType type,
 	return re;
 }
 
-HQReturnVal HQShaderManagerD3D9::CreateShaderFromFile(HQShaderType type,
+HQReturnVal HQShaderManagerD3D9::CreateShaderFromStream(HQShaderType type,
 								 HQShaderCompileMode compileMode,
-								 const char* fileName,
+								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
 								 hq_uint32 *pID)
@@ -488,10 +498,10 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromFile(HQShaderType type,
 	switch (compileMode)
 	{
 	case HQ_SCM_CG:
-		re = this->CreateShaderFromFileEx(type , fileName,false , entryFunctionName, (const char**)args , false,pID);
+		re = this->CreateShaderFromStreamEx(type , dataStream,false , entryFunctionName, (const char**)args , false,pID);
 		break;
 	case HQ_SCM_CG_DEBUG:
-		re = this->CreateShaderFromFileEx(type , fileName,false , entryFunctionName, (const char**)args , true,pID);
+		re = this->CreateShaderFromStreamEx(type , dataStream,false , entryFunctionName, (const char**)args , true,pID);
 		break;
 	default:
 		re = HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;

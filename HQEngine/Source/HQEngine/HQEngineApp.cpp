@@ -11,6 +11,8 @@ COPYING.txt included with this distribution for more information.
 #include "HQEnginePCH.h"
 #include "../HQEngineApp.h"
 #include "HQEngineWindow.h"
+#include "HQEngineResManagerImpl.h"
+#include "HQEngineEffectManagerImpl.h"
 
 #include <iostream>
 #include <string.h>
@@ -220,6 +222,9 @@ HQReturnVal HQEngineApp::InitWindow(const WindowInitParams* initParams)
 		m_pRenderDevice->Clear(HQ_TRUE , HQ_FALSE , HQ_FALSE, HQ_TRUE);
 		m_pRenderDevice->DisplayBackBuffer();
 
+		/*-----------create resource and effect manager--------*/
+		m_resManager = HQ_NEW HQEngineResManagerImpl(initParams->logStream, initParams->flushDebugLog);
+		m_effectManager = HQ_NEW HQEngineEffectManagerImpl(initParams->logStream, initParams->flushDebugLog);
 		return re;
 	}
 	return HQ_FAILED;
@@ -284,6 +289,11 @@ HQReturnVal HQEngineApp::DestroyWindow()
 		m_pRenderDevice->Release();
 		m_pRenderDevice = NULL;
 	}
+
+	//delete managers
+	SafeDelete(static_cast<HQEngineResManagerImpl*> (m_resManager));
+	safeDelete(static_cast<HQEngineEffectManagerImpl*> (m_effectManager));
+
 	//delete window
 	SafeDelete(m_window);
 	m_renderer.Release();

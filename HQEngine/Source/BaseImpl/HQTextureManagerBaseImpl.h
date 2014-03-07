@@ -90,7 +90,6 @@ typedef struct HQBaseTexture
 	{
 		nColorKey = 0;
 		colorKey = NULL;
-		fileName = NULL;
 		alpha = 1.0f;
 		pData = NULL;
 	}
@@ -98,17 +97,12 @@ typedef struct HQBaseTexture
 	{
 		if(colorKey != NULL)
 		delete[] colorKey;
-		if(fileName!=NULL)
-		{
-			delete[] fileName;
-		}
 	}
 
 	HQTextureType type;
 
 	void *pData;//con trỏ đến đối tượng texture của direct3D hoặc openGL
 	hq_float32 alpha;//overall/max alpha (range 0.0f->1.0f)
-	char * fileName;//tên file ảnh dùng để load texture.Nếu ko phải load từ file ảnh , giá trị này = NULL
 	HQColor* colorKey;//colorkey chứa các giá trị pixel đã thay đổi giá trị alpha so với giá trị ban đầu load từ file ảnh
 	hq_uint32 nColorKey;//số color key
 } HQTexture , _HQTexture;
@@ -126,14 +120,14 @@ public:
 	HQReturnVal RemoveTexture(hq_uint32 ID);
 	void RemoveAllTexture();
 
-	HQReturnVal AddTexture(const char* fileName,
+	HQReturnVal AddTexture(HQDataReaderStream* dataStream,
 						   hq_float32 maxAlpha,
 						   const HQColor *colorKey,
 						   hq_uint32 numColorKey,
 						   bool generateMipmap,
 						   HQTextureType textureType,
 						   hq_uint32 *pTextureID);
-	HQReturnVal AddCubeTexture(const char * fileNames[6] ,
+	HQReturnVal AddCubeTexture(HQDataReaderStream* dataStreams[6] ,
 							   hq_float32 maxAlpha,
 							   const HQColor *colorKey,
 							   hq_uint32 numColorKey,
@@ -179,8 +173,8 @@ protected:
 	/*--------implement dependent----------*/
 	virtual HQTexture * CreateNewTextureObject(HQTextureType type) = 0;
 
-	virtual HQReturnVal LoadTextureFromFile(HQTexture * pTex) = 0;
-	virtual HQReturnVal LoadCubeTextureFromFiles(const char *fileNames[6] , HQTexture * pTex) = 0;
+	virtual HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex) = 0;
+	virtual HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex) = 0;
 	virtual HQReturnVal CreateSingleColorTexture(HQTexture *pTex,HQColorui color) = 0;
 #ifndef GLES
 	virtual HQReturnVal CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  , void *initData,bool isDynamic) { return HQ_FAILED ;}

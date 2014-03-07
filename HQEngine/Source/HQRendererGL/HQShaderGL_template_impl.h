@@ -64,17 +64,17 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Active
 
 /*--------------------------*/
 template <class ShaderController , class BaseShaderManagerClass>
-HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::CreateShaderFromFile(HQShaderType type,
-										const char* fileName,
+HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::CreateShaderFromStream(HQShaderType type,
+										HQDataReaderStream* dataStream,
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
 										hq_uint32 *pID)
 {
 	HQShaderObjectGL *pNewShader;
-	HQReturnVal re = this->shaderController.CreateShaderFromFile(
+	HQReturnVal re = this->shaderController.CreateShaderFromStream(
 					type ,
-					fileName ,
+					dataStream ,
 					pDefines ,
 					isPreCompiled ,
 					entryFunctionName ,
@@ -122,18 +122,18 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 }
 
 template <class ShaderController , class BaseShaderManagerClass>
-HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::CreateShaderFromFile(HQShaderType type,
+HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::CreateShaderFromStream(HQShaderType type,
 								 HQShaderCompileMode compileMode,
-								 const char* fileName,
+								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
 								 hq_uint32 *pID)
 {
 	HQShaderObjectGL *pNewShader;
-	HQReturnVal re = this->shaderController.CreateShaderFromFile(
+	HQReturnVal re = this->shaderController.CreateShaderFromStream(
 					type ,
 					compileMode,
-					fileName ,
+					dataStream ,
 					pDefines ,
 					entryFunctionName ,
 					&pNewShader);

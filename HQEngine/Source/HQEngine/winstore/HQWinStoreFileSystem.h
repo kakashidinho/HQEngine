@@ -51,6 +51,8 @@ namespace HQWinStoreFileSystem
 		bool Good() const {return Tell() < TotalSize();}
 
 		bool GetLine(char * buffer, size_t maxBufferSize);//maxBufferSize includes terminating character
+
+		const char *GetName() const {return name;}
 	private:
 		bool ReadBytes(unsigned char *ptr, size_t bytes);
 
@@ -58,13 +60,15 @@ namespace HQWinStoreFileSystem
 
 		LARGE_INTEGER currentPointer;
 		size_t totalSize;//total size of stream from the start to the end
+
+		char * name;//file name
 	};
 #else
 	//async version
 	class HQENGINE_API BufferedDataReader: public HQDataReaderStream
 	{
 	public:
-		BufferedDataReader(Windows::Storage::Streams::IRandomAccessStream ^stream);
+		BufferedDataReader(Windows::Storage::Streams::IRandomAccessStream ^stream, const char *_name);
 		~BufferedDataReader();
 
 		void Release() {delete this;}
@@ -80,6 +84,8 @@ namespace HQWinStoreFileSystem
 		bool Good() const {return Tell() < TotalSize();}
 
 		bool GetLine(char * buffer, size_t maxBufferSize);//maxBufferSize includes terminating character
+		
+		const char *GetName() const {return name;}
 	private:
 		void ResetStream(size_t position);
 		void ReadBytes(unsigned char *ptr, size_t bytes);
@@ -94,6 +100,8 @@ namespace HQWinStoreFileSystem
 		size_t bufferOffset;
 		size_t streamOffset;
 		size_t totalSize;//total size of stream from the start to the end
+
+		char * name;//file name
 	};
 #endif
 

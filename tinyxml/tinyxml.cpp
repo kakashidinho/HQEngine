@@ -31,6 +31,23 @@ distribution.
 
 #include "tinyxml.h"
 
+//wrapper of stdio functions
+static void stdio_seek (void* fileHandle, long offset, int origin)
+{
+	fseek((FILE*)fileHandle, offset, origin);
+}
+
+static size_t stdio_tell (void* fileHandle)
+{
+	return ftell((FILE*) fileHandle);
+}
+
+static size_t stdio_read ( void * ptr, size_t size, size_t count, void * stream )
+{
+	return fread(ptr, size, count, (FILE*) stream);
+}
+
+/*----------------------*/
 FILE* TiXmlFOpen( const char* filename, const char* mode );
 
 bool TiXmlBase::condenseWhiteSpace = true;
@@ -985,7 +1002,18 @@ bool TiXmlDocument::LoadFile( const char* _filename, TiXmlEncoding encoding )
 
 bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
 {
-	if ( !file ) 
+	TiXmlCustomFileStream stream;
+	stream.fileHandle = file;
+	stream.seek = &stdio_seek;
+	stream.tell = &stdio_tell;
+	stream.read = &stdio_read;
+
+	return LoadFile(stream, encoding);
+}
+
+bool TiXmlDocument::LoadFile( TiXmlCustomFileStream& fileStream, TiXmlEncoding encoding )
+{
+	if ( !fileStream.fileHandle ) 
 	{
 		SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
 		return false;
@@ -997,9 +1025,9 @@ bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
 
 	// Get the file size, so we can pre-allocate the string. HUGE speed impact.
 	long length = 0;
-	fseek( file, 0, SEEK_END );
-	length = ftell( file );
-	fseek( file, 0, SEEK_SET );
+	fileStream.seek( fileStream.fileHandle, 0, SEEK_END );
+	length = fileStream.tell( fileStream.fileHandle );
+	fileStream.seek( fileStream.fileHandle, 0, SEEK_SET );
 
 	// Strange case, but good to handle up front.
 	if ( length <= 0 )
@@ -1032,7 +1060,7 @@ bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
 	char* buf = new char[ length+1 ];
 	buf[0] = 0;
 
-	if ( fread( buf, length, 1, file ) != 1 ) {
+	if ( fileStream.read( buf, length, 1, fileStream.fileHandle ) != 1 ) {
 		delete [] buf;
 		SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
 		return false;

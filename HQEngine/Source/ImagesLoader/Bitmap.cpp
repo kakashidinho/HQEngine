@@ -210,14 +210,12 @@ Bitmap::~Bitmap()
 //*************************************************
 //load file ảnh,lưu dữ liệu pixel của ảnh vào pData
 //*************************************************
-int Bitmap::Load(const char *filename)
+int Bitmap::LoadFromStream(HQDataReaderStream* dataStream)
 {
 	//xóa dữ liệu trước đó
 	this->ClearData();
 
-	if (!stream->CreateByteStreamFromFile(filename))
-		return IMG_FAIL_FILE_NOT_EXIST;
-	
+	stream->CreateByteStreamFromStream(dataStream);
 	return this->LoadPixelData();
 }
 
@@ -365,7 +363,7 @@ void Bitmap::CopyPixelDataIfNotOwner()
 //********************************
 //Load cube map faces
 //********************************
-int Bitmap::LoadCubeFaces(const char *fileNames[6] , ImgOrigin origin , bool generateMipmaps)
+int Bitmap::LoadCubeFaces(HQDataReaderStream* dataStreams[6] , ImgOrigin origin , bool generateMipmaps)
 {
 	this->ClearData();
 
@@ -379,7 +377,7 @@ int Bitmap::LoadCubeFaces(const char *fileNames[6] , ImgOrigin origin , bool gen
 	int re;
 	for(int i = 0 ; i < 6 ; ++i)
 	{
-		re = bitmap[i].Load(fileNames[i]);
+		re = bitmap[i].LoadFromStream(dataStreams[i]);
 		if(re != IMG_OK)
 			return re;
 		if(format == FMT_UNKNOWN)//format chưa xác định

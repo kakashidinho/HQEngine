@@ -124,8 +124,8 @@ private:
 	void DeAllocMacrosHLSL(D3D10_SHADER_MACRO *pM);//delete D3D macro array
 #endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
-	HQReturnVal CreateShaderFromFileCg(HQShaderType type,
-								 const char* fileName,
+	HQReturnVal CreateShaderFromStreamCg(HQShaderType type,
+								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 bool isPreCompiled,
 								 const char* entryFunctionName,
@@ -138,8 +138,8 @@ private:
 								 const char* entryFunctionName,
 								 bool debugMode ,
 								 hq_uint32 *pID);
-	HQReturnVal CreateShaderFromFileHLSL(HQShaderType type,
-								 const char* fileName,
+	HQReturnVal CreateShaderFromStreamHLSL(HQShaderType type,
+								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
 								 bool debugMode ,
@@ -170,8 +170,8 @@ public:
 
 	HQReturnVal ActiveProgram(hq_uint32 programID);
 
-	HQReturnVal CreateShaderFromFile(HQShaderType type,
-									 const char* fileName,
+	HQReturnVal CreateShaderFromStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
@@ -183,9 +183,9 @@ public:
 									 const char* entryFunctionName,
 									 hq_uint32 *pID);
 
-	HQReturnVal CreateShaderFromFile(HQShaderType type,
+	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
-									 const char* fileName,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
 									 hq_uint32 *pID);
@@ -197,8 +197,8 @@ public:
 									 const char* entryFunctionName,
 									 hq_uint32 *pID);
 
-	HQReturnVal CreateShaderFromByteCodeFile(HQShaderType type,
-									 const char* file,
+	HQReturnVal CreateShaderFromByteCodeStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 hq_uint32 *pID);
 
 	HQReturnVal CreateShaderFromByteCode(HQShaderType type,

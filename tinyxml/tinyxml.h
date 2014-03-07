@@ -93,6 +93,14 @@ const int TIXML_MAJOR_VERSION = 2;
 const int TIXML_MINOR_VERSION = 6;
 const int TIXML_PATCH_VERSION = 2;
 
+
+struct TiXmlCustomFileStream{
+	void *fileHandle;
+	void (*seek) (void* fileHandle, long offset, int origin);
+	size_t (*tell) (void* fileHandle);
+	size_t (*read) ( void * ptr, size_t size, size_t count, void * stream );
+};
+
 /*	Internal structure for tracking location of items 
 	in the XML file.
 */
@@ -1425,6 +1433,9 @@ public:
 		file location. Streaming may be added in the future.
 	*/
 	bool LoadFile( FILE*, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING );
+
+	/// Load a file using custom file stream operators 
+	bool LoadFile( TiXmlCustomFileStream& customStream, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING );
 	/// Save a file using the given FILE*. Returns true if successful.
 	bool SaveFile( FILE* ) const;
 

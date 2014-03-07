@@ -15,14 +15,14 @@ COPYING.txt included with this distribution for more information.
 #ifndef GLES
 /*----------HQCombineShaderController----------------*/
 
-HQReturnVal HQCombineShaderController::CreateShaderFromFile(HQShaderType type,
-										const char* fileName,
+HQReturnVal HQCombineShaderController::CreateShaderFromStream(HQShaderType type,
+										HQDataReaderStream* dataStream,
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
 										HQShaderObjectGL **ppShaderObjectOut)
 {
-	return this->CreateShaderFromFileCg(type,fileName,pDefines ,isPreCompiled , entryFunctionName ,ppShaderObjectOut);
+	return this->CreateShaderFromStreamCg(type,dataStream,pDefines ,isPreCompiled , entryFunctionName ,ppShaderObjectOut);
 }
 
 HQReturnVal HQCombineShaderController::CreateShaderFromMemory(HQShaderType type,
@@ -35,9 +35,9 @@ HQReturnVal HQCombineShaderController::CreateShaderFromMemory(HQShaderType type,
 	return this->CreateShaderFromMemoryCg(type , pSourceData,pDefines ,isPreCompiled,entryFunctionName, ppShaderObjectOut);
 }
 
-HQReturnVal HQCombineShaderController::CreateShaderFromFile(HQShaderType type,
+HQReturnVal HQCombineShaderController::CreateShaderFromStream(HQShaderType type,
 								 HQShaderCompileMode compileMode,
-								 const char* fileName,
+								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
 								 HQShaderObjectGL **ppShaderObjectOut)
@@ -45,10 +45,10 @@ HQReturnVal HQCombineShaderController::CreateShaderFromFile(HQShaderType type,
 	switch (compileMode)
 	{
 	case HQ_SCM_GLSL:case HQ_SCM_GLSL_DEBUG:
-		return this->CreateShaderFromFileGLSL(type , fileName,pDefines,ppShaderObjectOut);
+		return this->CreateShaderFromStreamGLSL(type , dataStream,pDefines,ppShaderObjectOut);
 
 	case HQ_SCM_CG:case HQ_SCM_CG_DEBUG:
-		return this->CreateShaderFromFileCg(type , fileName ,pDefines,false , entryFunctionName, ppShaderObjectOut);
+		return this->CreateShaderFromStreamCg(type , dataStream ,pDefines,false , entryFunctionName, ppShaderObjectOut);
 	default:
 		return HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;
 	}

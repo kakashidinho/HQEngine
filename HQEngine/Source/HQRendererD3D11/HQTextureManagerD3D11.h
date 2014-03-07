@@ -52,8 +52,8 @@ public:
 	HQReturnVal SetTexture(hq_uint32 slot , hq_uint32 textureID);
 	HQReturnVal SetTextureForPixelShader(hq_uint32 slot , hq_uint32 textureID);
 	HQTexture * CreateNewTextureObject(HQTextureType type);
-	HQReturnVal LoadTextureFromFile(HQTexture * pTex);
-	HQReturnVal LoadCubeTextureFromFiles(const char *fileNames[6] , HQTexture * pTex);
+	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex);
+	HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex);
 	HQReturnVal CreateSingleColorTexture(HQTexture *pTex,HQColorui color);
 	HQReturnVal CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQTexture * pTex);
 	HQReturnVal Create2DTexture(hq_uint32 numMipmaps,HQTexture * pTex);

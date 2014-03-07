@@ -649,8 +649,8 @@ void HQShaderManagerD3D11::DeAllocMacrosHLSL(D3D10_SHADER_MACRO *pM)
 
 #endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
-HQReturnVal HQShaderManagerD3D11::CreateShaderFromFileCg(HQShaderType type,
-									 const char* fileName,
+HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamCg(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
@@ -667,12 +667,17 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromFileCg(HQShaderType type,
 	{
 		profile=this->cgGeometryProfile;
 	}
+
+	char * streamContent = new char [dataStream->TotalSize() + 1];
+	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
+	streamContent[dataStream->TotalSize()] = '0';
 	
 	char ** predefineMacroArgs = this->GetPredefineMacroArgumentsCg(pDefines);
-	CGprogram program=cgCreateProgramFromFile(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
-												 fileName,profile,entryFunctionName,(const char **)predefineMacroArgs);
+	CGprogram program=cgCreateProgram(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
+												 streamContent,profile,entryFunctionName,(const char **)predefineMacroArgs);
 
 	this->DeAllocArgsCg(predefineMacroArgs);
+	delete [] streamContent;
 
 	if(program==NULL)
 	{
@@ -770,8 +775,8 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemoryCg(HQShaderType type,
 #endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 }
 
-HQReturnVal HQShaderManagerD3D11::CreateShaderFromFileHLSL(HQShaderType type,
-									 const char* fileName,
+HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamHLSL(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
 									 bool debugMode,
@@ -808,6 +813,13 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromFileHLSL(HQShaderType type,
 		break;
 	}
 
+	const char nullStreamName[] = "";
+	const char *streamName = dataStream->GetName() != NULL? dataStream->GetName(): nullStreamName;
+
+	char * streamContent = new char [dataStream->TotalSize() + 1];
+	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
+	streamContent[dataStream->TotalSize()] = '0';
+
 	ID3D10Blob *pBlob = 0;
 	ID3D10Blob *pError = 0;
 	
@@ -821,17 +833,18 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromFileHLSL(HQShaderType type,
 	
 	D3D10_SHADER_MACRO *macros = this->GetPredefineMacroArgumentsHLSL(pDefines);	
 
-	if(FAILED(D3DX11CompileFromFileA(fileName , macros , NULL , entryFunctionName , profile , 
+	if(FAILED(D3DX11CompileFromMemory(streamContent, dataStream->TotalSize(), dataStream->GetName() , macros , NULL , entryFunctionName , profile , 
 							flags , 0 , NULL,
 							&pBlob , &pError , NULL)) || 
 		this->CreateShader(type , pBlob , sobject)!= HQ_OK)
 	{
 		if(pError)
-			Log("HLSL shader compile from  file %s error: %s" , fileName ,pError->GetBufferPointer());
+			Log("HLSL shader compile from  stream %s error: %s" , streamName ,pError->GetBufferPointer());
 		SafeRelease(pBlob);
 		SafeRelease(pError);
 		
 		this->DeAllocMacrosHLSL(macros);
+		delete[] streamContent;
 
 		HQ_DELETE (sobject);
 		return HQ_FAILED;;
@@ -840,6 +853,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromFileHLSL(HQShaderType type,
 	SafeRelease(pBlob);
 	SafeRelease(pError);
 	this->DeAllocMacrosHLSL(macros);
+	delete[] streamContent;
 
 	if (!this->shaderObjects.AddItem(sobject , pID))
 	{
@@ -934,14 +948,14 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemoryHLSL(HQShaderType type,
 #endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 }
 
-HQReturnVal HQShaderManagerD3D11::CreateShaderFromFile(HQShaderType type,
-										const char* fileName,
+HQReturnVal HQShaderManagerD3D11::CreateShaderFromStream(HQShaderType type,
+										HQDataReaderStream* dataStream,
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
 										hq_uint32 *pID)
 {
-	return this->CreateShaderFromFileCg(type,fileName,pDefines,isPreCompiled , entryFunctionName ,false , pID);
+	return this->CreateShaderFromStreamCg(type,dataStream,pDefines,isPreCompiled , entryFunctionName ,false , pID);
 }
 
 HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemory(HQShaderType type,
@@ -954,9 +968,9 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemory(HQShaderType type,
 	return this->CreateShaderFromMemoryCg(type , pSourceData,pDefines,isPreCompiled,entryFunctionName,false, pID);
 }
 
-HQReturnVal HQShaderManagerD3D11::CreateShaderFromFile(HQShaderType type,
+HQReturnVal HQShaderManagerD3D11::CreateShaderFromStream(HQShaderType type,
 								 HQShaderCompileMode compileMode,
-								 const char* fileName,
+								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
 								 hq_uint32 *pID)
@@ -964,13 +978,13 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromFile(HQShaderType type,
 	switch (compileMode)
 	{
 	case HQ_SCM_CG:
-		return this->CreateShaderFromFileCg(type , fileName , pDefines,false , entryFunctionName,false,pID);
+		return this->CreateShaderFromStreamCg(type , dataStream , pDefines,false , entryFunctionName,false,pID);
 	case HQ_SCM_HLSL_10:
-		return this->CreateShaderFromFileHLSL(type , fileName , pDefines , entryFunctionName,false , pID);
+		return this->CreateShaderFromStreamHLSL(type , dataStream , pDefines , entryFunctionName,false , pID);
 	case HQ_SCM_CG_DEBUG:
-		return this->CreateShaderFromFileCg(type , fileName , pDefines,false , entryFunctionName,true,pID);
+		return this->CreateShaderFromStreamCg(type , dataStream , pDefines,false , entryFunctionName,true,pID);
 	case HQ_SCM_HLSL_10_DEBUG:
-		return this->CreateShaderFromFileHLSL(type , fileName , pDefines , entryFunctionName,true , pID);
+		return this->CreateShaderFromStreamHLSL(type , dataStream , pDefines , entryFunctionName,true , pID);
 	default:
 		return HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;
 	}
@@ -999,29 +1013,16 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemory(HQShaderType type,
 }
 
 
-HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCodeFile(HQShaderType type,
-									 const char* file,
+HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCodeStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 hq_uint32 *pID)
 {
 	hqubyte8 *pData = NULL;
 	hquint32 dataSize = 0;
-#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-	if(!HQWinStoreFileSystem::ReadData(file, pData, dataSize))
-		return HQ_FAILED;
-#else
-	FILE *f = fopen(file, "rb");
-	if (f == NULL)
-		return HQ_FAILED;
-
-	fseek(f, 0L, SEEK_END);
-	dataSize = ftell(f);
-	rewind(f);
+	
+	dataSize = dataStream->TotalSize();
 	pData = HQ_NEW hqubyte8[dataSize];
-	fread(pData, dataSize, 1, f);
-
-	fclose(f);
-
-#endif//#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+	dataStream->ReadBytes(pData, dataSize, 1);
 
 	HQReturnVal re = this->CreateShaderFromByteCode(type, pData, dataSize, pID);
 

@@ -34,8 +34,8 @@ public:
 	virtual HQReturnVal ActiveProgram(hq_uint32 programID){return HQ_FAILED;}
 	
 	
-	virtual HQReturnVal CreateShaderFromFile(HQShaderType type,
-									 const char* fileName,
+	virtual HQReturnVal CreateShaderFromStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
@@ -53,9 +53,9 @@ public:
 
 	
 	
-	virtual HQReturnVal CreateShaderFromFile(HQShaderType type,
+	virtual HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
-									 const char* fileName,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
 									 hq_uint32 *pID)

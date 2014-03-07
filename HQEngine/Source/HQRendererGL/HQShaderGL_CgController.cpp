@@ -335,8 +335,8 @@ void HQBaseCgShaderController::DeAllocCgArgs(char **ppC)
 	SafeDeleteArray(ppC);
 }
 
-HQReturnVal HQBaseCgShaderController::CreateShaderFromFileCg(HQShaderType type,
-									 const char* fileName,
+HQReturnVal HQBaseCgShaderController::CreateShaderFromStreamCg(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
@@ -357,10 +357,17 @@ HQReturnVal HQBaseCgShaderController::CreateShaderFromFileCg(HQShaderType type,
 	sobject->type=type;
 
 	char **args = this->GetPredefineMacroArgumentsCg(pDefines);
-	sobject->program=cgCreateProgramFromFile(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
-												 fileName,profile,entryFunctionName,(const char**) args);
+
+	char * streamContent = new char [dataStream->TotalSize() + 1];
+	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
+	streamContent[dataStream->TotalSize()] = '0';
+
+	sobject->program=cgCreateProgram(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
+												 streamContent,profile,entryFunctionName,(const char**) args);
 
 	this->DeAllocCgArgs(args);
+
+	delete[] streamContent;
 
 	if(sobject->program==NULL)
 	{
@@ -491,14 +498,14 @@ HQReturnVal HQBaseCgShaderController::CreateProgramCg(
 
 /*----------HQCgShaderController----------------*/
 
-HQReturnVal HQCgShaderController::CreateShaderFromFile(HQShaderType type,
-										const char* fileName,
+HQReturnVal HQCgShaderController::CreateShaderFromStream(HQShaderType type,
+										HQDataReaderStream* dataStream,
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
 										HQShaderObjectGL **ppShaderObjectOut)
 {
-	return this->CreateShaderFromFileCg(type,fileName,pDefines ,isPreCompiled , entryFunctionName ,ppShaderObjectOut);
+	return this->CreateShaderFromStreamCg(type,dataStream,pDefines ,isPreCompiled , entryFunctionName ,ppShaderObjectOut);
 }
 
 HQReturnVal HQCgShaderController::CreateShaderFromMemory(HQShaderType type,
@@ -511,9 +518,9 @@ HQReturnVal HQCgShaderController::CreateShaderFromMemory(HQShaderType type,
 	return this->CreateShaderFromMemoryCg(type , pSourceData,pDefines ,isPreCompiled,entryFunctionName, ppShaderObjectOut);
 }
 
-HQReturnVal HQCgShaderController::CreateShaderFromFile(HQShaderType type,
+HQReturnVal HQCgShaderController::CreateShaderFromStream(HQShaderType type,
 								 HQShaderCompileMode compileMode,
-								 const char* fileName,
+								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
 								 HQShaderObjectGL **ppShaderObjectOut)
@@ -521,7 +528,7 @@ HQReturnVal HQCgShaderController::CreateShaderFromFile(HQShaderType type,
 	switch (compileMode)
 	{
 	case HQ_SCM_CG:case HQ_SCM_CG_DEBUG:
-		return this->CreateShaderFromFileCg(type , fileName ,pDefines,false , entryFunctionName, ppShaderObjectOut);
+		return this->CreateShaderFromStreamCg(type , dataStream ,pDefines,false , entryFunctionName, ppShaderObjectOut);
 	default:
 		return HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;
 	}

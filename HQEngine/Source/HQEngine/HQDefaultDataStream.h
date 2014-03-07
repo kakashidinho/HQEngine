@@ -14,12 +14,20 @@ COPYING.txt included with this distribution for more information.
 #include "../HQDataStream.h"
 
 #include <stdio.h>
+#include <string.h>
 
 class HQSTDDataReader: public HQDataReaderStream
 {
 public:
 	HQSTDDataReader(const char *file)
 	{
+		//copy name
+		size_t nameLen = strlen(file);
+		m_name = new char[nameLen + 1]
+		strncpy(m_name, file, nameLen);
+		m_name[nameLen] = '\0';
+
+		//open file stream
 		m_file = fopen(file, "rb");
 		if (m_file != NULL)
 		{
@@ -35,6 +43,7 @@ public:
 	~HQSTDDataReader()
 	{
 		Close();
+		delete[] m_name;
 	}
 
 	void Release() {delete this;}
@@ -88,9 +97,12 @@ public:
 
 	size_t TotalSize() const {return m_totalSize;}
 	bool Good() const {return Tell() < TotalSize();}
+
+	const char *GetName() const {return m_name;}
 private:
 	FILE * m_file;
 	size_t m_totalSize;
+	char * m_name;
 };
 
 #endif

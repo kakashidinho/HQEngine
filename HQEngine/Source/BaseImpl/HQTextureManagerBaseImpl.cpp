@@ -272,44 +272,26 @@ const HQSharedPtr<HQTexture> HQBaseTextureManager::GetTexture(hq_uint32 ID)
 HQReturnVal HQBaseTextureManager::AddSingleColorTexture(HQColorui color ,  hq_uint32 *pTextureID)
 {
 	hq_uint32 texID;
-	bool exist=false;
 	HQItemManager<HQTexture>::Iterator ite;
 	this->textures.GetIterator(ite);
-	//kiểm tra texture đã có sẵn chưa
-	for(;!ite.IsAtEnd();++ite)
+	HQTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_2D);
+
+	pNewTex->nColorKey=0;
+	pNewTex->colorKey=NULL;
+	pNewTex->alpha=1.0f;
+
+
+	HQReturnVal result=this->CreateSingleColorTexture(pNewTex,color);
+	if(result!=HQ_OK)
 	{
-		if(ite.GetItemPointerNonCheck() != NULL && ite->fileName != NULL && !memcmp(ite->fileName,&color,sizeof(color)))//kiểm tra cùng giá trị màu
-		{
-			texID = ite.GetID();
-			exist=true;
-			Log("Texture has single color %u already exists!",color);
-			break;
-		}
+		//giải phóng bộ nhớ
+		delete pNewTex;
+		return result;
 	}
-	if(!exist)
+	if(this->textures.AddItem(pNewTex,&texID)==false)
 	{
-		HQTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_2D);
-
-		pNewTex->nColorKey=0;
-		pNewTex->colorKey=NULL;
-		pNewTex->alpha=1.0f;
-		//lấy giá trị màu làm tên file để kiểm tra trùng lập sau này
-		pNewTex->fileName=new char[sizeof(color)];
-		memcpy(pNewTex->fileName , &color,sizeof(color));
-
-
-		HQReturnVal result=this->CreateSingleColorTexture(pNewTex,color);
-		if(result!=HQ_OK)
-		{
-			//giải phóng bộ nhớ
-			delete pNewTex;
-			return result;
-		}
-		if(this->textures.AddItem(pNewTex,&texID)==false)
-		{
-			delete pNewTex;
-			return HQ_FAILED_MEM_ALLOC;
-		}
+		delete pNewTex;
+		return HQ_FAILED_MEM_ALLOC;
 	}
 	if(pTextureID)
 		*pTextureID = texID;
@@ -371,7 +353,7 @@ HQReturnVal HQBaseTextureManager::AddTexture(const HQRawPixelBuffer* color , boo
 	return HQ_OK;
 }
 
-HQReturnVal HQBaseTextureManager::AddTexture(const char* fileName,
+HQReturnVal HQBaseTextureManager::AddTexture(HQDataReaderStream* dataStream,
 						   hq_float32 maxAlpha,
 						   const HQColor *colorKey,
 						   hq_uint32 numColorKey,
@@ -382,58 +364,41 @@ HQReturnVal HQBaseTextureManager::AddTexture(const char* fileName,
 
 	this->generateMipmap = generateMipmap;
 	hq_uint32 texID;
-	bool exist=false;
 	HQItemManager<HQTexture>::Iterator ite;
 	this->textures.GetIterator(ite);
-	//kiểm tra texture đã có sẵn chưa
-	for(;!ite.IsAtEnd();++ite)
+	
+	HQTexture *pNewTex = this->CreateNewTextureObject(textureType);
+	if (pNewTex == NULL)
+        return HQ_FAILED;
+
+	//copy ColorKey & maxAlpha
+	if(numColorKey>0 && colorKey!=NULL)
 	{
-		if(ite.GetItemPointerNonCheck() != NULL && ite->fileName != NULL && !strcmp(fileName,ite->fileName))//cùng load từ 1 file
-		{
-			texID = ite.GetID();
-			exist=true;
-			Log("Texture from file %s already exists!",fileName);
-			break;
-		}
+		pNewTex->nColorKey=numColorKey;
+		pNewTex->colorKey=new HQColor[numColorKey];
+		memcpy(pNewTex->colorKey,colorKey,numColorKey*sizeof(HQColor));
 	}
-	if(!exist)
+	else
 	{
-		HQTexture *pNewTex = this->CreateNewTextureObject(textureType);
-		if (pNewTex == NULL)
-            return HQ_FAILED;
-
-		//copy ColorKey & maxAlpha
-		if(numColorKey>0 && colorKey!=NULL)
-		{
-			pNewTex->nColorKey=numColorKey;
-			pNewTex->colorKey=new HQColor[numColorKey];
-			memcpy(pNewTex->colorKey,colorKey,numColorKey*sizeof(HQColor));
-		}
-		else
-		{
-			pNewTex->nColorKey=0;
-			pNewTex->colorKey=NULL;
-		}
-		pNewTex->alpha=maxAlpha;
-
-		pNewTex->fileName=new char[strlen(fileName)+1];
-		strcpy(pNewTex->fileName,fileName);
-
-
-		HQReturnVal result=this->LoadTextureFromFile(pNewTex);
-		if(result!=HQ_OK)
-		{
-			//giải phóng bộ nhớ
-			delete pNewTex;
-			return result;
-		}
-		if(this->textures.AddItem(pNewTex,&texID)==false)
-		{
-			delete pNewTex;
-			return HQ_FAILED_MEM_ALLOC;
-		}
-		//Log("Texture from file %s is successfully added!",fileName);
+		pNewTex->nColorKey=0;
+		pNewTex->colorKey=NULL;
 	}
+	pNewTex->alpha=maxAlpha;
+
+
+	HQReturnVal result=this->LoadTextureFromStream(dataStream, pNewTex);
+	if(result!=HQ_OK)
+	{
+		//giải phóng bộ nhớ
+		delete pNewTex;
+		return result;
+	}
+	if(this->textures.AddItem(pNewTex,&texID)==false)
+	{
+		delete pNewTex;
+		return HQ_FAILED_MEM_ALLOC;
+	}
+	
 
 	if(pTextureID)
 		*pTextureID = texID;
@@ -442,7 +407,7 @@ HQReturnVal HQBaseTextureManager::AddTexture(const char* fileName,
 	return HQ_OK;
 }
 
-HQReturnVal HQBaseTextureManager::AddCubeTexture(const char* fileNames[6],
+HQReturnVal HQBaseTextureManager::AddCubeTexture(HQDataReaderStream* dataStreams[6],
 						   hq_float32 maxAlpha,
 						   const HQColor *colorKey,
 						   hq_uint32 numColorKey,
@@ -451,74 +416,43 @@ HQReturnVal HQBaseTextureManager::AddCubeTexture(const char* fileNames[6],
 {
 
 	hq_uint32 texID;
-	bool exist=false;
 	this->generateMipmap = generateMipmap;
 
-	/*---tính tổng độ dài các tên của 6 file----*/
-	hq_uint32 totalNameLen = 0;
-	for (int i = 0 ; i < 6 ; ++i)
-	{
-		totalNameLen += strlen(fileNames[i]);
-	}
-	char *sumfileNames=new char[totalNameLen + 6];
-	sumfileNames[0] = '\0';
-
-	for (int i = 0 ; i < 6 ; ++i)
-	{
-		/*----gộp tên của 6 file------*/
-		strcat(sumfileNames , fileNames[i]);
-		if(i < 5)
-			strcat(sumfileNames , ",");
-	}
+	
 	HQItemManager<HQTexture>::Iterator ite;
 	this->textures.GetIterator(ite);
-	//kiểm tra texture đã có sẵn chưa
-	for(;!ite.IsAtEnd();++ite)
+	HQTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_CUBE);
+	if (pNewTex == NULL)
+		return HQ_FAILED;
+
+	//copy ColorKey & maxAlpha
+	if(numColorKey>0 && colorKey!=NULL)
 	{
-		if(ite.GetItemPointerNonCheck() != NULL && ite->fileName != NULL && !strcmp(sumfileNames , ite->fileName))//cùng load từ 1 file
-		{
-			texID = ite.GetID();
-			exist=true;
-			Log("Cube texture from files %s already exists!",sumfileNames);
-			break;
-		}
+		pNewTex->nColorKey=numColorKey;
+		pNewTex->colorKey=new HQColor[numColorKey];
+		memcpy(pNewTex->colorKey,colorKey,numColorKey*sizeof(HQColor));
 	}
-	if(!exist)
+	else
 	{
-		HQTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_CUBE);
-		if (pNewTex == NULL)
-			return HQ_FAILED;
-
-		//copy ColorKey & maxAlpha
-		if(numColorKey>0 && colorKey!=NULL)
-		{
-			pNewTex->nColorKey=numColorKey;
-			pNewTex->colorKey=new HQColor[numColorKey];
-			memcpy(pNewTex->colorKey,colorKey,numColorKey*sizeof(HQColor));
-		}
-		else
-		{
-			pNewTex->nColorKey=0;
-			pNewTex->colorKey=NULL;
-		}
-		pNewTex->alpha=maxAlpha;
-		pNewTex->fileName = sumfileNames;
-
-		HQReturnVal result=this->LoadCubeTextureFromFiles(fileNames , pNewTex);
-		if(result!=HQ_OK)
-		{
-			//giải phóng bộ nhớ
-			delete pNewTex;
-			return result;
-		}
-
-		if(this->textures.AddItem(pNewTex,&texID)==false)
-		{
-			delete pNewTex;
-			return HQ_FAILED_MEM_ALLOC;
-		}
-		//Log("Texture from file %s is successfully added!",fileName);
+		pNewTex->nColorKey=0;
+		pNewTex->colorKey=NULL;
 	}
+	pNewTex->alpha=maxAlpha;
+
+	HQReturnVal result=this->LoadCubeTextureFromStreams(dataStreams , pNewTex);
+	if(result!=HQ_OK)
+	{
+		//giải phóng bộ nhớ
+		delete pNewTex;
+		return result;
+	}
+
+	if(this->textures.AddItem(pNewTex,&texID)==false)
+	{
+		delete pNewTex;
+		return HQ_FAILED_MEM_ALLOC;
+	}
+
 
 	if(pTextureID)
 		*pTextureID = texID;

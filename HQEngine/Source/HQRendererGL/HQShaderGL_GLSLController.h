@@ -40,8 +40,8 @@ protected:
 	HQReturnVal DeActiveProgramGLSL();
 	HQReturnVal ActiveProgramGLSL(HQSharedPtr<HQBaseShaderProgramGL>& pProgram);
 
-	HQReturnVal CreateShaderFromFileGLSL(HQShaderType type,
-									 const char* fileName,
+	HQReturnVal CreateShaderFromStreamGLSL(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 HQShaderObjectGL **ppShaderObjectOut);
 	HQReturnVal CreateShaderFromMemoryGLSL(HQShaderType type,
@@ -107,8 +107,8 @@ public:
 		return this->ActiveProgramGLSL(pProgram);
 	}
 	
-	HQReturnVal CreateShaderFromFile(HQShaderType type,
-									 const char* fileName,
+	HQReturnVal CreateShaderFromStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
@@ -120,9 +120,9 @@ public:
 									 const char* entryFunctionName,
 									 HQShaderObjectGL **ppShaderObjectOut);
 
-	HQReturnVal CreateShaderFromFile(HQShaderType type,
+	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
-									 const char* fileName,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
 									 HQShaderObjectGL **ppShaderObjectOut);

@@ -37,32 +37,20 @@ void ImgByteStream::CreateByteStreamFromMemory(const hqubyte8 * memory, size_t s
 	this->streamSize = size;
 	this->isMemoryMode = true;
 }
-bool ImgByteStream::CreateByteStreamFromFile(const char *fileName)
+void ImgByteStream::CreateByteStreamFromStream(HQDataReaderStream *dataStream)
 {
 	Clear();
-
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-	file = HQWinStoreFileSystem::OpenFileForRead(fileName);
-#else
-	file = fopen(fileName, "rb");
-#endif
-	if (file == NULL)
-		return false;
-
-	fseek(file , 0, SEEK_END);
-	this->streamSize = ftell(file);
-	rewind(file);
-
+	this->dataStream = dataStream;
+	this->streamSize = this->dataStream->TotalSize();
 	this->isMemoryMode = false;
-	return true;
 }
 
 void ImgByteStream::Rewind()
 {
 	if (!this->isMemoryMode)
 	{
-		if (file != NULL)
-			rewind(file);
+		if (dataStream != NULL)
+			dataStream->Rewind();
 	}
 	else if (memory != NULL)
 		iterator = 0;
@@ -72,8 +60,8 @@ void ImgByteStream::Seek(size_t pos)
 {
 	if (!this->isMemoryMode)
 	{
-		if (file != NULL)
-			fseek(file, pos, SEEK_SET);
+		if (dataStream != NULL)
+			dataStream->Seek(pos, HQDataReaderStream::BEGIN);
 	}
 	else if (memory != NULL)
 		iterator = pos;
@@ -83,8 +71,8 @@ void ImgByteStream::Advance(size_t offset)
 {
 	if (!this->isMemoryMode)
 	{
-		if (file != NULL)
-			fseek(file, offset, SEEK_CUR);
+		if (dataStream != NULL)
+			dataStream->Seek(offset, HQDataReaderStream::CURRENT);
 	}
 	else if (memory != NULL)
 	{
@@ -98,8 +86,8 @@ hqint32 ImgByteStream::GetByte()
 {
 	if (!this->isMemoryMode)
 	{
-		if (file != NULL)
-			return fgetc(file);
+		if (dataStream != NULL)
+			return dataStream->GetByte();
 	}
 	else if (memory != NULL)
 	{
@@ -114,9 +102,9 @@ bool ImgByteStream::GetBytes(void *bytes, size_t size)
 {
 	if (!this->isMemoryMode)
 	{
-		if (file != NULL)
+		if (dataStream != NULL)
 		{
-			if (fread(bytes, size, 1, file)!= 1)
+			if (dataStream->ReadBytes(bytes, size, 1)!= 1)
 				return false;
 		}
 		else return false;
@@ -137,9 +125,9 @@ size_t ImgByteStream::TryGetBytes(void *buffer, size_t elemSize, size_t numElems
 {
 	if (!this->isMemoryMode)
 	{
-		if (file != NULL)
+		if (dataStream != NULL)
 		{
-			return fread(buffer, elemSize, numElems, file);
+			return dataStream->ReadBytes(buffer, elemSize, numElems);
 		}
 		else return 0;
 	}
@@ -167,10 +155,10 @@ void ImgByteStream::Clear()
 {
 	if (!this->isMemoryMode)
 	{
-		if (file != NULL)
+		if (dataStream != NULL)
 		{
-			fclose(file);
-			file = NULL;
+			//cannot close the stream here
+			dataStream = NULL;
 		}
 	}
 	else

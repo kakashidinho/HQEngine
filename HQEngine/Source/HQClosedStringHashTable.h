@@ -38,7 +38,7 @@ public:
 	using parentType::GetItemPointer;
 	using parentType::GetItem;
 
-	/*--------additional methods-------------*/
+	/*--------additional methods using C string as key-------------*/
 	bool Find(const char* key , hq_uint32 &foundIndex) const
 	{
 		if (this->m_numItems == 0)
@@ -100,6 +100,13 @@ public:
 		}
 		else
 			return this->m_invalidValue;
+	}
+
+	void Remove(const char* key)
+	{
+		hq_uint32 foundIndex;
+		if (this->Find(key , foundIndex))
+			this->RemoveAtNonCheck(foundIndex);
 	}
 };
 

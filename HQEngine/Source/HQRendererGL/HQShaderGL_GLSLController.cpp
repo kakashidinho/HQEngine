@@ -124,38 +124,29 @@ void HQBaseGLSLShaderController::GetPredefineMacroGLSL(std::string & macroDef , 
 	}
 }
 
-HQReturnVal HQBaseGLSLShaderController::CreateShaderFromFileGLSL(HQShaderType type,
-									 const char* fileName,
+HQReturnVal HQBaseGLSLShaderController::CreateShaderFromStreamGLSL(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 HQShaderObjectGL **ppShaderObjectOut)
 {
-	FILE *f = fopen(fileName,"rb");
-	if(f == NULL)
-	{
-		g_pShaderMan->Log("GLSL shader compile from file %s error : file not found !",fileName);
-		return HQ_FAILED;
-	}
-	fseek(f, 0  , SEEK_END);
-	long size = ftell(f);
-	rewind(f);
+	long size = dataStream->TotalSize();
 
 	char *source = new char[size + 1];
-	if(source == NULL)
-	{
-		fclose(f);
-		return HQ_FAILED;
-	}
 
-	fread(source,size ,1,f);
+	dataStream->ReadBytes(source,size ,1);
 	source[size] = '\0';
-	fclose(f);
 
 	HQReturnVal re = this->CreateShaderFromMemoryGLSL(type , source , pDefines, ppShaderObjectOut);
 
 	delete[] source;
 
 	if (HQFailed(re))
-		g_pShaderMan->Log("GLSL shader compile from file %s error !",fileName);
+	{
+		if (dataStream->GetName() != NULL)
+			g_pShaderMan->Log("GLSL shader compile from stream %s error !", dataStream->GetName());
+		else
+			g_pShaderMan->Log("GLSL shader compile from stream error !");
+	}
 
 	return re;
 }
@@ -481,14 +472,14 @@ void HQBaseGLSLShaderController::BindSamplerUnitGLSL(HQBaseShaderProgramGL* pPro
 
 /*----------HQGLSLShaderController----------------*/
 
-HQReturnVal HQGLSLShaderController::CreateShaderFromFile(HQShaderType type,
-										const char* fileName,
+HQReturnVal HQGLSLShaderController::CreateShaderFromStream(HQShaderType type,
+										HQDataReaderStream* dataStream,
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
 										HQShaderObjectGL **ppShaderObjectOut)
 {
-	return this->CreateShaderFromFileGLSL(type,fileName,pDefines ,ppShaderObjectOut);
+	return this->CreateShaderFromStreamGLSL(type,dataStream,pDefines ,ppShaderObjectOut);
 }
 
 HQReturnVal HQGLSLShaderController::CreateShaderFromMemory(HQShaderType type,
@@ -501,9 +492,9 @@ HQReturnVal HQGLSLShaderController::CreateShaderFromMemory(HQShaderType type,
 	return this->CreateShaderFromMemoryGLSL(type , pSourceData,pDefines , ppShaderObjectOut);
 }
 
-HQReturnVal HQGLSLShaderController::CreateShaderFromFile(HQShaderType type,
+HQReturnVal HQGLSLShaderController::CreateShaderFromStream(HQShaderType type,
 								 HQShaderCompileMode compileMode,
-								 const char* fileName,
+								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
 								 HQShaderObjectGL **ppShaderObjectOut)
@@ -511,7 +502,7 @@ HQReturnVal HQGLSLShaderController::CreateShaderFromFile(HQShaderType type,
 	switch (compileMode)
 	{
 	case HQ_SCM_GLSL:case HQ_SCM_GLSL_DEBUG:
-		return this->CreateShaderFromFileGLSL(type , fileName,pDefines,ppShaderObjectOut);
+		return this->CreateShaderFromStreamGLSL(type , dataStream,pDefines,ppShaderObjectOut);
 
 	default:
 		return HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;

@@ -15,6 +15,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQRendererPlatformDef.h"
 #include "HQReferenceCountObj.h"
 #include "HQReturnVal.h"
+#include "HQDataStream.h"
 
 
 ///
@@ -102,7 +103,7 @@ public:
 	///Lưu ý :	-nếu textureType = HQ_TEXTURE_CUBE và file ảnh không chứa đủ 6 mặt của cube map 
 	///			thì method này sẽ thất bại, return HQ_FAILED_NOT_ENOUGH_CUBE_FACES
 	///
-	virtual HQReturnVal AddTexture(const char* fileName,
+	virtual HQReturnVal AddTexture(HQDataReaderStream* dataStream,
 						   hq_float32 maxAlpha,
 						   const HQColor *colorKey,
 						   hq_uint32 numColorKey,
@@ -122,7 +123,7 @@ public:
 	///-Mỗi file ảnh ko dc phép có sẵn hơn 1 mipmap level , và ko dc phép chứa sẳn các mặt của cube map.
 	///-Các file ảnh phải cùng pixel format.
 	///
-	virtual HQReturnVal AddCubeTexture(const char * fileNames[6] , 
+	virtual HQReturnVal AddCubeTexture(HQDataReaderStream* dataStreams[6] , 
 							   hq_float32 maxAlpha,
 							   const HQColor *colorKey,
 							   hq_uint32 numColorKey,

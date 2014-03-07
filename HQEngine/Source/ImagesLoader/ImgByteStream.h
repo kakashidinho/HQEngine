@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define IMG_BYTE_STREAM_H
 
 #include "HQPrimitiveDataType.h"
+#include "HQDataStream.h"
 
 #if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #include "../HQEngine/winstore/HQWinStoreFileSystem.h"
@@ -26,7 +27,7 @@ public:
 	~ImgByteStream();
 
 	void CreateByteStreamFromMemory(const hqubyte8 * memory, size_t size);
-	bool CreateByteStreamFromFile(const char *fileName);
+	void CreateByteStreamFromStream(HQDataReaderStream *dataStream);
 
 	void Rewind();
 	void Clear();
@@ -45,11 +46,7 @@ private:
 	bool isMemoryMode;
 	size_t streamSize;
 	union{
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-		HQWinStoreFileSystem::BufferedDataReader *file;
-#else
-		FILE *file;
-#endif
+		HQDataReaderStream * dataStream;
 		struct{
 			const hqubyte* memory;
 			size_t iterator;

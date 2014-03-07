@@ -214,8 +214,8 @@ public:
 	///
 	///tạo shader từ mã đã compile
 	///
-	HQReturnVal CreateShaderFromByteCodeFile(HQShaderType type,
-									 const char* file,
+	HQReturnVal CreateShaderFromByteCodeStream(HQShaderType type,
+									 HQDataReaderStream* dataStream,
 									 hq_uint32 *pID)
 	{
 		return HQ_FAILED;

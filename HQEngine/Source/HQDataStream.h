@@ -33,6 +33,8 @@ public:
 
 	virtual size_t TotalSize() const = 0 ;
 	virtual bool Good() const = 0 ;///stil not reach end of stream
+	
+	virtual const char *GetName() const = 0;//can be NULL, this can return name of the opened file
 
 protected:
 	virtual ~HQDataReaderStream() {}
