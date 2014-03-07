@@ -23,6 +23,7 @@ Current status
 sematic following the attribute's declaration in the source code. This feature is redundant because of layout binding in new GLSL version, but it is still useful for OpenGL ES and older GPU. However, the parser still doesn't have a preprocessor, thus it may fail to parse those code that use preprocessing definitions. This should be implemented in future.
 	* Direct3D 11 new shader stages hasn't been implemented yet.
 	* The most difficult part to implement for the renderer abstract layer is that OpenGL (prior to the introduction of sampler object) doesn't separate sampler states from textures' states unlike Direct3D. I still haven't been able to remove that difference, hence, right now, the renderer's API has 2 versions for setting sampler states depends on its back-end. 
+	* Cg shader is supposed to be removed from OpenGL renderer in near future.
 - The current main maintained platforms are Windows and its variances (Phone/Metro). Android has also been maintained occasionally. IOS and Mac OSX currently have fewer maintenances due to limited resources. Linux was supported initially, but dropped because of limited documents about low level APIs.
 	
 Samples' status
