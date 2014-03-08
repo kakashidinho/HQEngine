@@ -247,8 +247,6 @@ HQEngineRenderPassImpl::HQEngineRenderPassImpl(const char* name)
 
 HQEngineRenderPassImpl::~HQEngineRenderPass()
 {
-	if (textureUnits != NULL)
-		delete[] textureUnits;
 }
 
 HQReturnVal HQEngineRenderPassImpl::Apply()
@@ -258,19 +256,45 @@ HQReturnVal HQEngineRenderPassImpl::Apply()
 
 
 /*-------------rendering effect--------------------*/
-class HQEngineRenderEffectImpl: public HQNamedGraphicsRelatedObj, public HQEngineRenderEffect {
-public:
-	HQEngineRenderEffectImpl(const char* name);
-	virtual ~HQEngineRenderEffect() ;
-	virtual hquint32 GetNumPasses() const = 0;
-	virtual HQEngineRenderPass* GetPassByName(const char* name);
-	virtual HQEngineRenderPass* GetPass(hquint32 index);
+HQEngineRenderEffectImpl::HQEngineRenderEffectImpl(const char* name, 
+												   HQEngineBaseHashTable<HQSharedPtr<HQEngineRenderPassImpl> > passes)
+: HQNamedGraphicsRelatedObj(name), m_passes(NULL), m_numPasses(0)
+{
+	m_numPasses = passes.GetNumItems();
+	m_passes = HQ_NEW HQSharedPtr<HQEngineRenderPassImpl> [m_numPasses];
 
-private:
-	typedef HQEngineBaseHashTable<HQEngineRenderPassImpl*> PassMapTable;
-	PassMapTable m_passMap;//render pass mapping table
-	HQEngineRenderPassImpl * m_passes;//render passes
-};
+	HQEngineBaseHashTable<HQSharedPtr<HQEngineRenderPassImpl> >::Iterator ite;
+	passes.GetIterator(ite);
+	
+	//copy passes' info
+	for (int i = 0; !ite.IsAtEnd(); ++ite, ++i){
+		HQSharedPtr<HQEngineRenderPassImpl> & pPass = *ite;
+		m_passes[i] = pPass;
+		m_passIdxMap.Add(pPass->GetName(), i);
+
+		//set default values
+		if (pPass->shaderProgram == NULL) pPass->shaderProgram = HQ_NEW HQEngineShaderProgramWrapper("default");
+		if (pPass->renderTargetGroup == NULL) pPass->renderTargetGroup = HQ_NEW HQEngineRTGroupWrapper("default");
+		if (pPass->blendState == NULL) pPass->blendState = HQ_NEW HQEngineBlendStateWrapper("default");
+		if (pPass->dsState == NULL) pPass->dsState = HQ_NEW HQEngineDSStateWrapper("default");
+	}
+}
+HQEngineRenderEffectImpl::~HQEngineRenderEffect() 
+{
+	if (m_passes != NULL)
+		delete[] m_passes;
+}
+
+HQEngineRenderPass* HQEngineRenderEffectImpl::GetPassByName(const char* name)
+{
+	hquint32 index = m_passIdxMap.GetItem(name);
+	return this->GetPass(index);
+}
+
+hquint32 HQEngineRenderEffectImpl::GetPassIndexByName(const char* name)
+{
+	return m_passIdxMap.GetItem(name);
+}
 
 /*----------------effect loading session----------------*/
 HQEngineEffectLoadSessionImpl::HQEngineEffectLoadSessionImpl(TiXmlDocument* doc)

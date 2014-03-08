@@ -153,23 +153,18 @@ struct HQEngineRenderPassImpl : public HQNamedGraphicsRelatedObj, public HQEngin
 //rendering effect
 class HQEngineRenderEffectImpl: public HQNamedGraphicsRelatedObj, public HQEngineRenderEffect {
 public:
-	HQEngineRenderEffectImpl(const char* name);
+	HQEngineRenderEffectImpl(const char* name, 
+		HQEngineBaseHashTable<HQSharedPtr<HQEngineRenderPassImpl> > passes);
 	virtual ~HQEngineRenderEffectImpl() ;
-	virtual hquint32 GetNumPasses() const = 0;
+	virtual hquint32 GetNumPasses() const {return m_numPasses;}
 	virtual HQEngineRenderPass* GetPassByName(const char* name);
 	virtual hquint32 GetPassIndexByName(const char* name);
-	virtual HQEngineRenderPass* GetPass(hquint32 index);
-	
-	virtual HQReturnVal AddPass(const HQSharedPtr<HQEngineRenderPassImpl>& pass);
-	virtual void Finalize();//complete the effect's initialization. AddPass() must not be called again after this method finishes
+	virtual HQEngineRenderPass* GetPass(hquint32 index) {return m_passes[index];}
 private:
-	typedef HQEngineBaseHashTable<HQEngineRenderPassImpl*> PassMapTable;
-	PassMapTable m_passMap;//render pass mapping table
+	typedef HQEngineBaseHashTable<hquint32> PassIndexMapTable;
+	PassIndexMapTable m_passIdxMap;//render pass index mapping table
 	HQSharedPtr<HQEngineRenderPassImpl> * m_passes;//render passes
 	hquint32 m_numPasses;
-
-	typedef HQLinkedList<HQSharedPtr<HQEngineRenderPassImpl> > PassList;
-	PassList m_tempList;//temp passes list during initialization
 };
 
 #ifdef WIN32
