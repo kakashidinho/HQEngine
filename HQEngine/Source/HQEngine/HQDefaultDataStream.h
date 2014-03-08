@@ -23,7 +23,7 @@ public:
 	{
 		//copy name
 		size_t nameLen = strlen(file);
-		m_name = new char[nameLen + 1]
+		m_name = new char[nameLen + 1];
 		strncpy(m_name, file, nameLen);
 		m_name[nameLen] = '\0';
 

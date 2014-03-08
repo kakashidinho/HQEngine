@@ -271,8 +271,8 @@ typedef struct HQDepthStencilStateTwoSideDesc : public HQBaseDepthStencilStateDe
 
 typedef enum HQBlendFactor
 {
-	HQ_BF_ONE = 0,//blend factor = (0 , 0 , 0 , 0)
-	HQ_BF_ZERO = 1,//blend factor = (1 , 1 , 1 , 1)
+	HQ_BF_ONE = 0,//blend factor = (1 , 1 , 1 , 1)
+	HQ_BF_ZERO = 1,//blend factor = (0 , 0 , 0 , 0)
 	HQ_BF_SRC_COLOR = 2,//blend factor = (Rs , Gs , Bs , As) . Rs, Gs ,Bs ,As = red ,green ,blue ,alpha of source color in range [0 - 1]
 	HQ_BF_ONE_MINUS_SRC_COLOR = 3,//blend factor = (1 - Rs , 1 - Gs , 1 - Bs , 1 - As) . Rs, Gs ,Bs ,As = red ,green ,blue ,alpha of source color in range [0 - 1]
 	HQ_BF_SRC_ALPHA = 4,//blend factor = (As , As , As , As) . As = alpha value of source color  in range [0 - 1]

@@ -303,6 +303,8 @@ public:
 	///Set the render targets in group {renderTargetGroupID} as main render targets	
 	///
 	HQReturnVal ActiveRenderTargets(hquint32 renderTargetGroupID) {
+		if (this->currentActiveRTGroup == renderTargetGroupID)
+			return HQ_OK;
 		HQSharedPtr<HQBaseRenderTargetGroup> group = this->rtGroups.GetItemPointer(renderTargetGroupID);
 
 		if (group == NULL)

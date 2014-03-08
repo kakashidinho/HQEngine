@@ -405,6 +405,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\HQDefaultFileManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HQEngineApp.cpp"
 				>
 			</File>
@@ -414,6 +418,10 @@
 			</File>
 			<File
 				RelativePath=".\HQEngineCommonInternal.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HQEngineEffectManagerImpl.cpp"
 				>
 			</File>
 			<File
@@ -1567,6 +1575,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HQDefaultFileManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\HQEngineApp.h"
 				>
 			</File>
@@ -1608,6 +1620,10 @@
 			</File>
 			<File
 				RelativePath=".\HQEngineWindow.h"
+				>
+			</File>
+			<File
+				RelativePath="..\HQFileManager.h"
 				>
 			</File>
 			<File

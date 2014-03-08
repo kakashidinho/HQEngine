@@ -46,19 +46,6 @@ void HQEngineApp::PlatformRelease()
 {
 }
 
-//default implementation
-HQDataReaderStream* HQEngineApp::OpenFileStream(const char *file)
-{
-	HQSTDDataReader *stream = HQ_NEW HQSTDDataReader(file);
-	if (!stream->Good())
-	{
-		stream->Release();
-		return NULL;
-	}
-
-	return stream;
-}
-
 bool HQEngineApp::EventHandle()
 {
 	bool hasEvent = false;

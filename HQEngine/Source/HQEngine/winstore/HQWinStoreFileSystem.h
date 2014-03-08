@@ -35,7 +35,7 @@ namespace HQWinStoreFileSystem
 	class HQENGINE_API BufferedDataReader: public HQDataReaderStream
 	{
 	public:
-		BufferedDataReader(const char *fileName);
+		BufferedDataReader(const char *fileName, bool useExactFileName = false);
 		~BufferedDataReader();
 
 		void Release() {delete this;}
@@ -107,6 +107,8 @@ namespace HQWinStoreFileSystem
 
 	//this will search file in installed folder, local folder, roaming folder, temp folder of the app
 	HQENGINE_API Windows::Storage::StorageFile ^ OpenFile(const char *file);
+	//this will open file using exact name specified by <file>. No concatenate  with current directory
+	HQENGINE_API Windows::Storage::StorageFile ^ OpenExactFile(const char *fileName);
 	//open or create file in local folder
 	HQENGINE_API Windows::Storage::StorageFile ^ OpenOrCreateFile(const char *file);
 	//open or create file in local folder
@@ -114,6 +116,9 @@ namespace HQWinStoreFileSystem
 
 	//this will search file in installed folder, local folder, roaming folder, temp folder of the app
 	HQENGINE_API BufferedDataReader * OpenFileForRead(const char *file);
+
+	//this will open a file using the exact name specified by <file>. No concatenate  with current directory
+	HQENGINE_API BufferedDataReader * OpenExactFileForRead(const char *file);
 
 	//*ppDataOut must be release by calling delete[]
 	HQENGINE_API bool ReadData(const char *fileName, unsigned char *&pDataOut, unsigned int &pDataSizeOut);

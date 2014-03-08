@@ -202,11 +202,6 @@ void HQEngineApp::PlatformRelease()
 {
 }
 
-HQDataReaderStream* HQEngineApp::OpenFileStream(const char *file)
-{
-	return HQWinStoreFileSystem::OpenFileForRead(file);
-}
-
 bool HQEngineApp::EventHandle()
 {
 	bool hasEvent = false;

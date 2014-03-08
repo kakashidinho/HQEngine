@@ -13,6 +13,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "../HQEngineResManager.h"
 #include "../HQLoggableObject.h"
+#include "../HQSharedPointer.h"
 #include "../../../tinyxml/tinyxml.h"
 #include "HQEngineCommonInternal.h"
 
@@ -24,10 +25,10 @@ COPYING.txt included with this distribution for more information.
 //texture resource
 class HQEngineTextureResImpl: public HQNamedGraphicsRelatedObj, public HQEngineTextureResource{
 public:
-	HQEngineTextureResImpl();
+	HQEngineTextureResImpl(const char* name);
 	virtual ~HQEngineTextureResImpl();
 
-	void SetTextureID(hquint32 textureID) {m_textureID = textureID;}
+	void Init(hquint32 textureID, hquint32 renderTargetID = HQ_NULL_ID) {m_textureID = textureID; m_renderTargetID = renderTargetID;}
 	hquint32 GetTextureID() const {return m_textureID;}
 	hquint32 GetRenderTargetID() const {return m_renderTargetID;}
 	virtual hquint32 GetTexture2DSize(hquint32 &width, hquint32 &height) const;
@@ -41,7 +42,7 @@ private:
 //shader resource
 class HQEngineShaderResImpl: public HQNamedGraphicsRelatedObj, public HQEngineShaderResource{
 public:
-	HQEngineShaderResImpl();
+	HQEngineShaderResImpl(const char* name);
 	virtual ~HQEngineShaderResImpl();
 
 	void Init(HQShaderType type, hquint32 shaderID) {m_shaderID = shaderID; m_shaderType = type;}
@@ -53,19 +54,6 @@ private:
 	HQShaderType m_shaderType;
 };
 
-//shader program
-class HQEngineShaderProgramResImpl: public HQNamedGraphicsRelatedObj, public HQEngineShaderProgramResource {
-public:
-	HQEngineShaderProgramResImpl();
-	virtual ~HQEngineShaderProgramResImpl();
-
-	void SetProgramID(hquint32 programID) {m_programID = programID;}
-	virtual hquint32 GetProgramID() const {return m_programID;}
-	virtual HQReturnVal Active() ;
-
-private:
-	hquint32 m_programID;
-};
 
 #ifdef WIN32
 #	pragma warning( pop )
@@ -81,7 +69,7 @@ public:
 	HQEngineResLoadSessionImpl(TiXmlDocument* doc);
 	~HQEngineResLoadSessionImpl();
 	bool HasMoreResources() const;
-	TiXmlElement * CurrentXMResource();
+	TiXmlElement * CurrentXMLResource();
 	TiXmlElement * NextXMLResource();//advances to next resource item and returns current resource item
 
 	const HQEngineResLoadType m_type;
@@ -89,12 +77,9 @@ public:
 		struct{
 			TiXmlDocument * m_resXml;
 			TiXmlElement* m_resGroup;
-			TiXmlElement* m_resourceIem;
+			TiXmlElement* m_resourceItem;
 		};
 	};
-	const char* GetResScriptDir() const {return m_resScriptDir;}
-private:
-	char * m_resScriptDir;//directory contains the resource script
 };
 
 //resource manager
@@ -103,29 +88,58 @@ public:
 	HQEngineResManagerImpl(HQLogStream* stream, bool flushLog);
 	~HQEngineResManagerImpl();
 
-	virtual HQReturnVal AddResourcesFromXML(HQDataReaderStream * data_stream);
-	virtual HQEngineResLoadSession* BeginAddResourcesFromXML(HQDataReaderStream * data_stream);
+	virtual HQReturnVal AddResourcesFromXML(const char* fileName);
+	virtual HQEngineResLoadSession* BeginAddResourcesFromXML(const char* fileName);
 	virtual bool HasMoreResources(HQEngineResLoadSession* session);
 	virtual HQReturnVal AddNextResource(HQEngineResLoadSession* session);
 	virtual HQReturnVal EndAddResources(HQEngineResLoadSession* session);
+
+	virtual HQReturnVal AddTextureResource(const char *name,
+											const char * image_file,
+											bool generateMipmap,
+											HQTextureType type
+											) ;
+	virtual HQReturnVal AddCubeTextureResource(const char *name,
+											const char * image_files[6],
+											bool generateMipmap
+											);
+	virtual HQReturnVal AddRenderTargetTextureResource(
+								  const char *name,
+								  hq_uint32 width , hq_uint32 height,
+								  bool hasMipmaps,
+								  HQRenderTargetFormat format , 
+								  HQMultiSampleType multisampleType,
+								  HQTextureType textureType);
+
+	virtual HQReturnVal AddShaderResource(
+									 const char * name,
+									 HQShaderType type,
+									 HQShaderCompileMode compileMode,
+									 const char * source_file,
+									 const HQShaderMacro * pDefines,
+									 const char* entryFunctionName);
+
+	virtual HQReturnVal AddShaderResourceFromByteCode(
+									 const char *name,
+									 HQShaderType type,
+									 const char * source_file);
+
 	virtual HQEngineTextureResource * GetTextureResource(const char* name);
 	virtual HQEngineShaderResource * GetShaderResource(const char* name);
-	virtual HQEngineShaderProgramResource * GetShaderProgramResource(const char* name);
+
+	const HQSharedPtr<HQEngineTextureResImpl>& GetTextureResourceSharedPtr(const char* name);
 
 	virtual HQReturnVal RemoveTextureResource(HQEngineTextureResource* res);
 	virtual HQReturnVal RemoveShaderResource(HQEngineShaderResource* res);
-	virtual HQReturnVal RemoveShaderProgramResource(HQEngineShaderProgramResource* res);
 	virtual void RemoveAllResources();
 private:
 	HQReturnVal LoadResourceFromXML(TiXmlElement* resource);
 	HQReturnVal LoadTextureFromXML(TiXmlElement* textureItem);
-	HQReturnVal LoadShaderFromXML(TiXmlElement* textureItem);
-	HQReturnVal LoadShaderProgramFromXML(TiXmlElement* textureItem);
+	HQReturnVal LoadShaderFromXML(TiXmlElement* shaderItem);
 
 
-	HQEngineBaseHashTable<HQEngineTextureResImpl> m_textures;
-	HQEngineBaseHashTable<HQEngineShaderResImpl> m_shaders;
-	HQEngineBaseHashTable<HQEngineShaderProgramResImpl> m_shaderPrograms;
+	HQEngineBaseHashTable<HQSharedPtr<HQEngineTextureResImpl> > m_textures;
+	HQEngineBaseHashTable<HQSharedPtr<HQEngineShaderResImpl> > m_shaders;
 };
 
 

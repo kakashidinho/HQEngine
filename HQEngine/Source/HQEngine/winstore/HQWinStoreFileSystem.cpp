@@ -397,6 +397,18 @@ namespace HQWinStoreFileSystem
 		return OpenFile(refFileName);
 	}
 
+	Windows::Storage::StorageFile ^ OpenExactFile(const char *fileName)
+	{
+		Platform::String^ refFileName;
+		int wStringSize = MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, fileName, -1, NULL, 0);
+		wchar_t *wFileName = new wchar_t[wStringSize];
+		MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, fileName, -1, wFileName, wStringSize);
+		refFileName = ref new Platform::String(wFileName);
+		delete[] wFileName;
+
+		return OpenFile(refFileName);
+	}
+
 	//open or create file in local folder
 	Windows::Storage::StorageFile ^ OpenOrCreateFile(const char *fileName)
 	{
@@ -496,6 +508,45 @@ namespace HQWinStoreFileSystem
 
 		return datareader;
 	}
+	
+	//open a file using exact name
+	BufferedDataReader * OpenExactFileForRead(const char *file)
+	{
+		if (filename == NULL)
+			return nullptr;
+#if USE_WIN32_HANDLE
+		BufferedDataReader * datareader = nullptr;
+
+		try
+		{
+			datareader = new BufferedDataReader(filename, true);
+		}
+		catch (...)
+		{
+			return nullptr;
+		}
+#else
+		using namespace Windows::Storage;
+		using namespace Concurrency;
+		using namespace Windows::Storage::Streams;
+
+		auto file = OpenExactFile(filename);
+		if (file == nullptr)
+			return nullptr;
+
+		
+		
+		auto datareader = HQWinStoreUtil:: Wait(create_task(file->OpenAsync(FileAccessMode::Read))
+			.then([filename] (Streams::IRandomAccessStream ^ stream) -> BufferedDataReader*
+		{
+			if (stream == nullptr)
+				return nullptr;
+			return new BufferedDataReader(stream, filename);
+		}));
+#endif
+
+		return datareader;
+	}
 
 	/*-----------emulating current working directory-----------------*/
 	
@@ -565,9 +616,18 @@ namespace HQWinStoreFileSystem
 	static const size_t DefaultBufferSize = 8192;
 
 #if USE_WIN32_HANDLE
-	BufferedDataReader::BufferedDataReader(const char *fileName)
+	BufferedDataReader::BufferedDataReader(const char *fileName, bool useExactName)
 	{
-		Platform::String^ refFileName = CreateFixedPathString( fileName);
+		Platform::String^ refFileName;
+		if (!useExactName)
+			refFileName = CreateFixedPathString( fileName);
+		else{
+			int wStringSize = MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, fileName, -1, NULL, 0);
+			wchar_t *wFileName = new wchar_t[wStringSize];
+			MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, fileName, -1, wFileName, wStringSize);
+			refFileName = ref new Platform::String(wFileName);
+			delete[] wFileName;
+		}
 
 		this->fileHandle = OpenFileHandleForRead(refFileName);
 
@@ -588,7 +648,7 @@ namespace HQWinStoreFileSystem
 
 		//copy name
 		size_t nameLen = strlen(fileName);
-		name = new char[nameLen + 1]
+		name = new char[nameLen + 1];
 		strncpy(name, fileName, nameLen);
 		name[nameLen] = '\0';
 		
@@ -717,7 +777,7 @@ namespace HQWinStoreFileSystem
 		if (_name != NULL)
 		{
 			size_t nameLen = strlen(_name);
-			name = new char[nameLen + 1]
+			name = new char[nameLen + 1];
 			strncpy(name, _name, nameLen);
 			name[nameLen] = '\0';
 		}

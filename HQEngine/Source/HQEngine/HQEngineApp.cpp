@@ -13,6 +13,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQEngineWindow.h"
 #include "HQEngineResManagerImpl.h"
 #include "HQEngineEffectManagerImpl.h"
+#include "HQDefaultFileManager.h"
 
 #include <iostream>
 #include <string.h>
@@ -146,12 +147,21 @@ m_flags(HQ_CURSOR_ENABLE)
 	hq_engine_eventQueue_internal->Enable(false);
 	hq_engine_eventQueue_internal->Unlock();
 #endif
+
+	//create default file manager
+	m_fileManagers.PushBack(HQ_NEW HQDefaultFileManager());
 }
 
 HQEngineApp::~HQEngineApp()
 {
 	this->DestroyWindow();
 	this->PlatformRelease();
+
+	HQLinkedList<HQFileManager*>::Iterator ite;
+	m_fileManagers.GetIterator(ite);
+	for (; !ite.IsAtEnd(); ++ite) {
+		delete (*ite);
+	}
 }
 
 HQEngineApp * HQEngineApp::CreateInstance(bool rendererDebugLayer )
@@ -527,4 +537,16 @@ void HQEngineApp::Stop()
 	hq_engine_eventQueue_internal->Enable(false);
 	hq_engine_eventQueue_internal->Unlock();
 #endif
+}
+
+HQDataReaderStream* HQEngineApp::OpenFileForRead(const char *file){
+	HQLinkedList<HQFileManager*>::Iterator ite;
+	m_fileManagers.GetIterator(ite);
+	for (; !ite.IsAtEnd(); ++ite) {
+		HQDataReaderStream* stream = (*ite)->OpenFileForRead(file);
+		if (stream != NULL)
+			return stream;
+	}
+
+	return NULL;
 }

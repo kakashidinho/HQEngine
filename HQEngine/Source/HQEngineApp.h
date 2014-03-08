@@ -13,9 +13,10 @@ COPYING.txt included with this distribution for more information.
 #include "HQEngineCommon.h"
 #include "HQRenderer.h"
 #include "HQEngineAppDelegate.h"
-#include "HQDataStream.h"
+#include "HQFileManager.h"
 #include "HQEngineResManager.h"
 #include "HQEngineEffectManager.h"
+#include "HQLinkedList.h"
 
 
 /*-----------win32---------------*/
@@ -206,8 +207,9 @@ public:
 	static void SetCurrentDir(const char *dir);
 #endif
 
-	HQDataReaderStream* OpenFileStream(const char *file);///open a file
-
+	HQDataReaderStream* OpenFileForRead(const char *file);///open a file
+	bool AddFileSearchPath(const char* path);///add a path to the list of default file manager's searching paths for a file. This path will be searched last.
+	bool PushFileSearchPath(const char* path);///add a path to the list of default file manager's searching paths for a file. This path will be searched first.
 private:
 	static HQEngineApp *sm_instance;
 
@@ -235,6 +237,8 @@ private:
 
 	HQEngineResManager * m_resManager;//resource manager
 	HQEngineEffectManager *m_effectManager;//effect manager
+
+	HQLinkedList<HQFileManager*> m_fileManagers;
 
 	HQEngineRenderDelegate *m_renderDelegate;//rendering delegate
 	HQEngineRenderDelegate *m_waitRenderDelegate;

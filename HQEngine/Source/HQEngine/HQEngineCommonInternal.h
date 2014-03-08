@@ -91,17 +91,6 @@ void seek_datastream (void* fileHandle, long offset, int origin);
 size_t tell_datastream (void* fileHandle);
 size_t read_datastream ( void * ptr, size_t size, size_t count, void * stream );
 
-//--------------------
-
-char * GetContainingDir(const char *file);//returned pointer should to be deleted
-void SetCurrentDir(const char *dir);
-
-#if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-wchar_t * GetCurrentDir();//returned pointer should be deleted
-void SetCurrentDir(const wchar_t *dir);
-#else
-char * GetCurrentDir();//returned pointer should be deleted
-#endif
 };//namespace HQEngineHelper
 
 

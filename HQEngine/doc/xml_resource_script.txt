@@ -1,0 +1,42 @@
+Basic Format:
+<resources>
+	<texture>
+	</texture>
+	<shader>
+	</shader>
+</resources>
+
+Texture resource format:
+	<texture name="texture1"> <!-- name will be default to file name in one source image case. In other cases, no default name, resource will not be loaded if there is no name specified -->
+		<type>2d/cube</type> <!-- default to 2D if not specified -->
+		<!--  "src", "cube_src" and "renderTarget" elements are mutually exclusive -->
+		<render_target has_mipmap="true/false"> <!-- info for render target. "has_mipmap" default is false. -->
+			<size> 
+				<width>100</width>
+				<height>100</height>
+			</size>
+			<format>
+				r32f/r16f/rgba32f/rgba16f/rg32f/rg16f/rgba8ub/r8ui/a8ui
+			</format>
+		</render_target>
+		<src generate_mipmap="true/false"> <!-- image file. generate_mipmap default to false -->
+		image.bmp
+		</src> 
+		<cube_src generate_mipmap="true/false"> <!-- image files. generate_mipmap default to false -->
+			<positive_x>img1.bmp</positive_x>
+			<negative_x>img2.bmp</negative_x>
+			<positive_y>img3.bmp</positive_y>
+			<negative_y>img4.bmp</negative_y>
+			<positive_z>img5.bmp</positive_z>
+			<negative_z>img6.bmp</negative_z>
+		</cube_src>
+	</texture>
+	
+Shader resource format:
+	<shader name="shader1"> <!-- name will be default to source file name -->
+		<type>vertex shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>hlsl/glsl/cg/bytecode</src_type>  <!-- default is cg -->
+		<entry>main</entry> <!-- entry function. default is 'main'. ignored in bytecode/glsl src_type -->
+		<src>file.txt</src> <!-- source file -->
+		<definition name="name1">value</definition> <!-- macro definition for compiling the source code. Can have more than one or none. -->
+	</shader>
