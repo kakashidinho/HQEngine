@@ -36,7 +36,7 @@ COPYING.txt included with this distribution for more information.
 
 
 
-#if !defined WIN32
+#if !defined WIN32 && !defined HQ_WIN_STORE_PLATFORM &&  !defined HQ_WIN_PHONE_PLATFORM
 #	ifndef DWORD
 #		define DWORD hq_uint32
 #	endif

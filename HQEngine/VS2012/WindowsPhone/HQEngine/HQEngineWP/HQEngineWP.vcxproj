@@ -448,6 +448,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\tinyxml\tinystr.h" />
+    <ClInclude Include="..\..\..\..\..\tinyxml\tinyxml.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h" />
@@ -481,8 +483,8 @@
     <ClInclude Include="..\..\..\..\Source\HQAtomicWin32.h" />
     <ClInclude Include="..\..\..\..\Source\HQAudio.h" />
     <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioBase.h" />
+    <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioInternal.h" />
     <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioPCH.h" />
-    <ClInclude Include="..\..\..\..\Source\HQAudio\winstore\HQAudioWinStore.h" />
     <ClInclude Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudio.h" />
     <ClInclude Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioBuffer.h" />
     <ClInclude Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioSource.h" />
@@ -500,14 +502,21 @@
     <ClInclude Include="..\..\..\..\Source\HQEngineAppDelegate.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngineCommon.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngineCustomHeap.h" />
+    <ClInclude Include="..\..\..\..\Source\HQEngineEffectManager.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngineRenderer\HQRendererDeviceDebugLayer.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngineRenderer\HQReturnValDebugString.h" />
+    <ClInclude Include="..\..\..\..\Source\HQEngineResManager.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultDataStream.h" />
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.h" />
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineCommonInternal.h" />
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineEffectManagerImpl.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEnginePCH.h" />
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineWindow.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEventSeparateThread.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\winstore\HQWinStoreFileSystem.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\winstore\HQWinStoreUtil.h" />
+    <ClInclude Include="..\..\..\..\Source\HQFileManager.h" />
     <ClInclude Include="..\..\..\..\Source\HQGrowableArray.h" />
     <ClInclude Include="..\..\..\..\Source\HQHashTable.h" />
     <ClInclude Include="..\..\..\..\Source\HQItemManager.h" />
@@ -704,6 +713,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinystr.cpp" />
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="..\..\..\..\Source\BaseImpl\HQTextureManagerBaseImpl.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">..\..\..\..\Source\HQRendererD3D11;..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">..\..\..\..\Source\HQRendererD3D11;..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
@@ -772,6 +785,7 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioInternal.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">Create</PrecompiledHeader>
@@ -816,56 +830,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">HQAudioPCH.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">HQAudioPCH.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Source\HQAudio\winstore\HQAudioWinStore.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">..\HQAudioPCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">..\HQAudioPCH.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
@@ -1048,6 +1012,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineApp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">Use</PrecompiledHeader>
@@ -1098,6 +1063,8 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(IntDir)HQEnginePCH.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(IntDir)HQEnginePCH.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineCommonInternal.cpp" />
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineEffectManagerImpl.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEnginePCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">Create</PrecompiledHeader>
@@ -1148,6 +1115,7 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(IntDir)HQEnginePCH.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(IntDir)HQEnginePCH.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEventSeparateThread.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">Use</PrecompiledHeader>

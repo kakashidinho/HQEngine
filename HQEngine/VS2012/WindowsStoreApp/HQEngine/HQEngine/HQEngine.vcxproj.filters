@@ -56,9 +56,6 @@
     <Filter Include="Source\HQAudio\xaudio2">
       <UniqueIdentifier>{7c1e1dc1-44f6-4043-b784-be7c1f83664f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\HQAudio\winstore">
-      <UniqueIdentifier>{750bbfa1-0465-48ad-be8b-da01e80a0cbf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\HQUtil\winstore">
       <UniqueIdentifier>{797b88d6-d997-4fa2-b32d-3fb3f0118bd5}</UniqueIdentifier>
     </Filter>
@@ -88,6 +85,9 @@
     </Filter>
     <Filter Include="Source\HQUtil\pthread">
       <UniqueIdentifier>{8d5a2bf6-79af-4463-ae67-43efd93de99f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\tinyxml">
+      <UniqueIdentifier>{b128ab89-8b21-4c51-b2df-eb6fa22ecf19}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -441,9 +441,6 @@
     <ClInclude Include="..\..\..\..\Source\HQAudio.h">
       <Filter>Source\HQAudio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Source\HQAudio\winstore\HQAudioWinStore.h">
-      <Filter>Source\HQAudio\winstore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Source\HQAtomic.h">
       <Filter>Source\HQUtil</Filter>
     </ClInclude>
@@ -563,6 +560,36 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_tex_debug.h">
       <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioInternal.h">
+      <Filter>Source\HQAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineEffectManager.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineResManager.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQFileManager.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineCommonInternal.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineEffectManagerImpl.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\tinyxml\tinystr.h">
+      <Filter>Source\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\tinyxml\tinyxml.h">
+      <Filter>Source\tinyxml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -953,9 +980,6 @@
     <ClCompile Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioSource.cpp">
       <Filter>Source\HQAudio\xaudio2</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Source\HQAudio\winstore\HQAudioWinStore.cpp">
-      <Filter>Source\HQAudio\winstore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioPCH.cpp">
       <Filter>Source\HQAudio</Filter>
     </ClCompile>
@@ -1036,6 +1060,33 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQUtil\win32\HQConditionVariableWin32.cpp">
       <Filter>Source\HQUtil\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioInternal.cpp">
+      <Filter>Source\HQAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineCommonInternal.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineEffectManagerImpl.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinystr.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxml.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source\tinyxml</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

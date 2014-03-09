@@ -12,9 +12,8 @@ COPYING.txt included with this distribution for more information.
 #include "HQDefaultDataStream.h"
 #if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #include "winstore/HQWinStoreFileSystem.h"
-#else
-#include "HQDefaultFileManager.h"
 #endif
+#include "HQDefaultFileManager.h"
 HQDefaultFileManager::HQDefaultFileManager()
 {
 	m_searchPaths.PushBack("");
@@ -93,7 +92,10 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 	{
 		fixedPath[i] = parent[i];
 		if (parent[i] == '\\' || parent[i] == '/')
+		{
 			slashPositions.PushBack(i);
+			fixedPath[i] = slash;
+		}
 	}
 	fixedPathPos = parent.size();
 	if (needSlash)

@@ -1380,6 +1380,11 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLSamplerState(TiXmlElement* textur
 		}
 	}//for (; attribute != NULL; attribute = attribute->NextSiblingElement())
 
+#if defined GLES || defined HQ_WIN_PHONE_PLATFORM//require mipmap in phone devices
+	if (strcmp(mip_filter_str, "none") == 0)
+		mip_filter_str = defaultfilter;
+#endif
+
 	//if one mode is "anisotropic", the others must be "anisotropic" as well
 	if (strcmp(min_filter_str, "anisotropic") == 0 ||
 		strcmp(mag_filter_str, "anisotropic") == 0 ||

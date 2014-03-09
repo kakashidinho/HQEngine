@@ -8,10 +8,13 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#include "../HQEnginePCH.h"  
+#include "../HQEnginePCH.h"
+#include "../HQEngineCommonInternal.h"
 #include "HQWinStoreFileSystem.h"
 #include "HQWinStoreUtil.h"
 #include "../../HQTimer.h"
+
+using namespace HQEngineHelper;
 
 #include <vector>
 #include <ppltasks.h>
@@ -510,7 +513,7 @@ namespace HQWinStoreFileSystem
 	}
 	
 	//open a file using exact name
-	BufferedDataReader * OpenExactFileForRead(const char *file)
+	BufferedDataReader * OpenExactFileForRead(const char *filename)
 	{
 		if (filename == NULL)
 			return nullptr;
@@ -588,9 +591,9 @@ namespace HQWinStoreFileSystem
 		if (!useExactName)
 			refFileName = CreateFixedPathString( fileName);
 		else{
-			int wStringSize = MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, fileName, -1, NULL, 0);
+			int wStringSize = MultiByteToWideChar(CP_UTF8, 0, fileName, -1, NULL, 0);
 			wchar_t *wFileName = new wchar_t[wStringSize];
-			MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, fileName, -1, wFileName, wStringSize);
+			MultiByteToWideChar(CP_UTF8, 0, fileName, -1, wFileName, wStringSize);
 			refFileName = ref new Platform::String(wFileName);
 			delete[] wFileName;
 		}

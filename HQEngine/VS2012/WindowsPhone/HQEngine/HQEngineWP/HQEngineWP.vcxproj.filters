@@ -56,9 +56,6 @@
     <Filter Include="Source\HQAudio\xaudio2">
       <UniqueIdentifier>{a2f3fe85-a505-4321-b0dc-9964ad84fd99}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\HQAudio\winstore">
-      <UniqueIdentifier>{d0f44717-9e3b-4c3e-9cbe-01fddd7b2a7b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\HQUtil\cpp11">
       <UniqueIdentifier>{62a89bc2-ee11-4dd2-94cd-cf4eb2399cb2}</UniqueIdentifier>
     </Filter>
@@ -79,6 +76,9 @@
     </Filter>
     <Filter Include="Source\HQEngine\Android">
       <UniqueIdentifier>{3168db69-6e62-40f7-8470-edda4eef7826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\tinyxml">
+      <UniqueIdentifier>{d29408f1-4564-401c-b490-79c6f0f1a69c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -437,9 +437,6 @@
     <ClInclude Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioSource.h">
       <Filter>Source\HQAudio\xaudio2</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Source\HQAudio\winstore\HQAudioWinStore.h">
-      <Filter>Source\HQAudio\winstore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Source\HQPlatformDef.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -559,6 +556,36 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex_debug.h">
       <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\tinyxml\tinystr.h">
+      <Filter>Source\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\tinyxml\tinyxml.h">
+      <Filter>Source\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioInternal.h">
+      <Filter>Source\HQAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineEffectManager.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngineResManager.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQFileManager.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineCommonInternal.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineEffectManagerImpl.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.h">
+      <Filter>Source\HQEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -949,9 +976,6 @@
     <ClCompile Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioSource.cpp">
       <Filter>Source\HQAudio\xaudio2</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Source\HQAudio\winstore\HQAudioWinStore.cpp">
-      <Filter>Source\HQAudio\winstore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQUtil\winstore\HQTimerWinStore.cpp">
       <Filter>Source\HQUtil\winstore</Filter>
     </ClCompile>
@@ -1005,6 +1029,33 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioStreamBuffer.cpp">
       <Filter>Source\HQAudio\xaudio2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinystr.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxml.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioInternal.cpp">
+      <Filter>Source\HQAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineCommonInternal.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineEffectManagerImpl.cpp">
+      <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.cpp">
+      <Filter>Source\HQEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

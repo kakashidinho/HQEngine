@@ -15,10 +15,12 @@ COPYING.txt included with this distribution for more information.
 
 #include "../HQEngine/winstore/HQWinStoreFileSystem.h"
 #include "../HQEngine/winstore/HQWinStoreUtil.h"
+#include "../HQEngine/HQEngineCommonInternal.h"
 
 #include <ppltasks.h>
 
 using namespace Windows::Storage;
+using namespace HQEngineHelper;
 
 #endif
 

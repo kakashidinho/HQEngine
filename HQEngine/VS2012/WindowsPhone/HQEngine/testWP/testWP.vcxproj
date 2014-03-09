@@ -451,6 +451,12 @@
     <ClCompile Include="..\..\..\..\Source\test\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="Assets\test\script\effects.xml" />
+    <Xml Include="Assets\test\script\resourcesCommon.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D11-winrt.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D11.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D9.xml" />
+    <Xml Include="Assets\test\script\resourcesGL.xml" />
     <Xml Include="WMAppManifest.xml">
       <SubType>Designer</SubType>
     </Xml>

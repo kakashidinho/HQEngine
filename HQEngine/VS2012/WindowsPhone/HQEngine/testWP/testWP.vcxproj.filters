@@ -31,9 +31,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{493d8e81-37db-4364-aea5-ab5824907f87}</UniqueIdentifier>
     </Filter>
-    <Image Include="Assets\test\meshes\Bat_Albedo.jpg">
-      <Filter>Assets</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Source\test\winmain.cpp">
@@ -50,6 +47,12 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="WMAppManifest.xml" />
+    <Xml Include="Assets\test\script\effects.xml" />
+    <Xml Include="Assets\test\script\resourcesCommon.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D9.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D11.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D11-winrt.xml" />
+    <Xml Include="Assets\test\script\resourcesGL.xml" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Source\test\setting\Setting.txt" />
@@ -81,13 +84,10 @@
     <Media Include="Assets\test\audio\battletoads-double-dragons-2.ogg">
       <Filter>Assets</Filter>
     </Media>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\test\meshes\bat.hqanimation">
+    <Media Include="Assets\test\meshes\Bat_Albedo.jpg">
       <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\test\meshes\bat.hqmesh">
-      <Filter>Assets</Filter>
-    </None>
+    </Media>
+    <Media Include="Assets\test\meshes\bat.hqanimation" />
+    <Media Include="Assets\test\meshes\bat.hqmesh" />
   </ItemGroup>
 </Project>

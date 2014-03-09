@@ -134,7 +134,7 @@ Game::Game()
 	HQEngineApp::GetInstance()->AddFileSearchPath("Assets/test/meshes");
 	HQEngineApp::GetInstance()->AddFileSearchPath("Assets/test/shader");
 
-	char apiResFile[256] = "resourcesD3D11.xml"
+	char apiResFile[256] = "resourcesD3D11-winrt.xml";
 #else
 	//setup file search paths
 	HQEngineApp::GetInstance()->AddFileSearchPath("script");
@@ -618,16 +618,12 @@ void Game::TouchBegan(const HQTouchEvent &event)
 	switch (index)
 	{
 		case 0:
-			curTexture = texture;
 			break;
 		case 1:
-			curTexture = temp[0];
 			break;
 		case 2:
-			curTexture = temp[1];
 			break;
 		case 3:
-			curTexture = temp[2];
 			break;
 	}
 	

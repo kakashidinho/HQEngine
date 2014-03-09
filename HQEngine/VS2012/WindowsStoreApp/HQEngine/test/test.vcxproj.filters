@@ -42,15 +42,6 @@
   <ItemGroup>
     <None Include="test_TemporaryKey.pfx" />
     <None Include="ClassDiagram.cd" />
-    <None Include="Assets\test\audio\battletoads-double-dragons-2.ogg">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\test\meshes\bat.hqanimation">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\test\meshes\bat.hqmesh">
-      <Filter>Assets</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\test\meshes\Bat_Albedo.jpg">
@@ -58,25 +49,26 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\test\shader\hlsl.txt">
-      <Filter>Assets</Filter>
-    </Text>
-    <Text Include="Assets\test\shader\hlsl-mesh.txt">
-      <Filter>Assets</Filter>
-    </Text>
+    <Text Include="..\..\..\..\Source\test\shader\hlsl-mesh.txt" />
+    <Text Include="..\..\..\..\Source\test\shader\hlsl.txt" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Assets\test\shader\hlsl_ps.hlsl">
-      <Filter>Assets</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\test\shader\hlsl_vs.hlsl">
-      <Filter>Assets</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\test\shader\hlsl-mesh_ps.hlsl">
-      <Filter>Assets</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\test\shader\hlsl-mesh_vs.hlsl">
-      <Filter>Assets</Filter>
-    </FxCompile>
+    <FxCompile Include="..\..\..\..\Source\test\shader\hlsl-mesh_ps.hlsl" />
+    <FxCompile Include="..\..\..\..\Source\test\shader\hlsl-mesh_vs.hlsl" />
+    <FxCompile Include="..\..\..\..\Source\test\shader\hlsl_ps.hlsl" />
+    <FxCompile Include="..\..\..\..\Source\test\shader\hlsl_vs.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Assets\test\audio\battletoads-double-dragons-2.ogg" />
+    <Media Include="Assets\test\meshes\bat.hqanimation" />
+    <Media Include="Assets\test\meshes\bat.hqmesh" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Assets\test\script\effects.xml" />
+    <Xml Include="Assets\test\script\resourcesCommon.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D9.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D11.xml" />
+    <Xml Include="Assets\test\script\resourcesD3D11-winrt.xml" />
+    <Xml Include="Assets\test\script\resourcesGL.xml" />
   </ItemGroup>
 </Project>

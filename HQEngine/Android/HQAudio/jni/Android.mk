@@ -79,7 +79,7 @@ LOCAL_MODULE := HQAudio
 
 LOCAL_C_INCLUDES := $(ROOT_PATH)/../../../Android-OpenAL-soft/android/include/AL $(ROOT_PATH)/../../../../libogg/include $(ROOT_PATH)/../../../../libvorbis/include
 
-LOCAL_SRC_FILES := HQAudioBase.cpp openAL/HQAudioAL.cpp openAL/HQAudioStreamBufferAL.cpp
+LOCAL_SRC_FILES := HQAudioBase.cpp openAL/HQAudioAL.cpp openAL/HQAudioStreamBufferAL.cpp HQAudioInternal.cpp
 
 LOCAL_FILTER_ASM := cp
 
