@@ -11,6 +11,8 @@ COPYING.txt included with this distribution for more information.
 #ifndef HQ_ENGINE_RES_MANAGER_H
 #define HQ_ENGINE_RES_MANAGER_H
 
+#include "HQRendererCoreType.h"
+#include "HQReturnVal.h"
 #include "HQEngineCommon.h"
 #include "HQDataStream.h"
 

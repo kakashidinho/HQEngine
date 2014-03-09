@@ -16,21 +16,21 @@ Base Pass format:
 		<!-- value is name of texture resource for texture unit 0. 0 can be replaced by any other number. Note that in Direct3D this is the texture unit for pixel shader. In OpenGL, if one texture is bound to multiple texture units, and each units has different sampler state, there will be undefined behavior.
 		For the attributes, default values are the first values specified below.
 		For example: min_filter="linear/point/anisotropic", means default value is linear.
-		border_color attribute is hex color
+		border_color attribute is hex color (rrggbbaa), max_anisotropy attribute is decimal integer
 		-->
 		<texture0
 			min_filter="linear/point/anisotropic"
 			mag_filter="linear/point/anisotropic"
-			mipmap_filter="linear/point"
+			mipmap_filter="linear/point/none/anisotropic"
 			address_u="wrap/mirror/clamp/border"
 			address_v="wrap/mirror/clamp/border"
 			max_anisotropy="1"
-			border_color="000000"
+			border_color="00000000"
 		>
 			resource name
 		</texture0> 
 		<blend>
-			<operator>add/sub/rev sub/</operator> <!-- default is add -->
+			<operator>add/sub/rev sub</operator> <!-- default is add -->
 			<src_factor> <!-- default is one -->
 				one/zero/src color/one minus src color/
 				src alpha/one minus src alpha
@@ -39,6 +39,7 @@ Base Pass format:
 				one/zero/src color/one minus src color/
 				src alpha/one minus src alpha
 			</dest_factor>
+			<alpha_operator>add/sub/rev sub</alpha_operator> <!-- default is same value as 'operator' -->
 			<alpha_src_factor> <!-- default is the same value as src_factor -->
 				one/zero/src color/one minus src color/
 				src alpha/one minus src alpha
@@ -51,7 +52,7 @@ Base Pass format:
 		<stencil>
 			<read_mask>ffffffff</read_mask> <!-- hex value -->
 			<write_mask>ffffffff</write_mask> <!-- hex value -->
-			<reference_value>0</reference_value> <!-- hex value -->
+			<reference_value>0</reference_value> <!-- decimal value -->
 			<fail_op>keep/zero/replace/incre/decre/incre wrap/decre wrap</fail_op> <!-- default is keep -->
 			<depth_fail_op>keep/zero/replace/incre/decre/incre wrap/decre wrap</depth_fail_op> <!-- default is keep -->
 			<pass_op>keep/zero/replace/incre/decre/incre wrap/decre wrap</pass_op> <!-- default is keep -->
@@ -70,7 +71,7 @@ Base Pass format:
 		<pixel_shader>shader resource name</pixel_shader>
 		<geometry_shader>shader resource name</geometry_shader>
 		
-		<custom_targets> <!-- if not specified, default render target is used -->
+		<custom_targets>  <!-- if not specified, default render target is used -->
 			<target0 cube_face="+x"> texture resource name </target0> <!-- cube_face can be "(+/-)(x/y/z)". default is "+x" -->
 			<depth_stencil_buffer_format> <!-- default is none -->
 				none/d24s8/d16/s8/d32

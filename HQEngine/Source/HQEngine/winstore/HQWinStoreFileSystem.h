@@ -130,12 +130,4 @@ namespace HQWinStoreFileSystem
 	wchar_t * GetCurrentDir();//returned pointer should be deleted
 	void SetCurrentDir(const wchar_t *dir);
 	void SetCurrentDir(const char *dir);
-
-	//for easy porting from standard C io
-	HQENGINE_API long ftell ( BufferedDataReader * stream );
-	HQENGINE_API int fseek ( BufferedDataReader * stream, long int offset, int origin );
-	HQENGINE_API void rewind( BufferedDataReader* stream );
-	HQENGINE_API int fgetc(BufferedDataReader *stream);
-	HQENGINE_API size_t fread ( void * ptr, size_t size, size_t count, BufferedDataReader * stream );
-	HQENGINE_API int fclose ( BufferedDataReader * stream );
 };

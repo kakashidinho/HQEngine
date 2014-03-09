@@ -11,11 +11,9 @@ COPYING.txt included with this distribution for more information.
 #include "HQAudioPCH.h"
 #include "HQAudioBase.h"
 
-#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-#include "winstore/HQAudioWinStore.h"
-
-using namespace HQWinStoreFileSystem;
-#endif
+#include "HQAudioInternal.h"
+#include "../HQEngine/HQEngineCommonInternal.h"
+using namespace HQEngineHelper;
 
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
@@ -160,11 +158,7 @@ public:
 		m_file.datasource = NULL;
 		rewind(f);
 		ov_clear(&m_file);
-#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 		ov_test_callbacks(f, &m_file, NULL, 0, g_vorbis_callback);
-#else
-		ov_test(f, &m_file, NULL, 0) ;
-#endif
 
 		ov_test_open(&m_file);
 
@@ -183,9 +177,7 @@ private:
 HQBaseAudioDevice::HQBaseAudioDevice(HQLogStream *logStream, const char *logPrefix, bool flushLog)
 		: HQLoggableObject(logStream, logPrefix, flushLog)
 {
-#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	HQAudioInternal::InitVorbisFileCallbacks(&g_vorbis_callback);
-#endif
 }
 
 HQReturnVal HQBaseAudioDevice::Release()
@@ -223,11 +215,7 @@ bool HQBaseAudioDevice::IsWaveFile(HQ_AUDIO_FILE_STREAM *f)
 
 bool HQBaseAudioDevice::IsVorbisFile(HQ_AUDIO_FILE_STREAM *f, OggVorbis_File &vf)
 {
-#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	if (ov_test_callbacks(f, &vf, NULL, 0, g_vorbis_callback) == 0 )
-#else
-	if (ov_test(f, &vf, NULL, 0) == 0 )
-#endif
 		return true;
 	ov_clear(&vf);
 	return false;

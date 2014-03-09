@@ -94,8 +94,8 @@ public:
 	void RemoveAt(HQLinkedListNode<T> *node);
 	void RemoveAll();
 
-	void GetIterator(Iterator& iterator) const;//get iterator starting at the first item
-	void GetIteratorFromLastItem(Iterator& iterator)const;//get iterator starting at the last item
+	void GetIterator(Iterator& iterator);//get iterator starting at the first item
+	void GetIteratorFromLastItem(Iterator& iterator);//get iterator starting at the last item
 
 	///use these methods with care. The element must be initialized after these methods are called because the constructor of the new element is not called by these methods
 	HQLinkedListNode<T> * PushBack();//add a new element at the end. The new element is not initialized, returned pointer can be used to initialize the new element
@@ -147,14 +147,14 @@ inline HQLinkedList<T , MemManager> & HQLinkedList<T , MemManager> :: TransferFr
 }
 
 template <class T , class MemManager>
-inline void HQLinkedList<T , MemManager>::GetIterator(typename HQLinkedList<T , MemManager>::Iterator & iterator) const
+inline void HQLinkedList<T , MemManager>::GetIterator(typename HQLinkedList<T , MemManager>::Iterator & iterator)
 {
 	iterator.m_pRoot = this->m_pRoot;
 	iterator.m_pCurrentNode = this->m_pRoot;
 }
 
 template <class T , class MemManager>
-inline void HQLinkedList<T , MemManager>::GetIteratorFromLastItem(typename HQLinkedList<T , MemManager>::Iterator & iterator) const
+inline void HQLinkedList<T , MemManager>::GetIteratorFromLastItem(typename HQLinkedList<T , MemManager>::Iterator & iterator)
 {
 	iterator.m_pRoot = this->m_pRoot;
 	if (this->m_pRoot == NULL)

@@ -756,6 +756,11 @@ const HQSharedPtr<HQEngineTextureResImpl>& HQEngineResManagerImpl::GetTextureRes
 	return m_textures.GetItem(name, found);
 }
 
+const HQSharedPtr<HQEngineShaderResImpl>& HQEngineResManagerImpl::GetShaderResourceSharedPtr(const char* name)
+{
+	bool found = false;
+	return m_shaders.GetItem(name, found);
+}
 
 HQEngineShaderResource * HQEngineResManagerImpl::GetShaderResource(const char* name)
 {

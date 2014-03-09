@@ -45,12 +45,6 @@ struct HQArrayPointerRelease{
 template<class T , class PointerRelease>
 class HQBaseSharedPtr
 {
-protected:
-	T * m_ptr;//the real pointer
-	HQReference* m_ref;
-
-	void Copy(const HQBaseSharedPtr<T , PointerRelease>& sptr2);
-
 public:
 	HQBaseSharedPtr();
 	HQBaseSharedPtr(T *rawptr);
@@ -78,6 +72,13 @@ public:
 
 	//null pointer
 	static const HQBaseSharedPtr<T , PointerRelease> null;
+
+protected:
+	T * m_ptr;//the real pointer
+	mutable HQReference* m_ref;
+
+	void Copy(const HQBaseSharedPtr<T , PointerRelease>& sptr2);
+
 };
 
 template <class T, class PointerRelease>

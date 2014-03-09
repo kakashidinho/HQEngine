@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define HQ_MESH_H
 
 #include "HQSceneManagementCommon.h"
+#include "HQEngineResManager.h"
 #include "HQSceneNode.h"
 #include "HQRenderDevice.h"
 #include "HQLogStream.h"
@@ -20,7 +21,7 @@ struct HQSubMeshInfo
 {
 	HQColorMaterial colorMaterial;
 	hquint32 numTextures;
-	hquint32 *textures;
+	HQEngineTextureResource **textures;
 };
 
 ///
@@ -36,6 +37,14 @@ public:
 		const char *hqMeshFileName, 
 		HQRenderDevice *pDevice, 
 		hquint32 vertexShaderID,
+		HQLogStream *pLogStream = NULL);
+	///
+	///{vertexShaderName} is name of shader resource used for creating vertex input layout
+	///
+	HQMeshNode(const char *name,
+		const char *hqMeshFileName, 
+		HQRenderDevice *pDevice, 
+		const char* vertexShaderName,
 		HQLogStream *pLogStream = NULL);
 	~HQMeshNode();
 	
@@ -64,6 +73,11 @@ public:
 	void OnResetDevice();//need to call this when render device restore
 
 private:
+	void Init(const char *name,
+		const char *hqMeshFileName ,
+		hquint32 vertexShaderID,
+		HQLogStream *pLogStream); 
+
 	struct MeshFileHeader;
 	struct GeometricInfo;
 	struct AnimationInfo;

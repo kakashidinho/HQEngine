@@ -24,6 +24,7 @@ public:
 	void AddLastSearchPath(const char* path);
 	void AddFirstSearchPath(const char* path);
 
+	virtual void Release() {delete this;}
 private:
 	void Append(const std::string & parent, const char * name, std::string &appendedPath);
 

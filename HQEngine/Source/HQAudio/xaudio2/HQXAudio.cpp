@@ -10,6 +10,10 @@ COPYING.txt included with this distribution for more information.
 
 #include "../HQAudioPCH.h"
 #include "HQXAudioSource.h"
+#include "../../HQEngineApp.h"
+#include "../../HQEngine/HQEngineCommonInternal.h"
+
+using namespace HQEngineHelper;
 
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
@@ -21,8 +25,6 @@ using namespace Windows::UI::Core;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::ApplicationModel;
 using namespace Windows::Foundation;
-
-using namespace HQWinStoreFileSystem;
 
 extern Platform::Agile<CoreWindow> hq_engine_coreWindow_internal;
 
@@ -221,11 +223,7 @@ HQReturnVal HQXAudioDevice::CreateAudioBufferFromFile(const char *fileName, hq_u
 		return HQ_OK;
 	}
 
-#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-	auto f = HQWinStoreFileSystem::OpenFileForRead(fileName);
-#else
-	FILE *f = fopen(fileName, "rb");
-#endif
+	HQDataReaderStream  *f = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
 	if (f == NULL)
 	{
 		Log("File \"%s\" doesn't exist!", fileName);
@@ -281,11 +279,7 @@ HQReturnVal HQXAudioDevice::CreateAudioBufferFromFile(const char *fileName, hq_u
 
 HQReturnVal HQXAudioDevice::CreateStreamAudioBufferFromFile(const char *fileName, hquint32 numSubBuffers, hquint32 subBufferSize, hq_uint32 *pBufferID)
 {
-#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-	auto f = HQWinStoreFileSystem::OpenFileForRead(fileName);
-#else
-	FILE *f = fopen(fileName, "rb");
-#endif
+	HQDataReaderStream  *f = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
 	if (f == NULL)
 	{
 		Log("File \"%s\" doesn't exist!", fileName);

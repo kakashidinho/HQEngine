@@ -16,117 +16,179 @@ COPYING.txt included with this distribution for more information.
 #include "HQEngineResManagerImpl.h"
 
 //shader program
-class HQEngineShaderProgramWrapper: public HQNamedGraphicsRelatedObj {
+class HQEngineShaderProgramWrapper: public HQGraphicsRelatedObj {
 public:
-	HQEngineShaderProgramWrapper(const char* name);
+	struct CreationParams {
+		CreationParams() {}
+		
+		CreationParams& operator = (const CreationParams& params2);
+
+		hquint32 HashCode() const ;
+		bool Equal(const CreationParams* params2) const;
+
+		HQSharedPtr<HQEngineShaderResImpl> vertexShader;
+		HQSharedPtr<HQEngineShaderResImpl> geometryShader;
+		HQSharedPtr<HQEngineShaderResImpl> pixelShader;
+
+	};
+	HQEngineShaderProgramWrapper();
 	virtual ~HQEngineShaderProgramWrapper();
 
-	HQReturnVal Init(
-					const HQSharedPtr<HQEngineShaderResImpl> & vertexShader, 
-					const HQSharedPtr<HQEngineShaderResImpl> & pixelShader,
-					const HQSharedPtr<HQEngineShaderResImpl> & geometryShader
-			);
+	HQReturnVal Init(const CreationParams &params);
 	virtual hquint32 GetProgramID() const {return m_programID;}
-	const HQSharedPtr<HQEngineShaderResImpl>& GetShader(HQShaderType shaderStage) const;
+	const CreationParams& GetCreationParams() const {return m_creationParams;}
 	virtual HQReturnVal Active() ;
 
 private:
+	CreationParams m_creationParams;
 	hquint32 m_programID;
-	const HQSharedPtr<HQEngineShaderResImpl> m_vertexShader;
-	const HQSharedPtr<HQEngineShaderResImpl> m_geometryShader;
-	const HQSharedPtr<HQEngineShaderResImpl> m_pixelShader;
 };
 
 //blend state
-class HQEngineBlendStateWrapper: public HQNamedGraphicsRelatedObj {
+class HQEngineBlendStateWrapper: public HQGraphicsRelatedObj {
 public:
-	HQEngineBlendStateWrapper(const char *name);
-	~HQEngineBlendStateWrapper();
+	struct CreationParams{
+		CreationParams() {}
+		
+		hquint32 HashCode() const ;
+		bool Equal(const CreationParams* params2) const;
+		
+		CreationParams& operator = (const CreationParams& params2);
 
-	HQReturnVal Init(const HQBlendStateDesc& _desc);
-	HQReturnVal Init(const HQBlendStateExDesc& _desc);
-
-	bool isExState;
-	union {
-		HQBlendStateDesc desc;
+		bool isExState;
 		HQBlendStateExDesc descEx;
 	};
-	
+
+	HQEngineBlendStateWrapper();
+	~HQEngineBlendStateWrapper();
+
+	HQReturnVal Init(const CreationParams& creationParams);
+	HQReturnVal Active();
+
+	const CreationParams & GetCreationParams() const {return creationParams;}
+
+	CreationParams creationParams;
 	hquint32 stateID;
 };
 
 //depth stencil state
-class HQEngineDSStateWrapper: public HQNamedGraphicsRelatedObj{
+class HQEngineDSStateWrapper: public HQGraphicsRelatedObj{
 public:
-	HQEngineDSStateWrapper(const char* name);
-	~HQEngineDSStateWrapper();
+	struct CreationParams{
+		CreationParams() {}
+		hquint32 HashCode() const ;
+		bool Equal(const CreationParams* params2) const;
+		
+		CreationParams& operator = (const CreationParams& params2);
 
-	HQReturnVal Init(const HQDepthStencilStateDesc& _desc);
-	HQReturnVal Init(const HQDepthStencilStateTwoSideDesc& _desc);
-
-	bool isTwoSideState;
-	union{
+		bool isTwoSideState;
+		
 		HQDepthStencilStateDesc desc;
 		HQDepthStencilStateTwoSideDesc twoSideDesc;
 	};
 
+	HQEngineDSStateWrapper();
+	~HQEngineDSStateWrapper();
+
+	HQReturnVal Init(const CreationParams& params);
+	HQReturnVal Active();
+
+	const CreationParams & GetCreationParams() const {return creationParams;}
+
+	CreationParams creationParams;
 	hquint32 stateID;
 };
 
 //sampler state
-class HQEngineSamplerStateWrapper: public HQNamedGraphicsRelatedObj{
+class HQEngineSamplerStateWrapper: public HQGraphicsRelatedObj{
 public:
-	HQEngineSamplerStateWrapper(const char* name);
+	struct CreationParams: public HQSamplerStateDesc{
+		CreationParams(): HQSamplerStateDesc() {}
+		hquint32 HashCode() const ;
+		bool Equal(const CreationParams* params2) const;
+		CreationParams& operator = (const CreationParams& params2);
+	};
+
+	HQEngineSamplerStateWrapper();
 	~HQEngineSamplerStateWrapper();
 
-	HQReturnVal Init(const HQSamplerStateDesc& _desc);
+	HQReturnVal Init(const CreationParams& _desc);
+	HQReturnVal Apply(hquint32 index);
 
-	HQSamplerStateDesc desc;
+	const CreationParams & GetCreationParams() const {return desc;}
 
+	CreationParams desc;
 	hquint32 stateID;
 };
 
 //texture unit
 struct HQEngineTextureUnit {
-	hquint32 unitIndex;
+	void InitD3D(HQShaderType shaderStage, hquint32 textureIdx, const HQSharedPtr<HQEngineTextureResImpl>& texture, const HQSharedPtr<HQEngineSamplerStateWrapper>& samplerState);
+	void InitGL(hquint32 textureIdx, const HQSharedPtr<HQEngineTextureResImpl>& texture, const HQSharedPtr<HQEngineSamplerStateWrapper>& samplerState);
+
+	hquint32 unitIndex;//different between D3D and GL. D3D: index = shaderStage bitwise or-ed with texture stage index
 	HQSharedPtr<HQEngineTextureResImpl> texture;//texture
 	HQSharedPtr<HQEngineSamplerStateWrapper> samplerState;// sampling state
 };
 
 //depth stencil buffer
-class HQEngineDSBufferWrapper: public HQNamedGraphicsRelatedObj {
+class HQEngineDSBufferWrapper: public HQGraphicsRelatedObj {
 public:
-	HQEngineDSBufferWrapper(const char *name);
+	struct CreationParams{
+		CreationParams() {}
+		hquint32 HashCode() const;
+		bool Equal(const CreationParams* params2) const;
+		CreationParams& operator = (const CreationParams& params2);
+
+		HQDepthStencilFormat format;
+		hquint32 width, height;
+	};
+
+	HQEngineDSBufferWrapper();
 	~HQEngineDSBufferWrapper();
 
-	HQReturnVal Init(HQDepthStencilFormat _format, hquint32 _width, hquint32 _height);
+	HQReturnVal Init(const CreationParams &params);
+	const CreationParams & GetCreationParams() const {return creationParams;}
 
-
-	HQDepthStencilFormat format;
-	hquint32 width, height;
+	CreationParams creationParams;	
 	hquint32 bufferID;
 };
 
 //render target
 struct HQEngineRenderTargetWrapper {
-	SharedPtr<HQEngineTextureResImpl> outputTexture;
+	HQEngineRenderTargetWrapper() : cubeFace(HQ_CTF_POS_X) {}
+
+	hquint32 HashCode() const;
+	bool Equal(const HQEngineRenderTargetWrapper& rt2) const;
+
+	HQSharedPtr<HQEngineTextureResImpl> outputTexture;
 	HQCubeTextureFace cubeFace;
 };
 
 //render targets group
-class HQEngineRTGroupWrapper: public HQNamedGraphicsRelatedObj {
+class HQEngineRTGroupWrapper: public HQGraphicsRelatedObj {
 public:
-	HQEngineRTGroupWrapper(const char * name);
+	struct CreationParams {
+		CreationParams();
+		~CreationParams();
+		hquint32 HashCode() const;
+		bool Equal(const CreationParams* params2) const;
+
+		HQSharedArrayPtr<HQEngineRenderTargetWrapper> outputs;
+		hquint32 numOutputs;
+		HQSharedPtr<HQEngineDSBufferWrapper> dsBuffer;//depth stencil buffer
+	};
+
+	HQEngineRTGroupWrapper();
 	~HQEngineRTGroupWrapper();
 
-	HQReturnVal Init(const HQEngineRenderTargetWrapper *_outputs, hquint32 _numOutputs, const HQSharedPtr<HQEngineDSBufferWrapper>& _dsBuffer);
+	HQReturnVal Init(const CreationParams &params);
+	const CreationParams & GetCreationParams() const {return creationParams;}
 
 	HQReturnVal Active();
 
 	hquint32 groupID;
-	HQEngineRenderTargetWrapper * outputs;
-	hquint32 numOutputs;
-	HQSharedPtr<HQEngineDSBufferWrapper> dsBuffer;//depth stencil buffer
+	CreationParams creationParams;
 };
 
 #ifdef WIN32
@@ -137,8 +199,11 @@ public:
 //rendering pass
 struct HQEngineRenderPassImpl : public HQNamedGraphicsRelatedObj, public HQEngineRenderPass{
 	HQEngineRenderPassImpl(const char* name);
-	virtual ~HQEngineRenderPass();
+	virtual ~HQEngineRenderPassImpl();
 	virtual HQReturnVal Apply();
+	virtual HQReturnVal ApplyTextureStates() = 0;
+
+	void AddTextureUnit(const HQEngineTextureUnit& texunit);
 
 	HQSharedPtr<HQEngineShaderProgramWrapper> shaderProgram;//shader program
 	HQSharedPtr<HQEngineRTGroupWrapper> renderTargetGroup;//render targets. 
@@ -150,18 +215,30 @@ struct HQEngineRenderPassImpl : public HQNamedGraphicsRelatedObj, public HQEngin
 
 };
 
+struct HQEngineRenderPassD3D : public HQEngineRenderPassImpl
+{
+	HQEngineRenderPassD3D(const char *name);
+	virtual HQReturnVal ApplyTextureStates();
+};
+
+struct HQEngineRenderPassGL : public HQEngineRenderPassImpl
+{
+	HQEngineRenderPassGL(const char* name);
+	virtual HQReturnVal ApplyTextureStates();
+};
+
 //rendering effect
 class HQEngineRenderEffectImpl: public HQNamedGraphicsRelatedObj, public HQEngineRenderEffect {
 public:
 	HQEngineRenderEffectImpl(const char* name, 
-		HQEngineBaseHashTable<HQSharedPtr<HQEngineRenderPassImpl> > passes);
+		HQEngineStringHashTable<HQSharedPtr<HQEngineRenderPassImpl> >& passes);
 	virtual ~HQEngineRenderEffectImpl() ;
 	virtual hquint32 GetNumPasses() const {return m_numPasses;}
 	virtual HQEngineRenderPass* GetPassByName(const char* name);
 	virtual hquint32 GetPassIndexByName(const char* name);
-	virtual HQEngineRenderPass* GetPass(hquint32 index) {return m_passes[index];}
+	virtual HQEngineRenderPass* GetPass(hquint32 index) {return m_passes[index].GetRawPointer();}
 private:
-	typedef HQEngineBaseHashTable<hquint32> PassIndexMapTable;
+	typedef HQEngineStringHashTable<hquint32> PassIndexMapTable;
 	PassIndexMapTable m_passIdxMap;//render pass index mapping table
 	HQSharedPtr<HQEngineRenderPassImpl> * m_passes;//render passes
 	hquint32 m_numPasses;
@@ -207,26 +284,63 @@ public:
 	virtual HQReturnVal AddNextEffect(HQEngineEffectLoadSession* session);
 	virtual HQReturnVal EndAddEffects(HQEngineEffectLoadSession* session);///for releasing loading session
 
+	virtual HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs , 
+												hq_uint32 numAttrib ,
+												HQEngineShaderResource* vertexShader , 
+												hq_uint32 *pInputLayoutID);
+
+	virtual HQReturnVal SetTexture(hq_uint32 slot, HQEngineTextureResource* texture);
+	virtual HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQEngineTextureResource* texture);
+
 	virtual HQEngineRenderEffect * GetEffect(const char *name) ;
 	virtual HQReturnVal RemoveEffect(HQEngineRenderEffect *effect) ;
 	virtual void RemoveAllEffects() ;
 
 private:
-	typedef HQEngineBaseHashTable<HQSharedPtr<HQEngineShaderProgramWrapper> > ProgramTable;
-	typedef HQEngineBaseHashTable<HQSharedPtr<HQEngineRTGroupWrapper> > RTGroupTable;
-	typedef HQEngineBaseHashTable<HQSharedPtr<HQEngineBlendStateWrapper> > BlendStateTable;
-	typedef HQEngineBaseHashTable<HQSharedPtr<HQEngineDSStateWrapper> > DSStateTable;
-	typedef HQEngineBaseHashTable<HQSharedPtr<HQEngineSamplerStateWrapper> > SamplerStateTable;
-	typedef HQEngineBaseHashTable<HQSharedPtr<HQEngineRenderEffectImpl> > EffectTable;
+	HQReturnVal LoadEffectFromXML(TiXmlElement * effectItem);
+	HQReturnVal LoadPassFromXML(TiXmlElement* passItem, HQSharedPtr<HQEngineRenderPassImpl> &newPass);
+	HQReturnVal ParseXMLStencilState(TiXmlElement *stencilElem, HQEngineDSStateWrapper::CreationParams &params);
+	HQReturnVal ParseXMLBlendState(TiXmlElement* blendElem, HQEngineBlendStateWrapper::CreationParams &params);
+	HQReturnVal ParseXMLSamplerState(TiXmlElement* textureElem, HQEngineSamplerStateWrapper::CreationParams &params);
+	HQReturnVal ParseXMLDepthStencilBuffer(TiXmlElement* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params);
+	HQReturnVal ParseXMLRTGroup(TiXmlElement* rtGroupElem, HQEngineRTGroupWrapper::CreationParams &params);
+
+	//these methods will create new or return existing object
+	HQSharedPtr<HQEngineRTGroupWrapper> CreateOrGetRTGroup(const HQEngineRTGroupWrapper::CreationParams& params);
+	HQSharedPtr<HQEngineDSBufferWrapper> CreateOrGetDSBuffer(const HQEngineDSBufferWrapper::CreationParams& params);
+	HQSharedPtr<HQEngineShaderProgramWrapper> CreateOrGetShaderProgram(const HQEngineShaderProgramWrapper::CreationParams& params);
+	HQSharedPtr<HQEngineBlendStateWrapper> CreateOrGetBlendState(const HQEngineBlendStateWrapper::CreationParams& params);
+	HQSharedPtr<HQEngineDSStateWrapper> CreateOrGetDSState(const HQEngineDSStateWrapper::CreationParams& params);
+	HQSharedPtr<HQEngineSamplerStateWrapper> CreateOrGetSamplerState(const HQEngineSamplerStateWrapper::CreationParams& params);
+
+	typedef HQEnginePtrKeyHashTable<const HQEngineShaderProgramWrapper::CreationParams*, HQSharedPtr<HQEngineShaderProgramWrapper> > ProgramTable;
+	typedef HQEnginePtrKeyHashTable<const HQEngineRTGroupWrapper::CreationParams*, HQSharedPtr<HQEngineRTGroupWrapper> > RTGroupTable;
+	typedef HQEnginePtrKeyHashTable<const HQEngineDSBufferWrapper::CreationParams*, HQSharedPtr<HQEngineDSBufferWrapper> > DSBufferTable;
+	typedef HQEnginePtrKeyHashTable<const HQEngineBlendStateWrapper::CreationParams*, HQSharedPtr<HQEngineBlendStateWrapper> > BlendStateTable;
+	typedef HQEnginePtrKeyHashTable<const HQEngineDSStateWrapper::CreationParams*, HQSharedPtr<HQEngineDSStateWrapper> > DSStateTable;
+	typedef HQEnginePtrKeyHashTable<const HQEngineSamplerStateWrapper::CreationParams*, HQSharedPtr<HQEngineSamplerStateWrapper> > SamplerStateTable;
+	typedef HQEngineStringHashTable<HQSharedPtr<HQEngineRenderEffectImpl> > EffectTable;
 
 	ProgramTable m_shaderPrograms;//shader programs
 	RTGroupTable m_renderTargetGroups;//render targets. 
+	DSBufferTable m_dsBuffers;//depth stencil buffers
 	BlendStateTable m_blendStates;//blend states
 	DSStateTable m_dsStates;//depth stencil states
 	SamplerStateTable m_samplerStates;//sampler states
 
 	EffectTable m_effects;//rendering effects
 
+	HQEngineStringHashTable<HQCullMode> m_cullModeMap;
+	HQEngineStringHashTable<HQDepthMode> m_depthModeMap;
+	HQEngineStringHashTable<HQStencilOp> m_stencilOpMap;
+	HQEngineStringHashTable<HQStencilFunc> m_stencilFuncMap;
+	HQEngineStringHashTable<HQBlendFactor> m_blendFactorMap;
+	HQEngineStringHashTable<HQBlendOp> m_blendOpMap;
+	HQEngineStringHashTable<HQTexAddressMode> m_taddrModeMap;
+	HQEngineStringHashTable<HQFilterMode> m_filterModeMap;
+	HQEngineStringHashTable<HQDepthStencilFormat> m_dsFmtMap;
+
+	bool m_isGL;
 };
 
 #endif

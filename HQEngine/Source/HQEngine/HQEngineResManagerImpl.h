@@ -128,6 +128,8 @@ public:
 	virtual HQEngineShaderResource * GetShaderResource(const char* name);
 
 	const HQSharedPtr<HQEngineTextureResImpl>& GetTextureResourceSharedPtr(const char* name);
+	const HQSharedPtr<HQEngineShaderResImpl>& GetShaderResourceSharedPtr(const char* name);
+
 
 	virtual HQReturnVal RemoveTextureResource(HQEngineTextureResource* res);
 	virtual HQReturnVal RemoveShaderResource(HQEngineShaderResource* res);
@@ -138,8 +140,8 @@ private:
 	HQReturnVal LoadShaderFromXML(TiXmlElement* shaderItem);
 
 
-	HQEngineBaseHashTable<HQSharedPtr<HQEngineTextureResImpl> > m_textures;
-	HQEngineBaseHashTable<HQSharedPtr<HQEngineShaderResImpl> > m_shaders;
+	HQEngineStringHashTable<HQSharedPtr<HQEngineTextureResImpl> > m_textures;
+	HQEngineStringHashTable<HQSharedPtr<HQEngineShaderResImpl> > m_shaders;
 };
 
 

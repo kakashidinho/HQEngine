@@ -160,7 +160,7 @@ HQEngineApp::~HQEngineApp()
 	HQLinkedList<HQFileManager*>::Iterator ite;
 	m_fileManagers.GetIterator(ite);
 	for (; !ite.IsAtEnd(); ++ite) {
-		delete (*ite);
+		(*ite)->Release();
 	}
 }
 
@@ -301,8 +301,10 @@ HQReturnVal HQEngineApp::DestroyWindow()
 	}
 
 	//delete managers
-	SafeDelete(static_cast<HQEngineResManagerImpl*> (m_resManager));
-	safeDelete(static_cast<HQEngineEffectManagerImpl*> (m_effectManager));
+	HQEngineResManagerImpl* resManagerImpl = static_cast<HQEngineResManagerImpl*> (m_resManager);
+	HQEngineEffectManagerImpl* effectManagerImpl = static_cast<HQEngineEffectManagerImpl*> (m_effectManager);
+	SafeDelete(resManagerImpl);
+	SafeDelete(effectManagerImpl);
 
 	//delete window
 	SafeDelete(m_window);

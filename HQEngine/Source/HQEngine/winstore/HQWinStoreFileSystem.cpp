@@ -578,40 +578,6 @@ namespace HQWinStoreFileSystem
 		g_currentDir = (CreateFixedPathString(dir));
 	}
 
-	/*-------------for easy porting from standard C io---------------*/
-	int fgetc(BufferedDataReader *stream)
-	{
-		return stream->GetByte();
-	}
-
-	size_t fread ( void * ptr, size_t size, size_t count, BufferedDataReader * stream )
-	{
-		return stream->ReadBytes(ptr, size, count);
-	}
-	int fclose ( BufferedDataReader * stream )
-	{
-		if (stream == nullptr)
-			return 0;
-		stream->Close();
-		HQ_DELETE (stream);
-		return 0;
-	}
-
-	long ftell ( BufferedDataReader * stream )
-	{
-		return stream->Tell();
-	}
-
-	int fseek ( BufferedDataReader * stream, long int offset, int origin )
-	{
-		return stream->Seek(offset, (HQDataReaderStream::StreamSeekOrigin)origin);
-	}
-
-	void rewind( BufferedDataReader *stream)
-	{
-		stream->Rewind();
-	}
-
 	//BufferedDataReader class
 	static const size_t DefaultBufferSize = 8192;
 

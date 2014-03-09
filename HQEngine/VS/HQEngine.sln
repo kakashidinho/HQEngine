@@ -30,6 +30,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQRendererD3D11", "..\Sourc
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQSceneManagement", "..\Source\HQSceneManagement\HQSceneManagement.vcproj", "{9BAA75AB-BFC1-4BB1-AC7E-D81805DB7D65}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2DD0888C-18A2-485A-8528-ADEAE73F1C41} = {2DD0888C-18A2-485A-8528-ADEAE73F1C41}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQEngine", "..\Source\HQEngine\HQEngine.vcproj", "{2DD0888C-18A2-485A-8528-ADEAE73F1C41}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -46,6 +49,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQAudio", "..\Source\HQAudio\HQAudio.vcproj", "{8A6976E1-EE62-4BC1-8865-DDA506640A28}"
 	ProjectSection(ProjectDependencies) = postProject
 		{05907671-E330-415C-BF60-BAB7B1895E37} = {05907671-E330-415C-BF60-BAB7B1895E37}
+		{2DD0888C-18A2-485A-8528-ADEAE73F1C41} = {2DD0888C-18A2-485A-8528-ADEAE73F1C41}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQEngineDeployDll", "..\Source\HQEngineDeployDll\HQEngineDeployDll.csproj", "{EF7BDAC5-1186-4571-9BF9-9111D6ABDBC7}"

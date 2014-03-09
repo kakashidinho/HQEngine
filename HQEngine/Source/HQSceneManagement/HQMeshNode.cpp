@@ -10,6 +10,8 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQScenePCH.h"
 #include "../HQMeshNode.h"
+#include "../HQEngineApp.h"
+#include "../HQEngine/HQEngineResManagerImpl.h"
 #include "helperFunctions.h"
 #include "HQMeshNodeInternal.h"
 
@@ -24,12 +26,9 @@ COPYING.txt included with this distribution for more information.
 #	define TRACE(...)
 #endif
 
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-#include "../HQEngine/winstore/HQWinStoreFileSystem.h"
+#include "../HQEngine/HQEngineCommonInternal.h"
 
-using namespace HQWinStoreFileSystem;
-
-#endif
+using namespace HQEngineHelper;
 
 #define HQMESH_MAGIC_STR "HQEngineMeshFile"
 
@@ -57,15 +56,43 @@ HQMeshNode::HQMeshNode(const char *name,
 	m_animInfo(new AnimationInfo()),
 	m_reloading(false)
 {
+
+	this->Init(name, hqMeshFileName, vertexShaderID, pLogStream);
+
+}
+
+HQMeshNode::HQMeshNode(const char *name,
+		const char *hqMeshFileName, 
+		HQRenderDevice *pDevice, 
+		const char* vertexShaderName, 
+		HQLogStream *pLogStream)
+:	HQSceneNode(name),
+	m_pRenderDevice(pDevice), 
+	m_geoInfo(new GeometricInfo()),
+	m_animInfo(new AnimationInfo()),
+	m_reloading(false)
+{
+
+	HQEngineShaderResource* shaderRes = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource(vertexShaderName);
+	HQEngineShaderResImpl* shaderResImpl = (HQEngineShaderResImpl*) shaderRes;
+	hquint32 vertexShaderID = shaderResImpl != NULL ? shaderResImpl->GetShaderID(): HQ_NOT_USE_VSHADER;
+
+
+	this->Init(name, hqMeshFileName, vertexShaderID, pLogStream);
+
+}
+
+
+void HQMeshNode::Init(const char *name,
+		const char *hqMeshFileName ,
+		hquint32 vertexShaderID,
+		HQLogStream *pLogStream)
+{
 	m_hqMeshFileName = HQ_NEW char[strlen(hqMeshFileName) + 1];
 	strcpy(m_hqMeshFileName, hqMeshFileName);
 
 	//load binary file
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-	auto f = HQWinStoreFileSystem::OpenFileForRead(hqMeshFileName);
-#else
-	FILE *f = fopen(hqMeshFileName, "rb");
-#endif
+	HQDataReaderStream* f = HQEngineApp::GetInstance()-> OpenFileForRead(hqMeshFileName);
 	if (f == NULL)
 	{
 		if (pLogStream != NULL)
@@ -114,19 +141,6 @@ HQMeshNode::HQMeshNode(const char *name,
 
 		throw std::bad_alloc();
 	}
-	
-	//change current working directory to the directory contains this file
-#ifdef WIN32
-	wchar_t *cwd ;
-#else
-	char *cwd;
-#endif
-	
-	cwd = HQSceneManagementHelper::GetCurrentDir();
-
-	char *containingDir = HQSceneManagementHelper::GetContainingDir(hqMeshFileName);//get containing folder of this file
-	if (containingDir != NULL)
-		HQSceneManagementHelper::SetCurrentDir(containingDir);
 
 	//load geometric data
 	if (!this->LoadGeometricInfo(f, header, vertexShaderID))
@@ -142,11 +156,6 @@ HQMeshNode::HQMeshNode(const char *name,
 		
 			delete[] message;
 		}
-		//switch back to current dir
-		HQSceneManagementHelper::SetCurrentDir(cwd);
-		delete[] cwd;
-		delete[] containingDir;
-
 		throw std::bad_alloc();
 	}
 	
@@ -174,10 +183,6 @@ HQMeshNode::HQMeshNode(const char *name,
 			
 				delete[] message;
 			}
-			//switch back to current dir
-			HQSceneManagementHelper::SetCurrentDir(cwd);
-			delete[] cwd;
-			delete[] containingDir;
 			delete[] animFile;
 
 			throw std::bad_alloc();
@@ -197,11 +202,6 @@ HQMeshNode::HQMeshNode(const char *name,
 	}
 
 	this->Reset();
-
-	//switch back to current dir
-	HQSceneManagementHelper::SetCurrentDir(cwd);
-	delete[] cwd;
-	delete[] containingDir;
 }
 
 HQMeshNode::~HQMeshNode()
@@ -214,7 +214,7 @@ HQMeshNode::~HQMeshNode()
 	{
 		for (hquint32 j = 0; j < this->m_geoInfo->groups[i].material.numTextures; ++j)
 		{
-			m_pRenderDevice->GetTextureManager()->RemoveTexture(this->m_geoInfo->groups[i].material.textures[j]);
+			HQEngineApp::GetInstance()->GetResourceManager() ->RemoveTextureResource(this->m_geoInfo->groups[i].material.textures[j]);
 		}
 		delete[] this->m_geoInfo->groups[i].material.textures;
 	}
@@ -247,36 +247,15 @@ void HQMeshNode::OnResetDevice()
 	MeshFileHeader header;
 	fread(&header, sizeof(MeshFileHeader), 1, f);
 
-	//change current working directory to the directory contains this file
-#ifdef WIN32
-	wchar_t *cwd ;
-#else
-	char *cwd;
-#endif
-	
-	cwd = HQSceneManagementHelper::GetCurrentDir();
-
-	char *containingDir = HQSceneManagementHelper::GetContainingDir(m_hqMeshFileName);//get containing folder of this file
-	if (containingDir != NULL)
-		HQSceneManagementHelper::SetCurrentDir(containingDir);
 
 	this->LoadGeometricInfo(f, header, 0);
 
 	fclose(f);
-
-	//switch back to current dir
-	HQSceneManagementHelper::SetCurrentDir(cwd);
-	delete[] cwd;
-	delete[] containingDir;
 }
 
 bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, hquint32 vertexShaderID)
 {
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-	BufferedDataReader *f = (BufferedDataReader*) fptr;
-#else
-	FILE * f = (FILE*) fptr;
-#endif
+	HQDataReaderStream *f = (HQDataReaderStream*) fptr;
 	HQReturnVal re;
 	
 	if (!m_reloading)
@@ -395,7 +374,7 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, hquint32 
 		else
 		{
 			if (!m_reloading)
-				this->m_geoInfo->groups[i].material.textures = HQ_NEW hquint32[this->m_geoInfo->groups[i].material.numTextures];
+				this->m_geoInfo->groups[i].material.textures = HQ_NEW HQEngineTextureResource* [this->m_geoInfo->groups[i].material.numTextures];
 			char *textureName;
 
 			for (hquint32 j = 0; j < this->m_geoInfo->groups[i].material.numTextures; ++j)
@@ -407,15 +386,20 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, hquint32 
 				fread(textureName, textureNameSize, 1, f);
 				textureName[textureNameSize] = '\0';
 
-				//create texture
-				m_pRenderDevice->GetTextureManager()->AddTexture(
-					textureName, 
-					1.0f,
-					NULL,
-					0,
-					true,
-					HQ_TEXTURE_2D,
-					&this->m_geoInfo->groups[i].material.textures[j]);
+				HQEngineTextureResource* textureRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource(textureName);
+				if (textureRes == NULL)
+				{
+					//create texture
+					HQEngineApp::GetInstance()->GetResourceManager()->AddTextureResource(
+						textureName, 
+						textureName,
+						true,
+						HQ_TEXTURE_2D);
+
+					textureRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource(textureName);
+				}
+
+				this->m_geoInfo->groups[i].material.textures[j] = textureRes;
 		
 				delete[] textureName;
 			}//for (hquint32 j = 0; j < this->m_geoInfo->groups[i].material.numTextures; ++j)
@@ -469,7 +453,7 @@ void HQMeshNode::SetSubMeshTextures(hquint32 submeshIndex)
 	HQGeometricGroup &subMeshInfo = m_geoInfo->groups[submeshIndex];
 	for (hquint32 i = 0; i < subMeshInfo.material.numTextures ; ++i)
 	{
-		m_pRenderDevice->GetTextureManager()->SetTextureForPixelShader(i, subMeshInfo.material.textures[i]);
+		HQEngineApp::GetInstance()->GetEffectManager() ->SetTextureForPixelShader(i, subMeshInfo.material.textures[i]);
 	}
 }
 

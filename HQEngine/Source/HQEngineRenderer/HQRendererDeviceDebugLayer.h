@@ -168,7 +168,7 @@ public:
 		return m_pDevice->IsDSMultisampleTypeSupported(format , multisampleType);
 	}
 	
-	//return max number of render targets can be actived as a time
+	//return max number of render targets can be active as a time
 	hq_uint32 GetMaxActiveRenderTargets(){
 		return m_pDevice->GetMaxActiveRenderTargets();
 	}

@@ -357,7 +357,7 @@ public:
 											  HQMultiSampleType multisampleType) = 0;
 
 	///
-	///return max number of render targets can be actived at a time
+	///return max number of render targets can be active at a time
 	///
 	virtual hq_uint32 GetMaxActiveRenderTargets() = 0;
 

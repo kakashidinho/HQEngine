@@ -63,13 +63,58 @@ public:
 	HQNamedGraphicsRelatedObj(const char* _name) : HQEngineNamedObjImpl(_name) {}
 };
 
-/*-------base hash table using string key--------*/
+/*----------base hash table using pointer typed key-----------------*/
+template <class Key>
+//hash function for a pointer typed key
+struct HQEnginePtrKeyHashFunc {
+	hquint32 operator() (const Key& key) const {
+		return key->HashCode();
+	}
+};
+
+template <class Key>
+struct HQEnginePtrKeyEqual {
+	bool operator () (const Key & val1 , const Key &val2)const  
+	{
+		return val1->Equal(val2);
+	}
+};
+
+//hash table for a pointer typed key
+template
+<
+class Key ,
+class T ,
+class ProbingFunction = HQQuadradticProbing ,
+class MemoryManager = HQDefaultMemManager
+>
+class HQEnginePtrKeyHashTable: public HQClosedHashTable<Key, T, HQEnginePtrKeyHashFunc<Key> , ProbingFunction, HQEnginePtrKeyEqual<Key>,  MemoryManager>
+{
+public:
+	typedef HQClosedHashTable<Key, T , HQEnginePtrKeyHashFunc<Key> , ProbingFunction, HQEnginePtrKeyEqual<Key>,  MemoryManager > parentType;
+
+	/*----create hash table with 16 buckets and max load factor 0.75----------*/
+	HQEnginePtrKeyHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(pMemoryManager) {}
+protected:
+	hq_uint32 GetNewSize()
+	{
+		//resize table size to next prime number
+		hq_uint32 i = this->m_numBuckets + 1;
+		while ( !HQIsPrime(i) || (hq_float32)this->m_numItems / i > 0.5f )
+		{
+			++i;
+		}
+		return i;
+	}
+};
+
+/*------- hash table using string key--------*/
 template <class T>
-class HQEngineBaseHashTable : public HQClosedStringHashTable<T>
+class HQEngineStringHashTable : public HQClosedStringHashTable<T>
 {
 public:
 	typedef HQClosedStringHashTable<T> ParentType;
-	HQEngineBaseHashTable() : ParentType(3 , 0.5f) {}
+	HQEngineStringHashTable() : ParentType(3 , 0.5f) {}
 
 protected:
 	hq_uint32 GetNewSize()
@@ -90,6 +135,14 @@ namespace HQEngineHelper
 void seek_datastream (void* fileHandle, long offset, int origin);
 size_t tell_datastream (void* fileHandle);
 size_t read_datastream ( void * ptr, size_t size, size_t count, void * stream );
+
+//for easy porting from standard C io
+HQENGINE_API long ftell ( HQDataReaderStream * stream );
+HQENGINE_API int fseek ( HQDataReaderStream * stream, long int offset, int origin );
+HQENGINE_API void rewind( HQDataReaderStream* stream );
+HQENGINE_API int fgetc(HQDataReaderStream *stream);
+HQENGINE_API size_t fread ( void * ptr, size_t size, size_t count, HQDataReaderStream * stream );
+HQENGINE_API int fclose ( HQDataReaderStream * stream );
 
 };//namespace HQEngineHelper
 

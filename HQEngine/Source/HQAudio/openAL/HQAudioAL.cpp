@@ -12,6 +12,10 @@ COPYING.txt included with this distribution for more information.
 //
 #include "../HQAudioPCH.h"
 #include "HQAudioSourceAL.h"
+#include "../../HQEngineApp.h"
+#include "../../HQEngine/HQEngineCommonInternal.h"
+
+using namespace HQEngineHelper;
 
 #ifdef WIN32
 #	ifdef IMPLICIT_LINK
@@ -93,7 +97,7 @@ HQReturnVal HQAudioDeviceAL::CreateAudioBufferFromFile(const char *fileName, hq_
 		return HQ_OK;
 	}
 
-	FILE *f = fopen(fileName, "rb");
+	HQDataReaderStream  *f = HQEngineApp::GetInstance()->OpenFileForRead (fileName);
 	if (f == NULL)
 	{
 		Log("File \"%s\" doesn't exist!", fileName);
@@ -190,7 +194,7 @@ HQReturnVal HQAudioDeviceAL::CreateAudioBufferFromFile(const char *fileName, hq_
 
 HQReturnVal HQAudioDeviceAL::CreateStreamAudioBufferFromFile(const char *fileName, hquint32 numSubBuffers, hquint32 subBufferSize, hq_uint32 *pBufferID)
 {
-	FILE *f = fopen(fileName, "rb");
+	HQDataReaderStream  *f = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
 
 	if (f == NULL)
 	{

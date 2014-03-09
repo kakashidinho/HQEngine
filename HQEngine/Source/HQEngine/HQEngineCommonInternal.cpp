@@ -33,5 +33,38 @@ size_t read_datastream ( void * ptr, size_t size, size_t count, void * fileHandl
 	return stream->ReadBytes(ptr, size, count);
 }
 
+/*-------------for easy porting from standard C io---------------*/
+int fgetc(HQDataReaderStream *stream)
+{
+	return stream->GetByte();
+}
+
+size_t fread ( void * ptr, size_t size, size_t count, HQDataReaderStream * stream )
+{
+	return stream->ReadBytes(ptr, size, count);
+}
+int fclose ( HQDataReaderStream * stream )
+{
+	if (stream == NULL)
+		return 0;
+	stream->Release();
+	return 0;
+}
+
+long ftell ( HQDataReaderStream * stream )
+{
+	return stream->Tell();
+}
+
+int fseek ( HQDataReaderStream * stream, long int offset, int origin )
+{
+	return stream->Seek(offset, (HQDataReaderStream::StreamSeekOrigin)origin);
+}
+
+void rewind( HQDataReaderStream *stream)
+{
+	stream->Rewind();
+}
+
 
 };//namespace HQEngineHelper

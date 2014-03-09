@@ -12,12 +12,9 @@ COPYING.txt included with this distribution for more information.
 #include "../HQMeshNode.h"
 #include "HQMeshNodeInternal.h"
 
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-#include "../HQEngine/winstore/HQWinStoreFileSystem.h"
+#include "../HQEngine/HQEngineCommonInternal.h"
 
-using namespace HQWinStoreFileSystem;
-
-#endif
+using namespace HQEngineHelper;
 
 #include <stdio.h>
 #include <string.h>
@@ -273,11 +270,8 @@ HQMeshNode::AnimationInfo::~AnimationInfo()
 /*------HQMeshNode-------*/
 bool HQMeshNode::LoadAnimationInfo(const char *fileName)
 {
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-	auto f = HQWinStoreFileSystem::OpenFileForRead(fileName);
-#else
-	FILE *f = fopen(fileName, "rb");
-#endif
+	HQDataReaderStream* f = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
+
 	HQAnimationFileHeader header;
 
 	fread(&header, sizeof(HQAnimationFileHeader), 1, f);

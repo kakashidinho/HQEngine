@@ -15,20 +15,15 @@ COPYING.txt included with this distribution for more information.
 #include "../HQAudio.h"
 #include "../HQItemManager.h"
 #include "../HQLoggableObject.h"
+#include "../HQDataStream.h"
 #include <string.h>
-#include <stdio.h>
 #include <vorbis/vorbisfile.h>
 
 #ifdef APPLE
 #	define RAW_VORBIS
 #endif
 
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-#	include "../HQEngine/winstore/HQWinStoreFileSystem.h"
-#	define HQ_AUDIO_FILE_STREAM HQWinStoreFileSystem::BufferedDataReader
-#else
-#	define HQ_AUDIO_FILE_STREAM FILE
-#endif
+#define HQ_AUDIO_FILE_STREAM HQDataReaderStream
 
 
 /*---------HQBaseAudioSourceController---------------*/

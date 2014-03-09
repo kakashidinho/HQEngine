@@ -151,7 +151,7 @@ public:
 	bool IsDSMultisampleTypeSupported(HQDepthStencilFormat format , 
 											  HQMultiSampleType multisampleType);
 	
-	//return max number of render targets can be actived at a time
+	//return max number of render targets can be active at a time
 	hq_uint32 GetMaxActiveRenderTargets(){
 		return pEnum->selectedDevice->dCaps.NumSimultaneousRTs;
 	}
