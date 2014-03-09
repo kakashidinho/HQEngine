@@ -84,6 +84,7 @@ How to build
 - Windows Phone 8:
 	* Open Windows Phone's solution "/HQEngine/VS2012/WindowsPhone/HQEngine/HQEngine.sln". 
 	Note: Be sure to use Windows Phone version if you are using VS Express.
+	* Choose "StaticDebug" configuration.
 	* Build and run "testWP" project.
 - Android:
 	* Open Cygwin. (If using Windows)
