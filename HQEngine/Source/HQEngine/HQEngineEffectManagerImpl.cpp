@@ -796,6 +796,8 @@ HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromXML(con
 
 	data_stream->Release();
 
+	this->Log("Effects loading session from file '%s' created!", fileName);
+
 	return HQ_NEW HQEngineEffectLoadSessionImpl(doc);
 }
 
@@ -1535,7 +1537,10 @@ HQSharedPtr<HQEngineRTGroupWrapper> HQEngineEffectManagerImpl::CreateOrGetRTGrou
 		//create new
 		re = HQ_NEW HQEngineRTGroupWrapper();
 		if (re->Init(params) != HQ_OK)
+		{
+			Log("Error : Could not create render target group!");
 			return NULL;
+		}
 		m_renderTargetGroups.Add(&re->GetCreationParams(), re); 
 	}
 
@@ -1554,7 +1559,10 @@ HQSharedPtr<HQEngineDSBufferWrapper> HQEngineEffectManagerImpl::CreateOrGetDSBuf
 		//create new
 		re = HQ_NEW HQEngineDSBufferWrapper();
 		if (re->Init(params) != HQ_OK)
+		{
+			Log("Error : Could not create depth stencil buffer!");
 			return NULL;
+		}
 		m_dsBuffers.Add(&re->GetCreationParams(), re); 
 	}
 
@@ -1573,7 +1581,10 @@ HQSharedPtr<HQEngineShaderProgramWrapper> HQEngineEffectManagerImpl::CreateOrGet
 		//create new
 		re = HQ_NEW HQEngineShaderProgramWrapper();
 		if (re->Init(params) != HQ_OK)
+		{
+			Log("Error : Could not create shader program!");
 			return NULL;
+		}
 		m_shaderPrograms.Add(&re->GetCreationParams(), re); 
 	}
 
@@ -1592,7 +1603,10 @@ HQSharedPtr<HQEngineBlendStateWrapper> HQEngineEffectManagerImpl::CreateOrGetBle
 		//create new
 		re = HQ_NEW HQEngineBlendStateWrapper();
 		if (re->Init(params) != HQ_OK)
+		{
+			Log("Error : Could not create blend state object!");
 			return NULL;
+		}
 		m_blendStates.Add(&re->GetCreationParams(), re); 
 	}
 
@@ -1611,7 +1625,10 @@ HQSharedPtr<HQEngineDSStateWrapper> HQEngineEffectManagerImpl::CreateOrGetDSStat
 		//create new
 		re = HQ_NEW HQEngineDSStateWrapper();
 		if (re->Init(params) != HQ_OK)
+		{
+			Log("Error : Could not create depth stencil state object!");
 			return NULL;
+		}
 		m_dsStates.Add(&re->GetCreationParams(), re); 
 	}
 
@@ -1630,7 +1647,10 @@ HQSharedPtr<HQEngineSamplerStateWrapper> HQEngineEffectManagerImpl::CreateOrGetS
 		//create new
 		re = HQ_NEW HQEngineSamplerStateWrapper();
 		if (re->Init(params) != HQ_OK)
+		{
+			Log("Error : Could not create sampler state object!");
 			return NULL;
+		}
 		m_samplerStates.Add(&re->GetCreationParams(), re); 
 	}
 

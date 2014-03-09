@@ -23,6 +23,7 @@ D3D9 Render Target Manager : Init done!
 D3D9 Render State Manager : Init done!
 D3D9 Render Device : Successfully created! Renderer : NVIDIA GeForce GT 635M  
 Engine's Resource Manager : Init done!
+Engine's Effect Manager : Effects loading session from file 'effects.xml' created!
 XAudio2 Device : Init done! Device Description: Speakers (High Definition Audio Device)
 XAudio2 Device : Released!
 Engine's Resource Manager : Released!

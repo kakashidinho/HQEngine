@@ -48,7 +48,7 @@ private:
 class HQEngineBlendStateWrapper: public HQGraphicsRelatedObj {
 public:
 	struct CreationParams{
-		CreationParams() {}
+		CreationParams() {isExState = false;}
 		
 		hquint32 HashCode() const ;
 		bool Equal(const CreationParams* params2) const;
@@ -75,7 +75,7 @@ public:
 class HQEngineDSStateWrapper: public HQGraphicsRelatedObj{
 public:
 	struct CreationParams{
-		CreationParams() {}
+		CreationParams() {isTwoSideState = false;}
 		hquint32 HashCode() const ;
 		bool Equal(const CreationParams* params2) const;
 		
