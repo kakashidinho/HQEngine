@@ -13,8 +13,10 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#if 0
 #define HQ_CUSTOM_MALLOC
 #include "../HQEngineCustomHeap.h"
+#endif
 
 //#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 //#define new DEBUG_NEW
