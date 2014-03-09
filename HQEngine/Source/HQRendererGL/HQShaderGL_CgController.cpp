@@ -360,7 +360,7 @@ HQReturnVal HQBaseCgShaderController::CreateShaderFromStreamCg(HQShaderType type
 
 	char * streamContent = new char [dataStream->TotalSize() + 1];
 	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
-	streamContent[dataStream->TotalSize()] = '0';
+	streamContent[dataStream->TotalSize()] = '\0';
 
 	sobject->program=cgCreateProgram(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
 												 streamContent,profile,entryFunctionName,(const char**) args);

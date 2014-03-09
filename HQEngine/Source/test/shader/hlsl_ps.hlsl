@@ -17,7 +17,7 @@ struct vIn
 };
 
 Texture2D texture0 : register (t0);
-SamplerState sampler0 : register (s15);
+SamplerState sampler0 : register (s0);
 
 float4 PS(in float4 position : SV_Position,
 	in float2 texcoord  : TEXCOORD0  , 

@@ -1,0 +1,35 @@
+D3D9 Texture Manager : Init done!
+D3D9 Texture Manager : 	2D texture compression support:
+D3D9 Texture Manager : 		S3TC DXT1 : all
+D3D9 Texture Manager : 		S3TC DXT3 : all
+D3D9 Texture Manager : 		S3TC DXT5 : all
+D3D9 Texture Manager : 		ETC1 : software
+D3D9 Texture Manager : 		PVRTC RGB 2BPP : software
+D3D9 Texture Manager : 		PVRTC RGB 4BPP : software
+D3D9 Texture Manager : 		PVRTC RGBA 2BPP : software
+D3D9 Texture Manager : 		PVRTC RGBA 4BPP : software
+D3D9 Texture Manager : 	Cube texture compression support:
+D3D9 Texture Manager : 		S3TC DXT1 : all
+D3D9 Texture Manager : 		S3TC DXT3 : all
+D3D9 Texture Manager : 		S3TC DXT5 : all
+D3D9 Texture Manager : 		ETC1 : software
+D3D9 Texture Manager : 		PVRTC RGB 2BPP : software
+D3D9 Texture Manager : 		PVRTC RGB 4BPP : software
+D3D9 Texture Manager : 		PVRTC RGBA 2BPP : software
+D3D9 Texture Manager : 		PVRTC RGBA 4BPP : software
+D3D9 Vertex Stream Manager : Init done!
+D3D9 Shader Manager : Init done! Cg library version is 3.1.0013
+D3D9 Render Target Manager : Init done!
+D3D9 Render State Manager : Init done!
+D3D9 Render Device : Successfully created! Renderer : NVIDIA GeForce GT 635M  
+Engine's Resource Manager : Init done!
+XAudio2 Device : Init done! Device Description: Speakers (High Definition Audio Device)
+XAudio2 Device : Released!
+Engine's Resource Manager : Released!
+D3D9 Shader Manager : Released!
+D3D9 Texture Manager : Released!
+D3D9 Texture Manager : Released!
+D3D9 Vertex Stream Manager : Released!
+D3D9 Render Target Manager : Released!
+D3D9 Render State Manager : Released!
+D3D9 Render Device : Released!

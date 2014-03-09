@@ -386,10 +386,11 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, hquint32 
 				fread(textureName, textureNameSize, 1, f);
 				textureName[textureNameSize] = '\0';
 
+				//check if texture resource is already loaded
 				HQEngineTextureResource* textureRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource(textureName);
 				if (textureRes == NULL)
 				{
-					//create texture
+					//create texture resource
 					HQEngineApp::GetInstance()->GetResourceManager()->AddTextureResource(
 						textureName, 
 						textureName,

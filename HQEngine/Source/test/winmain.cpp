@@ -145,7 +145,7 @@ struct OneTimeInit
 #if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #	if defined (_DEBUG) || defined(DEBUG)
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_crtBreakAlloc = 177;
+	//_crtBreakAlloc = 1053;
 
 #	endif
 #endif
@@ -156,171 +156,14 @@ static OneTimeInit ontTimeInit;
 
 int HQEngineMain(int argc, char **argv)
 {	
-	int * p = HQ_NEW int;
-
-	TRACE("here %s %d", __FILE__, __LINE__);
-
-	HQAtomic<short> si;
-
-	HQVector4 * pvec = HQVector4::New(1,1,1);
-	HQFloat3 f3 = *pvec;
-	HQFloat4 f4 = *pvec;
-	delete pvec;
-
-	{
-		const HQVector4 & buitin1 = HQVector4::Origin();
-		TRACE("addres of HQVector4::Origin() = %p", &buitin1);
-	}
-	{
-		const HQVector4 & buitin = HQVector4::PositiveX();
-		TRACE("addres of HQVector4::PositiveX() = %p", &buitin);
-	}
-	{
-		const HQVector4 & buitin = HQVector4::NegativeX();
-		TRACE("addres of HQVector4::NegativeX() = %p", &buitin);
-	}
-	{
-		const HQVector4 & buitin = HQVector4::PositiveY();
-		TRACE("addres of HQVector4::PositiveY() = %p", &buitin);
-	}
-	{
-		
-		const HQVector4 & buitin = HQVector4::NegativeY();
-		TRACE("addres of HQVector4::NegativeY() = %p", &buitin);
-	}
-	{
-		const HQVector4 & buitin = HQVector4::PositiveZ();
-		TRACE("addres of HQVector4::PositiveZ() = %p", &buitin);
-	}
-	{
-		const HQVector4 & buitin = HQVector4::NegativeZ();
-		TRACE("addres of HQVector4::NegativeZ() = %p", &buitin);
-	}
-	size_t svec = sizeof(HQVector4);
-	svec = sizeof(HQFloat4);
-
-	svec = sizeof(HQQuaternion);
-
-	size_t smat = sizeof(HQMatrix4);
-	smat = sizeof(HQMatrix3x4);
-
-	HQ_DECL_STACK_VECTOR4_CTOR_PARAMS( vec2, (1, 2 ,3));
-	
-
-	TRACE("HERE %s, %d", __FILE__, __LINE__);
-
-	HQMutex mutex;
-	mutex.Lock();
-	mutex.Unlock();
-	mutex.Lock();
-	
-
-	HQSemaphore sem(3);
-	HQSemaphore sem2(3);
-	sem.Lock();
-	sem.Lock();
-	sem.Lock();
-	sem.Unlock();
-	sem.Lock();
-	
-	/*
-	_Thread thread;
-	thread.Start();
-	thread.Join();
-	thread.Start();
-	thread.Join();
-	thread.Start();
-	thread.Join();
-	thread.Start();
-	thread.Join();
-	thread.Start();
-	*/
-
-	TRACE("HERE %s, %d", __FILE__, __LINE__);
-
-	//test HQUtilMath
-	HQA16ByteMatrix4Ptr mat(1, 2, 3, 4,
-							5, 6, 7, 8,
-							9, 10, 11, 12,
-							13, 14, 15, 16);
-
-	HQA16ByteMatrix3x4Ptr mat2(1, 2, 3, 4,
-							5, 6, 7, 8,
-							9, 10, 11, 12);
-
-	TRACE("HERE %s, %d", __FILE__, __LINE__);
-
-	mat->Transpose();
-
-	HQA16ByteVector4Ptr vec3(1, 2, 3);
-
-	TRACE("HERE %s, %d: vec3=%p", __FILE__, __LINE__, vec3.operator void *());
-
-	vec3->Normalize();
-
-	TRACE("HERE %s, %d: vec3=%p", __FILE__, __LINE__, vec3.operator void *());
-
-	HQVector4 *re = vec3;
-
-	size_t sizeVec = sizeof(HQVector4);
-	
-	TRACE("HERE %s, %d", __FILE__, __LINE__);
-
-	HQA16ByteQuaternionPtr quat;
-	quat->QuatFromRotAxisOx(HQPiFamily::_PIOVER3);
-
-	TRACE("quat = {%f, %f, %f, %f}", quat->x, quat->y, quat->z, quat->w);
-
-	quat->QuatToMatrix4r(mat);
-
-	quat->QuatToMatrix3x4c(mat2);
-
-	TRACE("matrix 4 from quat:");
-	TRACE("====>{%f, %f, %f, %f}", mat->_11, mat->_12, mat->_13, mat->_14);
-	TRACE("====>{%f, %f, %f, %f}", mat->_21, mat->_22, mat->_23, mat->_24);
-	TRACE("====>{%f, %f, %f, %f}", mat->_31, mat->_32, mat->_33, mat->_34);
-	TRACE("====>{%f, %f, %f, %f}", mat->_41, mat->_42, mat->_43, mat->_44);
-
-	TRACE("matrix 3x4 from quat:");
-	TRACE("====>{%f, %f, %f, %f}", mat2->_11, mat2->_12, mat2->_13, mat2->_14);
-	TRACE("====>{%f, %f, %f, %f}", mat2->_21, mat2->_22, mat2->_23, mat2->_24);
-	TRACE("====>{%f, %f, %f, %f}", mat2->_31, mat2->_32, mat2->_33, mat2->_34);
-
-
-	HQA16ByteQuaternionPtr quat2;
-	HQQuaternion *quat2ptr = quat2;
-	TRACE("quat2 = %p", quat2ptr);
-	quat2->QuatFromMatrix3x4c(*mat2);
-
-	TRACE("quat from matrix 3x4 = {%f, %f, %f, %f}", quat2->x, quat2->y, quat2->z, quat2->w);
-
-	HQA16ByteQuaternionPtr quat3;
-	quat2->QuatFromMatrix4r(*mat);
-
-	TRACE("quat from matrix 4 = {%f, %f, %f, %f}", quat2->x, quat2->y, quat2->z, quat2->w);
-
-
-	float det;
-	HQMatrix4Inverse(mat, &det, mat);
-
-	HQA16ByteMatrix4Ptr mat2Inv;
-	HQMatrix3x4Inverse(mat2, mat2Inv);
-
-	//HQMatrix4 identity = *mat2Inv * *mat2  ;
-
-	float length = quat->GetMagnitude();
-
-	TRACE("HERE %s, %d", __FILE__, __LINE__);
 /*-----------------------------------------------*/
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	InitCommonControls();
 #endif
 
-	TRACE("here %s %d", __FILE__, __LINE__);
 	
 	Game game;
 
-	TRACE("here %s %d", __FILE__, __LINE__);
 	HQEngineApp::GetInstance()->SetRenderDelegate(game);
 
 	

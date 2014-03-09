@@ -15,9 +15,13 @@ COPYING.txt included with this distribution for more information.
 #else
 #include "HQDefaultFileManager.h"
 #endif
-HQDefaultFileManager::~HQDefaultFileManager()
+HQDefaultFileManager::HQDefaultFileManager()
 {
 	m_searchPaths.PushBack("");
+}
+
+HQDefaultFileManager::~HQDefaultFileManager()
+{
 }
 
 HQDataReaderStream * HQDefaultFileManager::OpenFileForRead(const char* name)
@@ -64,11 +68,17 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 	size_t len ;
 	bool needSlash = false;
 	HQLinkedList<size_t> slashPositions; //positions of '\\' or '/' characters
+#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+	char slash = '\\';
+#else
+	char slash = '/';
+#endif
+	
 
 	len = strlen(name);
 	if (parent != "")
 	{
-		if (parent[parent.size()-1] != '\\')
+		if (parent[parent.size()-1] != '\\' && parent[parent.size()-1] != '/')
 		{
 			len += parent.size() + 1;
 			needSlash = true;
@@ -82,13 +92,13 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 	for (size_t i = 0; i < parent.size(); ++i)
 	{
 		fixedPath[i] = parent[i];
-		if (parent[i] == '\\')
+		if (parent[i] == '\\' || parent[i] == '/')
 			slashPositions.PushBack(i);
 	}
 	fixedPathPos = parent.size();
 	if (needSlash)
 	{
-		fixedPath[fixedPathPos] = '\\';
+		fixedPath[fixedPathPos] = slash;
 		slashPositions.PushBack(fixedPathPos);
 		fixedPathPos += 1;
 	}
@@ -116,7 +126,7 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 			}
 			else
 			{
-				fixedPath[fixedPathPos] = '\\';
+				fixedPath[fixedPathPos] = slash;
 				slashPositions.PushBack(fixedPathPos);//push the slash position to positions list
 			}
 

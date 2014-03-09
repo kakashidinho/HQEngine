@@ -71,33 +71,6 @@ class Game : public HQEngineRenderDelegate
 	, public HQEngineMotionListener, public HQEngineAppListener, public HQEngineOrientationListener
 #endif
 {
-private:
-	bool deviceLost;
-	int API;
-	hq_uint32 program;
-	hq_uint32 programMesh;
-	hq_uint32 uniformBuffer[2];
-	hq_uint32 textureBuffer;
-	hq_uint32 vertexbuffer[4];
-	hq_uint32 indexbuffer;
-	hq_uint32 vertexLayout[3];
-	hq_uint32 colorTexture;
-	hq_uint32 texture, texCube, temp[3];
-	hquint32 curTexture;
-	hq_uint32 samplerState[2];
-	hq_uint32 dsState;
-	hq_uint32 music;
-	HQA16ByteStorageArrayPtr< HQMatrix3x4 , 3> rotation;
-	HQA16ByteMatrix4Ptr viewProj;
-	HQLogStream* logFile;
-
-	HQMeshNode * mesh;
-#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-	MeshX *meshX;
-#endif
-#ifdef LINUX
-	Display *dpy;
-#endif
 public:
 #ifdef LINUX
 #error need implement
@@ -137,8 +110,10 @@ public:
 	void OnPause() ;
 	void OnResume() ;
 #if defined ANDROID || defined HQ_WIN_PHONE_PLATFORM
-	 bool BackButtonPressed();
+	bool BackButtonPressed();
 #endif
+
+private:
 	
 	HQMutex mutex;
 	
@@ -147,6 +122,28 @@ public:
 	
 #endif //#if	defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	
+	
+private:
+	bool deviceLost;
+	int API;
+	hq_uint32 uniformBuffer[2];
+	hq_uint32 vertexbuffer[4];
+	hq_uint32 indexbuffer;
+	hq_uint32 vertexLayout[3];
+	hq_uint32 colorTexture;
+	hq_uint32 music;
+	HQA16ByteStorageArrayPtr< HQMatrix3x4 , 3> rotation;
+	HQA16ByteMatrix4Ptr viewProj;
+	HQLogStream* logFile;
+
+	HQMeshNode * mesh;
+#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+	MeshX *meshX;
+#endif
+#ifdef LINUX
+	Display *dpy;
+#endif
+
 	hquint32 m_offsetX, m_offsetY;
 
 	HQEngineApp::RenderDevice *pDevice;

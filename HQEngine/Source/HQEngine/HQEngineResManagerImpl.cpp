@@ -13,6 +13,8 @@ COPYING.txt included with this distribution for more information.
 #include "../HQGrowableArray.h"
 #include "HQEngineResManagerImpl.h"
 
+//TO DO: reload resources when device lost
+
 /*------------texture resource----------*/
 HQEngineTextureResImpl::HQEngineTextureResImpl(const char* name)
 : HQNamedGraphicsRelatedObj(name),
@@ -136,6 +138,8 @@ HQReturnVal HQEngineResManagerImpl::AddResourcesFromXML(const char* fileName)
 		if (this->AddNextResource(session) != HQ_OK)
 			re = HQ_FAILED;
 	}
+
+	this->EndAddResources(session);
 	
 
 	return re;
@@ -517,9 +521,10 @@ HQReturnVal HQEngineResManagerImpl::LoadShaderFromXML(TiXmlElement* shaderItem)
 		}//else if (!strcmp(elemName, "entry"))
 		else if (!strcmp(elemName, "definition"))
 		{
+			const char emptyDef[] = "";
 			HQShaderMacro newMacro;
 			newMacro.name = item_elem->Attribute("name");
-			newMacro.definition = elemStr;
+			newMacro.definition = elemStr != NULL? elemStr : emptyDef;
 			if (newMacro.name == NULL)
 			{
 				Log("Warning : Shader resource loading ignored no named definition!");
@@ -542,6 +547,9 @@ HQReturnVal HQEngineResManagerImpl::LoadShaderFromXML(TiXmlElement* shaderItem)
 	if (byteCode)
 		return this->AddShaderResourceFromByteCode(res_name, shaderType, src_file);
 	else
+	{
+		HQShaderMacro end = {NULL, NULL};
+		macros.Add(end);
 		return this->AddShaderResource(
 							res_name,
 							shaderType,
@@ -549,6 +557,7 @@ HQReturnVal HQEngineResManagerImpl::LoadShaderFromXML(TiXmlElement* shaderItem)
 							src_file,
 							macros,
 							entry);
+	}
 
 	return HQ_OK;
 }

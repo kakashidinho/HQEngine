@@ -320,7 +320,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 
 	char * streamContent = new char [dataStream->TotalSize() + 1];
 	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
-	streamContent[dataStream->TotalSize()] = '0';
+	streamContent[dataStream->TotalSize()] = '\0';
 
 	HQShaderObjectD3D9 *sobject= new HQShaderObjectD3D9();
 	sobject->program=cgCreateProgram(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,

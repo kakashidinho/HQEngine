@@ -26,10 +26,13 @@ public:
 		:m_name(NULL)
 	{
 	}
-	HQEngineNamedObjImpl(const char* _name) {
+	HQEngineNamedObjImpl(const char* _name) 
+		:m_name(NULL)
+	{
 		SetName(_name);
 	}
-	~HQEngineNamedObjImpl(){
+	~HQEngineNamedObjImpl()
+	{
 		if (m_name) delete[] m_name;
 	}
 
@@ -57,7 +60,7 @@ protected:
 };
 
 /*---------named graphics related object------*/
-class HQNamedGraphicsRelatedObj: public HQGraphicsRelatedObj, public virtual HQEngineNamedObjImpl{
+class HQNamedGraphicsRelatedObj: public HQGraphicsRelatedObj, public HQEngineNamedObjImpl{
 public:
 	HQNamedGraphicsRelatedObj(): HQEngineNamedObjImpl() {}
 	HQNamedGraphicsRelatedObj(const char* _name) : HQEngineNamedObjImpl(_name) {}

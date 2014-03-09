@@ -293,6 +293,12 @@ HQReturnVal HQEngineApp::CreateRenderDevice(const WindowInitParams* initParams)
 
 HQReturnVal HQEngineApp::DestroyWindow()
 {
+	//delete managers
+	HQEngineResManagerImpl* resManagerImpl = static_cast<HQEngineResManagerImpl*> (m_resManager);
+	HQEngineEffectManagerImpl* effectManagerImpl = static_cast<HQEngineEffectManagerImpl*> (m_effectManager);
+	SafeDelete(resManagerImpl);
+	SafeDelete(effectManagerImpl);
+
 	//release render device
 	if (m_pRenderDevice)
 	{
@@ -300,11 +306,6 @@ HQReturnVal HQEngineApp::DestroyWindow()
 		m_pRenderDevice = NULL;
 	}
 
-	//delete managers
-	HQEngineResManagerImpl* resManagerImpl = static_cast<HQEngineResManagerImpl*> (m_resManager);
-	HQEngineEffectManagerImpl* effectManagerImpl = static_cast<HQEngineEffectManagerImpl*> (m_effectManager);
-	SafeDelete(resManagerImpl);
-	SafeDelete(effectManagerImpl);
 
 	//delete window
 	SafeDelete(m_window);
@@ -551,4 +552,18 @@ HQDataReaderStream* HQEngineApp::OpenFileForRead(const char *file){
 	}
 
 	return NULL;
+}
+
+bool HQEngineApp::AddFileSearchPath(const char* path)
+{
+	HQDefaultFileManager *defaultFileManager = (HQDefaultFileManager*) m_fileManagers.GetFront();
+	defaultFileManager->AddLastSearchPath(path);
+	return true;
+}
+
+bool HQEngineApp::PushFileSearchPath(const char* path)
+{
+	HQDefaultFileManager *defaultFileManager = (HQDefaultFileManager*) m_fileManagers.GetFront();
+	defaultFileManager->AddFirstSearchPath(path);
+	return true;
 }

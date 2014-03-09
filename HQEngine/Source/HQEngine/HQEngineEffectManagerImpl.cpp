@@ -568,10 +568,10 @@ HQEngineRenderEffectImpl::HQEngineRenderEffectImpl(const char* name,
 		m_passIdxMap.Add(pPass->GetName(), i);
 
 		//set default values
-		if (pPass->shaderProgram == NULL) pPass->shaderProgram = HQ_NEW HQEngineShaderProgramWrapper();
-		if (pPass->renderTargetGroup == NULL) pPass->renderTargetGroup = HQ_NEW HQEngineRTGroupWrapper();
-		if (pPass->blendState == NULL) pPass->blendState = HQ_NEW HQEngineBlendStateWrapper();
-		if (pPass->dsState == NULL) pPass->dsState = HQ_NEW HQEngineDSStateWrapper();
+		if (pPass->shaderProgram == NULL) m_passes[i]->shaderProgram = HQ_NEW HQEngineShaderProgramWrapper();
+		if (pPass->renderTargetGroup == NULL) m_passes[i]->renderTargetGroup = HQ_NEW HQEngineRTGroupWrapper();
+		if (pPass->blendState == NULL) m_passes[i]->blendState = HQ_NEW HQEngineBlendStateWrapper();
+		if (pPass->dsState == NULL) m_passes[i]->dsState = HQ_NEW HQEngineDSStateWrapper();
 	}
 }
 HQEngineRenderEffectImpl::~HQEngineRenderEffectImpl() 
@@ -762,6 +762,8 @@ HQReturnVal HQEngineEffectManagerImpl::AddEffectsFromXML(const char* fileName)
 		if (this->AddNextEffect(session) != HQ_OK)
 			re = HQ_FAILED;
 	}
+
+	this->EndAddEffects(session);
 	
 
 	return re;
@@ -786,7 +788,7 @@ HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromXML(con
 
 	if (doc->LoadFile(stream) == false)
 	{
-		this->Log("Error : Could not load effects from file %s!", fileName);
+		this->Log("Error : Could not load effects from file %s! %d:%d: %s", fileName, doc->ErrorRow(), doc->ErrorCol(), doc->ErrorDesc());
 		delete doc;
 		data_stream->Release();
 		return NULL;

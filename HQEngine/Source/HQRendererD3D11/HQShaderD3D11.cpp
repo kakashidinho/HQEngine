@@ -670,7 +670,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamCg(HQShaderType type,
 
 	char * streamContent = new char [dataStream->TotalSize() + 1];
 	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
-	streamContent[dataStream->TotalSize()] = '0';
+	streamContent[dataStream->TotalSize()] = '\0';
 	
 	char ** predefineMacroArgs = this->GetPredefineMacroArgumentsCg(pDefines);
 	CGprogram program=cgCreateProgram(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
@@ -818,7 +818,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamHLSL(HQShaderType type,
 
 	char * streamContent = new char [dataStream->TotalSize() + 1];
 	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
-	streamContent[dataStream->TotalSize()] = '0';
+	streamContent[dataStream->TotalSize()] = '\0';
 
 	ID3D10Blob *pBlob = 0;
 	ID3D10Blob *pError = 0;
