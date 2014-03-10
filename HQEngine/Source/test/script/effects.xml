@@ -15,6 +15,10 @@
 				<compare_func>less</compare_func> <!-- default is always -->
 			</stencil>
 			<depth>full</depth> <!-- default is none -->
+			<blend>
+				<src_factor>one minus src alpha</src_factor>
+				<dest_factor>src alpha</dest_factor>
+			</blend>
 		</pass>
 	</technique>
 </techniques>
