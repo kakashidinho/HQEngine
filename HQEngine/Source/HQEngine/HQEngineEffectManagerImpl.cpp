@@ -717,7 +717,7 @@ HQEngineEffectManagerImpl::HQEngineEffectManagerImpl(HQLogStream *stream, bool f
 	//add/sub/rev sub
 	m_blendOpMap.Add("add", HQ_BO_ADD);
 	m_blendOpMap.Add("sub", HQ_BO_SUBTRACT);
-	m_blendOpMap.Add("rev add", HQ_BO_REVSUBTRACT);
+	m_blendOpMap.Add("rev sub", HQ_BO_REVSUBTRACT);
 
 	//wrap/mirror/clamp/border
 	m_taddrModeMap.Add("wrap", HQ_TAM_WRAP);
