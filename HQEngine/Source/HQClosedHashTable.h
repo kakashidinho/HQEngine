@@ -70,6 +70,7 @@ class MemoryManager = HQDefaultMemManager
 class HQClosedHashTable
 {
 public:
+	typedef HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> HashTableType;
 	typedef HQHashTableBucket<Key , T > HashTableBucketType;
 	/*------iterator class - for traversing through list of items in this manager---*/
 	class Iterator
@@ -197,7 +198,7 @@ protected:
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
 T HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager>:: m_invalidValue;
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
-T HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager>:: m_invalidKey;
+Key HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager>:: m_invalidKey;
 
 
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
@@ -389,6 +390,8 @@ void HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , Mem
 	if (m_buckets[index].m_isEmpty == 0)
 	{
 		m_buckets[index].m_isEmpty = 1;
+		m_buckets[index].m_entry.m_first = HashTableType::m_invalidKey;
+		m_buckets[index].m_entry.m_second = HashTableType::m_invalidValue;
 		this->m_numItems --;
 	}
 }
