@@ -9,6 +9,8 @@ COPYING.txt included with this distribution for more information.
 */
 
 #include "../../HQEngineApp.h"
+#include "../../HQConditionVariable.h"
+#include "../../HQAtomic.h"
 #include "../HQEventSeparateThread.h"
 
 #include <jni.h>
@@ -82,6 +84,10 @@ static int g_appStatusFlag = hq_internalAppNormalState;
 static HQMutex g_mutex;
 #else
 
+//for blocking game thread
+static HQSimpleConditionVar g_pauseGameThreadCnd;
+static HQAtomic<bool> g_game_thread_blocked = false;
+
 # include <sys/atomics.h>
 
 static volatile int g_appStatusFlag = hq_internalAppNormalState;
@@ -153,6 +159,47 @@ int HQAppInternalGetStatusFlag()
 #else
 	return __sync_fetch_and_or(&g_appStatusFlag, 0x0);
 #endif
+}
+
+/*----------game thread blocking control--------*/
+
+void HQAppInternalBlockGameLoopIfNeeded()
+{
+	if (!g_pauseGameThreadCnd.TryLock())
+		return;
+    
+	if (HQAppInternalGetStatusFlag() == hq_internalAppIsPaused)
+	{
+		g_game_thread_blocked = true;
+        
+		g_pauseGameThreadCnd.Wait();
+        
+	}
+    
+	g_pauseGameThreadCnd.Unlock();
+}
+
+static void HQAppInternalWakeGameLoopIfNeededNoLock()
+{
+	bool shouldWake = false;
+    
+	shouldWake = g_game_thread_blocked;
+	g_game_thread_blocked = false;
+    
+	if (shouldWake)
+		g_pauseGameThreadCnd.Signal();
+    
+}
+
+
+static void HQAppInternalWakeGameLoopIfNeeded()
+{
+	g_pauseGameThreadCnd.Lock();
+	
+	HQAppInternalWakeGameLoopIfNeededNoLock();
+    
+	g_pauseGameThreadCnd.Unlock();
+    
 }
 
 /*----------for manually stop activity when game thread exit while activity is still running----------*/
@@ -331,7 +378,9 @@ extern "C"
 	  (JNIEnv *env, jobject thiz)
 	{
 		HQAppInternalSetStatusFlag(hq_internalAppNormalState);
-	
+        
+        HQAppInternalWakeGameLoopIfNeeded();//wake game thread if needed
+        
 		HQEngineApp *pEngineApp = HQEngineApp::GetInstance();
 		
 		if (pEngineApp != NULL)
