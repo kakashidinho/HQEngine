@@ -59,7 +59,7 @@ HQGrowableArray<T>::HQGrowableArray(hq_uint32 _growQuantity)
 }
 
 template <class T>
-HQGrowableArray<T>::HQGrowableArray(hq_uint32 initCapacity , hq_uint32 growQuantity)
+HQGrowableArray<T>::HQGrowableArray(hq_uint32 initCapacity , hq_uint32 _growQuantity)
 : size(0), capacity(initCapacity) , growQuantity(_growQuantity)
 {
 	this->elements = (T*) malloc(capacity * sizeof(T));

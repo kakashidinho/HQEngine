@@ -13,6 +13,8 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQPrimitiveDataType.h"
 
+#include <stdlib.h>
+
 class HQDataReaderStream
 {
 public:

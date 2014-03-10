@@ -31,6 +31,7 @@ COPYING.txt included with this distribution for more information.
 #include <fstream>
 
 #include "../HQPlatformDef.h"
+#include "../HQRendererPlatformDef.h"
 #include "../HQItemManager.h"
 #include "../HQLoggableObject.h"
 #include "../HQLinkedList.h"

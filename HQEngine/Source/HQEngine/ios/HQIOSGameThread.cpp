@@ -8,7 +8,7 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#include "../../HQEngineCommon.h"
+#include "../../HQEngineApp.h"
 #include "../HQEventSeparateThread.h"
 
 HQEventQueue* hq_engine_eventQueue_internal;

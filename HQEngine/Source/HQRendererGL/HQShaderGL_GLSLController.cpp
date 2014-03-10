@@ -14,6 +14,8 @@ COPYING.txt included with this distribution for more information.
 
 #include <string>
 
+#define LOG_SRC_ERR 0
+
 const char semanticKeywords[] =
 	"\
 #define VPOSITION\n\
@@ -235,14 +237,16 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 
 
 	/*--------set shader source---------*/
+
+#ifdef GLES
+	const char prefDefExtVersion[]	= "#define HQEXT_GLSL_ES\n";
+#else
+	const char prefDefExtVersion[]	= "#define HQEXT_GLSL\n";
+#endif
 	const GLchar* sourceArray[] = {
 		version_string.c_str(),
+		prefDefExtVersion,
 		macroDefList.c_str(),
-#ifdef GLES
-		"#define HQEXT_GLSL_ES\n",
-#else
-		"#define HQEXT_GLSL\n",
-#endif
 		semanticKeywords,
 		samplerKeywords,
 		"#line 0 0\n",
@@ -265,10 +269,25 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	    glGetShaderiv(sobject->shader, GL_INFO_LOG_LENGTH,&infologLength);
 	    if (infologLength > 0)
 	    {
+#if LOG_SRC_ERR
+			int src_length;
+			char * glsource;
+			glGetShaderiv(sobject->shader, GL_SHADER_SOURCE_LENGTH,&src_length);
+			glsource = (char*)malloc(src_length);
+			glGetShaderSource(sobject->shader, src_length, NULL, glsource);
+#endif
 	        infoLog = (char *)malloc(infologLength);
 	        glGetShaderInfoLog(sobject->shader, infologLength, &charsWritten, infoLog);
+
+#if LOG_SRC_ERR
+			g_pShaderMan->Log("GLSL shader compile error: %s. Source code=<%s>",infoLog, glsource);
+#else
 			g_pShaderMan->Log("GLSL shader compile error: %s",infoLog);
+#endif
 	        free(infoLog);
+#if LOG_SRC_ERR
+			free(glsource);
+#endif
 	    }
 		delete sobject;
 		return HQ_FAILED;

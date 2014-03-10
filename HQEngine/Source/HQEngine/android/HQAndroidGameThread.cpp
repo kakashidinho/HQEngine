@@ -8,7 +8,7 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#include "../../HQEngineCommon.h"
+#include "../../HQEngineApp.h"
 #include "../HQEventSeparateThread.h"
 
 #include <android/log.h>
