@@ -242,7 +242,7 @@ void HQMeshNode::OnResetDevice()
 	
 	m_reloading = true;
 
-	FILE * f = fopen(m_hqMeshFileName, "rb");
+	HQDataReaderStream* f = HQEngineApp::GetInstance()-> OpenFileForRead(m_hqMeshFileName);
 
 	MeshFileHeader header;
 	fread(&header, sizeof(MeshFileHeader), 1, f);
