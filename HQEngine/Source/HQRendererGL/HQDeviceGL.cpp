@@ -637,6 +637,8 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 			glActiveTexture(gl_texture(i));
 			glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
 		}
+        
+        glActiveTexture(GL_TEXTURE0);
 	}
 
 #endif
