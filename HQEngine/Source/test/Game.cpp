@@ -7,7 +7,7 @@
 #define GLES_EMULATION
 #endif
 
-#define HQ_CUSTOM_MALLOC
+//#define HQ_CUSTOM_MALLOC
 #include "../HQEngineCustomHeap.h"
 
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)

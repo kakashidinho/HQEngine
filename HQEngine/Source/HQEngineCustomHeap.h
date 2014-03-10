@@ -56,13 +56,20 @@ HQENGINE_API void HQEngineFree (void *ptr, const char *file, int line);
 }
 #endif
 
-#ifndef HQ_NO_CUSTOM_HEAP
+#ifdef HQ_NO_CUSTOM_HEAP
+
+#define HQ_MALLOC(size) malloc(size)
+#define HQ_REALLOC(ptr, size)  realloc(ptr, size)
+#define HQ_FREE(ptr) free(ptr)
+
+#else
 
 #define HQ_MALLOC(size)  (HQEngineMalloc(size, __FILE__, __LINE__))
 #define HQ_REALLOC(ptr, size)  (HQEngineRealloc(ptr, size, __FILE__, __LINE__))
 #define HQ_FREE(ptr) (HQEngineFree(ptr, __FILE__, __LINE__))
 
 #ifdef HQ_CUSTOM_MALLOC
+#pragma message ("using custom malloc")
 #define malloc(size) HQ_MALLOC(size)
 #define realloc(p, size) HQ_REALLOC(p, size)
 #define free(p) HQ_FREE(p)
