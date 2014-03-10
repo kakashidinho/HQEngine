@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define HQ_SHADER_GL_GLSL_H
 
 #include "HQShaderGL_Common.h"
+#include <string>
 
 
 struct HQShaderProgramGL_GLSL : public HQBaseShaderProgramGL
@@ -34,7 +35,7 @@ protected:
 	void BindUniformBlockGLSL(GLuint program);
 	void BindSamplerUnitGLSL(HQBaseShaderProgramGL* pProgram , HQLinkedList<HQUniformSamplerGL>& samplerList);
 	
-	void GetPredefineMacroGLSL(std::string & macroDefList , const HQShaderMacro * pDefines, bool ignoreVersion);//convert HQShaderMacro array to GLSL macro definition
+	void GetPredefineMacroGLSL(std::string & macroDefList , const HQShaderMacro * pDefines, std::string &version_string);//convert HQShaderMacro array to GLSL macro definition
 
 
 	HQReturnVal DeActiveProgramGLSL();

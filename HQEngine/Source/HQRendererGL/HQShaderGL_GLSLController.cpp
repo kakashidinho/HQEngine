@@ -102,7 +102,7 @@ HQBaseGLSLShaderController::~HQBaseGLSLShaderController()
 	SafeDelete(pVParser);
 }
 
-void HQBaseGLSLShaderController::GetPredefineMacroGLSL(std::string & macroDef , const HQShaderMacro * pDefines, bool ignoreVersion)
+void HQBaseGLSLShaderController::GetPredefineMacroGLSL(std::string & macroDef , const HQShaderMacro * pDefines, std::string &version_string)
 {
 	if(pDefines == NULL)
 		return;
@@ -110,19 +110,21 @@ void HQBaseGLSLShaderController::GetPredefineMacroGLSL(std::string & macroDef , 
 	macroDef = "";
 	while (pD->name != NULL && pD->definition != NULL)
 	{
-		if (!strcmp(pD->name , "version"))
+		if (!strcmp(pD->name , "version") && version_string.size() == 0)
 		{
-			macroDef += "#version ";
+			version_string = "#version ";
+            version_string += pD->definition;
+            version_string += '\n';
 		}
 		else
 		{
 			macroDef += "#define ";
 			macroDef += pD->name;
 			macroDef += " ";
+            macroDef += pD->definition;
+            macroDef += '\n';
 		}
-		macroDef += pD->definition;
-		macroDef += '\n';
-		pD++;
+        pD++;
 	}
 }
 
@@ -233,7 +235,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 
 	/*---create macro definition list---------*/
 	std::string macroDefList;
-	this->GetPredefineMacroGLSL(macroDefList , pDefines, version_string.size() != 0);
+	this->GetPredefineMacroGLSL(macroDefList , pDefines, version_string);
 
 
 	/*--------set shader source---------*/

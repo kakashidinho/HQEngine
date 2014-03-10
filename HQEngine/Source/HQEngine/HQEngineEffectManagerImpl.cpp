@@ -14,7 +14,11 @@ COPYING.txt included with this distribution for more information.
 /*--------------common hash code------------------*/
 template <class T>
 static inline hquint32 SPtrHashCode(const HQSharedPtr<T>& ptr){
+#if defined (__LP64__) || defined(_M_X64) || defined(__amd64__)
+	return ((hquint64)ptr.GetRawPointer() * 2654435761) & 0xffffffff;
+#else
 	return (hquint32)ptr.GetRawPointer() * 2654435761;
+#endif
 }
 
 template <class T>
@@ -1461,7 +1465,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem
 			HQEngineRenderTargetWrapper rtOutput;
 			const char defaultCubeFaceStr[] = "+x";
 			const char* cubeFaceStr = defaultCubeFaceStr;
-			if (sscanf(attriName, "target%u", targetIdx) != 1)
+			if (sscanf(attriName, "target%u", &targetIdx) != 1)
 			{
 				Log("Error : invald token %s!", attriName);
 				return HQ_FAILED;
