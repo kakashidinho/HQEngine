@@ -549,3 +549,9 @@ bool HQEngineApp::PushFileSearchPath(const char* path)
 	defaultFileManager->AddFirstSearchPath(path);
 	return true;
 }
+
+bool HQEngineApp::AddFileManager(HQFileManager *fileManager)
+{
+	m_fileManagers.PushBack(fileManager);
+	return true;
+}

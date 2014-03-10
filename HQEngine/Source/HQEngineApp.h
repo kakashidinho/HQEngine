@@ -210,6 +210,11 @@ public:
 	HQDataReaderStream* OpenFileForRead(const char *file);///open a file
 	bool AddFileSearchPath(const char* path);///add a path to the list of default file manager's searching paths for a file. This path will be searched last.
 	bool PushFileSearchPath(const char* path);///add a path to the list of default file manager's searching paths for a file. This path will be searched first.
+	///
+	///add a custom file manager. If default file manager and all previously added custom file managers cannot open a file, 
+	///this newly added file manager will be used to open it.
+	///
+	bool AddFileManager(HQFileManager *fileManager);
 private:
 	static HQEngineApp *sm_instance;
 
