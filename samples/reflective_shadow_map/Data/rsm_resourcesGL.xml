@@ -1,0 +1,50 @@
+<resources>
+	<shader name="noise_decoding_vs"> <!-- name will be default to source file name -->
+		<type>vertex shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>glsl</src_type>  <!-- default is cg -->
+		<src>noise_decoding-compiled-cg.glslv</src> <!-- source file -->
+	</shader>
+	
+	<shader name="noise_decoding_ps"> <!-- name will be default to source file name -->
+		<type>pixel shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>glsl</src_type>  <!-- default is cg -->
+		<src>noise_decoding-compiled-cg.glslf</src> <!-- source file -->
+	</shader>
+	
+	<shader name="depth-pass_vs"> <!-- name will be default to source file name -->
+		<type>vertex shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>glsl</src_type>  <!-- default is cg -->
+		<src>depth-pass-compiled-cg.glslv</src> <!-- source file -->
+	</shader>
+	
+	<shader name="depth-pass_ps"> <!-- name will be default to source file name -->
+		<type>pixel shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>glsl</src_type>  <!-- default is cg -->
+		<src>depth-pass-compiled-cg.glslf</src> <!-- source file -->
+	</shader>
+	
+	<shader name="lowres-pass_vs"> <!-- name will be default to source file name -->
+		<type>vertex shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>glsl</src_type>  <!-- default is cg -->
+		<src>lowres-pass-compiled-cg.glslv</src> <!-- source file -->
+	</shader>
+	
+	<shader name="lowres-pass_ps"> <!-- name will be default to source file name -->
+		<type>pixel shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>glsl</src_type>  <!-- default is cg -->
+		<src>lowres-pass-compiled-cg.glslf</src> <!-- source file -->
+	</shader>
+	
+	
+	<shader name="final-gathering_vs"> <!-- name will be default to source file name -->
+		<type>vertex shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>glsl</src_type>  <!-- default is cg -->
+		<src>final-gathering-compiled-cg.glslv</src> <!-- source file -->
+	</shader>
+	
+	<shader name="final-gathering_ps"> <!-- name will be default to source file name -->
+		<type>pixel shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>glsl</src_type>  <!-- default is cg -->
+		<src>final-gathering-compiled-cg.glslf</src> <!-- source file -->
+	</shader>
+</resources>

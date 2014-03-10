@@ -1,49 +1,36 @@
-GL Shader Manager - GLSL only: creating GLSL fixed function vertex shader(light=1, specular=1, texture=1)
-GL Shader Manager - GLSL only: creating GLSL fixed function fragment shader(texture=1)
-GL Shader Manager - GLSL only: creating GLSL fixed function program(light=1, specular=1, texture=1): vshader=1, fshader=2
-GL Shader Manager - GLSL only: creating GLSL fixed function vertex shader(light=1, specular=1, texture=0)
-GL Shader Manager - GLSL only: creating GLSL fixed function fragment shader(texture=0)
-GL Shader Manager - GLSL only: creating GLSL fixed function program(light=1, specular=1, texture=0): vshader=4, fshader=5
-GL Shader Manager - GLSL only: creating GLSL fixed function vertex shader(light=1, specular=0, texture=1)
-GL Shader Manager - GLSL only: creating GLSL fixed function program(light=1, specular=0, texture=1): vshader=7, fshader=2
-GL Shader Manager - GLSL only: creating GLSL fixed function vertex shader(light=1, specular=0, texture=0)
-GL Shader Manager - GLSL only: creating GLSL fixed function program(light=1, specular=0, texture=0): vshader=9, fshader=5
-GL Shader Manager - GLSL only: creating GLSL fixed function vertex shader(light=0, specular=0, texture=1)
-GL Shader Manager - GLSL only: creating GLSL fixed function program(light=0, specular=0, texture=1): vshader=11, fshader=2
-GL Shader Manager - GLSL only: creating GLSL fixed function vertex shader(light=0, specular=0, texture=0)
-GL Shader Manager - GLSL only: creating GLSL fixed function program(light=0, specular=0, texture=0): vshader=13, fshader=5
-GL Shader Manager - GLSL only: Init done!
-GL Texture Manager: Init done!
-GL Texture Manager: 	2D texture compression support:
-GL Texture Manager: 		S3TC DXT1 : all
-GL Texture Manager: 		S3TC DXT3 : all
-GL Texture Manager: 		S3TC DXT5 : all
-GL Texture Manager: 		ETC1 : software
-GL Texture Manager: 		PVRTC RGB 2BPP : none
-GL Texture Manager: 		PVRTC RGB 4BPP : none
-GL Texture Manager: 		PVRTC RGBA 2BPP : none
-GL Texture Manager: 		PVRTC RGBA 4BPP : none
-GL Texture Manager: 	Cube texture compression support:
-GL Texture Manager: 		S3TC DXT1 : all
-GL Texture Manager: 		S3TC DXT3 : all
-GL Texture Manager: 		S3TC DXT5 : all
-GL Texture Manager: 		ETC1 : software
-GL Texture Manager: 		PVRTC RGB 2BPP : none
-GL Texture Manager: 		PVRTC RGB 4BPP : none
-GL Texture Manager: 		PVRTC RGBA 2BPP : none
-GL Texture Manager: 		PVRTC RGBA 4BPP : none
-GL Render State Manager : Init done!
-GL Vertex Stream Manager : Init done!
-GL Render Target Manager : Init done!
-GL Render Device : Successfully created! Renderer : GeForce GT 635M/PCIe/SSE2, OpenGL version : 4.4.0
+D3D9 Texture Manager : Init done!
+D3D9 Texture Manager : 	2D texture compression support:
+D3D9 Texture Manager : 		S3TC DXT1 : all
+D3D9 Texture Manager : 		S3TC DXT3 : all
+D3D9 Texture Manager : 		S3TC DXT5 : all
+D3D9 Texture Manager : 		ETC1 : software
+D3D9 Texture Manager : 		PVRTC RGB 2BPP : software
+D3D9 Texture Manager : 		PVRTC RGB 4BPP : software
+D3D9 Texture Manager : 		PVRTC RGBA 2BPP : software
+D3D9 Texture Manager : 		PVRTC RGBA 4BPP : software
+D3D9 Texture Manager : 	Cube texture compression support:
+D3D9 Texture Manager : 		S3TC DXT1 : all
+D3D9 Texture Manager : 		S3TC DXT3 : all
+D3D9 Texture Manager : 		S3TC DXT5 : all
+D3D9 Texture Manager : 		ETC1 : software
+D3D9 Texture Manager : 		PVRTC RGB 2BPP : software
+D3D9 Texture Manager : 		PVRTC RGB 4BPP : software
+D3D9 Texture Manager : 		PVRTC RGBA 2BPP : software
+D3D9 Texture Manager : 		PVRTC RGBA 4BPP : software
+D3D9 Vertex Stream Manager : Init done!
+D3D9 Shader Manager : Init done! Cg library version is 3.1.0013
+D3D9 Render Target Manager : Init done!
+D3D9 Render State Manager : Init done!
+D3D9 Render Device : Successfully created! Renderer : NVIDIA GeForce GT 635M  
 Engine's Resource Manager : Init done!
 Engine's Effect Manager : Effects loading session from file 'effects.xml' created!
 XAudio2 Device : Init done! Device Description: Speakers (High Definition Audio Device)
 XAudio2 Device : Released!
 Engine's Resource Manager : Released!
-GL Shader Manager - GLSL only: Released!
-GL Vertex Stream Manager : Released!
-GL Render Target Manager : Released!
-GL Render State Manager : Released!
-GL Texture Manager: Released!
-GL Render Device : Released!
+D3D9 Shader Manager : Released!
+D3D9 Texture Manager : Released!
+D3D9 Texture Manager : Released!
+D3D9 Vertex Stream Manager : Released!
+D3D9 Render Target Manager : Released!
+D3D9 Render State Manager : Released!
+D3D9 Render Device : Released!
