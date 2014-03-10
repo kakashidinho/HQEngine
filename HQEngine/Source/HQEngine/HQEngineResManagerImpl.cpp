@@ -150,7 +150,7 @@ HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromXML(const c
 	HQDataReaderStream* data_stream = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
 	if (data_stream == NULL)
 	{
-		this->Log("Error : Could not load resources from file %s!", fileName);
+		this->Log("Error : Could not load resources from file %s! Could not open the file!", fileName);
 		return NULL;
 	}
 
@@ -164,7 +164,7 @@ HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromXML(const c
 
 	if (doc->LoadFile(stream) == false)
 	{
-		this->Log("Error : Could not load resources from file %s!", fileName);
+		this->Log("Error : Could not load resources from file %s! %d:%d: %s", fileName, doc->ErrorRow(), doc->ErrorCol(), doc->ErrorDesc());
 		delete doc;
 		data_stream->Release();
 		return NULL;

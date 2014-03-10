@@ -778,7 +778,7 @@ HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromXML(con
 	HQDataReaderStream* data_stream = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
 	if (data_stream == NULL)
 	{
-		this->Log("Error : Could not load effects from file %s!", fileName);
+		this->Log("Error : Could not load effects from file %s! Could not open the file!", fileName);
 		return NULL;
 	}
 

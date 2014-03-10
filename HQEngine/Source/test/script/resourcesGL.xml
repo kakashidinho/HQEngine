@@ -5,6 +5,7 @@
 		<entry>main</entry> <!-- entry function. default is 'main'. ignored in bytecode/glsl src_type -->
 		<src>vs-mesh.txt</src> <!-- source file -->
 		<definition name="TEXTURE_COLOR">0</definition> <!-- macro definition for compiling the source code. Can have more than one or none. -->
+		<definition name="version">120</definition>
 		<definition name="NOT_ORIGIN"></definition>
 		<definition name="NUNIFORM_BUFFER"></definition>
 	</shader>
