@@ -21,12 +21,6 @@ COPYING.txt included with this distribution for more information.
 #define LOWRES_RT_HEIGHT 128 //offscreen render target size
 
 
-#define STR_CONCAT(str1, str2) str1 str2
-#define DATA_FILE(fileName) STR_CONCAT("../Data/",fileName)
-#define API_BASED_VSHADER_FILE(api, fileName) (api == HQ_RA_D3D? STR_CONCAT(DATA_FILE(fileName),".cg") : STR_CONCAT(DATA_FILE(fileName),"-compiled-cg.glslv"))
-#define API_BASED_FSHADER_FILE(api, fileName) (api == HQ_RA_D3D? STR_CONCAT(DATA_FILE(fileName),".cg") : STR_CONCAT(DATA_FILE(fileName),"-compiled-cg.glslf"))
-#define API_BASED_SHADER_MODE(api) (api == HQ_RA_D3D ? HQ_SCM_CG: HQ_SCM_GLSL)
-
 /*------basic light structure---------*/
 struct BaseLight{
 	BaseLight(const HQColor& diffuse,
@@ -77,9 +71,6 @@ public:
 	void Render(HQTime dt);
 
 private:
-	void DepthPassInit();//init render targets
-	void LowresPassInit();
-	void FinalPassInit();
 	void DecodeNoiseMap();//decode noise map from RGBA image to float texture
 
 	void DepthPassRender(HQTime dt);//render depth pass
@@ -101,25 +92,7 @@ private:
 
 	SpotLight * m_light;
 
-	//for depth pass rendering
-	hquint32 depth_pass_rtGroupID;//depth pass render targets group
-	hquint32 depth_pass_rtTextures[4];//textures associating with render targets
-	hquint32 depth_pass_depth_buffer;//depth buffer for depth pass
-	hquint32 depth_pass_program;//shader program
-
-	//for low res rendering
-	hquint32 lowres_pass_rtGroupID;//render targets
-	hquint32 lowres_pass_rtTextures[3];//textures associating with this render targets
-	hquint32 lowres_depth_buffer;//depth buffer for lowres pass
-	hquint32 lowres_pass_program;//shader program
-
-	//for final gathering
-	hquint32 final_pass_program;
-
-	//for low res rendering and final gathering
-	hquint32 m_noise_map;//noise map texture
-	hquint32 point_sstate;//point sampling state
-	hquint32 border_sstate;//black border sampling state
+	HQEngineRenderEffect* rsm_effect;
 
 	char m_renderAPI_name[6];//"D3D9" or "GL"
 	HQRenderAPI m_renderAPI_type;

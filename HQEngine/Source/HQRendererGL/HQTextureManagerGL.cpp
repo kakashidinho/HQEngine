@@ -1376,6 +1376,25 @@ HQReturnVal HQTextureManagerGL::GetTexture2DSize(hq_uint32 textureID, hquint32 &
 	return HQ_OK;
 }
 
+//define the size for texture. useful for textures created outside texture manager, such as those created by render target manager
+void HQTextureManagerGL::DefineTexture2DSize(HQTexture* pTex, hquint32 width, hquint32 height)
+{
+	if (pTex == NULL)
+		return;
+
+	HQTextureGL* pTexGL = ((HQTextureGL*)pTex);
+
+	if (pTexGL->textureDesc != NULL)
+	{
+		free(pTexGL->textureDesc);
+	}
+	
+	HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)malloc (sizeof(HQTexture2DDesc));
+	l_textureDesc->width = width;
+	l_textureDesc->height = height;
+	pTexGL->textureDesc = l_textureDesc;
+}
+
 HQTextureCompressionSupport HQTextureManagerGL::IsCompressionSupported(HQTextureType textureType,HQTextureCompressionFormat type)
 {
 	switch (type)

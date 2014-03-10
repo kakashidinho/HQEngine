@@ -66,6 +66,8 @@ public:
 #endif
 
 	HQReturnVal GetTexture2DSize(hq_uint32 textureID, hquint32 &width, hquint32& height);
+	void DefineTexture2DSize(HQTexture* pTex, hquint32 width, hquint32 height);//define the size for texture. useful for textures created outside texture manager, such as those created by render target manager
+
 	HQTextureCompressionSupport IsCompressionSupported(HQTextureType textureType,HQTextureCompressionFormat type);
 	
 	inline void ActiveTextureUnit(hq_uint32 slot)
@@ -112,8 +114,7 @@ public:
 	HQReturnVal CreateCubeTexture(hq_uint32 numMipmaps,HQTexture * pTex);
 	HQReturnVal SetAlphaValue(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 B,hq_ubyte8 A);//set giá trị alpha của texel trong texture có giá trị RGB như tham số(hoặc R nến định dạng texture chỉ có kênh 8 bit greyscale) thành giá trị A.
 	HQReturnVal SetTransparency(hq_float32 alpha);//set giá trị alpha lớn nhất của toàn bộ texel thành alpha
-
-
+	
 #ifndef GLES
 	HQReturnVal CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic);
 	HQReturnVal MapTextureBuffer(hq_uint32 textureID , void **ppData);

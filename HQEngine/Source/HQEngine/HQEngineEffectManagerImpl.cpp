@@ -904,6 +904,7 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPassFromXML(TiXmlElement* passItem, H
 	HQEngineBlendStateWrapper::CreationParams blendStateParams;
 	HQEngineRTGroupWrapper::CreationParams rtGroupParams;
 	bool useDefaultRT = true;
+	bool useBlendState = false;
 
 	TiXmlElement * elem = passItem->FirstChildElement();
 	for (; elem != NULL; elem = elem->NextSiblingElement())
@@ -949,6 +950,7 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPassFromXML(TiXmlElement* passItem, H
 		{
 			if (HQFailed(this->ParseXMLBlendState(elem, blendStateParams)) )
 				return HQ_FAILED;
+			useBlendState = true;
 		}
 		else if (!strcmp(elemName, "stencil"))
 		{
@@ -1024,11 +1026,13 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPassFromXML(TiXmlElement* passItem, H
 			return HQ_FAILED;
 	}
 
-	//create blend state
-	newPass->blendState = this->CreateOrGetBlendState(blendStateParams);
-	if (newPass->blendState == NULL)
-		return HQ_FAILED;
-
+	if (useBlendState)
+	{
+		//create blend state
+		newPass->blendState = this->CreateOrGetBlendState(blendStateParams);
+		if (newPass->blendState == NULL)
+			return HQ_FAILED;
+	}
 	//create depth stencil state
 	newPass->dsState = this->CreateOrGetDSState(dsStateParams);
 	if (newPass->dsState == NULL)
@@ -1506,8 +1510,8 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem
 			if (global_width == 0xffffffff)
 			{
 				//store the global size
-				global_width = width;
-				global_height = height;
+				dsBufferParams.width = global_width = width;
+				dsBufferParams.height = global_height = height;
 			}
 			else
 			{
@@ -1532,7 +1536,8 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem
 	params.numOutputs = numOutputs;
 	params.outputs = outputArray;
 	//now create depth stencil buffer
-	params.dsBuffer = this->CreateOrGetDSBuffer(dsBufferParams);
+	if (useDSBuffer)
+		params.dsBuffer = this->CreateOrGetDSBuffer(dsBufferParams);
 
 	return HQ_OK;
 }

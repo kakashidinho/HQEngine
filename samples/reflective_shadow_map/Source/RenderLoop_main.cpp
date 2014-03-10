@@ -53,10 +53,17 @@ SpotLight::~SpotLight()
 RenderLoop::RenderLoop(const char* _renderAPI)
 {
 	strcpy(this->m_renderAPI_name, _renderAPI);
+	char apiResNamXML[256];
 	if (strcmp(m_renderAPI_name, "GL") == 0)
+	{
 		this->m_renderAPI_type = HQ_RA_OGL;
+		strcpy(apiResNamXML, "rsm_resourcesGL.xml");
+	}
 	else
+	{
 		this->m_renderAPI_type = HQ_RA_D3D;
+		strcpy(apiResNamXML, "rsm_resourcesD3D9.xml");
+	}
 
 	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
 
@@ -67,9 +74,9 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	//create model
 	m_model = new HQMeshNode(
 		"cornell_box", 
-		"../Data/cornell_box.hqmesh",
+		"cornell_box.hqmesh",
 		m_pRDevice,
-		HQ_NOT_USE_VSHADER,
+		"final-gathering_vs",
 		NULL);
 
 	//init camera
@@ -98,35 +105,20 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	m_scene->AddChild(m_model);
 	m_scene->AddChild(m_camera);
 
-	//init resources for depth pass
-	DepthPassInit();
+	//init resources
+	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromXML(apiResNamXML);
+	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromXML("rsm_resourcesCommon.xml");
+	HQEngineApp::GetInstance()->GetEffectManager()->AddEffectsFromXML("rsm_effects.xml");
 
-	//init resources and states for low res pass
-	LowresPassInit();
-
-	//int final pass
-	FinalPassInit();
+	//retrieve main effect
+	rsm_effect = HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("rsm");
 
 	//decode noise map from RGBA image to float texture
 	DecodeNoiseMap();
 
 	//init render device
 	m_pRDevice->SetClearColorf(1, 1, 1, 1);
-	m_pRDevice->GetStateManager()->SetFaceCulling(HQ_CULL_CCW);
-	HQDepthStencilStateDesc depthEnableState(HQ_DEPTH_FULL);
-	hquint32 depthEnableStateID = 0;
-	m_pRDevice->GetStateManager()->CreateDepthStencilState(depthEnableState, &depthEnableStateID);
-	m_pRDevice->GetStateManager()->ActiveDepthStencilState(depthEnableStateID);
 	//m_pRDevice->GetStateManager()->SetFillMode(HQ_FILL_WIREFRAME);
-
-	//point sampling state
-	HQSamplerStateDesc stDesc1(HQ_FM_MIN_MAG_POINT, HQ_TAM_CLAMP, HQ_TAM_CLAMP);
-	m_pRDevice->GetStateManager()->CreateSamplerState(stDesc1, &point_sstate);
-
-	//black border color sampling state
-	HQSamplerStateDesc stDesc2(HQ_FM_MIN_MAG_LINEAR, HQ_TAM_BORDER, HQ_TAM_BORDER, 1, HQColorRGBA(0.f, 0.f, 0.f, 1.f));
-	m_pRDevice->GetStateManager()->CreateSamplerState(stDesc2, &border_sstate);
-
 }
 
 //destructor
@@ -142,42 +134,12 @@ RenderLoop::~RenderLoop()
 
 void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float texture
 {
-	hquint32 encoded_noise_map, width, height;//encoded noise map
-	hquint32 vid, pid, program;//vertex, pixel shader, program
+	hquint32 width, height;//encoded noise map's size
+	//encoded noise map
+	HQEngineTextureResource *encoded_noise_map = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("random_factors_img");
 	hquint32 vBuffer, vInputLayout;//vertex buffer and input layout
-	hquint32 pointSamplerState;//point sampling state
 
-	//create decoding shader program
-	m_pRDevice->GetShaderManager()->CreateShaderFromFile(
-		HQ_VERTEX_SHADER,
-		API_BASED_SHADER_MODE(this->m_renderAPI_type),
-		API_BASED_VSHADER_FILE(this->m_renderAPI_type, "noise_decoding"),
-		NULL,
-		"VS",
-		&vid);
-
-	m_pRDevice->GetShaderManager()->CreateShaderFromFile(
-		HQ_PIXEL_SHADER,
-		API_BASED_SHADER_MODE(this->m_renderAPI_type),
-		API_BASED_FSHADER_FILE(this->m_renderAPI_type, "noise_decoding"),
-		NULL,
-		"PS",
-		&pid);
-
-	m_pRDevice->GetShaderManager()->CreateProgram(
-		vid, pid, HQ_NULL_GSHADER, NULL, 
-		&program);
-
-	//load texture containing encoded random numbers in RGBA format
-	m_pRDevice->GetTextureManager()->AddTexture(
-		"../Data/random_factors_20x20.tga",
-		1.0,
-		NULL,
-		0,
-		false,
-		HQ_TEXTURE_2D,
-		&encoded_noise_map);
-	m_pRDevice->GetTextureManager()->GetTexture2DSize(encoded_noise_map, width, height);
+	encoded_noise_map->GetTexture2DSize(width, height);
 
 	//create screen quad vertex buffer. vertex data contains width and height of noise map. This info is needed for half pixel offset in Direct3D9 device
 	float vertices[] = {
@@ -193,43 +155,15 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	HQVertexAttribDescArray<2> vAttrDescs;
 	vAttrDescs.SetPosition(0, 0, 0, HQ_VADT_FLOAT4);
 	vAttrDescs.SetTexcoord(1, 0, 4 * sizeof(float), HQ_VADT_FLOAT2, 0);
-	m_pRDevice->GetVertexStreamManager()->CreateVertexInputLayout(vAttrDescs, 2, vid, &vInputLayout);
-
-	//create render target to hold the decoded random numbers 
-	hquint32 decodeRT, decodeRTGroupID;
-	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetTexture(
-		width, height,
-		false,
-		HQ_RTFMT_RGBA_FLOAT64,
-		HQ_MST_NONE,
-		HQ_TEXTURE_2D,
-		&decodeRT,
-		&m_noise_map);
-	//create render target group
-	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetGroup(
-			&HQRenderTargetDesc(decodeRT),
-			HQ_NULL_ID,
-			1,
-			&decodeRTGroupID
-		);
-
-	//point sampling state
-	HQSamplerStateDesc stDesc1(HQ_FM_MIN_MAG_MIP_POINT, HQ_TAM_CLAMP, HQ_TAM_CLAMP);
-	m_pRDevice->GetStateManager()->CreateSamplerState(stDesc1, &pointSamplerState);
-
-	//now decode the random numbers by render them to texture. result = (R=decoded number 1, G=sin(2*pi*decoded number 2), B=cos(2*pi*decoded number 2), A = decoded number 1 ^ 2)
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(decodeRTGroupID);
-
-	m_pRDevice->GetShaderManager()->ActiveProgram(program);
+	HQEngineShaderResource* vshader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("noise_decoding_vs");
+	HQEngineApp::GetInstance()->GetEffectManager()->CreateVertexInputLayout(vAttrDescs, 2, vshader, &vInputLayout);
+	
+	//now begin the decoding process. read the encoded noise factors from texture and render the decoded factors to a float render target.
+	HQEngineRenderEffect* effect = HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("decode_random_factors");
+	effect->GetPass(0)->Apply();
 
 	m_pRDevice->GetVertexStreamManager()->SetVertexBuffer(vBuffer, 0, 6 * sizeof(float));
 	m_pRDevice->GetVertexStreamManager()->SetVertexInputLayout(vInputLayout);
-
-	if (strcmp(m_renderAPI_name, "GL") == 0)
-		m_pRDevice->GetStateManager()->SetSamplerState(encoded_noise_map, pointSamplerState);
-	else
-		m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER| 0, pointSamplerState);
-	m_pRDevice->GetTextureManager()->SetTextureForPixelShader(0, encoded_noise_map);
 
 	m_pRDevice->SetPrimitiveMode(HQ_PRI_TRIANGLE_STRIP);
 	//draw full screen quad
@@ -241,20 +175,12 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 
 	//clean up
 	m_pRDevice->GetVertexStreamManager()->RemoveVertexBuffer(vBuffer);
-	m_pRDevice->GetTextureManager()->RemoveTexture(encoded_noise_map);
-	m_pRDevice->GetShaderManager()->DestroyProgram(program);
-	m_pRDevice->GetShaderManager()->DestroyShader(vid);
-	m_pRDevice->GetShaderManager()->DestroyShader(pid);
+	HQEngineApp::GetInstance()->GetResourceManager()->RemoveTextureResource(encoded_noise_map);
+	HQEngineApp::GetInstance()->GetEffectManager()->RemoveEffect(effect);	
 
-	//switch to default render target
+	//for debugging
 	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(HQ_NULL_ID);
-
-	//switch back to default shader program
-	m_pRDevice->GetShaderManager()->ActiveProgram(HQ_NOT_USE_SHADER);
-
-	m_pRDevice->GetStateManager()->SetSamplerState(HQ_PIXEL_SHADER| 0, 0);
-
-	m_pRDevice->DisplayBackBuffer();//for debugging
+	m_pRDevice->DisplayBackBuffer();
 }
 
 //rendering loop

@@ -76,5 +76,5 @@ Base Pass format:
 			<depth_stencil_buffer_format> <!-- default is none -->
 				none/d24s8/d16/s8/d32
 			</depth_stencil_buffer_format>
-		</custom targets>
+		</custom_targets>
 	</pass>

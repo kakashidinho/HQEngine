@@ -235,6 +235,9 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 
 				//re-bind old texture
 				glBindTexture(GL_TEXTURE_2D, pTextureMan->GetActiveTextureUnitInfo().GetTexture2DGL());
+				//since we created a texture outside texture managet. we need to tell texture manager about the size of this texture
+				pTextureMan->DefineTexture2DSize(this->pTexture.GetRawPointer(), this->width, this->height);
+		
 			}
 			break;
 		case HQ_TEXTURE_CUBE:
@@ -255,6 +258,8 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 			}
 			//re-bind old texture
 			glBindTexture(GL_TEXTURE_CUBE_MAP, pTextureMan->GetActiveTextureUnitInfo().GetTextureCubeGL());
+			//since we created a texture outside texture managet. we need to tell texture manager about the size of this texture
+			pTextureMan->DefineTexture2DSize(this->pTexture.GetRawPointer(), this->width, this->width);
 			break;
 		}
 

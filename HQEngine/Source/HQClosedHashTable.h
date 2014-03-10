@@ -44,17 +44,18 @@ typedef hq_ubyte8 HQBucketBoolType;
 template <class Key , class T >
 struct HQHashTableBucket
 {
+	typedef HQPair<Key , T> EntryType;
 	HQHashTableBucket() : m_isEmpty(1) {}
 	HQHashTableBucket(HQBoolType isEmpty) : m_isEmpty(isEmpty) {}
 	HQHashTableBucket(Key key , T value) : m_isEmpty(0) , m_entry(key , value) {}
 
 	~HQHashTableBucket(){}
 
-	HQPair<Key , T> m_entry;
+	EntryType m_entry;
 	HQBucketBoolType m_isEmpty;
 };
 
-/*-----------this hash table resolves collision by using open addressing-----*/
+/*-----------this hash table resolves collision by using open addressing. Note: destructor will not be called when an item is removed from table-----*/
 //class MemoryManager will be used for malloc and free multiple HashTableBucketType objects
 template
 <
@@ -183,6 +184,7 @@ protected:
 	HashTableBucketType* m_buckets;
 
 	static T m_invalidValue;
+	static Key m_invalidKey;
 
 	hq_uint32 m_numBuckets;
 	hq_uint32 m_numItems;//num allocated slot
@@ -194,6 +196,9 @@ protected:
 };
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
 T HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager>:: m_invalidValue;
+template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
+T HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager>:: m_invalidKey;
+
 
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
 HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager>
