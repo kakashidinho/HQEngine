@@ -1250,6 +1250,9 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 	HQBlendOp op;
 	HQBlendFactor factor;
 	bool mappedValueFound = false;
+	bool alphaOpOverride = false;
+	bool alphaSrcFactorOverride = false;
+	bool alphaDstFactorOverride = false;
 
 	//initialize default values
 	params.isExState = false;
@@ -1298,7 +1301,8 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 				Log("Error : invalid alpha_operator=%s", attriValStr);
 				return HQ_FAILED;
 			}
-			params.isExState = true; params.descEx.alphaBlendOp = op;
+			params.isExState = true; params.descEx.alphaBlendOp = op; 
+			alphaOpOverride = true;
 		}
 		else if (!strcmp(attriName, "alpha_src_factor"))
 		{
@@ -1309,6 +1313,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 				return HQ_FAILED;
 			}
 			params.isExState = true; params.descEx.srcAlphaFactor = factor;
+			alphaSrcFactorOverride = true;
 		}
 		else if (!strcmp(attriName, "alpha_dest_factor"))
 		{
@@ -1319,8 +1324,20 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 				return HQ_FAILED;
 			}
 			params.isExState = true; params.descEx.destAlphaFactor = factor;
+			alphaDstFactorOverride = true;
 		}
 	}//for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+
+	if (params.isExState)
+	{
+		//check if we need to use default values
+		if (!alphaOpOverride)
+			params.descEx.alphaBlendOp = params.descEx.blendOp;
+		if (!alphaSrcFactorOverride)
+			params.descEx.srcAlphaFactor = params.descEx.srcFactor;
+		if (!alphaDstFactorOverride)
+			params.descEx.destAlphaFactor = params.descEx.destFactor;
+	}
 
 	return HQ_OK;
 }

@@ -16,6 +16,7 @@
 			</stencil>
 			<depth>full</depth> <!-- default is none -->
 			<blend>
+				<operator>add</operator>
 				<src_factor>one minus src alpha</src_factor>
 				<dest_factor>src alpha</dest_factor>
 			</blend>
