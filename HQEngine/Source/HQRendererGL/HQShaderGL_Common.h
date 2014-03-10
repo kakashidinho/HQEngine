@@ -140,7 +140,7 @@ struct HQShaderObjectGL
 struct HQBaseShaderProgramGL
 {
 	HQBaseShaderProgramGL();
-	~HQBaseShaderProgramGL();
+	virtual ~HQBaseShaderProgramGL();
 
 	virtual HQShaderParameterGL* TryCreateParameterObject(const char *parameterName) = 0;//just create paremeter object (if it exists in shader), doesn't add to paremeter list
 	hq_uint32 TryCreateParamObjAndAddToParamsList(const char *parameterName);//create paremeter object (if it exists in shader), return parameter index

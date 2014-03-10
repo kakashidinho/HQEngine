@@ -1,0 +1,21 @@
+<resources>
+	<shader name="vs-mesh"> <!-- name will be default to source file name -->
+		<type>vertex shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>cg</src_type>  <!-- default is cg -->
+		<entry>VS</entry> <!-- entry function. default is 'main'. ignored in bytecode/glsl src_type -->
+		<src>cg2-mesh.txt</src> <!-- source file -->
+		<definition name="TEXTURE_COLOR">0</definition> <!-- macro definition for compiling the source code. Can have more than one or none. -->
+		<definition name="NOT_ORIGIN"></definition>
+		<definition name="NUNIFORM_BUFFER"></definition>
+	</shader>
+	
+	<shader name="ps-mesh"> <!-- name will be default to source file name -->
+		<type>pixel shader</type>  <!-- vertex/pixel/geometry shader. default to vertex -->
+		<src_type>cg</src_type>  <!-- default is cg -->
+		<entry>PS</entry> <!-- entry function. default is 'main'. ignored in bytecode/glsl src_type -->
+		<src>cg2-mesh.txt</src> <!-- source file -->
+		<definition name="TEXTURE_COLOR">0</definition> <!-- macro definition for compiling the source code. Can have more than one or none. -->
+		<definition name="NOT_ORIGIN"></definition>
+		<definition name="NUNIFORM_BUFFER"></definition>
+	</shader>
+</resources>
