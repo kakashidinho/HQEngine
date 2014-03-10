@@ -50,14 +50,8 @@ COPYING.txt included with this distribution for more information.
 #	define HQ_RENDER_DEVICE_LOST_POSSIBLE
 #endif
 
-#if	defined IOS || defined ANDROID
-//for knowing if app is paused or not
-extern int hq_internalAppIsPaused;
-extern int hq_internalAppExit;
-extern int HQAppInternalGetStatusFlag();
-#endif
 
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+#if defined IOS || defined ANDROID || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 extern void HQAppInternalBlockGameLoopIfNeeded();
 #endif
 
@@ -435,10 +429,6 @@ HQReturnVal HQEngineApp::Run(hq_uint32 fpsLimit)
 	m_flags |= HQ_APP_START | HQ_APP_RUNNING;
 
 
-#if defined IOS || defined ANDROID
-	int appStatus;
-#endif
-
 	do
 	{
 		/*----check for new delegates---------*/
@@ -466,11 +456,7 @@ HQReturnVal HQEngineApp::Run(hq_uint32 fpsLimit)
 		}
 		/*-------check for event-------------*/
 		//if has no event and app is not paused
-		if (!this->EventHandle()
-#if defined IOS || defined ANDROID
-		&& ((appStatus = HQAppInternalGetStatusFlag()) != hq_internalAppIsPaused)
-#endif
-		)
+		if (!this->EventHandle())
 		{
 			bool skipFrame = false;
 
@@ -518,15 +504,11 @@ HQReturnVal HQEngineApp::Run(hq_uint32 fpsLimit)
 			HQThread::TempPause();
 		}//if (!this->EventHandle())
 		
-#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+#if defined IOS || defined ANDROID ||  HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 		HQAppInternalBlockGameLoopIfNeeded();
 #endif
 
-	}while( m_flags & HQ_APP_RUNNING
-#if defined IOS || defined ANDROID
-		&& appStatus != hq_internalAppExit
-#endif
-		);
+	}while( m_flags & HQ_APP_RUNNING);
 
 	return HQ_OK;
 }

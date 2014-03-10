@@ -39,6 +39,23 @@ Game::Game()
 
 {
 #endif
+    
+#ifdef __APPLE__
+	/*resource directory*/
+	NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
+    
+	int len = [resourcePath lengthOfBytesUsingEncoding:NSASCIIStringEncoding] + 1 ;
+	char * cDir = HQ_NEW char[len + strlen("/test")];
+	[resourcePath getCString:cDir maxLength:len
+					encoding:NSASCIIStringEncoding];
+    
+	strcat(cDir, "/test");
+    //simulate the working directory of Windows
+	chdir(cDir);
+    
+	delete[] cDir;
+    
+#endif
 
 	HQEngineApp::CreateInstance(true); 
 	
@@ -108,23 +125,6 @@ Game::Game()
 	
 	HQEngineApp::GetInstance()->InitWindow(&params);
 
-
-#ifdef __APPLE__
-	/*resource directory*/
-	NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
-
-	int len = [resourcePath lengthOfBytesUsingEncoding:NSASCIIStringEncoding] + 1 ;
-	char * cDir = HQ_NEW char[len + strlen("/test")];
-	[resourcePath getCString:cDir maxLength:len
-					encoding:NSASCIIStringEncoding];
-
-	strcat(cDir, "/test");
-
-	chdir(cDir);
-
-	delete[] cDir;
-
-#endif
 
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	//setup file search paths

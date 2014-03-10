@@ -176,6 +176,15 @@
 		D648372E18C9148600C0DD3A /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDDA7418C7AC8D00825C3C /* OpenAL.framework */; };
 		D648372F18C9148600C0DD3A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D606EF2418C8F133009F9A67 /* OpenGLES.framework */; };
 		D648373218C9165000C0DD3A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D64836FA18C90B7200C0DD3A /* QuartzCore.framework */; };
+		D682AEB518CDD896004E3C6F /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEAF18CDD896004E3C6F /* tinystr.cpp */; };
+		D682AEB618CDD896004E3C6F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEB118CDD896004E3C6F /* tinyxml.cpp */; };
+		D682AEB718CDD896004E3C6F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEB318CDD896004E3C6F /* tinyxmlerror.cpp */; };
+		D682AEB818CDD896004E3C6F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEB418CDD896004E3C6F /* tinyxmlparser.cpp */; };
+		D682AEBB18CDD8A8004E3C6F /* HQAudioInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEB918CDD8A8004E3C6F /* HQAudioInternal.cpp */; };
+		D682AEC418CDD8CA004E3C6F /* HQDefaultFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEBC18CDD8CA004E3C6F /* HQDefaultFileManager.cpp */; };
+		D682AEC518CDD8CA004E3C6F /* HQEngineCommonInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEBE18CDD8CA004E3C6F /* HQEngineCommonInternal.cpp */; };
+		D682AEC618CDD8CA004E3C6F /* HQEngineEffectManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEC018CDD8CA004E3C6F /* HQEngineEffectManagerImpl.cpp */; };
+		D682AEC718CDD8CA004E3C6F /* HQEngineResManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEC218CDD8CA004E3C6F /* HQEngineResManagerImpl.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -227,6 +236,35 @@
 		D64836FA18C90B7200C0DD3A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D648370018C9141E00C0DD3A /* testIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D648370218C9141E00C0DD3A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		D682AEAB18CDD86A004E3C6F /* HQEngineEffectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineEffectManager.h; path = ../../../Source/HQEngineEffectManager.h; sourceTree = "<group>"; };
+		D682AEAC18CDD86A004E3C6F /* HQEngineResManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineResManager.h; path = ../../../Source/HQEngineResManager.h; sourceTree = "<group>"; };
+		D682AEAD18CDD86A004E3C6F /* HQFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQFileManager.h; path = ../../../Source/HQFileManager.h; sourceTree = "<group>"; };
+		D682AEAF18CDD896004E3C6F /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../../../../tinyxml/tinystr.cpp; sourceTree = "<group>"; };
+		D682AEB018CDD896004E3C6F /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../../../../tinyxml/tinystr.h; sourceTree = "<group>"; };
+		D682AEB118CDD896004E3C6F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../../../tinyxml/tinyxml.cpp; sourceTree = "<group>"; };
+		D682AEB218CDD896004E3C6F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../../../tinyxml/tinyxml.h; sourceTree = "<group>"; };
+		D682AEB318CDD896004E3C6F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../../../tinyxml/tinyxmlerror.cpp; sourceTree = "<group>"; };
+		D682AEB418CDD896004E3C6F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../../../tinyxml/tinyxmlparser.cpp; sourceTree = "<group>"; };
+		D682AEB918CDD8A8004E3C6F /* HQAudioInternal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQAudioInternal.cpp; path = ../../../Source/HQAudio/HQAudioInternal.cpp; sourceTree = "<group>"; };
+		D682AEBA18CDD8A8004E3C6F /* HQAudioInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQAudioInternal.h; path = ../../../Source/HQAudio/HQAudioInternal.h; sourceTree = "<group>"; };
+		D682AEBC18CDD8CA004E3C6F /* HQDefaultFileManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQDefaultFileManager.cpp; path = ../../../Source/HQEngine/HQDefaultFileManager.cpp; sourceTree = "<group>"; };
+		D682AEBD18CDD8CA004E3C6F /* HQDefaultFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQDefaultFileManager.h; path = ../../../Source/HQEngine/HQDefaultFileManager.h; sourceTree = "<group>"; };
+		D682AEBE18CDD8CA004E3C6F /* HQEngineCommonInternal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQEngineCommonInternal.cpp; path = ../../../Source/HQEngine/HQEngineCommonInternal.cpp; sourceTree = "<group>"; };
+		D682AEBF18CDD8CA004E3C6F /* HQEngineCommonInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineCommonInternal.h; path = ../../../Source/HQEngine/HQEngineCommonInternal.h; sourceTree = "<group>"; };
+		D682AEC018CDD8CA004E3C6F /* HQEngineEffectManagerImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQEngineEffectManagerImpl.cpp; path = ../../../Source/HQEngine/HQEngineEffectManagerImpl.cpp; sourceTree = "<group>"; };
+		D682AEC118CDD8CA004E3C6F /* HQEngineEffectManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineEffectManagerImpl.h; path = ../../../Source/HQEngine/HQEngineEffectManagerImpl.h; sourceTree = "<group>"; };
+		D682AEC218CDD8CA004E3C6F /* HQEngineResManagerImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQEngineResManagerImpl.cpp; path = ../../../Source/HQEngine/HQEngineResManagerImpl.cpp; sourceTree = "<group>"; };
+		D682AEC318CDD8CA004E3C6F /* HQEngineResManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineResManagerImpl.h; path = ../../../Source/HQEngine/HQEngineResManagerImpl.h; sourceTree = "<group>"; };
+		D682AEC918CDDA67004E3C6F /* HQEngineAppWinStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQEngineAppWinStore.cpp; path = ../../../Source/HQEngine/winstore/HQEngineAppWinStore.cpp; sourceTree = "<group>"; };
+		D682AECA18CDDA67004E3C6F /* HQEngineWindowWinStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQEngineWindowWinStore.cpp; path = ../../../Source/HQEngine/winstore/HQEngineWindowWinStore.cpp; sourceTree = "<group>"; };
+		D682AECB18CDDA67004E3C6F /* HQWinStoreFileSystem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQWinStoreFileSystem.cpp; path = ../../../Source/HQEngine/winstore/HQWinStoreFileSystem.cpp; sourceTree = "<group>"; };
+		D682AECC18CDDA67004E3C6F /* HQWinStoreFileSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HQWinStoreFileSystem.h; path = ../../../Source/HQEngine/winstore/HQWinStoreFileSystem.h; sourceTree = "<group>"; };
+		D682AECD18CDDA67004E3C6F /* HQWinStoreUtil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQWinStoreUtil.cpp; path = ../../../Source/HQEngine/winstore/HQWinStoreUtil.cpp; sourceTree = "<group>"; };
+		D682AECE18CDDA67004E3C6F /* HQWinStoreUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HQWinStoreUtil.h; path = ../../../Source/HQEngine/winstore/HQWinStoreUtil.h; sourceTree = "<group>"; };
+		D682AED018CDDB49004E3C6F /* HQAndroidGameThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQAndroidGameThread.cpp; path = ../../../Source/HQEngine/android/HQAndroidGameThread.cpp; sourceTree = "<group>"; };
+		D682AED118CDDB49004E3C6F /* HQEngineAppAndroid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQEngineAppAndroid.cpp; path = ../../../Source/HQEngine/android/HQEngineAppAndroid.cpp; sourceTree = "<group>"; };
+		D682AED218CDDB49004E3C6F /* HQEngineJNI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQEngineJNI.cpp; path = ../../../Source/HQEngine/android/HQEngineJNI.cpp; sourceTree = "<group>"; };
+		D682AED318CDDB49004E3C6F /* HQEngineWindowAndroid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQEngineWindowAndroid.cpp; path = ../../../Source/HQEngine/android/HQEngineWindowAndroid.cpp; sourceTree = "<group>"; };
 		D6FDD8DF18C7A61D00825C3C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D6FDD8E018C7A61D00825C3C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D6FDD8E118C7A61D00825C3C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -609,6 +647,43 @@
 			name = "ios-simulator";
 			sourceTree = "<group>";
 		};
+		D682AEAE18CDD87D004E3C6F /* tinyxml */ = {
+			isa = PBXGroup;
+			children = (
+				D682AEAF18CDD896004E3C6F /* tinystr.cpp */,
+				D682AEB018CDD896004E3C6F /* tinystr.h */,
+				D682AEB118CDD896004E3C6F /* tinyxml.cpp */,
+				D682AEB218CDD896004E3C6F /* tinyxml.h */,
+				D682AEB318CDD896004E3C6F /* tinyxmlerror.cpp */,
+				D682AEB418CDD896004E3C6F /* tinyxmlparser.cpp */,
+			);
+			name = tinyxml;
+			sourceTree = "<group>";
+		};
+		D682AEC818CDDA40004E3C6F /* winrt */ = {
+			isa = PBXGroup;
+			children = (
+				D682AEC918CDDA67004E3C6F /* HQEngineAppWinStore.cpp */,
+				D682AECA18CDDA67004E3C6F /* HQEngineWindowWinStore.cpp */,
+				D682AECB18CDDA67004E3C6F /* HQWinStoreFileSystem.cpp */,
+				D682AECC18CDDA67004E3C6F /* HQWinStoreFileSystem.h */,
+				D682AECD18CDDA67004E3C6F /* HQWinStoreUtil.cpp */,
+				D682AECE18CDDA67004E3C6F /* HQWinStoreUtil.h */,
+			);
+			name = winrt;
+			sourceTree = "<group>";
+		};
+		D682AECF18CDDB26004E3C6F /* android */ = {
+			isa = PBXGroup;
+			children = (
+				D682AED018CDDB49004E3C6F /* HQAndroidGameThread.cpp */,
+				D682AED118CDDB49004E3C6F /* HQEngineAppAndroid.cpp */,
+				D682AED218CDDB49004E3C6F /* HQEngineJNI.cpp */,
+				D682AED318CDDB49004E3C6F /* HQEngineWindowAndroid.cpp */,
+			);
+			name = android;
+			sourceTree = "<group>";
+		};
 		D6FDD8CF18C7A61D00825C3C = {
 			isa = PBXGroup;
 			children = (
@@ -668,6 +743,7 @@
 				D6FDD9FE18C7A94C00825C3C /* BaseImpl */,
 				D6FDD9F318C7A90C00825C3C /* HQRendererFactory */,
 				D6FDD90718C7A72E00825C3C /* HQRendererGL */,
+				D682AEAE18CDD87D004E3C6F /* tinyxml */,
 				D6FDD8E318C7A61D00825C3C /* Supporting Files */,
 			);
 			path = HQEngine;
@@ -735,6 +811,9 @@
 		D6FDD96A18C7A88E00825C3C /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				D682AEAB18CDD86A004E3C6F /* HQEngineEffectManager.h */,
+				D682AEAC18CDD86A004E3C6F /* HQEngineResManager.h */,
+				D682AEAD18CDD86A004E3C6F /* HQFileManager.h */,
 				D6FDD96B18C7A8EC00825C3C /* HQ2DMath.h */,
 				D6FDD96C18C7A8EC00825C3C /* HQ2DMathInline.h */,
 				D6FDD96D18C7A8EC00825C3C /* HQ3DMath.h */,
@@ -905,6 +984,8 @@
 		D6FDDA4A18C7ABC700825C3C /* HQAudio */ = {
 			isa = PBXGroup;
 			children = (
+				D682AEB918CDD8A8004E3C6F /* HQAudioInternal.cpp */,
+				D682AEBA18CDD8A8004E3C6F /* HQAudioInternal.h */,
 				D6FDDA4C18C7ABF300825C3C /* HQAudioBase.cpp */,
 				D6FDDA4D18C7ABF300825C3C /* HQAudioBase.h */,
 				D6FDDA4E18C7ABF300825C3C /* HQAudioPCH.h */,
@@ -1135,8 +1216,18 @@
 		D6FDDB7D18C7C37600825C3C /* HQEngine */ = {
 			isa = PBXGroup;
 			children = (
+				D682AECF18CDDB26004E3C6F /* android */,
+				D682AEC818CDDA40004E3C6F /* winrt */,
 				D6FDDB7E18C7C39800825C3C /* apple */,
 				D606EE3318C8E6CE009F9A67 /* ios */,
+				D682AEBC18CDD8CA004E3C6F /* HQDefaultFileManager.cpp */,
+				D682AEBD18CDD8CA004E3C6F /* HQDefaultFileManager.h */,
+				D682AEBE18CDD8CA004E3C6F /* HQEngineCommonInternal.cpp */,
+				D682AEBF18CDD8CA004E3C6F /* HQEngineCommonInternal.h */,
+				D682AEC018CDD8CA004E3C6F /* HQEngineEffectManagerImpl.cpp */,
+				D682AEC118CDD8CA004E3C6F /* HQEngineEffectManagerImpl.h */,
+				D682AEC218CDD8CA004E3C6F /* HQEngineResManagerImpl.cpp */,
+				D682AEC318CDD8CA004E3C6F /* HQEngineResManagerImpl.h */,
 				D606EE3418C8E6F3009F9A67 /* HQEventSeparateThread.cpp */,
 				D606EE3518C8E6F3009F9A67 /* HQEventSeparateThread.h */,
 				D6FDDB8118C7C39800825C3C /* HQDefaultDataStream.h */,
@@ -1277,7 +1368,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D606EE9518C8E7B3009F9A67 /* jfdctflt.c in Sources */,
+				D682AEB618CDD896004E3C6F /* tinyxml.cpp in Sources */,
 				D606EE7F18C8E7B3009F9A67 /* jcparam.c in Sources */,
+				D682AEB718CDD896004E3C6F /* tinyxmlerror.cpp in Sources */,
 				D606EE9818C8E7B3009F9A67 /* jidctflt.c in Sources */,
 				D606EE6D18C8E7B3009F9A67 /* pngtrans.c in Sources */,
 				D606EE6018C8E7B3009F9A67 /* trees.c in Sources */,
@@ -1285,6 +1378,7 @@
 				D606EEC518C8E80C009F9A67 /* HQTextureManagerBaseImpl.cpp in Sources */,
 				D606EE8518C8E7B3009F9A67 /* jdarith.c in Sources */,
 				D606EE6518C8E7B3009F9A67 /* pngget.c in Sources */,
+				D682AEB518CDD896004E3C6F /* tinystr.cpp in Sources */,
 				D606EE7018C8E7B3009F9A67 /* pngwtran.c in Sources */,
 				D606EE6618C8E7B3009F9A67 /* pngmem.c in Sources */,
 				D606EE8B18C8E7B3009F9A67 /* jdhuff.c in Sources */,
@@ -1294,6 +1388,7 @@
 				D606EECB18C8E832009F9A67 /* HQDeviceGL_caps.cpp in Sources */,
 				D606EE9D18C8E7B3009F9A67 /* jquant1.c in Sources */,
 				D606EE9918C8E7B3009F9A67 /* jidctfst.c in Sources */,
+				D682AEBB18CDD8A8004E3C6F /* HQAudioInternal.cpp in Sources */,
 				D606EEC718C8E815009F9A67 /* HQRenderer.cpp in Sources */,
 				D606EE4E18C8E771009F9A67 /* ImgByteStream.cpp in Sources */,
 				D606EE6C18C8E7B3009F9A67 /* pngset.c in Sources */,
@@ -1330,6 +1425,7 @@
 				D606EE4A18C8E771009F9A67 /* Bitmap.cpp in Sources */,
 				D606EE8618C8E7B3009F9A67 /* jdatadst.c in Sources */,
 				D606EE8218C8E7B3009F9A67 /* jctrans.c in Sources */,
+				D682AEC718CDD8CA004E3C6F /* HQEngineResManagerImpl.cpp in Sources */,
 				D606EEB018C8E7DB009F9A67 /* HQAudioBase.cpp in Sources */,
 				D606EE9718C8E7B3009F9A67 /* jfdctint.c in Sources */,
 				D606EE4318C8E72D009F9A67 /* HQEngineWindowIOS.mm in Sources */,
@@ -1342,6 +1438,7 @@
 				D606EE4718C8E743009F9A67 /* HQEngineApp.cpp in Sources */,
 				D606EEBA18C8E7FF009F9A67 /* HQBSP.cpp in Sources */,
 				D606EE8E18C8E7B3009F9A67 /* jdmarker.c in Sources */,
+				D682AEC418CDD8CA004E3C6F /* HQDefaultFileManager.cpp in Sources */,
 				D606EE6A18C8E7B3009F9A67 /* pngrtran.c in Sources */,
 				D606EE6818C8E7B3009F9A67 /* pngread.c in Sources */,
 				D606EE4518C8E72D009F9A67 /* HQIOSGameThread.cpp in Sources */,
@@ -1363,6 +1460,7 @@
 				D606EEB318C8E7ED009F9A67 /* HQConditionVariablePThread.cpp in Sources */,
 				D606EECF18C8E832009F9A67 /* HQRenderTargetFBO.cpp in Sources */,
 				D606EE9018C8E7B3009F9A67 /* jdmerge.c in Sources */,
+				D682AEB818CDD896004E3C6F /* tinyxmlparser.cpp in Sources */,
 				D606EED818C8E832009F9A67 /* HQTextureManagerGL.cpp in Sources */,
 				D606EE5E18C8E7B3009F9A67 /* inflate.c in Sources */,
 				D606EE5F18C8E7B3009F9A67 /* inftrees.c in Sources */,
@@ -1399,6 +1497,7 @@
 				D606EE7B18C8E7B3009F9A67 /* jcmainct.c in Sources */,
 				D606EE5118C8E771009F9A67 /* PNGImg.cpp in Sources */,
 				D606EE7218C8E7B3009F9A67 /* jaricom.c in Sources */,
+				D682AEC518CDD8CA004E3C6F /* HQEngineCommonInternal.cpp in Sources */,
 				D606EE4C18C8E771009F9A67 /* DDS.cpp in Sources */,
 				D606EE9318C8E7B3009F9A67 /* jdtrans.c in Sources */,
 				D606EE5A18C8E7B3009F9A67 /* gzread.c in Sources */,
@@ -1412,6 +1511,7 @@
 				D606EECE18C8E832009F9A67 /* HQFixedFunctionShaderManagerGL.cpp in Sources */,
 				D606EE8818C8E7B3009F9A67 /* jdcoefct.c in Sources */,
 				D606EE4F18C8E771009F9A67 /* JPEG.cpp in Sources */,
+				D682AEC618CDD8CA004E3C6F /* HQEngineEffectManagerImpl.cpp in Sources */,
 				D606EE9F18C8E7B3009F9A67 /* jutils.c in Sources */,
 				D606EECC18C8E832009F9A67 /* HQDeviceGL.cpp in Sources */,
 				D606EE7A18C8E7B3009F9A67 /* jcinit.c in Sources */,
@@ -1689,6 +1789,7 @@
 				D64836F118C9041200C0DD3A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D648372518C9141F00C0DD3A /* Build configuration list for PBXNativeTarget "testIOS" */ = {
 			isa = XCConfigurationList;
@@ -1697,6 +1798,7 @@
 				D648372718C9141F00C0DD3A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D6FDD8D318C7A61D00825C3C /* Build configuration list for PBXProject "HQEngineIOS" */ = {
 			isa = XCConfigurationList;

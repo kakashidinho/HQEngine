@@ -17,6 +17,9 @@ COPYING.txt included with this distribution for more information.
 //
 
 #import "HQEngineApp.h"
+#include "../../HQConditionVariable.h"
+#include "../../HQAtomic.h"
+
 #include <libkern/OSAtomic.h>
 
 #define SLEEP_MAIN_THREAD 0
@@ -26,6 +29,9 @@ int hq_internalAppNormalState = 0;
 int hq_internalAppExit = 1;
 int hq_internalAppIsPaused = 2;
 
+//for blocking game thread
+static HQSimpleConditionVar g_pauseGameThreadCnd;
+static HQAtomic<bool> g_game_thread_blocked = false;
 
 #if USE_MUTEX
 static int g_appStatusFlag = hq_internalAppNormalState;
@@ -55,6 +61,44 @@ int HQAppInternalGetStatusFlag()
 #endif
 }
 
+void HQAppInternalBlockGameLoopIfNeeded()
+{
+	if (!g_pauseGameThreadCnd.TryLock())
+		return;
+    
+	if (HQAppInternalGetStatusFlag() == hq_internalAppIsPaused)
+	{
+		g_game_thread_blocked = true;
+        
+		g_pauseGameThreadCnd.Wait();
+        
+	}
+    
+	g_pauseGameThreadCnd.Unlock();
+}
+
+static void HQAppInternalWakeGameLoopIfNeededNoLock()
+{
+	bool shouldWake = false;
+    
+	shouldWake = g_game_thread_blocked;
+	g_game_thread_blocked = false;
+    
+	if (shouldWake)
+		g_pauseGameThreadCnd.Signal();
+    
+}
+
+
+static void HQAppInternalWakeGameLoopIfNeeded()
+{
+	g_pauseGameThreadCnd.Lock();
+	
+	HQAppInternalWakeGameLoopIfNeededNoLock();
+    
+	g_pauseGameThreadCnd.Unlock();
+    
+}
 
 @implementation HQAppDelegate
 
@@ -102,6 +146,7 @@ int HQAppInternalGetStatusFlag()
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
 	HQAppInternalSetStatusFlag(hq_internalAppNormalState);
+    HQAppInternalWakeGameLoopIfNeeded();//wake game loop if needed
 
 	HQEngineApp *pEngineApp = HQEngineApp::GetInstance();
 	

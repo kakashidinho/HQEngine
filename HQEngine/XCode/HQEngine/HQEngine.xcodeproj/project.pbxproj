@@ -1234,6 +1234,7 @@
 		D6FDDB7D18C7C37600825C3C /* HQEngine */ = {
 			isa = PBXGroup;
 			children = (
+				D6FDDB7E18C7C39800825C3C /* apple */,
 				D682AE8E18CDC6AB004E3C6F /* HQDefaultFileManager.cpp */,
 				D682AE8F18CDC6AB004E3C6F /* HQDefaultFileManager.h */,
 				D682AE9018CDC6AB004E3C6F /* HQEngineCommonInternal.cpp */,
@@ -1242,7 +1243,6 @@
 				D682AE9318CDC6AB004E3C6F /* HQEngineEffectManagerImpl.h */,
 				D682AE9418CDC6AB004E3C6F /* HQEngineResManagerImpl.cpp */,
 				D682AE9518CDC6AB004E3C6F /* HQEngineResManagerImpl.h */,
-				D6FDDB7E18C7C39800825C3C /* apple */,
 				D6FDDB8118C7C39800825C3C /* HQDefaultDataStream.h */,
 				D6FDDB8218C7C39900825C3C /* HQEngineApp.cpp */,
 				D6FDDB8318C7C39900825C3C /* HQEngineBaseWindow.cpp */,
