@@ -13,11 +13,12 @@ Current status
 	* Images loader. (supports various file formats including compressed ones used by OpenGL and Direct3D like DXT and ETC)
 	* Rendering API layer. (supports Direct3D (9/11), OpenGL (ES) back-ends)
 	* Audio layer. (supports OpenAL and XAudio 2 back-ends)
+	* XML-based resources and effects scripting
 	* Single code-base for Window creation and Game loop. (hides the setting up of window in various platforms)
 	* Threading system. (supports win32, C++11, pthread back-ends)
 	* Template hash table, memory alignment, linked list, stack.  (this removes the dependence of C++ STL in some platforms not supporting it, or not supporting C++11)
-	* Skeleton animation. 
-	* Scene graph.
+	* Basic Skeleton animation
+	* Basic Scene graph
 - Some important notes:
 	* I implemented a custom GLSL parser to support my addtional syntax for the language. This additional syntax is sematic binding similar to that in HLSL. For example, I can bind an attribute to index 0 by an additional "POSITION"
 sematic following the attribute's declaration in the source code. This feature is redundant because of layout binding in new GLSL version, but it is still useful for OpenGL ES and older GPU. However, the parser still doesn't have a preprocessor, thus it may fail to parse those code that use preprocessing definitions. This should be implemented in future.
