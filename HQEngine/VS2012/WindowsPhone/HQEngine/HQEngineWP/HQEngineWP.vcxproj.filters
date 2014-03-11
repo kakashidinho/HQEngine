@@ -557,12 +557,6 @@
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex_debug.h">
       <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\tinyxml\tinystr.h">
-      <Filter>Source\tinyxml</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\tinyxml\tinyxml.h">
-      <Filter>Source\tinyxml</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioInternal.h">
       <Filter>Source\HQAudio</Filter>
     </ClInclude>
@@ -586,6 +580,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.h">
       <Filter>Source\HQEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.h">
+      <Filter>Source\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.h">
+      <Filter>Source\tinyxml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1030,18 +1030,6 @@
     <ClCompile Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudioStreamBuffer.cpp">
       <Filter>Source\HQAudio\xaudio2</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinystr.cpp">
-      <Filter>Source\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxml.cpp">
-      <Filter>Source\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlerror.cpp">
-      <Filter>Source\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlparser.cpp">
-      <Filter>Source\tinyxml</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioInternal.cpp">
       <Filter>Source\HQAudio</Filter>
     </ClCompile>
@@ -1056,6 +1044,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.cpp">
       <Filter>Source\HQEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source\tinyxml</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -165,7 +165,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
@@ -186,7 +186,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -206,7 +206,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -227,7 +227,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -247,7 +247,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -267,7 +267,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -288,7 +288,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -308,7 +308,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -328,7 +328,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -344,8 +344,8 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\tinyxml\tinystr.h" />
-    <ClInclude Include="..\..\..\..\..\tinyxml\tinyxml.h" />
+    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.h" />
+    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h" />
@@ -594,10 +594,10 @@
     <ClInclude Include="..\..\..\..\Source\ImagesLoader\zlib-1.2.6\zutil.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinystr.cpp" />
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxml.cpp" />
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.cpp" />
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQAudio\HQAudioBase.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">HQAudioPCH.h</PrecompiledHeaderFile>

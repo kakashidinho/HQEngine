@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;..\..\..\"
+				AdditionalIncludeDirectories="..;..\..\..\ThirdParty-mod\;$(SolutionDir)/Libs/PVRTexLib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D11_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,9 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMathD.lib &quot;$(SolutionDir)Libs\PVRTexLib/Windows_x86_32/Dll/PVRTexLib.lib&quot;"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)_D.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output;&quot;$(SolutionDir)\Output\StaticDebug&quot;;&quot;..\..\..\ThirdParty-mod\Cg\lib&quot;"
 				ModuleDefinitionFile="HQRendererD3D11Def.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -119,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..;..\..\..\"
+				AdditionalIncludeDirectories="..;..\..\..\ThirdParty-mod\;$(SolutionDir)/Libs/PVRTexLib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D11_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -140,9 +141,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMath.lib &quot;$(SolutionDir)Libs\PVRTexLib/Windows_x86_32/Dll/PVRTexLib.lib&quot;"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\Output;..\..\..\ThirdParty-mod\Cg\lib;$(SolutionDir)\Output\StaticRelease"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="HQRendererD3D11Def.def"
 				GenerateDebugInformation="false"
@@ -200,7 +202,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..;..\..\..\"
+				AdditionalIncludeDirectories="..;..\..\..\ThirdParty-mod\;$(SolutionDir)/Libs/PVRTexLib"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_USRDLL;HQRENDERERD3D11_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -222,9 +224,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMath.lib &quot;$(SolutionDir)Libs\PVRTexLib/Windows_x86_32/Dll/PVRTexLib.lib&quot;"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\Output;..\..\..\ThirdParty-mod\Cg\lib;$(SolutionDir)\Output\StaticRelease"
 				ModuleDefinitionFile="HQRendererD3D11Def.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -281,7 +284,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..;..\..\..\"
+				AdditionalIncludeDirectories="..;..\..\..\ThirdParty-mod\;$(SolutionDir)/Libs/PVRTexLib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D11_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -302,9 +305,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMath.lib &quot;$(SolutionDir)Libs\PVRTexLib/Windows_x86_32/Lib/PVRTexLib.lib&quot;"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Output&quot;;&quot;..\..\..\ThirdParty-mod\Cg\lib&quot;;&quot;$(SolutionDir)\Output\StaticRelease static CRT&quot;"
 				ModuleDefinitionFile="HQRendererD3D11Def.def"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -359,7 +363,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;..\..\..\"
+				AdditionalIncludeDirectories="..;..\..\..\ThirdParty-mod\;$(SolutionDir)/Libs/PVRTexLib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D11_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -380,9 +384,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMathD.lib &quot;$(SolutionDir)Libs\PVRTexLib/Windows_x86_32/Lib/PVRTexLib.lib&quot;"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)_D.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\Cg\lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\Output;..\..\..\ThirdParty-mod\Cg\lib;&quot;$(SolutionDir)\Output\StaticDebug static CRT&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="HQRendererD3D11Def.def"
 				GenerateDebugInformation="true"

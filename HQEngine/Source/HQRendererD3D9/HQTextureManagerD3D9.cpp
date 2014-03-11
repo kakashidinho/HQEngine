@@ -14,12 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceD3D9.h"
 #include <d3dx9.h>
 #pragma comment(lib,"d3dx9.lib")
-#include "../../VS/Libs/PVRTexLib/PVRTexLib.h"
-#if defined _DEBUG || defined DEBUG || !defined _STATIC_CRT
-#pragma comment (lib, "../../VS/Libs/PVRTexLib/Windows_x86_32/Dll/PVRTexLib.lib")
-#else
-#pragma comment (lib, "../../VS/Libs/PVRTexLib/Windows_x86_32/Lib/PVRTexLib.lib")
-#endif
+#include "PVRTexLib.h"
 using namespace pvrtexlib;
 
 inline hq_uint32 GetShaderStageIndex(HQShaderType type) 

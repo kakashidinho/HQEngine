@@ -17,21 +17,6 @@ COPYING.txt included with this distribution for more information.
 
 
 #include "../ImagesLoader/Bitmap.h"
-#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-#	if defined(_DEBUG)||defined (DEBUG)
-#		ifdef _STATIC_CRT
-#			pragma comment(lib,"../../VS/Output/Debug static CRT/ImagesLoaderD.lib")
-#		else
-#			pragma comment(lib,"../../VS/Output/Debug/ImagesLoaderD.lib")
-#		endif
-#	elif defined (_NOOPTIMIZE)
-#		pragma comment(lib,"../../VS/Output/release noptimize/ImagesLoader.lib")
-#	elif defined (_STATIC_CRT)
-#		pragma comment(lib,"../../VS/Output/Release static CRT/ImagesLoader.lib")
-#	else
-#		pragma comment(lib,"../../VS/Output/Release/ImagesLoader.lib")
-#	endif
-#endif
 
 #ifndef max
 #define max(a,b) ((a>b) ? a : b)

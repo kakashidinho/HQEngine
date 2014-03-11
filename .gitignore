@@ -4,8 +4,8 @@
 *.suo
 *.pdb
 *.idb
-libogg/xcode/build
-libvorbis/xcode/build
+ThirdParty-mod/libogg/xcode/build
+ThirdParty-mod/libvorbis/xcode/build
 xcuserdata
 HQEngine/Android/HQAudio/libs
 HQEngine/Android/HQAudio/obj
@@ -19,9 +19,9 @@ HQEngine/Android/test/bin
 HQEngine/Android/test/gen
 HQEngine/Android/test/libs
 HQEngine/Android/test/obj
-HQEngine/Source/HQEngineDeployDll/obj
-HQEngine/VS/Output
-HQEngine/VS/VS_int_files
+tools/HQEngineDeployDll/obj
+HQEngine/VS2008/Output
+HQEngine/VS2008/VS_int_files
 HQEngine/Xcode/HQEngine/Output
 HQEngine/Xcode/HQEngine/build
 HQEngine/Xcode/HQEngineIOS/Output
@@ -58,9 +58,9 @@ HQEngine/VS2012/WindowsStoreApp/HQEngine/test/Debug
 HQEngine/VS2012/WindowsStoreApp/HQEngine/test/StaticDebug
 HQEngine/VS2012/WindowsStoreApp/HQEngine/test/Release
 HQEngine/VS2012/WindowsStoreApp/HQEngine/test/StaticRelease
-HQShaderCompiler/Netbeans/HQEngineShaderCompiler/build
-HQShaderCompiler/Netbeans/HQEngineShaderCompiler/dist
-HQShaderCompiler/Netbeans/HQEngineShaderCompiler/setting.ini
+tools/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/build
+tools/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/dist
+tools/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/setting.ini
 VS2008_bin_Debug
 VS2008_bin_Release
 VS2012_Desk_bin_Debug

@@ -25,22 +25,6 @@ COPYING.txt included with this distribution for more information.
 
 #else
 
-#	ifdef WIN32
-#		ifdef _STATIC_CRT
-#			if defined _DEBUG || defined DEBUG
-#				pragma comment(lib,"../../VS/Output/StaticDebug static CRT/HQUtilMathD.lib")
-#			else
-#				pragma comment(lib,"../../VS/Output/StaticRelease static CRT/HQUtilMath.lib")
-#			endif
-
-#		else
-#			if defined _DEBUG || defined DEBUG
-#				pragma comment(lib,"../../VS/Output/StaticDebug/HQUtilMathD.lib")
-#			else
-#				pragma comment(lib,"../../VS/Output/StaticRelease/HQUtilMath.lib")
-#			endif
-#		endif
-#	endif
 
 #endif
 

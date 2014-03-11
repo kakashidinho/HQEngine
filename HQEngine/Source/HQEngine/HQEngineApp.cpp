@@ -19,31 +19,11 @@ COPYING.txt included with this distribution for more information.
 #include <string.h>
 
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-#if defined _DEBUG || defined DEBUG
-#	ifdef _STATIC_CRT
-#		pragma comment(lib, "../../VS/Output/StaticDebug static CRT/HQUtilMathD.lib")
-#		pragma comment(lib , "../../VS/Output/Debug static CRT/HQEngineRendererD.lib")
-#		pragma comment(lib , "../../VS/Output/Debug static CRT/HQUtilD.lib")
-#	else
-#		pragma comment(lib, "../../VS/Output/StaticDebug/HQUtilMathD.lib")
-#		pragma comment(lib , "../../VS/Output/Debug/HQEngineRendererD.lib")
-#		pragma comment(lib , "../../VS/Output/Debug/HQUtilD.lib")
-#	endif
-#elif defined _STATIC_CRT
-#	pragma comment(lib, "../../VS/Output/StaticRelease static CRT/HQUtilMath.lib")
-#	pragma comment(lib , "../../VS/Output/Release static CRT/HQEngineRenderer.lib")
-#	pragma comment(lib , "../../VS/Output/Release static CRT/HQUtil.lib")
-#else
-#	pragma comment(lib, "../../VS/Output/StaticRelease/HQUtilMath.lib")
-#	pragma comment(lib , "../../VS/Output/Release/HQEngineRenderer.lib")
-#	pragma comment(lib , "../../VS/Output/Release/HQUtil.lib")
-#endif
-
-#define HQ_DEFAULT_RENDERER_TYPE "D3D9"
+#	define HQ_DEFAULT_RENDERER_TYPE "D3D9"
 #elif (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-#define HQ_DEFAULT_RENDERER_TYPE "D3D11"
+#	define HQ_DEFAULT_RENDERER_TYPE "D3D11"
 #else
-#define HQ_DEFAULT_RENDERER_TYPE "GL"
+#	define HQ_DEFAULT_RENDERER_TYPE "GL"
 #endif
 
 #ifdef ANDROID

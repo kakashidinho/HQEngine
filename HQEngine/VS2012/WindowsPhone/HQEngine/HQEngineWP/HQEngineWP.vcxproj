@@ -177,7 +177,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -195,7 +195,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -213,7 +213,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -231,7 +231,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
@@ -247,7 +247,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
@@ -263,7 +263,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
@@ -279,7 +279,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
@@ -296,7 +296,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
@@ -313,7 +313,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -331,7 +331,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -349,7 +349,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -367,7 +367,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
@@ -384,7 +384,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
@@ -401,7 +401,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
@@ -417,7 +417,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <Optimization>Disabled</Optimization>
     </ClCompile>
@@ -435,7 +435,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <Optimization>Disabled</Optimization>
     </ClCompile>
@@ -448,8 +448,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\tinyxml\tinystr.h" />
-    <ClInclude Include="..\..\..\..\..\tinyxml\tinyxml.h" />
+    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.h" />
+    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h" />
@@ -713,10 +713,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinystr.cpp" />
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxml.cpp" />
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.cpp" />
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="..\..\..\..\Source\BaseImpl\HQTextureManagerBaseImpl.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">..\..\..\..\Source\HQRendererD3D11;..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">..\..\..\..\Source\HQRendererD3D11;..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>

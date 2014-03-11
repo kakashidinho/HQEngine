@@ -27,43 +27,7 @@
 #include <Commctrl.h>
 #include <string.h>
 #pragma comment(lib,"Comctl32.lib")
-#ifdef _DEBUG
-#	ifdef _STATIC_CRT
-#		pragma comment(lib,"../../VS/Output/Debug static CRT/HQAudioD.lib")
-#		pragma comment(lib,"../../VS/Output/Debug static CRT/HQSceneManagement.lib")
-#		pragma comment(lib,"../../VS/Output/Debug static CRT/ImagesLoaderD.lib")
-#		pragma comment(lib,"../../VS/Output/Debug static CRT/HQEngineD.lib")
-#		pragma comment(lib,"../../VS/Output/Debug static CRT/HQUtilD.lib")
-#		pragma comment(lib,"../../VS/Output/Debug static CRT/HQUtilMathD.lib")
-#	else
-#		pragma comment(lib,"../../VS/Output/Debug/HQAudioD.lib")
-#		pragma comment(lib,"../../VS/Output/Debug/HQSceneManagement.lib")
-#		pragma comment(lib,"../../VS/Output/Debug/ImagesLoaderD.lib")
-#		pragma comment(lib,"../../VS/Output/Debug/HQEngineD.lib")
-#		pragma comment(lib,"../../VS/Output/Debug/HQUtilD.lib")
-#		pragma comment(lib,"../../VS/Output/Debug/HQUtilMathD.lib")
-#	endif
-#elif defined (_NOOPTIMIZE)
-#	pragma comment(lib,"../../VS/Output/Release/ImagesLoader.lib")
-#	pragma comment(lib,"../../VS/Output/Release/HQAudio.lib")
-#	pragma comment(lib,"../../VS/Output/Release/HQEngine.lib")
-#	pragma comment(lib,"../../VS/Output/Release/HQUtil.lib")
-#	pragma comment(lib,"../../VS/Output/release noptimize/HQUtilMath.lib")
-#elif defined (_STATIC_CRT)
-#	pragma comment(lib,"../../VS/Output/Release static CRT/HQSceneManagement.lib")
-#	pragma comment(lib,"../../VS/Output/Release static CRT/ImagesLoader.lib")
-#	pragma comment(lib,"../../VS/Output/Release static CRT/HQAudio.lib")
-#	pragma comment(lib,"../../VS/Output/Release static CRT/HQEngine.lib")
-#	pragma comment(lib,"../../VS/Output/Release static CRT/HQUtil.lib")
-#	pragma comment(lib,"../../VS/Output/Release static CRT/HQUtilMath.lib")
-#else
-#	pragma comment(lib,"../../VS/Output/Release/HQSceneManagement.lib")
-#	pragma comment(lib,"../../VS/Output/Release/ImagesLoader.lib")
-#	pragma comment(lib,"../../VS/Output/Release/HQAudio.lib")
-#	pragma comment(lib,"../../VS/Output/Release/HQEngine.lib")
-#	pragma comment(lib,"../../VS/Output/Release/HQUtil.lib")
-#	pragma comment(lib,"../../VS/Output/Release/HQUtilMath.lib")
-#endif
+
 #include <stdio.h>
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 

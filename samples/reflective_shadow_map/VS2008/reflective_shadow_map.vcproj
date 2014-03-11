@@ -63,7 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="HQEngineD.lib HQUtilMathD.lib HQUtilD.lib HQSceneManagement.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(SolutionDir)/../../../HQEngine/VS/Output/Debug"
+				AdditionalLibraryDirectories="$(SolutionDir)/../../../HQEngine/VS2008/Output/Debug"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y $(SolutionDir)\..\..\..\HQEngine\VS\Output\$(ConfigurationName)\*.dll  $(OutDir)\"
+				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\"
 			/>
 		</Configuration>
 		<Configuration
@@ -139,7 +139,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="HQEngine.lib HQUtilMath.lib HQUtil.lib HQSceneManagement.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(SolutionDir)/../../../HQEngine/VS/Output/Release"
+				AdditionalLibraryDirectories="$(SolutionDir)/../../../HQEngine/VS2008/Output/Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -166,7 +166,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y $(SolutionDir)\..\..\..\HQEngine\VS\Output\$(ConfigurationName)\*.dll  $(OutDir)\"
+				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\"
 			/>
 		</Configuration>
 		<Configuration
@@ -217,7 +217,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="HQEngine.lib HQUtilMath.lib HQUtil.lib HQSceneManagement.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(SolutionDir)/../../../HQEngine/VS/Output/Release"
+				AdditionalLibraryDirectories="$(SolutionDir)/../../../HQEngine/VS2008/Output/Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="0"
@@ -244,7 +244,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y $(SolutionDir)\..\..\..\HQEngine\VS\Output\$(ConfigurationName)\*.dll  $(OutDir)\"
+				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\"
 			/>
 		</Configuration>
 	</Configurations>
@@ -287,7 +287,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -296,7 +296,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -305,7 +305,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -318,7 +318,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -327,7 +327,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -336,7 +336,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -349,7 +349,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -358,7 +358,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -367,7 +367,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -380,7 +380,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -389,7 +389,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -398,7 +398,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
+							CommandLine="call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\$(InputName).cg $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\Data\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>

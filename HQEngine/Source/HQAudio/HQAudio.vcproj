@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\libogg\include;..\..\..\libvorbis\include"
+				AdditionalIncludeDirectories="..\..\..\ThirdParty-mod\libogg\include;..\..\..\ThirdParty-mod\libvorbis\include"
 				PreprocessorDefinitions="HQ_NO_XAUDIO;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQAUDIO_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,8 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libogg_static.lib libvorbis_static.lib libvorbisfile_static.lib HQUtilMathD.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)D.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticDebug static CRT;$(SolutionDir)/Libs/Debug static CRT"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -121,7 +123,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\..\libogg\include;..\..\..\libvorbis\include"
+				AdditionalIncludeDirectories="..\..\..\ThirdParty-mod\libogg\include;..\..\..\ThirdParty-mod\libvorbis\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQAUDIO_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -141,8 +143,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libogg_static.lib libvorbis_static.lib libvorbisfile_static.lib HQUtilMath.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticRelease static CRT;$(SolutionDir)/Libs/Release static CRT"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -198,7 +202,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\libogg\include;..\..\..\libvorbis\include"
+				AdditionalIncludeDirectories="..\..\..\ThirdParty-mod\libogg\include;..\..\..\ThirdParty-mod\libvorbis\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HQAUDIO_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -219,8 +223,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libogg_static.lib libvorbis_static.lib libvorbisfile_static.lib HQUtilMathD.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)D.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticDebug;$(SolutionDir)/Libs/Debug"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -276,7 +282,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\..\libogg\include;..\..\..\libvorbis\include"
+				AdditionalIncludeDirectories="..\..\..\ThirdParty-mod\libogg\include;..\..\..\ThirdParty-mod\libvorbis\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQAUDIO_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -296,8 +302,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libogg_static.lib libvorbis_static.lib libvorbisfile_static.lib HQUtilMath.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticRelease;;$(SolutionDir)/Libs/Release"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -355,7 +363,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\..\libogg\include;..\..\..\libvorbis\include"
+				AdditionalIncludeDirectories="..\..\..\ThirdParty-mod\libogg\include;..\..\..\ThirdParty-mod\libvorbis\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HQAUDIO_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -375,8 +383,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libogg_static.lib libvorbis_static.lib libvorbisfile_static.lib HQUtilMath.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticRelease;;$(SolutionDir)/Libs/Release"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"

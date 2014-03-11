@@ -62,8 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMathD.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)D.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticDebug"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -137,8 +139,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMath.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticRelease"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -214,8 +218,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMath.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticRelease static CRT"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -290,8 +296,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMathD.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)D.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticDebug static CRT"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -365,8 +373,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="HQUtilMath.lib"
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SolutionDir)/Output/StaticRelease"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -1384,7 +1394,7 @@
 				Name="tinyxml"
 				>
 				<File
-					RelativePath="..\..\..\tinyxml\tinystr.cpp"
+					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinystr.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1428,7 +1438,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\tinyxml\tinyxml.cpp"
+					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinyxml.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1472,7 +1482,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\tinyxml\tinyxmlerror.cpp"
+					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinyxmlerror.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1516,7 +1526,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\tinyxml\tinyxmlparser.cpp"
+					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinyxmlparser.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1646,11 +1656,11 @@
 				Name="tinyxml"
 				>
 				<File
-					RelativePath="..\..\..\tinyxml\tinystr.h"
+					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinystr.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\tinyxml\tinyxml.h"
+					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinyxml.h"
 					>
 				</File>
 			</Filter>

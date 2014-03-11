@@ -14,21 +14,6 @@ COPYING.txt included with this distribution for more information.
 #include "HQBaseImplCommon.h"
 #include "../HQLoggableObject.h"
 
-#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-#	if defined (_DEBUG)||defined(DEBUG)
-#		ifdef _STATIC_CRT
-#			pragma comment(lib,"../../VS/Output/StaticDebug static CRT/HQUtilMathD.lib")
-#		else
-#			pragma comment(lib,"../../VS/Output/StaticDebug/HQUtilMathD.lib")
-#		endif
-#	else
-#		ifdef _STATIC_CRT
-#			pragma comment(lib,"../../VS/Output/StaticRelease static CRT/HQUtilMath.lib")
-#		else
-#			pragma comment(lib,"../../VS/Output/StaticRelease/HQUtilMath.lib")
-#		endif
-#	endif
-#endif
 
 class HQBaseRenderDevice : public HQRenderDevice, public HQA16ByteObject ,public HQLoggableObject
 {

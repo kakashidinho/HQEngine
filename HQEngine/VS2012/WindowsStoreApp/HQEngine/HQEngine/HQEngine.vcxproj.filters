@@ -585,10 +585,10 @@
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.h">
       <Filter>Source\HQEngine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\tinyxml\tinystr.h">
+    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.h">
       <Filter>Source\tinyxml</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\tinyxml\tinyxml.h">
+    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.h">
       <Filter>Source\tinyxml</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1076,16 +1076,16 @@
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.cpp">
       <Filter>Source\HQEngine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinystr.cpp">
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.cpp">
       <Filter>Source\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxml.cpp">
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.cpp">
       <Filter>Source\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlerror.cpp">
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlerror.cpp">
       <Filter>Source\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\tinyxml\tinyxmlparser.cpp">
+    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlparser.cpp">
       <Filter>Source\tinyxml</Filter>
     </ClCompile>
   </ItemGroup>

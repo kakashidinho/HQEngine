@@ -27,12 +27,7 @@ COPYING.txt included with this distribution for more information.
 #include <math.h>
 
 #if HQ_USE_PVR_TEX_LIB
-#include "../../VS/Libs/PVRTexLib/PVRTexLib.h"
-#if defined _DEBUG || defined DEBUG || !defined _STATIC_CRT
-#pragma comment (lib, "../../VS/Libs/PVRTexLib/Windows_x86_32/Dll/PVRTexLib.lib")
-#else
-#pragma comment (lib, "../../VS/Libs/PVRTexLib/Windows_x86_32/Lib/PVRTexLib.lib")
-#endif
+#include "PVRTexLib.h"
 using namespace pvrtexlib;
 #endif //#if HQ_USE_PVR_TEX_LIB
 

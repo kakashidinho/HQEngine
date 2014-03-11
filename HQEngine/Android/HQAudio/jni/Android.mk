@@ -77,7 +77,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := HQAudio
 
-LOCAL_C_INCLUDES := $(ROOT_PATH)/../../../Android-OpenAL-soft/android/include/AL $(ROOT_PATH)/../../../../libogg/include $(ROOT_PATH)/../../../../libvorbis/include
+LOCAL_C_INCLUDES := $(ROOT_PATH)/../../../../ThirdParty-mod/Android-OpenAL-soft/android/include/AL $(ROOT_PATH)/../../../../ThirdParty-mod/libogg/include $(ROOT_PATH)/../../../../ThirdParty-mod/libvorbis/include
 
 LOCAL_SRC_FILES := HQAudioBase.cpp openAL/HQAudioAL.cpp openAL/HQAudioStreamBufferAL.cpp HQAudioInternal.cpp
 

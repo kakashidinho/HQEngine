@@ -23,36 +23,6 @@ using namespace HQEngineHelper;
 #		pragma comment(lib, "libogg_static.lib")		
 #	endif
 
-#elif defined WIN32
-#	if defined _DEBUG || defined DEBUG
-#		ifdef _STATIC_CRT
-#			pragma comment(lib, "../../VS/Output/Debug static CRT/HQUtilD.lib")
-#			pragma comment(lib, "../../VS/Output/StaticDebug static CRT/HQUtilMathD.lib")
-#			pragma comment(lib, "../../VS/Libs/Debug static CRT/libvorbis_static.lib")
-#			pragma comment(lib, "../../VS/Libs/Debug static CRT/libvorbisfile_static.lib")
-#			pragma comment(lib, "../../VS/Libs/Debug static CRT/libogg_static.lib")
-#		else
-#			pragma comment(lib, "../../VS/Output/Debug/HQUtilD.lib")
-#			pragma comment(lib, "../../VS/Output/StaticDebug/HQUtilMathD.lib")
-#			pragma comment(lib, "../../VS/Libs/Debug/libvorbis_static.lib")
-#			pragma comment(lib, "../../VS/Libs/Debug/libvorbisfile_static.lib")
-#			pragma comment(lib, "../../VS/Libs/Debug/libogg_static.lib")
-#		endif
-#	else
-#		ifdef _STATIC_CRT
-#			pragma comment(lib, "../../VS/Output/Release static CRT/HQUtil.lib")
-#			pragma comment(lib, "../../VS/Output/StaticRelease static CRT/HQUtilMath.lib")
-#			pragma comment(lib, "../../VS/Libs/Release static CRT/libvorbis_static.lib")
-#			pragma comment(lib, "../../VS/Libs/Release static CRT/libvorbisfile_static.lib")
-#			pragma comment(lib, "../../VS/Libs/Release static CRT/libogg_static.lib")
-#		else
-#			pragma comment(lib, "../../VS/Output/Release/HQUtil.lib")
-#			pragma comment(lib, "../../VS/Output/StaticRelease/HQUtilMath.lib")
-#			pragma comment(lib, "../../VS/Libs/Release/libvorbis_static.lib")
-#			pragma comment(lib, "../../VS/Libs/Release/libvorbisfile_static.lib")
-#			pragma comment(lib, "../../VS/Libs/Release/libogg_static.lib")
-#		endif
-#	endif
 #endif
 
 HQBaseAudioDevice * ge_pAudioDevice = NULL;

@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEngineResManager.h"
 #include "../HQLoggableObject.h"
 #include "../HQSharedPointer.h"
-#include "../../../tinyxml/tinyxml.h"
+#include "../../../ThirdParty-mod/tinyxml/tinyxml.h"
 #include "HQEngineCommonInternal.h"
 
 #ifdef WIN32
