@@ -3027,6 +3027,35 @@ HQLinkedList<*,*>{
 		)
 	)
 }
+;------------------------------------------------------------------------------
+;HQHashTableBucket
+;------------------------------------------------------------------------------
+HQHashTableBucket<*,*>{
+	children
+	(
+		#(
+			entry: #if ($c.m_isEmpty == 0) (
+				$c.m_entry
+			) 
+			#else (
+				0
+			),
+			raw_view:  [$c,!]
+		)
+	)
+	preview(
+		#(
+			#if ($c.m_isEmpty == 0) (
+				#(
+					"[", $c.m_entry.m_first, "]"
+				)
+			) 
+			#else (
+				"empty"
+			)
+		)
+	)
+}
 
 ;------------------------------------------------------------------------------
 ;  HQClosedHashTable
@@ -3037,7 +3066,7 @@ HQClosedHashTable<*,*,*,*,*,*>{
 		#(
 			#array
 			(
-				expr : ($c.m_buckets[$i].m_entry),
+				expr : ($c.m_buckets[$i]),
 				size : ($c.m_numBuckets)
 			)  : ($e),
 			
