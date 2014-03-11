@@ -1,5 +1,6 @@
 ; AutoExp.Dat - templates for automatically expanding data
 ; Copyright(c) Microsoft Corporation. All Rights Reserved.
+; Copy this to Program Files/Microsoft Visual Studio 9.0/Common7/Packages/Debugger
 ;---------------------------------------------------------------
 ;
 ; While debugging, Data Tips and items in the Watch and Variable
