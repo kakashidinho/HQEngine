@@ -343,12 +343,12 @@
 		D682AE9318CDC6AB004E3C6F /* HQEngineEffectManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineEffectManagerImpl.h; path = ../../../Source/HQEngine/HQEngineEffectManagerImpl.h; sourceTree = "<group>"; };
 		D682AE9418CDC6AB004E3C6F /* HQEngineResManagerImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQEngineResManagerImpl.cpp; path = ../../../Source/HQEngine/HQEngineResManagerImpl.cpp; sourceTree = "<group>"; };
 		D682AE9518CDC6AB004E3C6F /* HQEngineResManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineResManagerImpl.h; path = ../../../Source/HQEngine/HQEngineResManagerImpl.h; sourceTree = "<group>"; };
-		D682AE9F18CDC6DE004E3C6F /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../../../../ThirdParty-mod/tinyxml/tinystr.cpp; sourceTree = "<group>"; };
-		D682AEA018CDC6DE004E3C6F /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../../../../ThirdParty-mod/tinyxml/tinystr.h; sourceTree = "<group>"; };
-		D682AEA118CDC6DE004E3C6F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../../../ThirdParty-mod/tinyxml/tinyxml.cpp; sourceTree = "<group>"; };
-		D682AEA218CDC6DE004E3C6F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../../../ThirdParty-mod/tinyxml/tinyxml.h; sourceTree = "<group>"; };
-		D682AEA318CDC6DE004E3C6F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../../../ThirdParty-mod/tinyxml/tinyxmlerror.cpp; sourceTree = "<group>"; };
-		D682AEA418CDC6DE004E3C6F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../../../ThirdParty-mod/tinyxml/tinyxmlparser.cpp; sourceTree = "<group>"; };
+		D682AE9F18CDC6DE004E3C6F /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinystr.cpp"; sourceTree = "<group>"; };
+		D682AEA018CDC6DE004E3C6F /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = "../../../../ThirdParty-mod/tinyxml/tinystr.h"; sourceTree = "<group>"; };
+		D682AEA118CDC6DE004E3C6F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxml.cpp"; sourceTree = "<group>"; };
+		D682AEA218CDC6DE004E3C6F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = "../../../../ThirdParty-mod/tinyxml/tinyxml.h"; sourceTree = "<group>"; };
+		D682AEA318CDC6DE004E3C6F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxmlerror.cpp"; sourceTree = "<group>"; };
+		D682AEA418CDC6DE004E3C6F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxmlparser.cpp"; sourceTree = "<group>"; };
 		D6FDD8D918C7A61D00825C3C /* HQEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HQEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6FDD8DC18C7A61D00825C3C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D6FDD8DF18C7A61D00825C3C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -1752,9 +1752,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../../ThirdParty-mod,
-					../../../ThirdParty-mod/libogg/include,
-					../../../ThirdParty-mod/libvorbis/include,
+					"../../../ThirdParty-mod",
+					"../../../ThirdParty-mod/libogg/include",
+					"../../../ThirdParty-mod/libvorbis/include",
 					../../Source,
 				);
 				LIBRARY_SEARCH_PATHS = ../libs/Debug;
@@ -1800,9 +1800,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../..,
-					../../../libogg/include,
-					../../../libvorbis/include,
+					"../../../ThirdParty-mod",
+					"../../../ThirdParty-mod/libogg/include",
+					"../../../ThirdParty-mod/libvorbis/include",
 					../../Source,
 				);
 				LIBRARY_SEARCH_PATHS = ../libs/Release;

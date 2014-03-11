@@ -75,14 +75,14 @@ Folder structure
 How to build
 ----------------------------
 - Windows Desktop:
-	* Open 3D Math library's solution "/HQEngine/VS/HQEngineUtilMath.sln".
+	* Open 3D Math library's solution "/HQEngine/VS2008/HQEngineUtilMath.sln".
 	* Select Build->Batch Build->Select All->Build to build various versions (Debug/Release) of Math library.
-	* Open game framework's solution "/HQEngine/VS/HQEngine.sln". 
+	* Open game framework's solution "/HQEngine/VS2008/HQEngine.sln". 
 	Note: it's normal if there's a error popup saying that a C sharp project cannot be opened because you are using Visual C++ Express.
 	* Config Prerequisites' include and libraries paths. 
 	* Build solution.
-	* Output dll and exe files are in "/HQEngine/VS/Output/Debug" folder. 
-	* Run "test" project inside Visual Studio. Don't run "test.exe" directly in "/HQEngine/VS/Output/Debug" folder.
+	* Output dll and exe files are in "/HQEngine/VS2008/Output/Debug" folder. 
+	* Run "test" project inside Visual Studio. Don't run "test.exe" directly in "/HQEngine/VS2008/Output/Debug" folder.
 - Windows Store App:
 	* Open Windows Store App's solution "/HQEngine/VS2012/WindowsStoreApp/HQEngine/HQEngine.sln". 
 	Note: Be sure to use Windows 8 version if you are using VS Express.

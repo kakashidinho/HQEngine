@@ -239,12 +239,12 @@
 		D682AEAB18CDD86A004E3C6F /* HQEngineEffectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineEffectManager.h; path = ../../../Source/HQEngineEffectManager.h; sourceTree = "<group>"; };
 		D682AEAC18CDD86A004E3C6F /* HQEngineResManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineResManager.h; path = ../../../Source/HQEngineResManager.h; sourceTree = "<group>"; };
 		D682AEAD18CDD86A004E3C6F /* HQFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQFileManager.h; path = ../../../Source/HQFileManager.h; sourceTree = "<group>"; };
-		D682AEAF18CDD896004E3C6F /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../../../../ThirdParty-mod/tinyxml/tinystr.cpp; sourceTree = "<group>"; };
-		D682AEB018CDD896004E3C6F /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../../../../ThirdParty-mod/tinyxml/tinystr.h; sourceTree = "<group>"; };
-		D682AEB118CDD896004E3C6F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../../../ThirdParty-mod/tinyxml/tinyxml.cpp; sourceTree = "<group>"; };
-		D682AEB218CDD896004E3C6F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../../../ThirdParty-mod/tinyxml/tinyxml.h; sourceTree = "<group>"; };
-		D682AEB318CDD896004E3C6F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../../../ThirdParty-mod/tinyxml/tinyxmlerror.cpp; sourceTree = "<group>"; };
-		D682AEB418CDD896004E3C6F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../../../ThirdParty-mod/tinyxml/tinyxmlparser.cpp; sourceTree = "<group>"; };
+		D682AEAF18CDD896004E3C6F /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinystr.cpp"; sourceTree = "<group>"; };
+		D682AEB018CDD896004E3C6F /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = "../../../../ThirdParty-mod/tinyxml/tinystr.h"; sourceTree = "<group>"; };
+		D682AEB118CDD896004E3C6F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxml.cpp"; sourceTree = "<group>"; };
+		D682AEB218CDD896004E3C6F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = "../../../../ThirdParty-mod/tinyxml/tinyxml.h"; sourceTree = "<group>"; };
+		D682AEB318CDD896004E3C6F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxmlerror.cpp"; sourceTree = "<group>"; };
+		D682AEB418CDD896004E3C6F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxmlparser.cpp"; sourceTree = "<group>"; };
 		D682AEB918CDD8A8004E3C6F /* HQAudioInternal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQAudioInternal.cpp; path = ../../../Source/HQAudio/HQAudioInternal.cpp; sourceTree = "<group>"; };
 		D682AEBA18CDD8A8004E3C6F /* HQAudioInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQAudioInternal.h; path = ../../../Source/HQAudio/HQAudioInternal.h; sourceTree = "<group>"; };
 		D682AEBC18CDD8CA004E3C6F /* HQDefaultFileManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQDefaultFileManager.cpp; path = ../../../Source/HQEngine/HQDefaultFileManager.cpp; sourceTree = "<group>"; };
@@ -1705,9 +1705,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../..,
-					../../../libogg/include,
-					../../../libvorbis/include,
+					"../../../ThirdParty-mod",
+					"../../../ThirdParty-mod/libogg/include",
+					"../../../ThirdParty-mod/libvorbis/include",
 					../../Source,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -1753,9 +1753,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../../ThirdParty-mod,
-					../../../ThirdParty-mod/libogg/include,
-					../../../ThirdParty-mod/libvorbis/include,
+					"../../../ThirdParty-mod",
+					"../../../ThirdParty-mod/libogg/include",
+					"../../../ThirdParty-mod/libvorbis/include",
 					../../Source,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
