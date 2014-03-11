@@ -13,6 +13,8 @@ COPYING.txt included with this distribution for more information.
 
 #if 0
 
+//TO DO
+
 #include "HQSceneManagementCommon.h"
 #include "math/HQ3DMath.h"
 
