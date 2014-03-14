@@ -39,7 +39,7 @@ HQ_FORCE_INLINE void HQSincosf( hq_float32 angle, hq_float32* sinOut, hq_float32
        mov eax , sinOut		//load giá trị con trỏ sinOut vào eax
        fstp [eax]		//pop giá trị đỉnh FPU stack và đưa vào giá trị con trỏ sinOut trỏ đến
    }
-#elif defined LINUX || defined APPLE
+#elif defined HQ_LINUX_PLATFORM || defined HQ_MAC_PLATFORM
 	//inline assembly gcc/g++ version 
 	asm(
 		"fsincos\n\t"
