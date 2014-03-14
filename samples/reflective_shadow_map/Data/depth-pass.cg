@@ -91,6 +91,7 @@ glslf float getNormDepth(float2 clipDepth){
 	return 0.5 * (clipDepth.x / clipDepth.y) + 0.5;
 }
 
+#define PI 3.141592654
 
 //pixel shader
 pOut PS(
@@ -116,7 +117,7 @@ pOut PS(
 		//out of light cone
 		output.flux = float4(0.0, 0.0, 0.0, 1.0);
 	else
-		output.flux = spot * lightDiffuse * materialDiffuse;
+		output.flux = spot * lightDiffuse * materialDiffuse / PI;
 	
 	return output;
 }
