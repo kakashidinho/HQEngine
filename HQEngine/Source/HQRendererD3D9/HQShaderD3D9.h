@@ -23,8 +23,7 @@ COPYING.txt included with this distribution for more information.
 
 struct HQParameterD3D9
 {
-	CGparameter parameter[2];//parameter both in vertex shader and pixel shader
-	CGtype type;
+	UINT parameterReg[2];//parameter's register index both in vertex shader and pixel shader
 };
 
 
@@ -32,15 +31,22 @@ struct HQShaderObjectD3D9
 {
 	HQShaderObjectD3D9()
 	{
-		program = NULL;
+		vshader = NULL;
+		consTable = NULL;
 	}
 	~HQShaderObjectD3D9()
 	{
-		if (program)
-			cgDestroyProgram(program);
+		if (consTable)
+			consTable->Release();
+		if (vshader)
+			vshader->Release();
 	}
 
-	CGprogram program;
+	union {
+		IDirect3DVertexShader9* vshader;
+		IDirect3DPixelShader9* pshader;
+	};
+	ID3DXConstantTable * consTable;
 	HQShaderType type;
 };
 
@@ -59,45 +65,6 @@ struct HQShaderProgramD3D9
 
 class HQShaderManagerD3D9:public HQShaderManager,private HQItemManager<HQShaderProgramD3D9> , public HQLoggableObject
 {
-private:
-
-	HQSharedPtr<HQShaderProgramD3D9> activeProgram; 
-#if defined _DEBUG || defined DEBUG
-	hq_uint32 activeProgramID;
-#endif
-	HQSharedPtr<HQShaderObjectD3D9> activeVShader,activePShader;
-
-	CGcontext cgContext;
-	CGprofile cgVertexProfile,cgPixelProfile;
-
-	LPDIRECT3DDEVICE9 pD3DDevice;
-	HQItemManager<HQShaderObjectD3D9> shaderObjects;//danh sách shader object
-	
-	//fixed function controlling values
-	D3DTEXTUREOP firstStageOp[2];//color & alpha op
-
-	char ** GetPredefineMacroArguments(const HQShaderMacro * pDefines);//convert HQShaderMacro array to Cg compiler command arguments
-	void DeAlloc(char **ppC);//delete arguments array
-
-	HQReturnVal CreateShaderFromStreamEx(HQShaderType type,
-									 HQDataReaderStream* dataStream,
-									 bool isPreCompiled,
-									 const char* entryFunctionName,
-									 const char **args,
-									 bool debugMode,
-									 hq_uint32 *pID
-									 );
-	HQReturnVal CreateShaderFromMemoryEx(HQShaderType type,
-									 const char* pSourceData,
-									 bool isPreCompiled,
-									 const char* entryFunctionName,
-									 const char **args,
-									 bool debugMode,
-									 hq_uint32 *pID);
-
-	HQSharedPtr<HQParameterD3D9> GetUniformParam(HQSharedPtr<HQShaderProgramD3D9>& pProgram,const char* parameterName);
-	hq_uint32 GetParameterIndex(HQSharedPtr<HQShaderProgramD3D9>& pProgram, 
-									const char *parameterName);
 public:
 	HQShaderManagerD3D9(LPDIRECT3DDEVICE9 g_pD3DDev,HQLogStream* logFileStream ,bool flushLog);
 	~HQShaderManagerD3D9();
@@ -259,6 +226,75 @@ public:
 	HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData);
 
 	void OnResetDevice();
+private:
+
+	HQSharedPtr<HQShaderProgramD3D9> activeProgram; 
+#if defined _DEBUG || defined DEBUG
+	hq_uint32 activeProgramID;
+#endif
+	HQSharedPtr<HQShaderObjectD3D9> activeVShader,activePShader;
+
+	CGcontext cgContext;
+	CGprofile cgVertexProfile,cgPixelProfile;
+
+	LPDIRECT3DDEVICE9 pD3DDevice;
+	HQItemManager<HQShaderObjectD3D9> shaderObjects;//danh sách shader object
+	
+	//fixed function controlling values
+	D3DTEXTUREOP firstStageOp[2];//color & alpha op
+
+	char ** GetPredefineMacroArguments(const HQShaderMacro * pDefines);//convert HQShaderMacro array to Cg compiler command arguments
+	void DeAlloc(char **ppC);//delete arguments array
+
+	HQReturnVal CreateShaderFromStreamEx(HQShaderType type,
+									 HQDataReaderStream* dataStream,
+									 bool isPreCompiled,
+									 const char* entryFunctionName,
+									 const char **args,
+									 bool debugMode,
+									 hq_uint32 *pID
+									 );
+	HQReturnVal CreateShaderFromMemoryEx(HQShaderType type,
+									 const char* pSourceData,
+									 bool isPreCompiled,
+									 const char* entryFunctionName,
+									 const char **args,
+									 bool debugMode,
+									 hq_uint32 *pID);
+
+	HQSharedPtr<HQParameterD3D9> GetUniformParam(HQSharedPtr<HQShaderProgramD3D9>& pProgram,const char* parameterName);
+	hq_uint32 GetParameterIndex(HQSharedPtr<HQShaderProgramD3D9>& pProgram, 
+									const char *parameterName);
+
+	template <size_t vecSize> void SetD3DVShaderConstantI(hquint32 startReg, 
+													 const int* pValues,
+													 hq_uint32 numElements);
+
+	template <> void SetD3DVShaderConstantI<4>(hquint32 startReg, 
+											const int* pValues,
+											hq_uint32 numElements);
+	
+	
+	template <size_t vecSize> void SetD3DVShaderConstantF(hquint32 startReg, 
+													 const float* pValues,
+													 hq_uint32 numElements);
+
+	template <> void SetD3DVShaderConstantF<4>(hquint32 startReg, 
+											 const float* pValues,
+											 hq_uint32 numElements);
+
+	template <size_t vecSize> void SetD3DPShaderConstantI(hquint32 startReg, 
+													 const int* pValues,
+													 hq_uint32 numElements);
+
+	
+	
+	template <size_t vecSize> void SetD3DPShaderConstantF(hquint32 startReg, 
+													 const float* pValues,
+													 hq_uint32 numElements);
+
+
+	hquint32 GetD3DConstantStartRegister(ID3DXConstantTable* table, const char* name);
 };
 
 #endif
