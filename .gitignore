@@ -4,9 +4,14 @@
 *.suo
 *.pdb
 *.idb
+*~
 ThirdParty-mod/libogg/xcode/build
 ThirdParty-mod/libvorbis/xcode/build
+ThirdParty-mod/openal-soft/build
 xcuserdata
+HQEngine/linux/Deps
+HQEngine/linux/Debug
+HQEngine/linux/Release
 HQEngine/Android/HQAudio/libs
 HQEngine/Android/HQAudio/obj
 HQEngine/Android/HQEngine/libs
