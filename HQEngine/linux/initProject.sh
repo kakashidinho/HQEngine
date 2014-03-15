@@ -6,7 +6,7 @@ if ["$1"==""]; then
   GeneratorOption=""
 else
   echo "using $1"
-  GeneratorOption="-G $1"
+  GeneratorOptions=-G"$1"
 fi
 
 CMAKE_OGG_INC_DIR=${CurrentDir}/Deps/include
@@ -22,7 +22,7 @@ DepsLibPathOptions="-DCMAKE_OGG_LIB_DIR=${CMAKE_OGG_LIB_DIR} -DCMAKE_VORBIS_LIB_
 
 mkdir Release
 cd Release
-cmake -DCMAKE_BUILD_TYPE=Release  ${GeneratorOption} ${DepsIncPathOptions} ${DepsLibPathOptions} ../..
+cmake -DCMAKE_BUILD_TYPE=Release  "${GeneratorOption}" ${DepsIncPathOptions} ${DepsLibPathOptions} ../..
 
 cd $CurrentDir
 
