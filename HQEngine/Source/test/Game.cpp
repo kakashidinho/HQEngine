@@ -28,9 +28,6 @@ struct BUFFER2
 };
 
 
-#ifdef LINUX
-#error need implement
-#else
 Game::Game() 
 : m_offsetX(0), m_offsetY(0)
 #if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
@@ -38,7 +35,6 @@ Game::Game()
 #endif
 
 {
-#endif
     
 #ifdef __APPLE__
 	/*resource directory*/
@@ -88,7 +84,7 @@ Game::Game()
 	//create log stream
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	logFile = HQCreateDebugLogStream();
-#elif defined WIN32
+#elif defined WIN32 || defined HQ_LINUX_PLATFORM
 	logFile = HQCreateFileLogStream("log.txt");
 #elif defined ANDROID
 	logFile = HQCreateLogCatStream();
@@ -251,12 +247,11 @@ Game::~Game()
 	this->audio->Release();
 #endif
 	HQEngineApp::Release();
-#ifdef LINUX
-#else
+	
 	if (logFile)
 		logFile->Close();
 	
-#endif
+
 }
 
 void Game::OnLostDevice()

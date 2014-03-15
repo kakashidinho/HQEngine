@@ -43,8 +43,8 @@ COPYING.txt included with this distribution for more information.
 typedef struct HQXWindowInfo{
     const char * title;
     int x, y;//toa do window
-    Window parent ;
-    Window window;
+    Window parent ;//can be DefaultRootWindow(display)
+    Window window;//this must be 0 when passing to HQRenderDevice::Init() method, a new window will be created and stored in this member
 } HQX11RenderDeviceInitInput , *HQRenderDeviceInitInput;
 
 

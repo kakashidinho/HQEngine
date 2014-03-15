@@ -72,11 +72,7 @@ class Game : public HQEngineRenderDelegate
 #endif
 {
 public:
-#ifdef LINUX
-#error need implement
-#else
 	Game();
-#endif
 	~Game();
 	void Render(HQTime dt);
 	void OnLostDevice();
@@ -139,9 +135,6 @@ private:
 	HQMeshNode * mesh;
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	MeshX *meshX;
-#endif
-#ifdef LINUX
-	Display *dpy;
 #endif
 
 	hquint32 m_offsetX, m_offsetY;

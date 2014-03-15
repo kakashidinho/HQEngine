@@ -1,0 +1,10 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(ImagesLoader)
+add_subdirectory(HQUtilMath)
+add_subdirectory(HQUtil)
+add_subdirectory(HQRendererGL)
+add_subdirectory(HQEngineRenderer)
+add_subdirectory(HQSceneManagement)
+add_subdirectory(HQAudio)
+add_subdirectory(HQEngine)

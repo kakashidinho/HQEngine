@@ -22,6 +22,7 @@ HQRenderDeviceDebugLayer debugLayer;
 #endif
 
 #ifdef _NO_DYNAMIC_LOAD_RENDERER_LIB_/*---function declare-----*/
+#	pragma message("implicitly link with renderer code")
 extern "C" {
 #if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 	extern HQReturnVal CreateDevice(hModule pDll,LPHQRenderDevice *ppDev,bool flushDebugLog , bool debugLayer);

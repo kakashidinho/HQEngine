@@ -721,6 +721,8 @@ void HQDeviceGL::EnableVSyncNonSave(bool enable)
 #elif defined LINUX
 	if(GLXEW_EXT_swap_control)
 		glXSwapIntervalEXT(this->dpy,winfo.win, interval);
+	else if (GLXEW_MESA_swap_control)
+		glXSwapIntervalMESA(interval);
 #elif defined APPLE
 	[glc setValues: &interval forParameter: NSOpenGLCPSwapInterval];
 #endif
@@ -1095,7 +1097,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
         XSetWindowAttributes swa;
         swa.colormap=winfo.cmap;
         unsigned long wFlags = CWColormap | CWEventMask;
-        swa.event_mask=ExposureMask | KeyPressMask;
+        swa.event_mask=ExposureMask | SubstructureNotifyMask |KeyPressMask | KeyReleaseMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask;
 
         if((flags & WINDOWED) == 0)//full screen
         {

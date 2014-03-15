@@ -20,7 +20,7 @@ COPYING.txt included with this distribution for more information.
 
 
 /*-----------win32---------------*/
-#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_WIN_DESKTOP_PLATFORM
 
 typedef HWND HQNativeWindow;
 
@@ -41,27 +41,32 @@ typedef struct HQWIPWinStoreSpecificType
 } HQWIPPlatformSpecificType;
 
 /*-------Mac OSX-----------------*/
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 typedef struct HQWIPMacSpecificType{
 	NSImage *icon;//application icon
 } HQWIPPlatformSpecificType;
 
 /*------IOS----------------------*/
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 typedef struct HQWIPIOSSpecificType{
 	bool landscapeMode;//is landscape mode
 } HQWIPPlatformSpecificType;
 
 /*--------Android----------------*/
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 
 typedef struct HQWIPAndroidSpecificType{
 	int openGL_ApiLevel;//OpenGL ES version 1 or 2.other values are equal to 1
 } HQWIPPlatformSpecificType;
 
 
-#else
-#	error need implement
+/*--------Linux------------------*/
+#elif defined HQ_LINUX_PLATFORM
+
+typedef struct HQWIPLinuxSpecificType{
+	Display * display;//can be NULL => default display
+} HQWIPPlatformSpecificType;
+
 #endif
 
 class HQEngineWindow;

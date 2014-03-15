@@ -227,15 +227,18 @@ HQReturnVal HQEngineApp::CreateRenderDevice(const WindowInitParams* initParams)
 	/*-------switch renderer type---------*/
 	if (!strcmp(l_rendererType , "GL"))
 #if defined LINUX
-#error need implement
-#else 
+	{
+		m_flags |= HQ_RENDERER_GL;
+		re = m_renderer.CreateGLDevice(m_window->GetDisplay(), initParams->flushDebugLog);
+	}
+#else //#if defined LINUX
 	{
 #	if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 		m_flags |= HQ_RENDERER_GL;
 		re = m_renderer.CreateGLDevice(initParams->flushDebugLog);
 #	endif
 	}
-#endif
+#endif //else of #if defined LINUX
 #if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #	if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	else if (!strcmp(l_rendererType , "D3D9"))
@@ -249,7 +252,7 @@ HQReturnVal HQEngineApp::CreateRenderDevice(const WindowInitParams* initParams)
 		m_flags |= HQ_RENDERER_D3D11;
 		re = m_renderer.CreateD3DDevice11(initParams->flushDebugLog);
 	}
-#endif
+#endif//#if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 	
 	/*-------init device------------*/
 	if (re == HQ_OK)

@@ -157,13 +157,13 @@ public:
 
 	T* GetItemPointer(const Key& key);
 	const T* GetItemPointer(const Key& key)const;
-	T* GetItemPointer(hq_uint32 bucketIndex);
-	const T* GetItemPointer(hq_uint32 bucketIndex)const;
+	T* GetItemPointerAt(hq_uint32 bucketIndex);
+	const T* GetItemPointerAt(hq_uint32 bucketIndex)const;
 
 	T& GetItem(const Key& key , bool &isFound);
 	const T& GetItem(const Key& key , bool &isFound) const;
-	T& GetItem(hq_uint32 bucketIndex , bool &isFound);
-	const T& GetItem(hq_uint32 bucketIndex , bool &isFound) const;
+	T& GetItemAt(hq_uint32 bucketIndex , bool &isFound);
+	const T& GetItemAt(hq_uint32 bucketIndex , bool &isFound) const;
 
 	bool Find(const Key& key , hq_uint32 &foundIndex) const;//Find existing key . Note : This class resolves collision by using quadraric probing
 
@@ -447,14 +447,14 @@ const T* HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual ,
 	return NULL;
 }
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
-T* HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItemPointer(hq_uint32 bucketIndex)
+T* HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItemPointerAt(hq_uint32 bucketIndex)
 {
 	if (bucketIndex < this->m_numBuckets && m_buckets[bucketIndex].m_isEmpty == 0)
 		return &this->GetItemNonCheck(bucketIndex);
 	return NULL;
 }
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
-const T* HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItemPointer(hq_uint32 bucketIndex) const
+const T* HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItemPointerAt(hq_uint32 bucketIndex) const
 {
 	if (bucketIndex < this->m_numBuckets && m_buckets[bucketIndex].m_isEmpty == 0)
 		return &this->GetItemNonCheck(bucketIndex);
@@ -484,7 +484,7 @@ const T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual ,
 		return this->m_invalidValue;
 }
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
-T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItem(hq_uint32 bucketIndex , bool &isFound)
+T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItemAt(hq_uint32 bucketIndex , bool &isFound)
 {
 	if ((isFound = (bucketIndex < this->m_numBuckets  && m_buckets[bucketIndex].m_isEmpty == 0)) == true)
 		return this->GetItemNonCheck(bucketIndex);
@@ -492,7 +492,7 @@ T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , Memor
 		return this->m_invalidValue;
 }
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
-const T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItem(hq_uint32 bucketIndex , bool &isFound) const
+const T& HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: GetItemAt(hq_uint32 bucketIndex , bool &isFound) const
 {
 	if ((isFound = (bucketIndex < this->m_numBuckets  && m_buckets[bucketIndex].m_isEmpty == 0)) == true)
 		return this->GetItemNonCheck(bucketIndex);

@@ -34,14 +34,16 @@ COPYING.txt included with this distribution for more information.
 #	endif
 #endif
 
-#if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 #	ifndef _STATIC_RENDERER_LIB_
 #		define _STATIC_RENDERER_LIB_
 #	endif 
-#elif defined __APPLE__
+#elif defined HQ_MAC_PLATFORM
 #	ifndef APPLE
 #		define APPLE __APPLE__
 #	endif
+#   define _NO_DYNAMIC_LOAD_RENDERER_LIB_
+#elif defined HQ_LINUX_PLATFORM
 #   define _NO_DYNAMIC_LOAD_RENDERER_LIB_
 #endif
 

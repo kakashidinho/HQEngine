@@ -66,7 +66,44 @@ public:
 	HQNamedGraphicsRelatedObj(const char* _name) : HQEngineNamedObjImpl(_name) {}
 };
 
+/*----------base hash table using prime number of buckets-----------*/
+template
+<
+class Key ,
+class T ,
+class HashFunction = HQDefaultHashFunc<Key>,
+class ProbingFunction = HQQuadradticProbing ,
+class KeyEqual = HQDefaultKeyEqual<Key>,
+class MemoryManager = HQDefaultMemManager
+>
+class HQEnginePrimeHashTable: public HQClosedHashTable<Key, T, HashFunction , ProbingFunction, KeyEqual,  MemoryManager>
+{
+public:
+	typedef HQClosedHashTable<Key, T , HashFunction , ProbingFunction, KeyEqual,  MemoryManager > parentType;
+
+	/*----create hash table with 16 buckets and max load factor 0.75----------*/
+	HQEnginePrimeHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(pMemoryManager) {}
+	/*----create hash table with max load factor 0.75----------*/
+	HQEnginePrimeHashTable(hq_uint32 numBuckets , const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(numBuckets , pMemoryManager) {}
+
+	/*-----------------------*/
+	HQEnginePrimeHashTable(hq_uint32 numBuckets , hq_float32 maxLoadFactor , const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(numBuckets , maxLoadFactor , pMemoryManager) {}
+protected:
+	hq_uint32 GetNewSize()
+	{
+		//resize table size to next prime number
+		hq_uint32 i = this->m_numBuckets + 1;
+		while ( !HQIsPrime(i) || (hq_float32)this->m_numItems / i > 0.5f )
+		{
+			++i;
+		}
+		return i;
+	}
+};
+
 /*----------base hash table using pointer typed key-----------------*/
+
+
 template <class Key>
 //hash function for a pointer typed key
 struct HQEnginePtrKeyHashFunc {
@@ -91,24 +128,13 @@ class T ,
 class ProbingFunction = HQQuadradticProbing ,
 class MemoryManager = HQDefaultMemManager
 >
-class HQEnginePtrKeyHashTable: public HQClosedHashTable<Key, T, HQEnginePtrKeyHashFunc<Key> , ProbingFunction, HQEnginePtrKeyEqual<Key>,  MemoryManager>
+class HQEnginePtrKeyHashTable: public HQEnginePrimeHashTable<Key, T, HQEnginePtrKeyHashFunc<Key> , ProbingFunction, HQEnginePtrKeyEqual<Key>,  MemoryManager>
 {
 public:
-	typedef HQClosedHashTable<Key, T , HQEnginePtrKeyHashFunc<Key> , ProbingFunction, HQEnginePtrKeyEqual<Key>,  MemoryManager > parentType;
+	typedef HQEnginePrimeHashTable<Key, T , HQEnginePtrKeyHashFunc<Key> , ProbingFunction, HQEnginePtrKeyEqual<Key>,  MemoryManager > parentType;
 
 	/*----create hash table with 16 buckets and max load factor 0.75----------*/
 	HQEnginePtrKeyHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(pMemoryManager) {}
-protected:
-	hq_uint32 GetNewSize()
-	{
-		//resize table size to next prime number
-		hq_uint32 i = this->m_numBuckets + 1;
-		while ( !HQIsPrime(i) || (hq_float32)this->m_numItems / i > 0.5f )
-		{
-			++i;
-		}
-		return i;
-	}
 };
 
 /*------- hash table using string key--------*/

@@ -13,19 +13,23 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQPlatformDef.h"
 
-#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_WIN_DESKTOP_PLATFORM
 
 #include <winuser.h>
 
 #elif (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 
 #include <Carbon/Carbon.h>
 
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
+
+#elif defined HQ_LINUX_PLATFORM
+
+#include <X11/keysym.h>
 
 #else
 
@@ -50,7 +54,7 @@ namespace HQKeyCode
 	///keyboard key code
 	enum KeyCodeEnum
 	{
-#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_WIN_DESKTOP_PLATFORM
 		BACKSPACE = VK_BACK,
 		TAB = VK_TAB ,
 		ENTER = VK_RETURN,
@@ -272,7 +276,7 @@ namespace HQKeyCode
 		NUM_LOCK = VirtualKey::NumberKeyLock,
 		SCROLL_LOCK = VirtualKey::Scroll,
 
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 		BACKSPACE = kVK_Delete,
 		TAB = kVK_Tab ,
 		ENTER = kVK_Return,
@@ -376,10 +380,123 @@ namespace HQKeyCode
 		SPECIAL5 = kVK_ANSI_Backslash,//  '\|' for US
 		SPECIAL6 = kVK_ANSI_RightBracket,//  ']}' for US
 		SPECIAL7 = kVK_ANSI_Quote,//  ''"' for US
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 
-#elif defined ANDROID		
+#elif defined HQ_ANDROID_PLATFORM
 
+#elif defined HQ_LINUX_PLATFORM
+			
+		BACKSPACE = XK_BackSpace,
+		TAB = XK_Tab ,
+		ENTER = XK_Return,
+
+		LSHIFT = XK_Shift_L,
+		RSHIFT = XK_Hyper_R,
+		LCONTROL = XK_Control_L,
+		RCONTROL = XK_Control_R,
+		LALT = XK_Alt_L,
+		RALT = XK_Alt_R,
+		PAUSE = XK_Pause,
+		CAP_SLOCK = XK_Caps_Lock,
+		ESCAPE = XK_Escape ,
+
+		SPACE = XK_space,
+		PAGE_UP = XK_Page_Up,
+		PAGE_DOWN = XK_Page_Down,
+		END = XK_End ,
+		HOME = XK_Home,
+		LEFT = XK_Left,
+		UP = XK_Up,
+		RIGHT = XK_Right ,
+		DOWN = XK_Down ,
+		SELECT = XK_Select ,
+		PRINT_SCREEN = XK_Print,
+		INSERT = XK_Insert,
+		DEL = XK_Delete ,
+		
+		NUM0 = 0x30,
+		NUM1 = 0x31,
+		NUM2 = 0x32,
+		NUM3 = 0x33,
+		NUM4 = 0x34,
+		NUM5 = 0x35,
+		NUM6 = 0x36,
+		NUM7 = 0x37,
+		NUM8 = 0x38,
+		NUM9 = 0x39,
+		
+		A = 0x41,
+		B = 0x42,
+		C = 0x43,
+		D = 0x44,
+		E = 0x45,
+		F = 0x46,
+		G = 0x47,
+		H = 0x48,
+		I = 0x49,
+		J = 0x4A,
+		K = 0x4B,
+		L = 0x4C,
+		M = 0x4D,
+		N = 0x4E,
+		O = 0x4F,
+		P = 0x50,
+		Q = 0x51,
+		R = 0x52,
+		S = 0x53,
+		T = 0x54,
+		U = 0x55,
+		V = 0x56,
+		W = 0x57,
+		X = 0x58,
+		Y = 0x59,
+		Z = 0x5A,
+
+		NUMPAD0 = XK_KP_0,
+		NUMPAD1 = XK_KP_1,
+		NUMPAD2 = XK_KP_2,
+		NUMPAD3 = XK_KP_3,
+		NUMPAD4 = XK_KP_4,
+		NUMPAD5 = XK_KP_5,
+		NUMPAD6 = XK_KP_6,
+		NUMPAD7 = XK_KP_7,
+		NUMPAD8 = XK_KP_8,
+		NUMPAD9 = XK_KP_9,
+		MULTIPLY = XK_KP_Multiply,
+		ADD = XK_KP_Add,
+		SEPARATOR = XK_KP_Separator,
+		SUBTRACT = XK_KP_Subtract,
+		DECIMAL = XK_KP_Decimal,
+		DIVIDE = XK_KP_Divide , //"/"
+		F1 = XK_F1,
+		F2 = XK_F2,
+		F3 = XK_F3,
+		F4 = XK_F4,
+		F5 = XK_F5,
+		F6 = XK_F6,
+		F7 = XK_F7,
+		F8 = XK_F8,
+		F9 = XK_F9,
+		F10 = XK_F10,
+		F11 = XK_F11,
+		F12 = XK_F12,
+
+		NUM_LOCK = XK_Num_Lock,
+		SCROLL_LOCK = XK_Scroll_Lock,
+
+		PLUS = XK_equal,// '=+' any country
+		COMMA = XK_comma,// ',' any country
+		MINUS = XK_minus,// '-' any country
+		PERIOD = XK_period,// '.' any country
+		
+		SPECIAL1 = XK_semicolon,// ';:' for US
+		SPECIAL2 = XK_slash,// '/?' for US
+		SPECIAL3 = XK_grave,// '`~' for US
+
+		SPECIAL4 = XK_bracketleft,//  '[{' for US
+		SPECIAL5 = XK_backslash,//  '\|' for US
+		SPECIAL6 = XK_bracketright,//  ']}' for US
+		SPECIAL7 = XK_apostrophe,//  ''"' for US
 #else
 #	error need implement
 #endif

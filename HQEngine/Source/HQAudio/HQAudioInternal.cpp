@@ -24,7 +24,7 @@ namespace HQAudioInternal
 		return ((HQDataReaderStream*)datasource)->ReadBytes(ptr, size, nmemb);
 	}
 
-	static int    seek_func (void *datasource, long long offset, int whence)
+	static int    seek_func (void *datasource, ogg_int64_t offset, int whence)
 	{
 		if (datasource == NULL)
 			return EOF;

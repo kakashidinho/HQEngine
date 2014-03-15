@@ -31,7 +31,7 @@ private :
 };
 
 /*-----win32------*/
-#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if HQ_WIN_DESKTOP_PLATFORM
 class HQEngineWindow : public HQEngineBaseWindow
 {
 public:
@@ -129,7 +129,7 @@ private:
 };
 
 /*----mac osx----*/
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 class HQEngineWindow : public HQEngineBaseWindow
 {
 public:
@@ -148,7 +148,7 @@ private:
 
 
 /*------IOS-----*/
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 class HQEngineWindow : public HQEngineBaseWindow
 {
 public:
@@ -166,7 +166,7 @@ private:
 };
 
 /*---------android----------*/
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 
 #include <j2cpp/j2cpp.hpp>
 #include <android/view/View.hpp>
@@ -187,6 +187,28 @@ private:
 	HQAndroidRenderDeviceInitInput m_renderDeviceInitInfo;
 };
 
+/*---------------linux----------------------*/
+#elif defined HQ_LINUX_PLATFORM
+
+class HQEngineWindow : public HQEngineBaseWindow
+{
+public:
+	HQEngineWindow(const char *title, const char* settingFileDir , HQWIPPlatformSpecificType* args);
+	~HQEngineWindow();
+	
+	HQRenderDeviceInitInput GetRenderDeviceInitInput() {return &m_windowInfo;}
+	Window GetRawWindow() {return m_windowInfo.window;}
+	Display * GetDisplay() {return m_display;}
+	HQReturnVal Show();
+	
+	bool EnableCursor(bool enable);
+private:
+	HQXWindowInfo m_windowInfo;
+	Display * m_display;
+	bool m_ownDisplay;
+	Cursor m_inviCursor;
+	char *m_title;
+};
 
 #else
 #	error need implement
