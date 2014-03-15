@@ -31,7 +31,7 @@ private :
 };
 
 /*-----win32------*/
-#if HQ_WIN_DESKTOP_PLATFORM
+#if defined HQ_WIN_DESKTOP_PLATFORM
 class HQEngineWindow : public HQEngineBaseWindow
 {
 public:
