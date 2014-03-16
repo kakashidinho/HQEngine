@@ -24,8 +24,8 @@ DepsLibPathOptions="-DCMAKE_OGG_LIB_DIR=${CMAKE_OGG_LIB_DIR} -DCMAKE_VORBIS_LIB_
 
 mkdir Debug
 cd Debug
-echo cmake -DCMAKE_BUILD_TYPE=Debug "${GeneratorOptions}" ${DepsIncPathOptions} ${DepsLibPathOptions} ../..
-cmake -DCMAKE_BUILD_TYPE=Debug "${GeneratorOptions}" ${DepsIncPathOptions} ${DepsLibPathOptions} ../..
+echo cmake -DCMAKE_BUILD_TYPE=Debug "${GeneratorOptions}" ${DepsIncPathOptions} ${DepsLibPathOptions} ..
+cmake -DCMAKE_BUILD_TYPE=Debug "${GeneratorOptions}" ${DepsIncPathOptions} ${DepsLibPathOptions} ..
 
 cd $CurrentDir
 

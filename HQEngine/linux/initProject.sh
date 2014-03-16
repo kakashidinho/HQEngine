@@ -22,7 +22,7 @@ DepsLibPathOptions="-DCMAKE_OGG_LIB_DIR=${CMAKE_OGG_LIB_DIR} -DCMAKE_VORBIS_LIB_
 
 mkdir Release
 cd Release
-cmake -DCMAKE_BUILD_TYPE=Release  "${GeneratorOption}" ${DepsIncPathOptions} ${DepsLibPathOptions} ../..
+cmake -DCMAKE_BUILD_TYPE=Release  "${GeneratorOption}" ${DepsIncPathOptions} ${DepsLibPathOptions} ..
 
 cd $CurrentDir
 
