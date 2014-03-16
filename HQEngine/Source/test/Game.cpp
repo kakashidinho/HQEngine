@@ -304,7 +304,7 @@ void Game::Render(HQTime dt)
 	this->audio->GetSourceController(music)->UpdateStream();
 
 	static hq_float32 angle = 0.0f;
-	angle += HQPiFamily::PI / 180.0f;
+	angle += dt * HQPiFamily::PI / 18.0f;
 	HQ_DECL_STACK_MATRIX3X4( scale) ;
 	//HQMatrix3x4Scale(0.8f, 0.8f, 0.8f, &scale);
 	HQMatrix3x4cRotateY(-angle , &rotation[0]);
@@ -327,7 +327,7 @@ void Game::Render(HQTime dt)
 	
 	//update mesh
 	mesh->SetUniformScale(0.3f);
-	mesh->RotateY(HQPiFamily::PI / 180.f);
+	mesh->RotateY(dt * HQPiFamily::PI / 18.f);
 	mesh->AdvanceAnimationTime(dt);
 	mesh->Update(dt);
 	const HQMatrix3x4 * boneMatrices = mesh->GetBoneTransformMatrices();
