@@ -91,7 +91,7 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 	LOCAL_CFLAGS := -DGLES2=1
 else
     ifeq ($(TARGET_ARCH_ABI),armeabi)
-		LOCAL_CFLAGS += -DCMATH=1
+		LOCAL_CFLAGS += -DHQ_CMATH=1
 	else
 		LOCAL_CFLAGS := -DGLES2=1
 	endif

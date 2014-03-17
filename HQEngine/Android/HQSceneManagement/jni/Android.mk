@@ -38,7 +38,7 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 	LOCAL_ARM_NEON := true
 else
 	ifeq ($(TARGET_ARCH_ABI),armeabi)
-		LOCAL_CFLAGS += -DCMATH=1
+		LOCAL_CFLAGS += -DHQ_CMATH=1
 	endif
 endif
 

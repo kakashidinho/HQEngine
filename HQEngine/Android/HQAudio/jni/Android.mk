@@ -87,6 +87,14 @@ LOCAL_CPP_FEATURES := exceptions
 
 LOCAL_ARM_MODE := arm
 
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+	LOCAL_ARM_NEON := true
+else
+	ifeq ($(TARGET_ARCH_ABI),armeabi)
+		LOCAL_CFLAGS += -DHQ_CMATH=1
+	endif
+endif
+
 LOCAL_CFLAGS := -fvisibility=hidden
 
 ifeq ($(NDK_DEBUG),1)
