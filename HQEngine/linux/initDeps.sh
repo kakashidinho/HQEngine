@@ -19,6 +19,7 @@ make install
 
 #-------------build openal-soft-----------------
 cd ../openal-soft
+rm -rf build
 mkdir build
 cd build
 cmake -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=$DepsDir/lib ..
