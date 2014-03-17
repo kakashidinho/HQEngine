@@ -21,7 +21,11 @@ COPYING.txt included with this distribution for more information.
 #define NUM_DS_FORMAT 5
 
 #ifdef LINUX
+#	if defined HQ_USE_XFREE86_VIDMODE
 #include <X11/extensions/xf86vmode.h>
+#	else
+#include <X11/extensions/Xrandr.h>
+#	endif
 #endif
 
 enum FORMAT
@@ -46,19 +50,24 @@ enum FORMAT
     SFMT_D24X8                = 77,
     SFMT_D24X4S4              = 79,
     SFMT_D16                  = 80,
-	SFMT_S8					  = 82,
-	SFMT_NODEPTHSTENCIL		  = 81
+    SFMT_S8		       = 82,
+    SFMT_NODEPTHSTENCIL	       = 81
 };
 
 struct Resolution : public HQResolution
 {
-#ifdef WIN32
-	DEVMODE w32DisplayMode;
-#elif defined LINUX
+#ifdef WIN32 /*-------windows----*/
+    DEVMODE w32DisplayMode;
+#elif defined LINUX /*-----linux----------*/
+#	if defined HQ_USE_XFREE86_VIDMODE
     XF86VidModeModeInfo * x11DisplayMode;
+#	else
+    int x11ScreenSizeIndex;
+#	endif
     double x11RefreshRate;
-#elif defined APPLE
-	CGDisplayModeRef cgDisplayMode;
+    
+#elif defined APPLE /*--------mac OSX------*/
+    CGDisplayModeRef cgDisplayMode;
 #endif
 };
 
@@ -91,47 +100,6 @@ struct Caps//device capabilities
 };
 
 class HQDeviceEnumGL{
-private:
-
-#ifndef GLES
-	HQLinkedList<Resolution> reslist;
-	HQLinkedList<BufferInfo> bufferInfoList;
-
-	Resolution customWindowedRes;//lưu tùy chọn dành cho chế độ windowed , không giới hạn kích thước width x height như chế độ fullscreen
-#endif
-	int unUseValue[4];//4 giá trị parse từ setting file không dùng,vì chúng dành cho dạng device khác(ví dụ Direct3D)
-	//dialog box items'handles
-#ifdef WIN32
-
-	HMODULE pDll;
-	HDC hDC;
-
-#elif defined LINUX
-
-	Display *dpy;
-	XF86VidModeModeInfo **modes;//list of display mode
-	int modeNum;
-
-#elif defined APPLE
-
-	CFArrayRef modeList;//list of display mode
-#elif defined ANDROID
-
-	jobject jegl;//java egl object
-	jobject jdisplay;//java EGLDisplay object
-	
-	void GetPixelFormat(JNIEnv *jenv , jobject jeglConfig , 
-							jint &red, jint& green, jint& blue, jint& alpha,
-							jint &depth, jint& stencil);
-
-#endif
-#ifndef GLES
-	bool CheckPixelFmt(FORMAT format);
-	bool CheckDepthStencilFmt(BufferInfo& bufInfo);
-	bool CheckMultisample(BufferInfo &bufInfo);
-#endif
-
-	void CheckRenderBufferFormatSupported();
 
 public:
 #ifdef WIN32
@@ -184,10 +152,60 @@ public:
 #ifdef WIN32
 	DEVMODE currentScreenDisplayMode;
 #elif defined LINUX
-    XF86VidModeModeInfo * currentScreenDisplayMode;
+#	if defined HQ_USE_XFREE86_VIDMODE
+	XF86VidModeModeInfo * currentScreenDisplayMode;
+#	else
+	int currentScreenSizeIndex;//id of current screen size
+	Rotation currentScreenRotation;
+	XRRScreenConfiguration *screenConfig;
+#	endif
 #elif defined APPLE
 	CGDisplayModeRef currentScreenDisplayMode;
 #endif
+	
+private:
+
+#ifndef GLES
+	HQLinkedList<Resolution> reslist;
+	HQLinkedList<BufferInfo> bufferInfoList;
+
+	Resolution customWindowedRes;//lưu tùy chọn dành cho chế độ windowed , không giới hạn kích thước width x height như chế độ fullscreen
+#endif
+	int unUseValue[4];//4 giá trị parse từ setting file không dùng,vì chúng dành cho dạng device khác(ví dụ Direct3D)
+	//dialog box items'handles
+#ifdef WIN32
+
+	HMODULE pDll;
+	HDC hDC;
+
+#elif defined LINUX
+
+	Display *dpy;
+#	if defined HQ_USE_XFREE86_VIDMODE
+	XF86VidModeModeInfo **modes;//list of display mode
+	int modeNum;
+#	endif
+
+#elif defined APPLE
+
+	CFArrayRef modeList;//list of display mode
+#elif defined ANDROID
+
+	jobject jegl;//java egl object
+	jobject jdisplay;//java EGLDisplay object
+	
+	void GetPixelFormat(JNIEnv *jenv , jobject jeglConfig , 
+							jint &red, jint& green, jint& blue, jint& alpha,
+							jint &depth, jint& stencil);
+
+#endif//#ifdef WIN32
+#ifndef GLES
+	bool CheckPixelFmt(FORMAT format);
+	bool CheckDepthStencilFmt(BufferInfo& bufInfo);
+	bool CheckMultisample(BufferInfo &bufInfo);
+#endif
+
+	void CheckRenderBufferFormatSupported();
 };
 
 namespace helper{

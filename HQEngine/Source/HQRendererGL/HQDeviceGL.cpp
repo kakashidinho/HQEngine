@@ -202,8 +202,16 @@ HQDeviceGL::~HQDeviceGL(){
 #elif defined (LINUX)
     if(!this->IsWindowed())//fullsceen
     {
+	//restore old screen display mode
+#	if defined HQ_USE_XFREE86_VIDMODE
         XF86VidModeSwitchToMode(this->dpy, XDefaultScreen(this->dpy), pEnum->currentScreenDisplayMode);
         XF86VidModeSetViewPort(this->dpy, XDefaultScreen(this->dpy), 0, 0);
+#	else
+	XRRSetScreenConfig(this->dpy, pEnum->screenConfig, RootWindow(this->dpy, 0), 
+				  pEnum->currentScreenSizeIndex, 
+				  pEnum->currentScreenRotation, 
+				  CurrentTime);
+#	endif
     }
     if(this->dpy!=NULL)
         glXMakeCurrent(this->dpy, None, NULL);
@@ -1102,9 +1110,15 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
         if((flags & WINDOWED) == 0)//full screen
         {
             swa.override_redirect = True;
-
+#	if defined HQ_USE_XFREE86_VIDMODE
             XF86VidModeSwitchToMode(this->dpy, XDefaultScreen(this->dpy), pEnum->selectedResolution->x11DisplayMode);
             XF86VidModeSetViewPort(this->dpy,XDefaultScreen(this->dpy), 0, 0);
+#	else /*---------using randr----------*/
+	    XRRSetScreenConfig(this->dpy, pEnum->screenConfig, RootWindow(this->dpy, 0), 
+				  pEnum->selectedResolution->x11ScreenSizeIndex, 
+				  pEnum->currentScreenRotation, 
+				  CurrentTime);
+#	endif
             wFlags |= CWOverrideRedirect;
 
             winfo.win=XCreateWindow(this->dpy, DefaultRootWindow(this->dpy),
@@ -1238,8 +1252,16 @@ HQReturnVal HQDeviceGL::ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool 
 #elif defined LINUX
    if(!windowed)
     {
+#	if defined HQ_USE_XFREE86_VIDMODE
         XF86VidModeSwitchToMode(this->dpy,XDefaultScreen(this->dpy),pEnum->selectedResolution->x11DisplayMode);
         XF86VidModeSetViewPort(this->dpy,XDefaultScreen(this->dpy),0,0);
+#	else /*---------using randr----------*/
+	XRRSetScreenConfig(this->dpy, pEnum->screenConfig, RootWindow(this->dpy, 0), 
+				  pEnum->selectedResolution->x11ScreenSizeIndex, 
+				  pEnum->currentScreenRotation, 
+				  CurrentTime);
+#	endif
+	
         XMoveResizeWindow(this->dpy,winfo.win,0,0,width,height);
         //XWarpPointer(this->dpy, None, winfo.win, 0, 0, 0, 0, 0, 0);
         XMapRaised(this->dpy,winfo.win);

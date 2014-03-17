@@ -7,7 +7,8 @@ set (Tutorial_VERSION_MINOR 1)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 find_package(OpenGL REQUIRED)
-find_package(Xfree86_video_mode REQUIRED)
+find_package(X11 REQUIRED)
+find_package(X11_randr REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -fPIC")
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -fPIC")
@@ -34,7 +35,8 @@ add_library (HQEngine SHARED
 	     
 target_link_libraries(HQEngine 
 	    ${OPENGL_gl_LIBRARY}
-	    ${Xfree86_video_mode_LIBRARY}
+	    ${X11_X11_LIB}
+	    ${X11_randr_LIBRARY}
 	    ${CMAKE_VORBIS_LIB_DIR}/libvorbis.a
 	    ${CMAKE_VORBIS_LIB_DIR}/libvorbisfile.a
 	    ${CMAKE_OGG_LIB_DIR}/libogg.a

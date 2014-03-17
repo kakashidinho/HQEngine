@@ -372,9 +372,13 @@ HQDeviceEnumGL::HQDeviceEnumGL(){
 }
 HQDeviceEnumGL::~HQDeviceEnumGL()
 {
-#ifdef LINUX
+#ifdef LINUX /*----------linux---------------*/
+#	if defined HQ_USE_XFREE86_VIDMODE//xfree86 vidmode
     XFree(modes);
-#elif defined APPLE
+#	else //randr
+    XRRFreeScreenConfigInfo(this->screenConfig);
+#	endif
+#elif defined APPLE /*------------mac osx-------------*/
 	if (modeList != NULL)
 		CFRelease(modeList);
 	if (currentScreenDisplayMode != NULL)
@@ -1311,13 +1315,14 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
 		++mode;
 	}
 
-#elif defined (LINUX)
+#elif defined (LINUX) /*-----------linux--------------*/
 
     //truy van cac do phan giai man hinh
     int screen = DefaultScreen(dpy);
 	maxW=DisplayWidth(dpy,screen);
 	maxH=DisplayHeight(dpy,screen);
 
+#	if defined HQ_USE_XFREE86_VIDMODE
     XF86VidModeGetAllModeLines(dpy, screen, &this->modeNum, &this->modes);
     //first element is current video mode
     this->currentScreenDisplayMode = this->modes[0];
@@ -1343,8 +1348,56 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
             }
 
     }
+#	else
+    /*--------using Randr-----------*/
+    Window root = RootWindow(dpy, 0);
+    XRRScreenSize *modes = NULL;
+    int numModes = 0;
+    short currentScreenRefreshRate = 0;
+    this->screenConfig = XRRGetScreenInfo (dpy, root);
+    
+    //get all possible screen size
+    modes = XRRSizes(dpy, 0, &numModes);
+  
+    //get current screen size
+    this->currentScreenSizeIndex = XRRConfigCurrentConfiguration (this->screenConfig, &this->currentScreenRotation);
+    //get current screen refresh rate
+    currentScreenRefreshRate = XRRConfigCurrentRate(this->screenConfig);
+    //push current screen config to the beginning of the list
+    myRes.width = modes[this->currentScreenSizeIndex].width;
+    myRes.height = modes[this->currentScreenSizeIndex].height;
+    myRes.x11ScreenSizeIndex = this->currentScreenSizeIndex;
+    myRes.x11RefreshRate = (double)currentScreenRefreshRate;
+    this->reslist.PushBack(myRes);
+    
+    //now push the rest to the list
+    for (int i = 0; i < numModes ; ++i)
+    {
+        if (modes[i].width <= maxW &&
+            modes[i].height <= maxH)
+            {
+		int numRates;
+		short * rates = XRRRates(dpy, 0, i, &numRates);
+		
+		for (int r = 0; r < numRates; ++r)
+		{
+		    short refresh_rate = rates[r];
+		    if (i != this->currentScreenSizeIndex || refresh_rate != currentScreenRefreshRate)//ignore current screen config
+		    {
+			myRes.width = modes[i].width;
+			myRes.height = modes[i].height;
+			myRes.x11ScreenSizeIndex = i;
+			myRes.x11RefreshRate = (double)refresh_rate;
+			this->reslist.PushBack(myRes);
+		    }
+		}
+            }
 
-#elif defined (APPLE)
+    }
+    
+#	endif//#	if defined HQ_USE_XFREE86_VIDMODE
+
+#elif defined (APPLE) /*----------mac osx------------*/
 	/*----find all display mode-----------*/
 	this->currentScreenDisplayMode = CGDisplayCopyDisplayMode(CGMainDisplayID());
 	modeList = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
@@ -1474,7 +1527,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 
 	this->windowed = (d1 !=0);//no use in openGL ES
 	//find resoltion in standard resolutions list that matches requested resolution
-#ifdef LINUX
+#if defined LINUX
     const Resolution & currentResolution = this->reslist.GetFront();
     double minRefeshRateDiff = 9999999.0;
 #endif
@@ -1911,7 +1964,7 @@ bool HQDeviceEnumGL::ChangeSelectedDisplay(hq_uint32 width,hq_uint32 height , bo
 		this->customWindowedRes.width = width;
 		this->customWindowedRes.height = height;
 #ifdef LINUX
-        this->customWindowedRes.x11RefreshRate = currentResolution.x11RefreshRate;
+		this->customWindowedRes.x11RefreshRate = currentResolution.x11RefreshRate;
 #endif
 		this->selectedResolution = &customWindowedRes;
 		return true;

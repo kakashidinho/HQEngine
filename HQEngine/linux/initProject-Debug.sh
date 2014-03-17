@@ -2,7 +2,7 @@
 
 CurrentDir=$PWD
 
-if ["$1" = ""]; then
+if [ -z "$1" ]; then
   echo "using default generator"
   GeneratorOptions=""
 else
