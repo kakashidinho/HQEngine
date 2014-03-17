@@ -14,8 +14,8 @@ if (NOT X11_randr_FOUND)
 	MESSAGE(FATAL_ERROR "X11 RandR extension's header and library not found!")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -fPIC")
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -msse2 -fPIC")
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -msse2 -fPIC")
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG -D_DEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -D_DEBUG")
