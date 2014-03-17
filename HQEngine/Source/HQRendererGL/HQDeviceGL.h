@@ -31,7 +31,7 @@ struct WindowInfo
 
 #define gl_GetProcAddress wglGetProcAddress
 /*------linux-----*/
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
 
 struct WindowInfo
 {
@@ -95,7 +95,7 @@ protected:
 	HDC hDC;//device context
 	HGLRC hRC;//render context
     WindowInfo winfo;//window info
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
     Display *dpy;
 	WindowInfo winfo;
 	GLXContext glc;
@@ -122,7 +122,7 @@ protected:
 public:
 #ifdef WIN32
 	HQDeviceGL(HMODULE _pDll,HQDeviceEnumGL *pEnum , bool flushLog);
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
     HQDeviceGL(Display *dpy,HQDeviceEnumGL *pEnum , bool flushLog);
 #elif defined ANDROID
 	HQDeviceGL(bool flushLog);

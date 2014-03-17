@@ -316,7 +316,7 @@ extern "C" {
 		{
 			return bytes[i];
 		}
-#if defined LINUX || defined HQ_MAC_PLATFORM
+#if defined HQ_LINUX_PLATFORM || defined HQ_MAC_PLATFORM
 	}  A16BYTE ;
 #else
 };

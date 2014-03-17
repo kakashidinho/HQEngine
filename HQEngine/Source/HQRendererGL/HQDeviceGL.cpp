@@ -22,7 +22,7 @@ COPYING.txt included with this distribution for more information.
 /*----------------------------------*/
 #ifdef WIN32
 #define gl_GetProcAddress wglGetProcAddress
-#elif defined(LINUX)
+#elif defined(HQ_LINUX_PLATFORM)
 #include <malloc.h>
 #endif
 
@@ -31,7 +31,7 @@ void GLAPIENTRY DummyProc1(GLenum v)
 }
 
 
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 pfnglxgetprocaddress pglGetProcAddress=NULL;
 glxFuncPointer DummyProc2(const GLubyte* arg)
 {
@@ -63,7 +63,7 @@ HQDeviceGL* g_pOGLDev=NULL;
 extern "C" {
 #ifdef WIN32
 HQReturnVal CreateDevice(HMODULE pDll,LPHQRenderDevice *ppDev,bool flushDebugLog , bool debugLayer)
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 HQReturnVal CreateDevice(Display *display,LPHQRenderDevice *ppDev,bool flushDebugLog , bool debugLayer)
 #else
 HQReturnVal CreateDevice(LPHQRenderDevice *ppDev,bool flushDebugLog , bool debugLayer)
@@ -75,7 +75,7 @@ HQReturnVal CreateDevice(LPHQRenderDevice *ppDev,bool flushDebugLog , bool debug
 	/*------create HQDeviceEnumGL object for enum device capabilities-------*/
 #ifdef WIN32
 	HQDeviceEnumGL *pEnum = new HQDeviceEnumGL(pDll);
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
     HQDeviceEnumGL *pEnum = new HQDeviceEnumGL(display);
 #elif !defined ANDROID
 	HQDeviceEnumGL *pEnum = new HQDeviceEnumGL();
@@ -89,7 +89,7 @@ HQReturnVal CreateDevice(LPHQRenderDevice *ppDev,bool flushDebugLog , bool debug
 
 #ifdef WIN32
 	*ppDev=new HQDeviceGL(pDll , pEnum , flushDebugLog);
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 	*ppDev=new HQDeviceGL(display , pEnum , flushDebugLog);
 #elif defined ANDROID
 	*ppDev=new HQDeviceGL(flushDebugLog);
@@ -119,7 +119,7 @@ HQDeviceGL
 ----------------------*/
 #ifdef WIN32
 HQDeviceGL::HQDeviceGL(HMODULE _pDll, HQDeviceEnumGL *pEnum, bool flushLog )
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 HQDeviceGL::HQDeviceGL(Display *dpy,HQDeviceEnumGL *pEnum, bool flushLog)
 #elif defined ANDROID
 HQDeviceGL::HQDeviceGL(bool flushLog)
@@ -143,7 +143,7 @@ HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
 
 	hDC=0;
 	hRC=0;
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
     this->dpy = dpy;
 	this->glc=NULL;
 #elif defined HQ_IPHONE_PLATFORM
@@ -199,7 +199,7 @@ HQDeviceGL::~HQDeviceGL(){
 		ReleaseDC(winfo.hwind,hDC);
 		hDC=NULL;
 	}
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
     if(!this->IsWindowed())//fullsceen
     {
 	//restore old screen display mode
@@ -336,7 +336,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 		winfo.y = rect.top;
 	}
 
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
 	winfo.parent = input->parent;
     winfo.x = input->x;
     winfo.y = input->y;
@@ -447,7 +447,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 		Log("Make current render context failed!");
 		return HQ_FAILED_INIT_DEVICE;
 	}
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
 
 	if(result!=0)
 	{
@@ -726,7 +726,7 @@ void HQDeviceGL::EnableVSyncNonSave(bool enable)
 #ifdef WIN32
 	if(WGLEW_EXT_swap_control)
 		wglSwapIntervalEXT(interval);
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 	if(GLXEW_EXT_swap_control)
 		glXSwapIntervalEXT(this->dpy,winfo.win, interval);
 	else if (GLXEW_MESA_swap_control)
@@ -742,7 +742,7 @@ void HQDeviceGL::EnableVSyncNonSave(bool enable)
 HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil,HQBool clearWholeRenderTarget){
 #ifdef WIN32
 	if(hRC==NULL)
-#elif defined (LINUX) || defined ANDROID
+#elif defined (HQ_LINUX_PLATFORM) || defined ANDROID
 	if(glc==NULL)
 #elif defined HQ_MAC_PLATFORM || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
@@ -801,7 +801,7 @@ HQReturnVal HQDeviceGL::EndRender(){
 
 #ifdef WIN32
 	if(hRC==NULL)
-#elif defined (LINUX) || defined ANDROID
+#elif defined (HQ_LINUX_PLATFORM) || defined ANDROID
 	if(glc==NULL)
 #elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
@@ -841,7 +841,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 
 #ifdef WIN32
 	if(hRC==NULL)
-#elif defined (LINUX) || defined ANDROID
+#elif defined (HQ_LINUX_PLATFORM) || defined ANDROID
 	if(glc==NULL)
 #elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
@@ -859,7 +859,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 
 #ifdef WIN32
 	SwapBuffers(hDC);
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
 	glXSwapBuffers(this->dpy, winfo.win);
 #elif defined HQ_IPHONE_PLATFORM
 	[glc presentRenderbuffer];
@@ -880,7 +880,7 @@ HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearSt
 #if defined DEBUG || defined _DEBUG
 #ifdef WIN32
 	if(hRC==NULL)
-#elif defined (LINUX) || defined ANDROID
+#elif defined (HQ_LINUX_PLATFORM) || defined ANDROID
 	if(glc==NULL)
 #elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
@@ -1067,7 +1067,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 
 	if(SetPixelFormat(hDC,ipixelFormat,&pixFmt)==FALSE)
 		return 1;
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
 	XVisualInfo *vi=NULL;
 	hq_ubyte8 R,G,B,A,D,S;
 	//get color bits
@@ -1253,7 +1253,7 @@ HQReturnVal HQDeviceGL::ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool 
 	}
 
 	ShowWindow(winfo.hwind, SW_SHOW);
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
    if(!windowed)
     {
 #	if defined HQ_USE_XFREE86_VIDMODE

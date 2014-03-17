@@ -23,7 +23,7 @@ typedef LARGE_INTEGER HQTimeCheckPoint;
 #include <time.h>
 typedef uint64_t HQTimeCheckPoint;
 
-#elif defined LINUX || defined ANDROID /*-----linux/android---------*/
+#elif defined HQ_LINUX_PLATFORM || defined ANDROID /*-----linux/android---------*/
 
 #include <time.h>
 typedef timespec HQTimeCheckPoint;

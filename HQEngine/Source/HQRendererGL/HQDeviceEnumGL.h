@@ -20,7 +20,7 @@ COPYING.txt included with this distribution for more information.
 #define NUM_RTT_FORMAT 9
 #define NUM_DS_FORMAT 5
 
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 #	if defined HQ_USE_XFREE86_VIDMODE
 #include <X11/extensions/xf86vmode.h>
 #	else
@@ -58,7 +58,7 @@ struct Resolution : public HQResolution
 {
 #ifdef WIN32 /*-------windows----*/
     DEVMODE w32DisplayMode;
-#elif defined LINUX /*-----linux----------*/
+#elif defined HQ_LINUX_PLATFORM /*-----linux----------*/
 #	if defined HQ_USE_XFREE86_VIDMODE
     XF86VidModeModeInfo * x11DisplayMode;
 #	else
@@ -106,7 +106,7 @@ public:
 	HQDeviceEnumGL(HMODULE pDll);
 
 	void SetDC(HDC hDC) {this->hDC = hDC;}
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 	HQDeviceEnumGL(Display *dpy);
 #elif defined ANDROID
 	HQDeviceEnumGL(jobject jegl, jobject jdisplay, jint apiLevel);
@@ -151,7 +151,7 @@ public:
 
 #ifdef WIN32
 	DEVMODE currentScreenDisplayMode;
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 #	if defined HQ_USE_XFREE86_VIDMODE
 	XF86VidModeModeInfo * currentScreenDisplayMode;
 #	else
@@ -178,7 +178,7 @@ private:
 	HMODULE pDll;
 	HDC hDC;
 
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 
 	Display *dpy;
 #	if defined HQ_USE_XFREE86_VIDMODE

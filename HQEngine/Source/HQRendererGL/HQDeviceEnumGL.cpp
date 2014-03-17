@@ -337,7 +337,7 @@ namespace helper{
 #ifdef WIN32
 HQDeviceEnumGL::HQDeviceEnumGL(HMODULE pDll){
 	this->pDll = pDll;
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 HQDeviceEnumGL::HQDeviceEnumGL(Display *dpy){
 	this->dpy = dpy;
 #elif defined ANDROID
@@ -372,7 +372,7 @@ HQDeviceEnumGL::HQDeviceEnumGL(){
 }
 HQDeviceEnumGL::~HQDeviceEnumGL()
 {
-#ifdef LINUX /*----------linux---------------*/
+#ifdef HQ_LINUX_PLATFORM /*----------linux---------------*/
 #	if defined HQ_USE_XFREE86_VIDMODE//xfree86 vidmode
     XFree(modes);
 #	else //randr
@@ -615,7 +615,7 @@ bool HQDeviceEnumGL::CheckMultisample(BufferInfo &bufInfo)
 		return false;
 	return true;
 }
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
 bool HQDeviceEnumGL::CheckPixelFmt(FORMAT format){
 	XVisualInfo *vi=NULL;
 
@@ -938,7 +938,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	if(wglMakeCurrent(hDC,hRC)==FALSE)
 		return;
 
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
     if(dpy==NULL)
         return;
 
@@ -1114,7 +1114,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	ReleaseDC(hwnd,hDC);
 	DestroyWindow(hwnd);
 	UnregisterClass(L"Dummy",pDll);
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
 
 	//done!Destroy dummy window
 	glXMakeCurrent(dpy, None, NULL);
@@ -1315,7 +1315,7 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
 		++mode;
 	}
 
-#elif defined (LINUX) /*-----------linux--------------*/
+#elif defined (HQ_LINUX_PLATFORM) /*-----------linux--------------*/
 
     //truy van cac do phan giai man hinh
     int screen = DefaultScreen(dpy);
@@ -1527,7 +1527,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 
 	this->windowed = (d1 !=0);//no use in openGL ES
 	//find resoltion in standard resolutions list that matches requested resolution
-#if defined LINUX
+#if defined HQ_LINUX_PLATFORM
     const Resolution & currentResolution = this->reslist.GetFront();
     double minRefeshRateDiff = 9999999.0;
 #endif
@@ -1537,7 +1537,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 	{
 		if(pRNode->m_element.width==sWidth && pRNode->m_element.height==sHeight)
 		{
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
             //find display mode that has closest matching refresh rate
 		    double refreshRateDiff = fabs(pRNode->m_element.x11RefreshRate - currentResolution.x11RefreshRate);
 		    if (refreshRateDiff < minRefeshRateDiff)
@@ -1546,7 +1546,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 #endif
                 this->selectedResolution=&pRNode->m_element;
                 found = true;
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 		    }
 #else
 			break;
@@ -1560,7 +1560,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 		this->customWindowedRes.width = sWidth;
 		this->customWindowedRes.height = sHeight;
 		this->selectedResolution = &customWindowedRes;
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
         this->customWindowedRes.x11RefreshRate = currentResolution.x11RefreshRate;
 #endif
 		windowed = 1;
@@ -1931,7 +1931,7 @@ void HQDeviceEnumGL::GetAllDisplayResolution(HQResolution *resolutionList , hq_u
 //**********************************************
 bool HQDeviceEnumGL::ChangeSelectedDisplay(hq_uint32 width,hq_uint32 height , bool windowed)
 {
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
     const Resolution & currentResolution = this->reslist.GetFront();
     double minRefeshRateDiff = 9999999.0;
 #endif
@@ -1941,7 +1941,7 @@ bool HQDeviceEnumGL::ChangeSelectedDisplay(hq_uint32 width,hq_uint32 height , bo
 	{
 		if(pRNode->m_element.width==width && pRNode->m_element.height==height)
 		{
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
             //find display mode that has closest matching refresh rate
 		    double refreshRateDiff = fabs(pRNode->m_element.x11RefreshRate - currentResolution.x11RefreshRate);
 		    if (refreshRateDiff < minRefeshRateDiff)
@@ -1950,7 +1950,7 @@ bool HQDeviceEnumGL::ChangeSelectedDisplay(hq_uint32 width,hq_uint32 height , bo
 #endif
 				this->selectedResolution=&pRNode->m_element;
                 found = true;
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 		    }
 #else
 			break;
@@ -1963,7 +1963,7 @@ bool HQDeviceEnumGL::ChangeSelectedDisplay(hq_uint32 width,hq_uint32 height , bo
 	{
 		this->customWindowedRes.width = width;
 		this->customWindowedRes.height = height;
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 		this->customWindowedRes.x11RefreshRate = currentResolution.x11RefreshRate;
 #endif
 		this->selectedResolution = &customWindowedRes;

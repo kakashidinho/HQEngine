@@ -12,7 +12,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEngineCustomHeap.h"
 #include "../HQRenderer.h"
 #include "HQRendererDeviceDebugLayer.h"
-#if defined LINUX || defined __APPLE__
+#if defined HQ_LINUX_PLATFORM || defined __APPLE__
 #include <dlfcn.h>
 #endif
 
@@ -26,7 +26,7 @@ HQRenderDeviceDebugLayer debugLayer;
 extern "C" {
 #if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 	extern HQReturnVal CreateDevice(hModule pDll,LPHQRenderDevice *ppDev,bool flushDebugLog , bool debugLayer);
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 	extern HQReturnVal CreateDevice(Display *display,LPHQRenderDevice *ppDev,bool flushDebugLog , bool debugLayer);
 #else
 	extern HQReturnVal CreateDevice(LPHQRenderDevice *ppDev,bool flushDebugLog , bool debugLayer);
@@ -42,7 +42,7 @@ extern "C" {
 //====================================================
 #ifdef WIN32
 typedef HQReturnVal (*CreateDev)(HMODULE,LPHQRenderDevice *,bool , bool );
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 typedef HQReturnVal (*CreateDev)(Display*,LPHQRenderDevice *,bool , bool );
 #else
 typedef HQReturnVal (*CreateDev)(LPHQRenderDevice *,bool , bool);
@@ -92,7 +92,7 @@ void HQRenderer::Release()
 #ifndef _NO_DYNAMIC_LOAD_RENDERER_LIB_
 #	ifdef WIN32
     pReleaseDevice ReleaseDevice = (pReleaseDevice)GetProcAddress(pDll,"ReleaseDevice");
-#	elif defined (LINUX) || defined __APPLE__
+#	elif defined (HQ_LINUX_PLATFORM) || defined __APPLE__
     pReleaseDevice ReleaseDevice = (pReleaseDevice)dlsym(pDll,"ReleaseDevice");
 #	endif
 #endif
@@ -105,7 +105,7 @@ void HQRenderer::Release()
 	{
 #	ifdef WIN32
 		FreeLibrary(pDll);
-#	elif defined (LINUX) || defined __APPLE__
+#	elif defined (HQ_LINUX_PLATFORM) || defined __APPLE__
 		dlclose(pDll);
 #	endif
 		pDll=NULL;
@@ -246,7 +246,7 @@ HQReturnVal HQRenderer::CreateD3DDevice11(bool flushDebugLog){
 #endif//#if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 }
 
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 HQReturnVal HQRenderer::CreateGLDevice(Display *dpy , bool flushDebugLog)
 #else
 HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
@@ -258,7 +258,7 @@ HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
 	{
 #	ifdef WIN32
 		FreeLibrary(pDll);
-#	elif defined (LINUX) || defined __APPLE__
+#	elif defined (HQ_LINUX_PLATFORM) || defined __APPLE__
 		dlclose(pDll);
 #	endif
 		pDll = NULL;
@@ -273,7 +273,7 @@ HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
 		pDll=LoadLibrary(L"HQRendererGL.dll");
 #		endif
 
-#	elif defined (LINUX)
+#	elif defined (HQ_LINUX_PLATFORM)
 #		if defined DEBUG || defined _DEBUG
         pDll=dlopen("./libHQEngineRendererDevice_D.so",RTLD_LAZY);
 #       else
@@ -300,7 +300,7 @@ HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
 	CreateDev CreateDevice=NULL;
 #	ifdef WIN32
 	CreateDevice=(CreateDev)GetProcAddress(pDll,"CreateDevice");
-#	elif defined (LINUX) || defined __APPLE__
+#	elif defined (HQ_LINUX_PLATFORM) || defined __APPLE__
     CreateDevice=(CreateDev )dlsym(pDll,"CreateDevice");
 #	endif
 
@@ -312,7 +312,7 @@ HQReturnVal HQRenderer::CreateGLDevice(bool flushDebugLog)
 
 #ifdef WIN32
 	HQReturnVal re=CreateDevice(pDll,&pDevice,flushDebugLog , debug);
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
     HQReturnVal re=CreateDevice(dpy,&pDevice,flushDebugLog , debug);
 #else
     HQReturnVal re=CreateDevice(&pDevice,flushDebugLog , debug);

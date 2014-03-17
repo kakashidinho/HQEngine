@@ -33,7 +33,7 @@ COPYING.txt included with this distribution for more information.
 
 
 /*------Linux-----------*/
-#elif defined (LINUX)
+#elif defined (HQ_LINUX_PLATFORM)
 #   include<X11/X.h>
 #   include<X11/Xlib.h>
 

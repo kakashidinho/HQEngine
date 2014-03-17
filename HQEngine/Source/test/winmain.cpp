@@ -133,7 +133,7 @@ int HQEngineMain(int argc, char **argv)
 	HQEngineApp::GetInstance()->SetRenderDelegate(game);
 
 	
-#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined LINUX
+#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM
 	HQEngineApp::GetInstance()->SetKeyListener(game);
 
 	HQEngineApp::GetInstance()->SetMouseListener(game);

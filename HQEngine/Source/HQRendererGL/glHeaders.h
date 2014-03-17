@@ -18,7 +18,7 @@ COPYING.txt included with this distribution for more information.
 #include <GL/glew.h>
 void GLAPIENTRY DummyProc1(GLenum v);
 
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 typedef void (*glxFuncPointer) (void);
 typedef glxFuncPointer (*pfnglxgetprocaddress) (const GLubyte* procName);
 glxFuncPointer gl_GetProcAddress(const char* procName);
@@ -41,7 +41,7 @@ glxFuncPointer DummyProc2(const GLubyte* arg);
 
 #ifdef WIN32
 #include <GL/wglew.h>
-#elif defined LINUX
+#elif defined HQ_LINUX_PLATFORM
 #include <GL/glxew.h>
 #endif
 

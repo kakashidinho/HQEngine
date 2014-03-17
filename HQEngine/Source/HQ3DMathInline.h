@@ -15,7 +15,7 @@ COPYING.txt included with this distribution for more information.
 #include <new>
 #include "HQ3DMath.h"
 #include <string.h>//for memset
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 #include <malloc.h>//for memalign
 #endif
 

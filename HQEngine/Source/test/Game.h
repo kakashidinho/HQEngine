@@ -64,7 +64,7 @@
 #endif
 
 class Game : public HQEngineRenderDelegate 
-#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined LINUX || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	, public HQEngineKeyListener , public HQEngineMouseListener , public HQEngineWindowListener
 #endif
 #if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
@@ -78,7 +78,7 @@ public:
 	void OnLostDevice();
 	void OnResetDevice();
 	
-#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined LINUX || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	bool WindowClosing() {return false;}
 	
 	void KeyPressed(HQKeyCodeType keycode);

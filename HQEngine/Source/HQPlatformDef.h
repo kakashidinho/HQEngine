@@ -60,7 +60,6 @@ COPYING.txt included with this distribution for more information.
 #		endif
 #	endif
 #else//linux
-#	define LINUX
 #	define HQ_LINUX_PLATFORM
 #endif
 

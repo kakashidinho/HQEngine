@@ -10,7 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQUtilMathPCH.h"
 #include "../HQ3DMath.h"
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 #include <string.h>//for memset
 #endif
 

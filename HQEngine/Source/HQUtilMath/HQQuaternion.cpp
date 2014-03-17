@@ -16,7 +16,7 @@ COPYING.txt included with this distribution for more information.
 #include "directx_math/HQDXQuaternion.h"
 #endif
 
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 #include <string.h>//for memset
 #endif
 
@@ -251,7 +251,7 @@ typedef struct A16_Bytes
 	{
 		return bytes[i];
 	}
-#if defined LINUX || defined HQ_MAC_PLATFORM || defined ANDROID || defined HQ_IPHONE_PLATFORM
+#if defined HQ_LINUX_PLATFORM || defined HQ_MAC_PLATFORM || defined ANDROID || defined HQ_IPHONE_PLATFORM
 }  A16_Bytes HQ_ALIGN16 ;
 #else
 };

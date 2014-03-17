@@ -69,7 +69,7 @@ public:
 	///create Direct3D11 device
 	HQReturnVal CreateD3DDevice11(bool flushDebugLog=false);
 
-#ifdef LINUX
+#ifdef HQ_LINUX_PLATFORM
 	///create openGL
 	HQReturnVal CreateGLDevice(Display *dpy , bool flushDebugLog=false);
 #else
