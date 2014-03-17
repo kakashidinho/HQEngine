@@ -11,7 +11,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQScenePCH.h"
 #include "../HQSceneNode.h"
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #	include <android/log.h>
 #	define TRACE(...)
 //#	define TRACE(...) __android_log_print(ANDROID_LOG_DEBUG, "HQSceneNode", __VA_ARGS__)

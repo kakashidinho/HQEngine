@@ -29,7 +29,7 @@ struct HQDefaultStringKeyEqual
 template <>
 struct HQDefaultKeyEqual<std::string> : public HQDefaultStringKeyEqual<std::string> {};
 
-#ifndef ANDROID
+#ifndef HQ_ANDROID_PLATFORM
 template <>
 struct HQDefaultKeyEqual<std::wstring> : public HQDefaultStringKeyEqual<std::wstring> {};
 #endif

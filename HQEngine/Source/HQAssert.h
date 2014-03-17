@@ -18,7 +18,7 @@ COPYING.txt included with this distribution for more information.
 #include <windows.h>
 #endif
 
-#if	defined ANDROID
+#if	defined HQ_ANDROID_PLATFORM
 #include <android/log.h>
 #endif
 
@@ -28,7 +28,7 @@ COPYING.txt included with this distribution for more information.
 #			define HQ_ASSERT(e) {_ASSERTE(e);}
 #			define HQ_ASSERT_SOURCE_LINE(e, source, line) { _ASSERTE(e);}
 #		else
-#			if	defined ANDROID
+#			if	defined HQ_ANDROID_PLATFORM
 #				define HQ_ASSERT_SOURCE_LINE(e, source, line) { if (!(e)) { __android_log_print(ANDROID_LOG_ERROR, "HQ_ASSERT_SOURCE_LINE", "failed in %s:%d", source, line ); assert(e);}}
 #				define HQ_ASSERT(e) (HQ_ASSERT_SOURCE_LINE(e, __FILE__, __LINE__))
 #			else

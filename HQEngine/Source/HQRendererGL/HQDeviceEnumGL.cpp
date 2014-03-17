@@ -340,7 +340,7 @@ HQDeviceEnumGL::HQDeviceEnumGL(HMODULE pDll){
 #elif defined HQ_LINUX_PLATFORM
 HQDeviceEnumGL::HQDeviceEnumGL(Display *dpy){
 	this->dpy = dpy;
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 HQDeviceEnumGL::HQDeviceEnumGL(jobject _jegl, jobject _jdisplay, jint apiLevel){
 	if (apiLevel == 1 || apiLevel == 2)
 		this->selectedApiLevel = apiLevel;
@@ -366,7 +366,7 @@ HQDeviceEnumGL::HQDeviceEnumGL(){
 	selectedMulSampleType=0;
 	vsync = 0;//default vsync is off
 
-#ifndef ANDROID//android will call this method when gl context is created
+#ifndef HQ_ANDROID_PLATFORM//android will call this method when gl context is created
 	CheckCapabilities();
 #endif
 }
@@ -1145,7 +1145,7 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 	glGetError();//reset flags;
 #ifndef HQ_OPENGLES
 	if (GLEW_VERSION_3_0) {//core in openGL 3.0
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	if (GLEW_VERSION_2_0){//core in openGL es 2.0
 #endif //default ios support fbo
 		glGenFramebuffers(1, &fbo);
@@ -1652,7 +1652,7 @@ void HQDeviceEnumGL::SaveSettingFile(const char *settingFile){
 	fclose(save);
 }
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 jobject HQDeviceEnumGL::GetJEGLConfig()
 {
 	JNIEnv *jenv = GetCurrentThreadJEnv();

@@ -20,7 +20,7 @@ COPYING.txt included with this distribution for more information.
 #include <string.h>//for memset
 #endif
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 //#	define TRACE(...) __android_log_print(ANDROID_LOG_DEBUG, "test", __VA_ARGS__)
 #	define TRACE(...)
 #else
@@ -251,7 +251,7 @@ typedef struct A16_Bytes
 	{
 		return bytes[i];
 	}
-#if defined HQ_LINUX_PLATFORM || defined HQ_MAC_PLATFORM || defined ANDROID || defined HQ_IPHONE_PLATFORM
+#if defined HQ_LINUX_PLATFORM || defined HQ_MAC_PLATFORM || defined HQ_ANDROID_PLATFORM || defined HQ_IPHONE_PLATFORM
 }  A16_Bytes HQ_ALIGN16 ;
 #else
 };

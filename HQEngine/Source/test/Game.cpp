@@ -30,7 +30,7 @@ struct BUFFER2
 
 Game::Game() 
 : m_offsetX(0), m_offsetY(0)
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
  , app_exit( false ), app_pause(false)
 #endif
 
@@ -86,7 +86,7 @@ Game::Game()
 	logFile = HQCreateDebugLogStream();
 #elif defined WIN32 || defined HQ_LINUX_PLATFORM
 	logFile = HQCreateFileLogStream("log.txt");
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	logFile = HQCreateLogCatStream();
 #else
 	logFile = HQCreateConsoleLogStream();
@@ -109,7 +109,7 @@ Game::Game()
 #endif
 	params.rendererType = api_str;
 	params.windowTitle = "test";
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 	HQWIPPlatformSpecificType additionalSettings;
 	additionalSettings.openGL_ApiLevel = 2;
 	params.platformSpecific = &additionalSettings;
@@ -276,7 +276,7 @@ void Game::Render(HQTime dt)
 	//Sleep(13);
 #endif
 
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	mutex.Lock();
 	if (app_exit)
 	{
@@ -604,7 +604,7 @@ void Game::MouseWheel( hq_float32 delta, const HQPointi &point)
 }
 #endif//defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 void Game::TouchBegan(const HQTouchEvent &event) 
 {
@@ -705,7 +705,7 @@ void Game::ChangedToLandscapeRight()
 	OutputDebugStringA("landscape right mode\n");
 }
 
-#if defined ANDROID || defined HQ_WIN_PHONE_PLATFORM
+#if defined HQ_ANDROID_PLATFORM || defined HQ_WIN_PHONE_PLATFORM
 bool Game::BackButtonPressed()
 {
 	OutputDebugStringA("back key is pressed!\n");

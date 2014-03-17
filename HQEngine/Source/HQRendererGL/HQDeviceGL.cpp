@@ -77,11 +77,11 @@ HQReturnVal CreateDevice(LPHQRenderDevice *ppDev,bool flushDebugLog , bool debug
 	HQDeviceEnumGL *pEnum = new HQDeviceEnumGL(pDll);
 #elif defined HQ_LINUX_PLATFORM
     HQDeviceEnumGL *pEnum = new HQDeviceEnumGL(display);
-#elif !defined ANDROID
+#elif !defined HQ_ANDROID_PLATFORM
 	HQDeviceEnumGL *pEnum = new HQDeviceEnumGL();
 #endif
 
-#ifndef ANDROID
+#ifndef HQ_ANDROID_PLATFORM
 	//currently support only openGL 2.0 and later
 	if(!GLEW_VERSION_2_0)
 		return HQ_FAILED_CREATE_DEVICE;
@@ -91,7 +91,7 @@ HQReturnVal CreateDevice(LPHQRenderDevice *ppDev,bool flushDebugLog , bool debug
 	*ppDev=new HQDeviceGL(pDll , pEnum , flushDebugLog);
 #elif defined HQ_LINUX_PLATFORM
 	*ppDev=new HQDeviceGL(display , pEnum , flushDebugLog);
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	*ppDev=new HQDeviceGL(flushDebugLog);
 #else
 	*ppDev=new HQDeviceGL(pEnum , flushDebugLog);
@@ -121,7 +121,7 @@ HQDeviceGL
 HQDeviceGL::HQDeviceGL(HMODULE _pDll, HQDeviceEnumGL *pEnum, bool flushLog )
 #elif defined HQ_LINUX_PLATFORM
 HQDeviceGL::HQDeviceGL(Display *dpy,HQDeviceEnumGL *pEnum, bool flushLog)
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 HQDeviceGL::HQDeviceGL(bool flushLog)
 #else
 HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
@@ -151,7 +151,7 @@ HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
 #elif defined HQ_MAC_PLATFORM
 	glc = nil;
 	pixelformat = nil;
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	pEnum = NULL;//it will be ceated in Init();
 	glc = NULL;
 	jeglConfig = NULL;
@@ -233,7 +233,7 @@ HQDeviceGL::~HQDeviceGL(){
 	}
 	if (pixelformat != nil)
 		[pixelformat release];
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	SafeDelete(glc);
 	
 	if (this->jeglConfig != NULL)
@@ -341,7 +341,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
     winfo.x = input->x;
     winfo.y = input->y;
 
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 
 	this->pEnum = new HQDeviceEnumGL(input->jegl , input->jdisplay, input->apiLevel);
 
@@ -537,7 +537,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 		CGDisplaySetDisplayMode( CGMainDisplayID() , pEnum->selectedResolution->cgDisplayMode , NULL);//change screen size
 		[[input->nsView window ] makeKeyAndOrderFront:nil];
 	}
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	if(result!=0)
 	{
 		if(result==1)
@@ -682,7 +682,7 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 	//create render target manager
 #ifndef HQ_IPHONE_PLATFORM
 	if (GLEW_EXT_framebuffer_object || GLEW_VERSION_3_0)
-#	ifdef ANDROID
+#	ifdef HQ_ANDROID_PLATFORM
 		this->renderTargetMan = new HQRenderTargetManagerFBO(1 , static_cast<HQTextureManagerGL*> (this->textureMan) , this->m_pLogStream , this->m_flushLog);
 #	else
 		this->renderTargetMan = new HQRenderTargetManagerFBO(pEnum->caps.maxDrawBuffers , static_cast<HQTextureManagerGL*> (this->textureMan) , this->m_pLogStream , this->m_flushLog);
@@ -742,7 +742,7 @@ void HQDeviceGL::EnableVSyncNonSave(bool enable)
 HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil,HQBool clearWholeRenderTarget){
 #ifdef WIN32
 	if(hRC==NULL)
-#elif defined (HQ_LINUX_PLATFORM) || defined ANDROID
+#elif defined (HQ_LINUX_PLATFORM) || defined HQ_ANDROID_PLATFORM
 	if(glc==NULL)
 #elif defined HQ_MAC_PLATFORM || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
@@ -801,7 +801,7 @@ HQReturnVal HQDeviceGL::EndRender(){
 
 #ifdef WIN32
 	if(hRC==NULL)
-#elif defined (HQ_LINUX_PLATFORM) || defined ANDROID
+#elif defined (HQ_LINUX_PLATFORM) || defined HQ_ANDROID_PLATFORM
 	if(glc==NULL)
 #elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
@@ -841,7 +841,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 
 #ifdef WIN32
 	if(hRC==NULL)
-#elif defined (HQ_LINUX_PLATFORM) || defined ANDROID
+#elif defined (HQ_LINUX_PLATFORM) || defined HQ_ANDROID_PLATFORM
 	if(glc==NULL)
 #elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
@@ -865,7 +865,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 	[glc presentRenderbuffer];
 #elif defined HQ_MAC_PLATFORM
 	[glc flushBuffer];
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	glc->SwapBuffers();
 #endif
 
@@ -880,7 +880,7 @@ HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearSt
 #if defined DEBUG || defined _DEBUG
 #ifdef WIN32
 	if(hRC==NULL)
-#elif defined (HQ_LINUX_PLATFORM) || defined ANDROID
+#elif defined (HQ_LINUX_PLATFORM) || defined HQ_ANDROID_PLATFORM
 	if(glc==NULL)
 #elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
@@ -1185,7 +1185,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 
 	if ( pixelformat == nil )
 		return 1;
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	this->jeglConfig = pEnum->GetJEGLConfig();
 	if (this->jeglConfig == NULL)
 		return 1;

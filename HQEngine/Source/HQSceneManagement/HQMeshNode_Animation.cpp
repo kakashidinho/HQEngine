@@ -20,7 +20,7 @@ using namespace HQEngineHelper;
 #include <string.h>
 #include <math.h>
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #	include <android/log.h>
 //#	define TRACE(...) __android_log_print(ANDROID_LOG_DEBUG, "HQMeshNode", __VA_ARGS__)
 #	define TRACE(...)

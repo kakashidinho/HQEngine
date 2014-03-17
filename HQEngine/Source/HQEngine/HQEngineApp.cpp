@@ -26,16 +26,16 @@ COPYING.txt included with this distribution for more information.
 #	define HQ_DEFAULT_RENDERER_TYPE "GL"
 #endif
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #	define HQ_RENDER_DEVICE_LOST_POSSIBLE
 #endif
 
 
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 extern void HQAppInternalBlockGameLoopIfNeeded();
 #endif
 
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #	define USE_SEPERATE_GAME_THREAD
 #endif
 
@@ -487,7 +487,7 @@ HQReturnVal HQEngineApp::Run(hq_uint32 fpsLimit)
 			HQThread::TempPause();
 		}//if (!this->EventHandle())
 		
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID ||  HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM ||  HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 		HQAppInternalBlockGameLoopIfNeeded();
 #endif
 

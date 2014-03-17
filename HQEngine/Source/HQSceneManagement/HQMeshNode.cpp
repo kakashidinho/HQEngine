@@ -18,7 +18,7 @@ COPYING.txt included with this distribution for more information.
 #include <stdio.h>
 #include <string.h>
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #	include <android/log.h>
 //#	define TRACE(...) __android_log_print(ANDROID_LOG_DEBUG, "HQMeshNode", __VA_ARGS__)
 #	define TRACE(...)
@@ -353,7 +353,7 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, hquint32 
 	if (HQFailed(re))
 		return false;
 
-#ifndef ANDROID
+#ifndef HQ_ANDROID_PLATFORM
 	//android need textures to be reloaded too
 	if (m_reloading) 
 		return true;

@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQPlatformDef.h"
 
 /*---------------flags--------------------*/
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #	define DEVICE_LOST_POSSIBLE
 #endif
 

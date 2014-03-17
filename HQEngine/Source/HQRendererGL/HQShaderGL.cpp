@@ -51,7 +51,7 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 		else
 #endif
 		{
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 			if (!GLEW_VERSION_2_0)
 				shaderMan = new HQFixedFunctionShaderManagerGL(logFileStream, flushLog);
 			else

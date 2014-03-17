@@ -43,7 +43,7 @@ inline bool Is_Address_16Bytes_Aligned(void * p)
 #	ifdef HQ_NO_NEED_ALIGN16
 #		define HQ_ASSERT_ALIGN16(p)
 #	else
-#		if defined ANDROID
+#		if defined HQ_ANDROID_PLATFORM
 #			define HQ_ASSERT_ALIGN16(p) HQ_ASSERT_SOURCE_LINE(Is_Address_16Bytes_Aligned(p), __FILE__, __LINE__)
 #		else
 #			define HQ_ASSERT_ALIGN16(p) HQ_ASSERT(Is_Address_16Bytes_Aligned(p))

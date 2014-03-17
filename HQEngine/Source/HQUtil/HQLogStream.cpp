@@ -194,7 +194,7 @@ HQLogStream * HQCreateDebugLogStream()
 }
 #endif//#if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 
 #include <android/log.h>
 

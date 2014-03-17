@@ -105,7 +105,7 @@ protected:
 #elif defined HQ_MAC_PLATFORM
 	HQAppleOpenGLContext * glc;
 	NSOpenGLPixelFormat* pixelformat;
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	HQAndroidOpenGLContext *glc;
 	jobject jeglConfig;
 #endif
@@ -124,7 +124,7 @@ public:
 	HQDeviceGL(HMODULE _pDll,HQDeviceEnumGL *pEnum , bool flushLog);
 #elif defined HQ_LINUX_PLATFORM
     HQDeviceGL(Display *dpy,HQDeviceEnumGL *pEnum , bool flushLog);
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	HQDeviceGL(bool flushLog);
 #else
 	HQDeviceGL(HQDeviceEnumGL *pEnum , bool flushLog);

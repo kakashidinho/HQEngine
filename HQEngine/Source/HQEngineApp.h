@@ -387,7 +387,7 @@ HQENGINE_API Windows::ApplicationModel::Core::IFrameworkViewSource ^ HQWinStoreC
 @end
 
 /*--------Android--------------*/
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 #include "HQThread.h"
 
 #include <jni.h>
@@ -479,7 +479,7 @@ extern HQGameThead ge_hqGameThread HQENGINE_API;
 			}\
 			int HQEngineMainWrapper(dargc, dargv)
 
-#	elif defined ANDROID
+#	elif defined HQ_ANDROID_PLATFORM
 #		define HQEngineMain(dargc,dargv) \
 			HQEngineMainWrapper(dargc, dargv);\
 			extern "C"\

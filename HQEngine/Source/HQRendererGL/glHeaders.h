@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQPlatformDef.h"
 /*---------------------------------*/
 
-#if !defined (HQ_MAC_PLATFORM) && !defined (HQ_IPHONE_PLATFORM) && !defined (ANDROID)
+#if !defined (HQ_MAC_PLATFORM) && !defined (HQ_IPHONE_PLATFORM) && !defined (HQ_ANDROID_PLATFORM)
 #include <GL/glew.h>
 void GLAPIENTRY DummyProc1(GLenum v);
 
@@ -30,7 +30,7 @@ glxFuncPointer DummyProc2(const GLubyte* arg);
 #import "Apple.h"
 #define GLAPIENTRY
 
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 #	ifdef ANDROID_PURE_NATIVE
 #		error need implement
 #	else

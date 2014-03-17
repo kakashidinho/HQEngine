@@ -55,7 +55,7 @@ COPYING.txt included with this distribution for more information.
 #undef glFramebufferTexture2D
 #endif
 
-#		ifdef ANDROID
+#		ifdef HQ_ANDROID_PLATFORM
 #			define glGenFramebuffers  android_glGenFramebuffers
 #			define glBindFramebuffer  android_glBindFramebuffer
 #			define glGenRenderbuffers  android_glGenRenderbuffers
@@ -531,7 +531,7 @@ HQRenderTargetManagerFBO::HQRenderTargetManagerFBO(
 										 flushLog)
 {
 
-#if !defined HQ_MAC_PLATFORM && !defined HQ_IPHONE_PLATFORM && !defined ANDROID
+#if !defined HQ_MAC_PLATFORM && !defined HQ_IPHONE_PLATFORM && !defined HQ_ANDROID_PLATFORM
 	/*-----------init openGL functions------------*/
 	glGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC )gl_GetProcAddress("glGenFramebuffers");
 	if (glGenFramebuffers == NULL)

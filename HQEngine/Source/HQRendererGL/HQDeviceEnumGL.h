@@ -13,7 +13,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQPlatformDef.h"
 #include "../HQLinkedList.h"
 #include "../HQRendererCoreType.h"
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #include <jni.h>
 #endif
 
@@ -108,7 +108,7 @@ public:
 	void SetDC(HDC hDC) {this->hDC = hDC;}
 #elif defined HQ_LINUX_PLATFORM
 	HQDeviceEnumGL(Display *dpy);
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 	HQDeviceEnumGL(jobject jegl, jobject jdisplay, jint apiLevel);
 #else
 	HQDeviceEnumGL();
@@ -124,7 +124,7 @@ public:
 #endif
 	void SaveSettingFile(const char* settingFile);
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 	jobject GetJEGLConfig();//create global reference
 #elif !defined HQ_OPENGLES
 	void GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions);
@@ -141,7 +141,7 @@ public:
 	bool windowed;
 #else
 	FORMAT selectedPixelFormat;
-#	ifdef ANDROID
+#	ifdef HQ_ANDROID_PLATFORM
 	jint selectedApiLevel;//selected OpenGL ES version
 #	endif
 #endif
@@ -189,7 +189,7 @@ private:
 #elif defined HQ_MAC_PLATFORM
 
 	CFArrayRef modeList;//list of display mode
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 
 	jobject jegl;//java egl object
 	jobject jdisplay;//java EGLDisplay object

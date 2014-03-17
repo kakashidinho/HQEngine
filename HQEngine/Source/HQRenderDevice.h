@@ -97,7 +97,7 @@ typedef struct HQOSXRenderDeviceInitInput {
 } *HQRenderDeviceInitInput;
 
 /*---------android----------*/
-#elif defined ANDROID
+#elif defined HQ_ANDROID_PLATFORM
 
 #	if defined ANDROID_PURE_NATIVE//pure native
 #		error need implement

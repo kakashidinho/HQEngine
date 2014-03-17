@@ -39,20 +39,20 @@
 #include "MeshX.h"
 #endif
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #include <android/log.h>
 #endif
 
 #define DEBUG_LOG_CAT 1
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #	define TRACE(...) __android_log_print(ANDROID_LOG_DEBUG, "test", __VA_ARGS__)
 #else
 #	define TRACE(...)
 #endif
 
 #ifndef WIN32
-#	ifdef ANDROID
+#	ifdef HQ_ANDROID_PLATFORM
 #		if DEBUG_LOG_CAT
 #			define OutputDebugStringA(str) {__android_log_print(ANDROID_LOG_DEBUG, "test", str);}
 #		else
@@ -67,7 +67,7 @@ class Game : public HQEngineRenderDelegate
 #if	defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	, public HQEngineKeyListener , public HQEngineMouseListener , public HQEngineWindowListener
 #endif
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	, public HQEngineMotionListener, public HQEngineAppListener, public HQEngineOrientationListener
 #endif
 {
@@ -88,7 +88,7 @@ public:
 	void MouseMove( const HQPointi &point) ;
 	void MouseWheel( hq_float32 delta, const HQPointi &point) ;
 #endif
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	
 	void TouchBegan(const HQTouchEvent &event) ;
 	void TouchMoved(const HQTouchEvent &event) ;
@@ -105,7 +105,7 @@ public:
 	void OnDestroy();
 	void OnPause() ;
 	void OnResume() ;
-#if defined ANDROID || defined HQ_WIN_PHONE_PLATFORM
+#if defined HQ_ANDROID_PLATFORM || defined HQ_WIN_PHONE_PLATFORM
 	bool BackButtonPressed();
 #endif
 
@@ -116,7 +116,7 @@ private:
 	bool app_exit;
 	bool app_pause;
 	
-#endif //#if	defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#endif //#if	defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	
 	
 private:

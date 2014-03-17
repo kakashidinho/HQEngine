@@ -79,11 +79,11 @@ template <class charType , class stringClass> struct HQDefaultStringHashFunc
 
 template <> struct HQDefaultHashFunc<char*> : public HQDefaultStringHashFunc<char , std::string> {};
 template <> struct HQDefaultHashFunc<unsigned char*> : public HQDefaultStringHashFunc<unsigned char, std::string> {};
-#ifndef ANDROID
+#ifndef HQ_ANDROID_PLATFORM
 template <> struct HQDefaultHashFunc<wchar_t*> : public HQDefaultStringHashFunc<wchar_t , std::wstring> {};
 #endif
 template <> struct HQDefaultHashFunc<std::string> : public HQDefaultStringHashFunc<char , std::string> {};
-#ifndef ANDROID
+#ifndef HQ_ANDROID_PLATFORM
 template <> struct HQDefaultHashFunc<std::wstring> : public HQDefaultStringHashFunc<wchar_t , std::wstring> {};
 #endif
 #endif

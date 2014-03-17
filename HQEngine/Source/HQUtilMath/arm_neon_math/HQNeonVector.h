@@ -132,12 +132,12 @@ extern "C" {
 					 );
 		
 	}
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 #include <android/log.h>
 #endif
 	HQ_FORCE_INLINE void HQNeonVector4Normalize(const float* v , float *normalizedVec)
 	{
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 		// __android_log_print(ANDROID_LOG_DEBUG, "HQNeonVector4Normalize", "HQNeonVector4Normalize(v=%p, normalizedVec=%p)", v, normalizedVec);
 #endif
 		asm volatile(
@@ -155,7 +155,7 @@ extern "C" {
 					 :"q0"  , "q1" , "d4" , "memory"
 					 );
 		
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 		// __android_log_print(ANDROID_LOG_DEBUG, "HQNeonVector4Normalize", "==>HQNeonVector4Normalize(v=%p, normalizedVec=%p) returns", v, normalizedVec);
 #endif
 	}

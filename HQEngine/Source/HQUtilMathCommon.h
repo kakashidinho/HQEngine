@@ -17,7 +17,7 @@ COPYING.txt included with this distribution for more information.
 #	define _STATICLINK
 #endif
 
-#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined HQ_ANDROID_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM)
 #	if	!defined HQ_CMATH && !defined HQ_NEON_MATH && !defined HQ_DIRECTX_MATH
 #		if (defined HQ_WIN_PHONE_PLATFORM)
 #			if 0
@@ -31,7 +31,7 @@ COPYING.txt included with this distribution for more information.
 #				endif
 #			endif
 #		else
-#			if defined ANDROID
+#			if defined HQ_ANDROID_PLATFORM
 #				if defined __x86_64__ || defined __i386__ || defined __i686__
 #					define HQ_SSE_MATH
 #				elif defined __arm__

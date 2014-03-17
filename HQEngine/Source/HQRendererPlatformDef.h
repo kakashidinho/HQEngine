@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQPlatformDef.h"
 
 
-#if defined ANDROID || defined HQ_IPHONE_PLATFORM
+#if defined HQ_ANDROID_PLATFORM || defined HQ_IPHONE_PLATFORM
 
 #	ifndef HQ_OPENGLES
 #		define HQ_OPENGLES

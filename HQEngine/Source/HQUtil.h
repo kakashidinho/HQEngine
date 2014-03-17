@@ -49,7 +49,7 @@ HQUTIL_API HQLogStream * HQCreateConsoleLogStream();
 HQUTIL_API HQLogStream * HQCreateDebugLogStream();
 #endif
 
-#ifdef ANDROID
+#ifdef HQ_ANDROID_PLATFORM
 HQUTIL_API HQLogStream * HQCreateLogCatStream();
 #endif
 
