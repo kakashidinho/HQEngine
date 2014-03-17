@@ -48,7 +48,7 @@ const DWORD MulSample[]=
 
 //helper functions
 namespace helper{
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 	const NSString* GetEAGLColorFormat(FORMAT fmt)
 	{
 		switch(fmt)
@@ -961,7 +961,7 @@ void HQDeviceEnumGL::CheckCapabilities()
         return;
     if(glXMakeCurrent(dpy, win, glc)==False)
         return;
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 	//create dummy context for checking capabilities
 	EAGLContext* glc = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 	if (glc == nil) {
@@ -1045,7 +1045,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	caps.maxDrawBuffers = 0;
 #endif
 
-#ifndef IOS
+#ifndef HQ_IPHONE_PLATFORM
 	if (GLEW_EXT_framebuffer_object || GLEW_VERSION_3_0)
 	{
 #endif
@@ -1059,7 +1059,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 #endif
 		/*-----check supported render buffer format-------*/
 		CheckRenderBufferFormatSupported();
-#ifndef IOS
+#ifndef HQ_IPHONE_PLATFORM
 	}
 	else
 	{
@@ -1121,7 +1121,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	glXDestroyContext(dpy, glc);
 	XDestroyWindow(dpy, win);
 
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 
 	//delete dummy context
 	[EAGLContext setCurrentContext:nil];
@@ -1210,7 +1210,7 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteFramebuffers(1, &fbo);
-#ifndef IOS
+#ifndef HQ_IPHONE_PLATFORM
 	}
 	else //EXT/OES version
 	{

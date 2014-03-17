@@ -40,12 +40,12 @@ public:
 class HQRenderTargetManagerFBO : public HQBaseRenderTargetManagerGL
 {
 private:
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 	GLuint defaultFBO;
 #endif
 public:
 	HQRenderTargetManagerFBO(
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 						   GLuint defaultFBO,
 #endif
 						   hq_uint32 maxActiveRenderTarget,

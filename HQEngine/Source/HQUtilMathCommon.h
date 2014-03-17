@@ -13,11 +13,11 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQPlatformDef.h"
 
-#if (defined HQ_STATIC_ENGINE) || defined IOS
+#if (defined HQ_STATIC_ENGINE) || defined HQ_IPHONE_PLATFORM
 #	define _STATICLINK
 #endif
 
-#if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM)
 #	if	!defined HQ_CMATH && !defined HQ_NEON_MATH && !defined HQ_DIRECTX_MATH
 #		if (defined HQ_WIN_PHONE_PLATFORM)
 #			if 0

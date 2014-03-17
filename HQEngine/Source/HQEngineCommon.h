@@ -12,7 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define HQ_ENGINE_COMMON_H
 
 #include "HQPlatformDef.h"
-#if defined IOS || defined ANDROID || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+#if defined HQ_IPHONE_PLATFORM || defined ANDROID || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #	ifndef _STATIC_RENDERER_LIB_
 #		define _STATIC_RENDERER_LIB_
 #	endif 

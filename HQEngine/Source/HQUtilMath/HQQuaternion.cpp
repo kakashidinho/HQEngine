@@ -251,7 +251,7 @@ typedef struct A16_Bytes
 	{
 		return bytes[i];
 	}
-#if defined LINUX || defined APPLE || defined ANDROID || defined IOS
+#if defined LINUX || defined APPLE || defined ANDROID || defined HQ_IPHONE_PLATFORM
 }  A16_Bytes HQ_ALIGN16 ;
 #else
 };

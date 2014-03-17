@@ -67,7 +67,7 @@ class Game : public HQEngineRenderDelegate
 #if	defined WIN32 || defined APPLE || defined LINUX || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	, public HQEngineKeyListener , public HQEngineMouseListener , public HQEngineWindowListener
 #endif
-#if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	, public HQEngineMotionListener, public HQEngineAppListener, public HQEngineOrientationListener
 #endif
 {
@@ -88,7 +88,7 @@ public:
 	void MouseMove( const HQPointi &point) ;
 	void MouseWheel( hq_float32 delta, const HQPointi &point) ;
 #endif
-#if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	
 	void TouchBegan(const HQTouchEvent &event) ;
 	void TouchMoved(const HQTouchEvent &event) ;
@@ -116,7 +116,7 @@ private:
 	bool app_exit;
 	bool app_pause;
 	
-#endif //#if	defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#endif //#if	defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	
 	
 private:

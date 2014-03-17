@@ -140,7 +140,7 @@ int HQEngineMain(int argc, char **argv)
 	
 	HQEngineApp::GetInstance()->SetWindowListener(game);
 #endif
-#if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	HQEngineApp::GetInstance()->SetMotionListener(game);
 	HQEngineApp::GetInstance()->SetOrientationListener(game);
 	HQEngineApp::GetInstance()->SetAppListener(game);

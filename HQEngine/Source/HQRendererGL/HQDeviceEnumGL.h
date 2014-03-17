@@ -209,7 +209,7 @@ private:
 };
 
 namespace helper{
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 	const NSString* GetEAGLColorFormat(FORMAT fmt);
 	uint GetEAGLDepthStencilFormat(FORMAT depthStencilFmt);
 #else

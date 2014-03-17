@@ -12,7 +12,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceGL.h"
 
 
-#ifndef IOS
+#ifndef HQ_IPHONE_PLATFORM
 #	define defaultFBO 0
 #	if !defined APPLE
 
@@ -519,7 +519,7 @@ GLdepthStencilFormat HQRenderTargetManagerFBO::GetGLFormat(HQDepthStencilFormat 
 }
 
 HQRenderTargetManagerFBO::HQRenderTargetManagerFBO(
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 											   GLuint defaultFBO,
 #endif
 											   hq_uint32 maxActiveRenderTargets,
@@ -531,7 +531,7 @@ HQRenderTargetManagerFBO::HQRenderTargetManagerFBO(
 										 flushLog)
 {
 
-#if !defined APPLE && !defined IOS && !defined ANDROID
+#if !defined APPLE && !defined HQ_IPHONE_PLATFORM && !defined ANDROID
 	/*-----------init openGL functions------------*/
 	glGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC )gl_GetProcAddress("glGenFramebuffers");
 	if (glGenFramebuffers == NULL)
@@ -580,7 +580,7 @@ HQRenderTargetManagerFBO::HQRenderTargetManagerFBO(
 	glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC )gl_GetProcAddress("glFramebufferTexture2D");
 	if (glFramebufferTexture2D == NULL)
 		glFramebufferTexture2D = glFramebufferTexture2DEXT;
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 	this->defaultFBO = defaultFBO;
 #endif
 	//default frame buffer's size

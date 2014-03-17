@@ -43,7 +43,7 @@ struct WindowInfo
 
 
 /*----Iphone OS----*/
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 
 
 
@@ -77,7 +77,7 @@ class HQDeviceGL:public HQBaseRenderDevice
 {
 protected:
 	~HQDeviceGL();
-#ifndef IOS
+#ifndef HQ_IPHONE_PLATFORM
 	int SetupPixelFormat(const char* coreProfile);
 #endif
 
@@ -99,7 +99,7 @@ protected:
     Display *dpy;
 	WindowInfo winfo;
 	GLXContext glc;
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 	HQIOSOpenGLContext *glc;
 	CAEAGLLayer *eaglLayer;
 #elif defined APPLE

@@ -59,7 +59,7 @@ PFNGLGETUNIFORMBLOCKINDEXPROC glGetUniformBlockIndex = NULL;
 PFNGLUNIFORMBLOCKBINDINGPROC glUniformBlockBinding = NULL;
 #endif
 
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 GLboolean gluCheckExtension(const GLubyte* ext , const GLubyte *strExt)
 {
 	hq_ubyte8* loc = (hq_ubyte8*)strstr((char*)strExt ,(char*) ext);
@@ -80,7 +80,7 @@ GLboolean gluCheckExtension(const GLubyte* ext , const GLubyte *strExt)
 void * gl_GetProcAddress (const char *procName)
 
 {
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 	return NULL;
 #else
     static CFBundleRef openGLBundle = NULL;
@@ -105,7 +105,7 @@ int glewInit()
 {
 	const GLubyte * strversion = glGetString(GL_VERSION);
 	hq_float32 versionf  = 1.0f;
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 	sscanf((const char*)strversion, "OpenGL ES %f" , &versionf);
 #else
 	sscanf((const char*)strversion, "%f" , &versionf);
@@ -149,7 +149,7 @@ int glewInit()
 	GLEW_OES_texture_half_float = gluCheckExtension ((const GLubyte*)"GL_OES_texture_half_float",strExt);
 	GLEW_OES_texture_float = gluCheckExtension ((const GLubyte*)"GL_OES_texture_float",strExt);
 	GLEW_EXT_texture_rg = gluCheckExtension ((const GLubyte*)"GL_EXT_texture_rg",strExt);
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 	GLEW_EXT_framebuffer_object = true;
 	GLEW_EXT_packed_depth_stencil = gluCheckExtension ((const GLubyte*)"GL_OES_packed_depth_stencil",strExt);
 #else
@@ -169,7 +169,7 @@ int glewInit()
 	return GLEW_OK;
 }
 
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 
 /*-----opengl context init helper class----*/
 @interface HQIOSOpenGLContextInitHelper : NSObject

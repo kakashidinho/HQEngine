@@ -146,7 +146,7 @@ HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
 #elif defined (LINUX)
     this->dpy = dpy;
 	this->glc=NULL;
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 	glc = nil;
 #elif defined APPLE
 	glc = nil;
@@ -220,7 +220,7 @@ HQDeviceGL::~HQDeviceGL(){
     int re;
     re = XDestroyWindow(this->dpy, winfo.win);
     re = XFreeColormap(this->dpy, winfo.cmap);
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 
 	if (glc != nil) {
 		[glc release];
@@ -409,7 +409,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	}
 #endif
 
-#ifndef IOS
+#ifndef HQ_IPHONE_PLATFORM
 	int result=this->SetupPixelFormat(core_profile.c_str());
 #endif
 
@@ -480,7 +480,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 
 	input->window=winfo.win;
 
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 	//create main context
 	glc = [[HQIOSOpenGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 
 									withEAGLLayer: input->eaglLayer 
@@ -680,7 +680,7 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 		this->vStreamMan = new HQVertexStreamManagerGL(pEnum->caps.maxVertexAttribs , this->m_pLogStream , this->m_flushLog);
 
 	//create render target manager
-#ifndef IOS
+#ifndef HQ_IPHONE_PLATFORM
 	if (GLEW_EXT_framebuffer_object || GLEW_VERSION_3_0)
 #	ifdef ANDROID
 		this->renderTargetMan = new HQRenderTargetManagerFBO(1 , static_cast<HQTextureManagerGL*> (this->textureMan) , this->m_pLogStream , this->m_flushLog);
@@ -744,7 +744,7 @@ HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool c
 	if(hRC==NULL)
 #elif defined (LINUX) || defined ANDROID
 	if(glc==NULL)
-#elif defined APPLE || defined IOS
+#elif defined APPLE || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
 #endif
 	{
@@ -760,7 +760,7 @@ HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool c
 		return HQ_FAILED_DEVICE_LOST;
 #endif
 
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 	if ([EAGLContext currentContext] != glc)
 		[EAGLContext setCurrentContext:glc];
 #elif defined APPLE
@@ -803,7 +803,7 @@ HQReturnVal HQDeviceGL::EndRender(){
 	if(hRC==NULL)
 #elif defined (LINUX) || defined ANDROID
 	if(glc==NULL)
-#elif defined APPLE  || defined IOS
+#elif defined APPLE  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
 #endif
 	{
@@ -843,7 +843,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 	if(hRC==NULL)
 #elif defined (LINUX) || defined ANDROID
 	if(glc==NULL)
-#elif defined APPLE  || defined IOS
+#elif defined APPLE  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
 #endif
 	{
@@ -861,7 +861,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 	SwapBuffers(hDC);
 #elif defined (LINUX)
 	glXSwapBuffers(this->dpy, winfo.win);
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 	[glc presentRenderbuffer];
 #elif defined APPLE
 	[glc flushBuffer];
@@ -882,7 +882,7 @@ HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearSt
 	if(hRC==NULL)
 #elif defined (LINUX) || defined ANDROID
 	if(glc==NULL)
-#elif defined APPLE  || defined IOS
+#elif defined APPLE  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
 #endif
 	{
@@ -953,7 +953,7 @@ void HQDeviceGL::SetClearStencilVal(hq_uint32 val){
 }
 
 
-#ifndef IOS
+#ifndef HQ_IPHONE_PLATFORM
 //********************
 //setup pixel
 //********************
@@ -1193,7 +1193,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 	return 0;
 }
 
-#endif //#ifndef IOS
+#endif //#ifndef HQ_IPHONE_PLATFORM
 
 
 

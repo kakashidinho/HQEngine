@@ -8,7 +8,7 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 
 #	ifndef GLES
 #		define GLES
@@ -99,7 +99,7 @@ extern PFNGLUNIFORMBLOCKBINDINGPROC glUniformBlockBinding;
 
 #endif//#ifndef GL_UNIFORM_BUFFER
 
-#ifdef IOS 
+#ifdef HQ_IPHONE_PLATFORM 
 
 #	ifdef SIMULATOR
 #		define NUM_DS_BUFFERS 2
@@ -174,7 +174,7 @@ extern PFNGLUNIFORMBLOCKBINDINGPROC glUniformBlockBinding;
 int glewInit();
 void * gl_GetProcAddress (const char *name);
 
-#ifdef IOS
+#ifdef HQ_IPHONE_PLATFORM
 
 @interface HQIOSOpenGLContext : EAGLContext
 {

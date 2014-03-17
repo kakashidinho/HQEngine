@@ -32,8 +32,6 @@ COPYING.txt included with this distribution for more information.
 #	include <TargetConditionals.h>
 #	if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR //ios
 #		import <Availability.h>
-#		ifndef IOS
-#			define IOS
 #		endif
 #		ifndef GLES
 #			define GLES

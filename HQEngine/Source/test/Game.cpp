@@ -30,7 +30,7 @@ struct BUFFER2
 
 Game::Game() 
 : m_offsetX(0), m_offsetY(0)
-#if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
  , app_exit( false ), app_pause(false)
 #endif
 
@@ -113,7 +113,7 @@ Game::Game()
 	HQWIPPlatformSpecificType additionalSettings;
 	additionalSettings.openGL_ApiLevel = 2;
 	params.platformSpecific = &additionalSettings;
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 	HQWIPPlatformSpecificType additionalSettings;
 	additionalSettings.landscapeMode = false;
 	params.platformSpecific = &additionalSettings;
@@ -276,7 +276,7 @@ void Game::Render(HQTime dt)
 	//Sleep(13);
 #endif
 
-#if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	mutex.Lock();
 	if (app_exit)
 	{
@@ -604,7 +604,7 @@ void Game::MouseWheel( hq_float32 delta, const HQPointi &point)
 }
 #endif//defined WIN32 || defined APPLE || defined LINUX || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
-#if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 void Game::TouchBegan(const HQTouchEvent &event) 
 {

@@ -49,7 +49,7 @@ typedef struct HQXWindowInfo{
 
 
 /*------Iphone OS-----------*/
-#elif defined IOS
+#elif defined HQ_IPHONE_PLATFORM
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>

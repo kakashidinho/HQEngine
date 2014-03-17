@@ -13,7 +13,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQPlatformDef.h"
 
-#if defined HQ_STATIC_ENGINE || defined IOS
+#if defined HQ_STATIC_ENGINE || defined HQ_IPHONE_PLATFORM
 #	define _STATIC_LIB
 #endif
 

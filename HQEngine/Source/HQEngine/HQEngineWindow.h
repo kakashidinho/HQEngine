@@ -147,7 +147,7 @@ private:
 };
 
 
-/*------IOS-----*/
+/*------HQ_IPHONE_PLATFORM-----*/
 #elif defined HQ_IPHONE_PLATFORM
 class HQEngineWindow : public HQEngineBaseWindow
 {

@@ -46,7 +46,7 @@ typedef struct HQWIPMacSpecificType{
 	NSImage *icon;//application icon
 } HQWIPPlatformSpecificType;
 
-/*------IOS----------------------*/
+/*------HQ_IPHONE_PLATFORM----------------------*/
 #elif defined HQ_IPHONE_PLATFORM
 typedef struct HQWIPIOSSpecificType{
 	bool landscapeMode;//is landscape mode
@@ -313,7 +313,7 @@ inline HQEngineApp::WindowInitParams HQEngineApp::WindowInitParams::Construct(co
 
 /*-------------------------------------platform specific-----------------------------------------------*/
 
-#if defined IOS || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if defined HQ_IPHONE_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 #include "HQThread.h"
 
@@ -353,7 +353,7 @@ extern HQENGINE_API HQGameThead *hq_engine_GameThread_internal;
 extern HQGameThead hq_engine_GameThread_internal;
 #endif
 
-#endif//if defined IOS || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#endif//if defined HQ_IPHONE_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)//win32 desktop
 /*-------WinMain wrapper's helper functions---------*/
@@ -370,7 +370,7 @@ HQENGINE_API void HQWinStoreFreeCmdLineArgs(char **&args, int argCount);
 
 HQENGINE_API Windows::ApplicationModel::Core::IFrameworkViewSource ^ HQWinStoreCreateFWViewSource();
 
-#elif defined IOS/*----IOS------*/
+#elif defined HQ_IPHONE_PLATFORM/*----HQ_IPHONE_PLATFORM------*/
 
 #import <UIKit/UIKit.h>
 
@@ -457,7 +457,7 @@ extern HQGameThead ge_hqGameThread HQENGINE_API;
 #	elif defined LINUX || defined APPLE
 #		define HQEngineMain main
 
-#	elif defined IOS
+#	elif defined HQ_IPHONE_PLATFORM
 #		define HQEngineMain(dargc,dargv) \
 			HQEngineMainWrapper(dargc, dargv);\
 			int main(int _argc, char **_argv)\
