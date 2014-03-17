@@ -1212,10 +1212,14 @@ HQReturnVal HQDeviceGL::OnWindowSizeChanged(hq_uint32 width,hq_uint32 height)
 
 HQReturnVal HQDeviceGL::ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool windowed, bool resizeWindow)//thay đổi chế độ hiển thị màn hình
 {
+	//currently not support switching between windowed and fullscreen
+	if (windowed != this->IsWindowed())
+		Log("Warning : Switching between windowed and fullscreen mode is not supported.");
+	
+	
 	if (width == this->sWidth && height == this->sHeight)
 		return HQ_OK;
 
-	//currently not support switching between windowed and fullscreen
 	windowed = this->IsWindowed();//get current mode
 #ifndef GLES
 	bool found = pEnum->ChangeSelectedDisplay(width,height , windowed);

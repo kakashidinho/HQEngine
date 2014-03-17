@@ -257,13 +257,13 @@ Game::~Game()
 void Game::OnLostDevice()
 {
 	deviceLost = true;
-	OutputDebugStringA("OnLostDevice");
+	OutputDebugStringA("OnLostDevice\n");
 }
 
 void Game::OnResetDevice()
 {
 	deviceLost = false;
-	OutputDebugStringA("OnResetDevice");
+	OutputDebugStringA("OnResetDevice\n");
 	if (!pDevice->IsRunning() && API != D3D9_RENDERER)
 		return;
 
@@ -497,7 +497,7 @@ void Game::KeyPressed(HQKeyCodeType keycode)
 		OnResetDevice();
 		break;
 	case HQKeyCode::Q:
-		pDevice->SetDisplayMode(1280, 800 , !pDevice->IsWindowed());
+		pDevice->SetDisplayMode(1280, 768 , !pDevice->IsWindowed());
 		OnResetDevice();
 #endif
 		break;
