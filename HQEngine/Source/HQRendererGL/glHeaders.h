@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQPlatformDef.h"
 /*---------------------------------*/
 
-#if !defined (APPLE) && !defined (HQ_IPHONE_PLATFORM) && !defined (ANDROID)
+#if !defined (HQ_MAC_PLATFORM) && !defined (HQ_IPHONE_PLATFORM) && !defined (ANDROID)
 #include <GL/glew.h>
 void GLAPIENTRY DummyProc1(GLenum v);
 
@@ -26,7 +26,7 @@ glxFuncPointer DummyProc2(const GLubyte* arg);
 #endif
 
 
-#elif defined (APPLE) || defined (HQ_IPHONE_PLATFORM)
+#elif defined (HQ_MAC_PLATFORM) || defined (HQ_IPHONE_PLATFORM)
 #import "Apple.h"
 #define GLAPIENTRY
 

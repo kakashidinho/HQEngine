@@ -148,7 +148,7 @@ HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
 	this->glc=NULL;
 #elif defined HQ_IPHONE_PLATFORM
 	glc = nil;
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	glc = nil;
 	pixelformat = nil;
 #elif defined ANDROID
@@ -225,7 +225,7 @@ HQDeviceGL::~HQDeviceGL(){
 	if (glc != nil) {
 		[glc release];
 	}
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	if (glc != nil) {
 		if ([NSOpenGLContext currentContext] == glc)
 			[NSOpenGLContext clearCurrentContext];
@@ -352,7 +352,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 #ifndef GLES
 	pEnum->EnumAllDisplayModes();
 #endif
-#ifdef APPLE
+#ifdef HQ_MAC_PLATFORM
 	pEnum->ParseSettingFile(settingFileDir , 
 							[input->nsView frame].size.width , 
 							[input->nsView frame].size.height,
@@ -504,7 +504,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	}
 
 
-#elif defined (APPLE)
+#elif defined (HQ_MAC_PLATFORM)
 
 	if(result!=0)
 	{
@@ -731,7 +731,7 @@ void HQDeviceGL::EnableVSyncNonSave(bool enable)
 		glXSwapIntervalEXT(this->dpy,winfo.win, interval);
 	else if (GLXEW_MESA_swap_control)
 		glXSwapIntervalMESA(interval);
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	[glc setValues: &interval forParameter: NSOpenGLCPSwapInterval];
 #endif
 }
@@ -744,7 +744,7 @@ HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool c
 	if(hRC==NULL)
 #elif defined (LINUX) || defined ANDROID
 	if(glc==NULL)
-#elif defined APPLE || defined HQ_IPHONE_PLATFORM
+#elif defined HQ_MAC_PLATFORM || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
 #endif
 	{
@@ -763,7 +763,7 @@ HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool c
 #ifdef HQ_IPHONE_PLATFORM
 	if ([EAGLContext currentContext] != glc)
 		[EAGLContext setCurrentContext:glc];
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	if ([NSOpenGLContext currentContext] != glc)
 		[glc makeCurrentContext];
 #endif
@@ -803,7 +803,7 @@ HQReturnVal HQDeviceGL::EndRender(){
 	if(hRC==NULL)
 #elif defined (LINUX) || defined ANDROID
 	if(glc==NULL)
-#elif defined APPLE  || defined HQ_IPHONE_PLATFORM
+#elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
 #endif
 	{
@@ -821,7 +821,7 @@ HQReturnVal HQDeviceGL::EndRender(){
 #endif
 
 #if 0
-#ifndef APPLE
+#ifndef HQ_MAC_PLATFORM
 	glFlush();
 #endif
 #endif
@@ -843,7 +843,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 	if(hRC==NULL)
 #elif defined (LINUX) || defined ANDROID
 	if(glc==NULL)
-#elif defined APPLE  || defined HQ_IPHONE_PLATFORM
+#elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
 #endif
 	{
@@ -863,7 +863,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 	glXSwapBuffers(this->dpy, winfo.win);
 #elif defined HQ_IPHONE_PLATFORM
 	[glc presentRenderbuffer];
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	[glc flushBuffer];
 #elif defined ANDROID
 	glc->SwapBuffers();
@@ -882,7 +882,7 @@ HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearSt
 	if(hRC==NULL)
 #elif defined (LINUX) || defined ANDROID
 	if(glc==NULL)
-#elif defined APPLE  || defined HQ_IPHONE_PLATFORM
+#elif defined HQ_MAC_PLATFORM  || defined HQ_IPHONE_PLATFORM
 	if (glc == nil)
 #endif
 	{
@@ -1144,7 +1144,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
         if(glc==NULL)
             return -1;
 	
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	hq_ubyte8 R,G,B,A,D,S;
 	//get color bits
 	helper::FormatInfo(pEnum->selectedBufferSetting->pixelFmt,NULL,&R,
@@ -1286,7 +1286,7 @@ HQReturnVal HQDeviceGL::ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool 
 
     XFlush(this->dpy);
 
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	if(resizeWindow)
 	{
 		if (windowed)

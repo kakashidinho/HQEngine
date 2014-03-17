@@ -39,9 +39,6 @@ COPYING.txt included with this distribution for more information.
 #		define _STATIC_RENDERER_LIB_
 #	endif 
 #elif defined HQ_MAC_PLATFORM
-#	ifndef APPLE
-#		define APPLE __APPLE__
-#	endif
 #   define _NO_DYNAMIC_LOAD_RENDERER_LIB_
 #elif defined HQ_LINUX_PLATFORM
 #   define _NO_DYNAMIC_LOAD_RENDERER_LIB_

@@ -19,7 +19,7 @@ COPYING.txt included with this distribution for more information.
 #include <string.h>
 #include <vorbis/vorbisfile.h>
 
-#ifdef APPLE
+#ifdef HQ_MAC_PLATFORM
 #	define RAW_VORBIS
 #endif
 

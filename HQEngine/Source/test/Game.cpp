@@ -439,7 +439,7 @@ void Game::Render(HQTime dt)
 
 }
 
-#if	defined WIN32 || defined APPLE || defined LINUX || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined LINUX || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 void Game::KeyPressed(HQKeyCodeType keycode)
 {
@@ -602,7 +602,7 @@ void Game::MouseWheel( hq_float32 delta, const HQPointi &point)
 	}
 	OutputDebugStringA(info);
 }
-#endif//defined WIN32 || defined APPLE || defined LINUX || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#endif//defined WIN32 || defined HQ_MAC_PLATFORM || defined LINUX || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 #if defined HQ_IPHONE_PLATFORM || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
@@ -715,4 +715,4 @@ bool Game::BackButtonPressed()
 }
 #endif
 
-#endif //#if	defined WIN32 || defined APPLE || defined LINUX
+#endif //#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined LINUX

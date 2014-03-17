@@ -1,4 +1,4 @@
-#ifdef APPLE
+#ifdef HQ_MAC_PLATFORM
 #include "HQEngine/HQPlatformDef.h"
 #else
 #include "../HQPlatformDef.h"
@@ -133,7 +133,7 @@ int HQEngineMain(int argc, char **argv)
 	HQEngineApp::GetInstance()->SetRenderDelegate(game);
 
 	
-#if	defined WIN32 || defined APPLE || defined LINUX
+#if	defined WIN32 || defined HQ_MAC_PLATFORM || defined LINUX
 	HQEngineApp::GetInstance()->SetKeyListener(game);
 
 	HQEngineApp::GetInstance()->SetMouseListener(game);

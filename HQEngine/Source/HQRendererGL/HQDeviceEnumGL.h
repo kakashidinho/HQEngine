@@ -66,7 +66,7 @@ struct Resolution : public HQResolution
 #	endif
     double x11RefreshRate;
     
-#elif defined APPLE /*--------mac OSX------*/
+#elif defined HQ_MAC_PLATFORM /*--------mac OSX------*/
     CGDisplayModeRef cgDisplayMode;
 #endif
 };
@@ -94,7 +94,7 @@ struct Caps//device capabilities
 	DWORD maxDrawBuffers;
 	DWORD maxUniformBufferSlots;
 #endif
-#if defined APPLE
+#if defined HQ_MAC_PLATFORM
 	bool hardwareAccel;
 #endif
 };
@@ -117,7 +117,7 @@ public:
 
 	void CheckCapabilities();//check opengl capabilities
 
-#ifdef APPLE
+#ifdef HQ_MAC_PLATFORM
 	void ParseSettingFile(const char* settingFile , hq_uint32 width , hq_uint32 height , bool windowed);
 #else
 	void ParseSettingFile(const char* settingFile);
@@ -159,7 +159,7 @@ public:
 	Rotation currentScreenRotation;
 	XRRScreenConfiguration *screenConfig;
 #	endif
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	CGDisplayModeRef currentScreenDisplayMode;
 #endif
 	
@@ -186,7 +186,7 @@ private:
 	int modeNum;
 #	endif
 
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 
 	CFArrayRef modeList;//list of display mode
 #elif defined ANDROID

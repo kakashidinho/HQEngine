@@ -153,7 +153,7 @@ bool HQDeviceGL::IsRTTMultisampleTypeSupported(HQRenderTargetFormat hqformat , H
 
 bool HQDeviceGL::IsDSMultisampleTypeSupported(HQDepthStencilFormat format , HQMultiSampleType multisampleType)
 {
-#if !defined APPLE && !defined GLES
+#if !defined HQ_MAC_PLATFORM && !defined GLES
 	if (glRenderbufferStorageMultisample == NULL)
 		return false;
 #endif

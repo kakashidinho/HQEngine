@@ -74,7 +74,7 @@ typedef struct HQIOSRenderDeviceInitInput {
 
 
 /*------MacOS-----------*/
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 
 #	define hModule void*
 #   define DLLDECL __attribute__ ((visibility("default")))

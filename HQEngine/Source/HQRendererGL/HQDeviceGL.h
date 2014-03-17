@@ -48,7 +48,7 @@ struct WindowInfo
 
 
 /*----MacOS--------*/
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -102,7 +102,7 @@ protected:
 #elif defined HQ_IPHONE_PLATFORM
 	HQIOSOpenGLContext *glc;
 	CAEAGLLayer *eaglLayer;
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 	HQAppleOpenGLContext * glc;
 	NSOpenGLPixelFormat* pixelformat;
 #elif defined ANDROID

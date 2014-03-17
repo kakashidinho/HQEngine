@@ -29,7 +29,7 @@ COPYING.txt included with this distribution for more information.
 // TODO: reference additional headers your program requires here
 #include "../HQPlatformDef.h"
 #include "../HQEngineCustomHeap.h"
-#ifdef APPLE
+#ifdef HQ_MAC_PLATFORM
 #include <Cocoa/Cocoa.h>
 #endif
 

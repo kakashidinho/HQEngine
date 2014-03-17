@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 
 #ifndef HQ_IPHONE_PLATFORM
 #	define defaultFBO 0
-#	if !defined APPLE
+#	if !defined HQ_MAC_PLATFORM
 
 #ifdef glGenFramebuffers
 #undef glGenFramebuffers
@@ -531,7 +531,7 @@ HQRenderTargetManagerFBO::HQRenderTargetManagerFBO(
 										 flushLog)
 {
 
-#if !defined APPLE && !defined HQ_IPHONE_PLATFORM && !defined ANDROID
+#if !defined HQ_MAC_PLATFORM && !defined HQ_IPHONE_PLATFORM && !defined ANDROID
 	/*-----------init openGL functions------------*/
 	glGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC )gl_GetProcAddress("glGenFramebuffers");
 	if (glGenFramebuffers == NULL)

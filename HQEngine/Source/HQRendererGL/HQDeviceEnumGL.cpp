@@ -351,7 +351,7 @@ HQDeviceEnumGL::HQDeviceEnumGL(jobject _jegl, jobject _jdisplay, jint apiLevel){
 	this->jdisplay = _jdisplay;
 #else
 HQDeviceEnumGL::HQDeviceEnumGL(){
-#	ifdef APPLE
+#	ifdef HQ_MAC_PLATFORM
 	modeList = NULL;
 	currentScreenDisplayMode = NULL;
 #	endif
@@ -378,7 +378,7 @@ HQDeviceEnumGL::~HQDeviceEnumGL()
 #	else //randr
     XRRFreeScreenConfigInfo(this->screenConfig);
 #	endif
-#elif defined APPLE /*------------mac osx-------------*/
+#elif defined HQ_MAC_PLATFORM /*------------mac osx-------------*/
 	if (modeList != NULL)
 		CFRelease(modeList);
 	if (currentScreenDisplayMode != NULL)
@@ -763,7 +763,7 @@ bool HQDeviceEnumGL::CheckMultisample(BufferInfo &bufInfo)
 	return true;
 }
 
-#elif defined (APPLE)
+#elif defined (HQ_MAC_PLATFORM)
 bool HQDeviceEnumGL::CheckPixelFmt(FORMAT format){
 
 	CGLPixelFormatObj pixelFormatObj = NULL;
@@ -973,7 +973,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 		[glc release];
 		return;
 	}
-#elif defined (APPLE)
+#elif defined (HQ_MAC_PLATFORM)
 	//create dummy context for checking capabilities
 	CGDirectDisplayID display = CGMainDisplayID ();
 	CGOpenGLDisplayMask myDisplayMask = CGDisplayIDToOpenGLDisplayMask (display);
@@ -1127,7 +1127,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	[EAGLContext setCurrentContext:nil];
 	[glc release];
 
-#elif defined APPLE
+#elif defined HQ_MAC_PLATFORM
 
 	//done! destroy dummy context
 	CGLDestroyContext (myCGLContext);
@@ -1397,7 +1397,7 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
     
 #	endif//#	if defined HQ_USE_XFREE86_VIDMODE
 
-#elif defined (APPLE) /*----------mac osx------------*/
+#elif defined (HQ_MAC_PLATFORM) /*----------mac osx------------*/
 	/*----find all display mode-----------*/
 	this->currentScreenDisplayMode = CGDisplayCopyDisplayMode(CGMainDisplayID());
 	modeList = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
@@ -1487,7 +1487,7 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
 //parse setting file
 //****************************************
 
-#ifdef APPLE
+#ifdef HQ_MAC_PLATFORM
 void HQDeviceEnumGL::ParseSettingFile(const char *settingFile , hq_uint32 width , hquint32 height , bool windowed)
 #else
 void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
@@ -1510,7 +1510,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 	fscanf(save,"RefreshRate=%d\n",&this->unUseValue[0]);//unuse value , it is for direct3d
 	fscanf(save,"VSync=%d\n\n",&this->vsync);
 
-#ifdef APPLE
+#ifdef HQ_MAC_PLATFORM
 	//mac osx version doesn't care about width & height stored in setting file if view currently in windowed mode
 	//the windowed mode stored in setting file also is ignored
 	if (windowed)

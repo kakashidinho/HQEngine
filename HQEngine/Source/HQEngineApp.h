@@ -454,7 +454,7 @@ extern HQGameThead ge_hqGameThread HQENGINE_API;
 			}\
 			int HQEngineMainWrapper(dargc, dargv)
 
-#	elif defined LINUX || defined APPLE
+#	elif defined LINUX || defined HQ_MAC_PLATFORM
 #		define HQEngineMain main
 
 #	elif defined HQ_IPHONE_PLATFORM

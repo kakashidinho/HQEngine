@@ -32,15 +32,11 @@ COPYING.txt included with this distribution for more information.
 #	include <TargetConditionals.h>
 #	if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR //ios
 #		import <Availability.h>
-#		endif
 #		ifndef GLES
 #			define GLES
 #		endif
 #		define HQ_IPHONE_PLATFORM
 #	else //Mac OS
-#		ifndef APPLE
-#			define APPLE
-#		endif
 #		define HQ_MAC_PLATFORM
 #	endif
 #elif defined ANDROID//android
