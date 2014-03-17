@@ -18,7 +18,7 @@ COPYING.txt included with this distribution for more information.
 #ifdef __cplusplus
 extern "C" {
 #endif
-#ifdef NEON_ASM
+#ifdef HQ_NEON_ASM
 	float HQNeonQuatMagnitude(float * quat);
 	
 	float HQNeonQuatSumSquares(float * quat);
@@ -42,7 +42,7 @@ extern "C" {
 	void HQNeonQuatFromMatrix3x4c(const float *matrix , float * quaternion);
 
 	void HQNeonQuatFromMatrix4r(const float *matrix , float * quaternion);
-#else//#ifdef NEON_ASM
+#else//#ifdef HQ_NEON_ASM
 	HQ_FORCE_INLINE float HQNeonQuatMagnitude(float * quat)
 	{
 		register float re;
@@ -554,7 +554,7 @@ extern "C" {
 					 :"r4" , "r5" ,"q0" , "q1" , "q2" , "q3" , "q4" , "q5" , "q6" , "q7", "memory"
 		);
 	}
-#endif//#ifdef NEON_ASM
+#endif//#ifdef HQ_NEON_ASM
 	
 #ifdef __cplusplus
 }

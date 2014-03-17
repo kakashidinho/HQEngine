@@ -19,7 +19,7 @@ COPYING.txt included with this distribution for more information.
 #include <malloc.h>//for memalign
 #endif
 
-#ifdef NEON_MATH
+#ifdef HQ_NEON_MATH
 #	define HQ_RETURN_VECTOR4 return *HQA16ByteVector4Ptr
 #else
 #	define HQ_RETURN_VECTOR4 return HQVector4
@@ -182,10 +182,10 @@ HQ_FORCE_INLINE HQVector4* HQVector4Sub(const HQVector4* pV1,const HQVector4 *pV
 //tích vô hướng
 //**********************************************
 HQ_FORCE_INLINE hq_float32 HQVector4::operator *(const HQVector4 &v2) const{
-#if	defined CMATH || defined NEON_MATH || defined HQ_DIRECTX_MATH
+#if	defined HQ_CMATH || defined HQ_NEON_MATH || defined HQ_DIRECTX_MATH
 	return x*v2.x+y*v2.y+z*v2.z;
 	
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	hq_float32 f;//kết quả cần trả về
 	float4 m0 , m1;
 	m0 = _mm_load_ps(this->v);//copy vector data to 128 bit xmm register
@@ -215,9 +215,9 @@ HQ_FORCE_INLINE hq_float32 HQVector4::operator *(const HQVector4 &v2) const{
 //bình phương độ dài vector
 //**********************************************
 HQ_FORCE_INLINE hq_float32 HQVector4::LengthSqr()const{
-#if	defined CMATH || defined NEON_MATH || defined HQ_DIRECTX_MATH
+#if	defined HQ_CMATH || defined HQ_NEON_MATH || defined HQ_DIRECTX_MATH
 	return x*x+y*y+z*z;
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	hq_float32 f;//kết quả cần trả về
 	float4 m0;
 	m0 = _mm_load_ps(this->v);//copy vector data to 128 bit xmm register
@@ -245,9 +245,9 @@ HQ_FORCE_INLINE hq_float32 HQVector4::LengthSqr()const{
 //độ dài vector
 //**********************************************
 HQ_FORCE_INLINE hq_float32 HQVector4::Length() const{
-#if	defined CMATH || defined NEON_MATH || defined HQ_DIRECTX_MATH
+#if	defined HQ_CMATH || defined HQ_NEON_MATH || defined HQ_DIRECTX_MATH
 	return sqrtf(x * x + y * y + z * z);
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	hq_float32 f;//kết quả cần trả về
 	float4 m0;
 	m0 = _mm_load_ps(this->v);//copy vector data to 128 bit xmm register
@@ -372,14 +372,14 @@ HQ_FORCE_INLINE HQMatrix4* HQMatrix4Identity(HQMatrix4* inout){
 //ma trận chuyển vị
 //******************************************************
 HQ_FORCE_INLINE HQMatrix4& HQMatrix4::Transpose(){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	swapf(_12,_21);
 	swapf(_13,_31);
 	swapf(_14,_41);
 	swapf(_23,_32);
 	swapf(_24,_42);
 	swapf(_34,_43);
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonMatrix4Transpose(this->m , this->m);
 #elif defined HQ_DIRECTX_MATH
 	HQDXMatrix4Transpose(this->m, this->m);
@@ -409,7 +409,7 @@ HQ_FORCE_INLINE HQMatrix4& HQMatrix4::Transpose(){
 	return *this;
 }
 HQ_FORCE_INLINE HQMatrix4* HQMatrix4Transpose(const HQMatrix4 *in, HQMatrix4 *out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if(in==out)
 		out->Transpose();
 	else{
@@ -433,7 +433,7 @@ HQ_FORCE_INLINE HQMatrix4* HQMatrix4Transpose(const HQMatrix4 *in, HQMatrix4 *ou
 		out->_43=in->_34;
 		out->_44=in->_44;
 	}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix4Transpose(in->m , out->m);
 
@@ -761,12 +761,12 @@ HQ_FORCE_INLINE bool HQPolygon3D::Intersect(const HQRay3D& ray,hq_float32 *pT,hq
 //phép cộng
 //***************************************
 HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator +=(const HQQuaternion &quat){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	x+=quat.x;
 	y+=quat.y;
 	z+=quat.z;
 	w+=quat.w;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonQuatAdd(this->q, quat.q, this->q);
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatAdd(this->q, quat.q, this->q);
@@ -784,9 +784,9 @@ HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator +=(const HQQuaternion &quat
 
 #ifndef HQ_EXPLICIT_ALIGN
 HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator +(const HQQuaternion &quat) const{
-#ifdef CMATH
+#ifdef HQ_CMATH
 	return HQQuaternion(x+quat.x,y+quat.y,z+quat.z,w+quat.w);
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteQuaternionPtr result;
 	HQNeonQuatAdd(this->q, quat.q, result->q);
 	return *result;
@@ -812,9 +812,9 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator +(const HQQuaternion &quat) 
 #endif//#ifndef HQ_EXPLICIT_ALIGN
 
 HQ_FORCE_INLINE HQQuaternion* HQQuatAdd(const HQQuaternion *quat1, const HQQuaternion* quat2, HQQuaternion *out) {
-#ifdef CMATH
+#ifdef HQ_CMATH
 	out->Set(quat1->x+quat2->x,quat1->y+quat2->y,quat1->z+quat2->z,quat1->w+quat2->w);
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonQuatAdd(quat1->q, quat2->q, out->q);
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatAdd(quat1->q, quat2->q, out->q);
@@ -835,12 +835,12 @@ HQ_FORCE_INLINE HQQuaternion* HQQuatAdd(const HQQuaternion *quat1, const HQQuate
 //phép trừ
 //***************************************
 HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator -=(const HQQuaternion &quat){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	x-=quat.x;
 	y-=quat.y;
 	z-=quat.z;
 	w-=quat.w;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonQuatSub(this->q, quat.q, this->q);
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatSub(this->q, quat.q, this->q);
@@ -859,9 +859,9 @@ HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator -=(const HQQuaternion &quat
 #ifndef HQ_EXPLICIT_ALIGN
 
 HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator -(const HQQuaternion &quat) const{
-#ifdef CMATH
+#ifdef HQ_CMATH
 	return HQQuaternion(x-quat.x,y-quat.y,z-quat.z,w-quat.w);
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteQuaternionPtr result;
 	HQNeonQuatSub(this->q, quat.q, result->q);
 	return *result;
@@ -887,9 +887,9 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator -(const HQQuaternion &quat) 
 #endif//#ifndef HQ_EXPLICIT_ALIGN
 
 HQ_FORCE_INLINE HQQuaternion* HQQuatSub(const HQQuaternion *quat1, const HQQuaternion* quat2, HQQuaternion *out) {
-#ifdef CMATH
+#ifdef HQ_CMATH
 	out->Set(quat1->x-quat2->x,quat1->y-quat2->y,quat1->z-quat2->z,quat1->w-quat2->w);
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonQuatSub(quat1->q, quat2->q, out->q);
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatSub(quat1->q, quat2->q, out->q);
@@ -908,12 +908,12 @@ HQ_FORCE_INLINE HQQuaternion* HQQuatSub(const HQQuaternion *quat1, const HQQuate
 
 
 HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator *=(const hq_float32 f){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	x *= f;
 	y *= f;
 	z *= f;
 	w *= f;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonQuatMultiplyScalar(this->q, f, this->q);
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatMultiplyScalar(this->q, f, this->q);
@@ -929,7 +929,7 @@ HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator *=(const hq_float32 f){
 
 #ifndef HQ_EXPLICIT_ALIGN
 HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator *(const hq_float32 f)const{
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQQuaternion result;
 
 	result.x = x * f;
@@ -938,7 +938,7 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator *(const hq_float32 f)const{
 	result.w = w * f;
 
 	return result;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteQuaternionPtr result;
 	HQNeonQuatMultiplyScalar(this->q, f, result->q);
 
@@ -961,9 +961,9 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator *(const hq_float32 f)const{
 
 
 HQ_FORCE_INLINE HQQuaternion* HQQuatMultiply(const HQQuaternion *quat1, hq_float32 f, HQQuaternion *out) {
-#ifdef CMATH
+#ifdef HQ_CMATH
 	out->Set(quat1->x * f,quat1->y * f,quat1->z * f,quat1->w * f);
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonQuatMultiplyScalar(quat1->q, f, out->q);
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatMultiplyScalar(quat1->q, f, out->q);
@@ -987,12 +987,12 @@ HQ_FORCE_INLINE HQQuaternion* HQQuatMultiply(hq_float32 f, const HQQuaternion *q
 
 HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator /=(const hq_float32 f){
 	hq_float32 rF=1.0f/f;
-#ifdef CMATH
+#ifdef HQ_CMATH
 	x *= rF;
 	y *= rF;
 	z *= rF;
 	w *= rF;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonQuatMultiplyScalar(this->q, rF, this->q);
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatMultiplyScalar(this->q, rF, this->q);
@@ -1008,7 +1008,7 @@ HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator /=(const hq_float32 f){
 #ifndef HQ_EXPLICIT_ALIGN
 HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator /(const hq_float32 f)const{
 	hq_float32 rF=1.0f/f;
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQQuaternion result;
 
 	result.x = x * rF;
@@ -1017,7 +1017,7 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator /(const hq_float32 f)const{
 	result.w = w * rF;
 
 	return result;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteQuaternionPtr result;
 	HQNeonQuatMultiplyScalar(this->q, rF, result->q);
 
@@ -1043,7 +1043,7 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator /(const hq_float32 f)const{
 
 HQ_FORCE_INLINE HQ_UTIL_MATH_API HQQuaternion operator *(const hq_float32 f,const HQQuaternion& quat)
 {
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQQuaternion result;
 
 	result.x = quat.x * f;
@@ -1052,7 +1052,7 @@ HQ_FORCE_INLINE HQ_UTIL_MATH_API HQQuaternion operator *(const hq_float32 f,cons
 	result.w = quat.w * f;
 
 	return result;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteQuaternionPtr result;
 	HQNeonQuatMultiplyScalar(quat.q, f, result->q);
 

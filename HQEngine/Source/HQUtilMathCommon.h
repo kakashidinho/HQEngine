@@ -18,14 +18,14 @@ COPYING.txt included with this distribution for more information.
 #endif
 
 #if defined IOS || defined ANDROID || (defined HQ_WIN_PHONE_PLATFORM)
-#	if	!defined CMATH && !defined NEON_MATH && !defined HQ_DIRECTX_MATH
+#	if	!defined HQ_CMATH && !defined HQ_NEON_MATH && !defined HQ_DIRECTX_MATH
 #		if (defined HQ_WIN_PHONE_PLATFORM)
 #			if 0
 #				define HQ_DIRECTX_MATH
 #			else
 #				if defined (_M_ARM)
-#					define NEON_MATH
-#					define NEON_ASM
+#					define HQ_NEON_MATH
+#					define HQ_NEON_ASM
 #				else
 #					define HQ_DIRECTX_MATH 
 #				endif
@@ -33,26 +33,26 @@ COPYING.txt included with this distribution for more information.
 #		else
 #			if defined ANDROID
 #				if defined __x86_64__ || defined __i386__ || defined __i686__
-#					define SSE_MATH
+#					define HQ_SSE_MATH
 #				elif defined __arm__
-#					define NEON_MATH
+#					define HQ_NEON_MATH
 #				else
-#					define CMATH
+#					define HQ_CMATH
 #				endif
 #			else
-#				define NEON_MATH
+#				define HQ_NEON_MATH
 #			endif
 #		endif
 #	endif
 #endif
 
-#if !defined CMATH && defined HQ_WIN_STORE_PLATFORM
+#if !defined HQ_CMATH && defined HQ_WIN_STORE_PLATFORM
 #	if 1
 #		define HQ_DIRECTX_MATH
 #	else
 #		if defined _M_ARM
-#			define NEON_MATH
-#			define NEON_ASM
+#			define HQ_NEON_MATH
+#			define HQ_NEON_ASM
 #		endif
 #	endif
 #endif
@@ -97,7 +97,7 @@ COPYING.txt included with this distribution for more information.
 #	endif
 #endif
 
-#ifdef CMATH
+#ifdef HQ_CMATH
 #define HQ_NO_NEED_ALIGN16
 
 //#pragma message ("using plain C math")
@@ -111,19 +111,19 @@ COPYING.txt included with this distribution for more information.
 #include <stdlib.h>
 #include <math.h>
 
-#if !defined (CMATH) && !defined (NEON_MATH) && !defined (HQ_DIRECTX_MATH)
-#	define SSE_MATH
+#if !defined (HQ_CMATH) && !defined (HQ_NEON_MATH) && !defined (HQ_DIRECTX_MATH)
+#	define HQ_SSE_MATH
 #endif
 
 
-#ifdef SSE_MATH /*----SSE--------*/
+#ifdef HQ_SSE_MATH /*----SSE--------*/
 
 //#pragma message ("using SSE math")
 
 #include <xmmintrin.h> //Intel SSE intrinsics header
 #include <emmintrin.h> //SSE2
 
-#	ifdef SSE4_MATH
+#	ifdef HQ_SSE4_MATH
 #include <smmintrin.h> //SSE4
 
 
@@ -141,11 +141,11 @@ typedef __m128i int4;
 #define SSE_SHUFFLE(x,y,z,w) (x<<6|y<<4|z<<2|w)
 #define SSE_SHUFFLEL(w,z,y,x) (x<<6|y<<4|z<<2|w)
 
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 
 //#	pragma message ("using Neon math")
 
-#	if defined NEON_ASM
+#	if defined HQ_NEON_ASM
 //#		pragma message ("using Neon assembly implementation")
 #	endif
 

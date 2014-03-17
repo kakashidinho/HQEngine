@@ -10,7 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQUtilMathPCH.h"
 #include "../HQ3DMath.h"
-#ifdef NEON_MATH
+#ifdef HQ_NEON_MATH
 #include "arm_neon_math/HQNeonVector.h"
 #include "arm_neon_math/HQNeonMatrix.h"
 #elif defined HQ_DIRECTX_MATH
@@ -19,7 +19,7 @@ COPYING.txt included with this distribution for more information.
 #endif
 #include <stdio.h>
 
-#ifdef SSE_MATH
+#ifdef HQ_SSE_MATH
 
 const float4 _3Halves_1Zero = {0.5f , 0.5f ,0.5f ,0.0f};
 const float4 _4Threes = {3.0f , 3.0f ,3.0f ,3.0f};
@@ -37,13 +37,13 @@ const HQ_ALIGN16 hq_uint32 Mask2[4]={0x00000000,0x00000000,0x00000000,0xffffffff
 //**********************************************
 #ifndef HQ_EXPLICIT_ALIGN
 HQVector4 HQVector4::Cross(const HQVector4& v2)const{
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQVector4 result;
 	result.x = y * v2.z - z * v2.y;
 	result.y = z * v2.x - x * v2.z;
 	result.z = x * v2.y - y * v2.x;
 	result.w = 0.0f;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteVector4Ptr pResult;
 	HQVector4 &result = *pResult;
 
@@ -88,10 +88,10 @@ HQVector4 HQVector4::Cross(const HQVector4& v2)const{
 #endif//#ifndef HQ_EXPLICIT_ALIGN
 
 HQVector4& HQVector4::Cross(const HQVector4 &v1, const HQVector4 &v2){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQVector4Cross(&v1, &v2 , this);
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonVector4Cross(v1, v2, this->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4Cross(v1, v2, this->v);
@@ -127,14 +127,14 @@ HQVector4& HQVector4::Cross(const HQVector4 &v1, const HQVector4 &v2){
 	return *this;
 }
 HQVector4* HQVector4Cross(const HQVector4 *v1,const HQVector4 *v2,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	hq_float32 X = v1->y * v2->z - v1->z * v2->y;
 	hq_float32 Y = v1->z * v2->x - v1->x * v2->z;
 	out->z = v1->x * v2->y - v1->y * v2->x;
 	out->x = X;
 	out->y = Y;
 	out->w = 0.0f;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonVector4Cross(v1->v, v2->v, out->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4Cross(v1->v, v2->v, out->v);
@@ -173,13 +173,13 @@ HQVector4* HQVector4Cross(const HQVector4 *v1,const HQVector4 *v2,HQVector4* out
 //chuẩn hóa
 //**********************************************
 HQVector4& HQVector4::Normalize(){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	hq_float32 f = 1.0f/sqrtf(x * x + y * y + z * z);
 	x *= f;
 	y *= f;
 	z *= f;
 	w = 0.0f;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonVector4Normalize(this->v, this->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4Normalize(this->v, this->v);
@@ -212,13 +212,13 @@ HQVector4& HQVector4::Normalize(){
 }
 
 HQVector4* HQVector4Normalize(const HQVector4* in,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	hq_float32 f = 1.0f/sqrtf(in->x * in->x + in->y * in->y + in->z * in->z);
 	out->x = in->x * f;
 	out->y = in->y * f;
 	out->z = in->z * f;
 	out->w = 0.0f;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonVector4Normalize(in->v , out->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4Normalize(in->v , out->v);
@@ -253,7 +253,7 @@ HQVector4* HQVector4Normalize(const HQVector4* in,HQVector4* out){
 //nhân vector với ma trận
 //**********************************************************
 HQVector4& HQVector4::operator *=(const HQMatrix4 &m){
-#ifdef CMATH	
+#ifdef HQ_CMATH	
 	/*normal version*/
 	hq_float32 X=x*m._11+y*m._21+z*m._31+w*m._41;
 	hq_float32 Y=x*m._12+y*m._22+z*m._32+w*m._42;
@@ -262,7 +262,7 @@ HQVector4& HQVector4::operator *=(const HQMatrix4 &m){
 	x = X;
 	y = Y;
 	z = Z;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonVector4MultiplyMatrix4(this->v, m, this->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4MultiplyMatrix4(this->v, m, this->v);
@@ -299,14 +299,14 @@ HQVector4& HQVector4::operator *=(const HQMatrix4 &m){
 
 #ifndef HQ_EXPLICIT_ALIGN
 HQVector4 HQVector4::operator *(const HQMatrix4 &m)const{
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQVector4 result;
 	/*normal version*/
 	result.x=x*m._11+y*m._21+z*m._31+w*m._41;
 	result.y=x*m._12+y*m._22+z*m._32+w*m._42;
 	result.z=x*m._13+y*m._23+z*m._33+w*m._43;
 	result.w =x*m._14+y*m._24+z*m._34+w*m._44;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteVector4Ptr pV;
 	HQVector4 &result = *pV;
 	HQNeonVector4MultiplyMatrix4(this->v, m, result);
@@ -346,7 +346,7 @@ HQVector4 HQVector4::operator *(const HQMatrix4 &m)const{
 #endif //#ifndef HQ_EXPLICIT_ALIGN
 
 HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v1)
 		return &((*out) *= (*mat));
 	else {
@@ -356,7 +356,7 @@ HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix4* mat,HQVector4
 		out->w = v1->x*mat->_14+v1->y*mat->_24+v1->z*mat->_34+v1->w*mat->_44;
 	}
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonVector4MultiplyMatrix4(v1->v, mat->m, out->v);	
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4MultiplyMatrix4(v1->v, mat->m, out->v);	
@@ -393,7 +393,7 @@ HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix4* mat,HQVector4
 
 HQVector4* HQVector4MultiTransform(const HQVector4* v, hq_uint32 numVec, const HQMatrix4* mat,HQVector4* out)
 {
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v)
 	{
 		for (hquint32 i = 0 ; i < numVec ; ++i)
@@ -411,7 +411,7 @@ HQVector4* HQVector4MultiTransform(const HQVector4* v, hq_uint32 numVec, const H
 			out[i].w = v[i].x*mat->_14+v[i].y*mat->_24+v[i].z*mat->_34+v[i].w*mat->_44;
 		}
 	}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonMultiVector4MultiplyMatrix4(v->v, numVec, mat->m, out->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXMultiVector4MultiplyMatrix4(v->v, numVec, mat->m, out->v);
@@ -451,7 +451,7 @@ HQVector4* HQVector4MultiTransform(const HQVector4* v, hq_uint32 numVec, const H
 
 
 HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v1)
 	{
 		hq_float32 X=v1->x*mat->_11+v1->y*mat->_21+v1->z*mat->_31+ mat->_41;
@@ -468,7 +468,7 @@ HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix4* mat,HQVe
 		out->z=v1->x*mat->_13+v1->y*mat->_23+v1->z*mat->_33+ mat->_43;
 		out->w = v1->x*mat->_14+v1->y*mat->_24+v1->z*mat->_34+ mat->_44;
 	}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonVector4TransformCoord(v1->v, mat->m, out->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4TransformCoord(v1->v, mat->m, out->v);
@@ -504,7 +504,7 @@ HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix4* mat,HQVe
 
 HQVector4* HQVector4MultiTransformCoord(const HQVector4* v, hq_uint32 numVec, const HQMatrix4* mat,HQVector4* out)
 {
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v)
 	{
 		for (hquint32 i = 0 ; i < numVec ; ++i)
@@ -529,7 +529,7 @@ HQVector4* HQVector4MultiTransformCoord(const HQVector4* v, hq_uint32 numVec, co
 		}
 	}
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonMultiVector4TransformCoord(v->v, numVec, mat->m, out->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXMultiVector4TransformCoord(v->v, numVec, mat->m, out->v);
@@ -566,7 +566,7 @@ HQVector4* HQVector4MultiTransformCoord(const HQVector4* v, hq_uint32 numVec, co
 }
 
 HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v1)
 	{
 		hq_float32 X=v1->x*mat->_11+v1->y*mat->_21+v1->z*mat->_31;
@@ -584,7 +584,7 @@ HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix4* mat,HQV
 		out->w = v1->x*mat->_14+v1->y*mat->_24+v1->z*mat->_34;
 	}
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonVector4TransformNormal(v1->v, mat->m, out->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4TransformNormal(v1->v, mat->m, out->v);
@@ -618,7 +618,7 @@ HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix4* mat,HQV
 
 HQVector4* HQVector4MultiTransformNormal(const HQVector4* v, hq_uint32 numVec, const HQMatrix4* mat,HQVector4* out)
 {
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v)
 	{
 		for (hquint32 i = 0 ; i < numVec ; ++i)
@@ -643,7 +643,7 @@ HQVector4* HQVector4MultiTransformNormal(const HQVector4* v, hq_uint32 numVec, c
 		}
 	}
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonMultiVector4TransformNormal(v->v, numVec, mat->m, out->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXMultiVector4TransformNormal(v->v, numVec, mat->m, out->v);
@@ -678,7 +678,7 @@ HQVector4* HQVector4MultiTransformNormal(const HQVector4* v, hq_uint32 numVec, c
 }
 
 HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix3x4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v1)
 	{
 		hq_float32 X=v1->x*mat->_11+v1->y*mat->_12+v1->z*mat->_13+ v1->w*mat->_14;
@@ -695,11 +695,11 @@ HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix3x4* mat,HQVecto
 		out->z=v1->x*mat->_31+v1->y*mat->_32+v1->z*mat->_33+v1->w*mat->_34;
 		out->w = v1->w;
 	}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQNeonMatrix3x4MultiplyVector4(mat->m, v1->v, out->v);
 #elif defined HQ_DIRECTX_MATH
 	HQDXMatrix3x4MultiplyVector4(mat->m, v1->v, out->v);
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	//load matrix
 	float4 m0 , m1 , m2 , m3 ;
 
@@ -762,7 +762,7 @@ HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix3x4* mat,HQVecto
 }
 
 HQVector4* HQVector4MultiTransform(const HQVector4* v,hquint32 numVec , const HQMatrix3x4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v)
 	{
 		for (hquint32 i = 0 ; i < numVec ; ++i)
@@ -786,7 +786,7 @@ HQVector4* HQVector4MultiTransform(const HQVector4* v,hquint32 numVec , const HQ
 		}
 	}
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix3x4MultiplyMultiVector4(mat->m, v->v, numVec, out->v);
 
@@ -794,7 +794,7 @@ HQVector4* HQVector4MultiTransform(const HQVector4* v,hquint32 numVec , const HQ
 
 	HQDXMatrix3x4MultiplyMultiVector4(mat->m, v->v, numVec, out->v);
 	
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	float4 m0 , m1 , m2 , m3 , m4;
 
 	m1 = _mm_load_ps(&mat->m[0]);//11 12 13 14
@@ -865,7 +865,7 @@ HQVector4* HQVector4MultiTransform(const HQVector4* v,hquint32 numVec , const HQ
 
 
 HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix3x4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v1)
 	{
 		hq_float32 X=v1->x*mat->_11+v1->y*mat->_12+v1->z*mat->_13+ mat->_14;
@@ -882,7 +882,7 @@ HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix3x4* mat,HQ
 		out->z=v1->x*mat->_31+v1->y*mat->_32+v1->z*mat->_33+ mat->_34;
 		out->w = 1.0f;
 	}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonVector4TransformCoordMatrix3x4(v1->v, mat->m, out->v);
 
@@ -890,7 +890,7 @@ HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix3x4* mat,HQ
 
 	HQDXVector4TransformCoordMatrix3x4(v1->v, mat->m, out->v);
 	
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	//load matrix
 	float4 m0 , m1 , m2 , m3;
 
@@ -953,7 +953,7 @@ HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix3x4* mat,HQ
 }
 
 HQVector4* HQVector4MultiTransformCoord(const HQVector4* v ,hquint32 numVec ,const HQMatrix3x4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v)
 	{
 		for (hquint32 i = 0 ; i < numVec ; ++i)
@@ -977,7 +977,7 @@ HQVector4* HQVector4MultiTransformCoord(const HQVector4* v ,hquint32 numVec ,con
 		}
 	}
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMultiVector4TransformCoordMatrix3x4(v->v, numVec, mat->m, out->v);
 
@@ -985,7 +985,7 @@ HQVector4* HQVector4MultiTransformCoord(const HQVector4* v ,hquint32 numVec ,con
 
 	HQDXMultiVector4TransformCoordMatrix3x4(v->v, numVec, mat->m, out->v);
 	
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	float4 m0 , m1 , m2 , m3 , m4;
 
 	m1 = _mm_load_ps(&mat->m[0]);//11 12 13 14
@@ -1054,7 +1054,7 @@ HQVector4* HQVector4MultiTransformCoord(const HQVector4* v ,hquint32 numVec ,con
 }
 
 HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix3x4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v1)
 	{
 		hq_float32 X=v1->x*mat->_11+v1->y*mat->_12+v1->z*mat->_13;
@@ -1071,7 +1071,7 @@ HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix3x4* mat,H
 		out->z=v1->x*mat->_31+v1->y*mat->_32+v1->z*mat->_33;
 		out->w = 0.0f;
 	}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonVector4TransformNormalMatrix3x4(v1->v, mat->m, out->v);
 
@@ -1079,7 +1079,7 @@ HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix3x4* mat,H
 
 	HQDXVector4TransformNormalMatrix3x4(v1->v, mat->m, out->v);
 	
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	//load matrix
 	float4 m0 , m1 , m2 , m3 ;
 
@@ -1137,7 +1137,7 @@ HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix3x4* mat,H
 }
 
 HQVector4* HQVector4MultiTransformNormal(const HQVector4* v , hquint32 numVec ,const HQMatrix3x4* mat,HQVector4* out){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (out == v)
 	{
 		for (hquint32 i = 0 ; i < numVec ; ++i)
@@ -1161,7 +1161,7 @@ HQVector4* HQVector4MultiTransformNormal(const HQVector4* v , hquint32 numVec ,c
 		}
 	}
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMultiVector4TransformNormalMatrix3x4(v->v, numVec, mat->m, out->v);
 
@@ -1169,7 +1169,7 @@ HQVector4* HQVector4MultiTransformNormal(const HQVector4* v , hquint32 numVec ,c
 
 	HQDXMultiVector4TransformNormalMatrix3x4(v->v, numVec, mat->m, out->v);
 	
-#elif defined SSE4_MATH
+#elif defined HQ_SSE4_MATH
 	float4 m0 , m1 , m2 , m3 , m4;
 
 	m1 = _mm_load_ps(&mat->m[0]);//11 12 13 14

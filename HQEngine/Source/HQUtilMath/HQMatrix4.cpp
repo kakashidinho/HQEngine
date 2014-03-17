@@ -10,7 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQUtilMathPCH.h"
 #include "../HQ3DMath.h"
-#ifdef NEON_MATH
+#ifdef HQ_NEON_MATH
 #include "arm_neon_math/HQNeonMatrix.h"
 #elif defined HQ_DIRECTX_MATH
 #include "directx_math/HQDXMatrix.h"
@@ -24,7 +24,7 @@ COPYING.txt included with this distribution for more information.
 #ifndef HQ_EXPLICIT_ALIGN
 HQVector4 HQMatrix4::operator *(const HQVector4 &v) const{
 	HQ_DECL_STACK_VECTOR4(result);
-#ifdef CMATH
+#ifdef HQ_CMATH
 	
 
 	result.x=_11*v.x+_12*v.y+_13*v.z+_14*v.w;
@@ -32,7 +32,7 @@ HQVector4 HQMatrix4::operator *(const HQVector4 &v) const{
 	result.z=_31*v.x+_32*v.y+_33*v.z+_34*v.w;
 	result.w=_41*v.x+_42*v.y+_43*v.z+_44*v.w;
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 
 	HQNeonMatrix4MultiplyVector4(this->m, v, result);
 	
@@ -88,7 +88,7 @@ HQVector4 HQMatrix4::operator *(const HQVector4 &v) const{
 
 HQVector4* HQMatrix4rMulVec(const HQMatrix4* mat,const HQVector4* v1,HQVector4* out)
 {
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if(out == v1)
 	{
 		hq_float32 X=mat->_11*v1->x+mat->_12*v1->y+mat->_13*v1->z+mat->_14*v1->w;
@@ -105,7 +105,7 @@ HQVector4* HQMatrix4rMulVec(const HQMatrix4* mat,const HQVector4* v1,HQVector4* 
 		out->z=mat->_31*v1->x+mat->_32*v1->y+mat->_33*v1->z+mat->_34*v1->w;
 		out->w=mat->_41*v1->x+mat->_42*v1->y+mat->_43*v1->z+mat->_44*v1->w;
 	}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix4MultiplyVector4(mat->m, v1->v , out->v);
 	
@@ -329,7 +329,7 @@ HQMatrix4* HQMatrix4Scale(hq_float32 s[3], HQMatrix4 *out){
 //******************************************************
 HQMatrix4& HQMatrix4::operator *=(const HQMatrix4 &m){
 	
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQMatrix4 result( 0.0f , 0.0f , 0.0f , 0.0f ,
 					0.0f , 0.0f , 0.0f , 0.0f ,
 					0.0f , 0.0f , 0.0f , 0.0f ,
@@ -339,7 +339,7 @@ HQMatrix4& HQMatrix4::operator *=(const HQMatrix4 &m){
 			for( hq_int32 k = 0 ; k < 4 ; ++k)
 				result.mt[i][j] += mt[i][k] * m.mt[k][j];
 	memcpy(this, &result, sizeof(HQMatrix4));
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 
 	HQNeonMatrix4Multiply(this->m, m, this->m);
 
@@ -430,7 +430,7 @@ HQMatrix4& HQMatrix4::operator *=(const HQMatrix4 &m){
 HQMatrix4 HQMatrix4::operator *(const HQMatrix4 &m) const{
 
 	
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQMatrix4  result( 0.0f , 0.0f , 0.0f , 0.0f ,
 					0.0f , 0.0f , 0.0f , 0.0f ,
 					0.0f , 0.0f , 0.0f , 0.0f ,
@@ -441,7 +441,7 @@ HQMatrix4 HQMatrix4::operator *(const HQMatrix4 &m) const{
 			for( hq_int32 k = 0 ; k < 4 ; ++k)
 				result.mt[i][j] += mt[i][k] * m.mt[k][j];
 
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteMatrix4Ptr pM(NULL);
 	HQMatrix4  &result = *pM;
 
@@ -535,7 +535,7 @@ HQMatrix4 HQMatrix4::operator *(const HQMatrix4 &m) const{
 #endif//#ifndef HQ_EXPLICIT_ALIGN
 
 HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix4* pM2,HQMatrix4* pOut){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQMatrix4 result( 0.0f , 0.0f , 0.0f , 0.0f ,
 					0.0f , 0.0f , 0.0f , 0.0f ,
 					0.0f , 0.0f , 0.0f , 0.0f ,
@@ -546,7 +546,7 @@ HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix4* pM2,HQMatrix4
 				result.mt[i][j] += pM1->mt[i][k] * pM2->mt[k][j];
 	memcpy(pOut, &result, sizeof(HQMatrix4));
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix4Multiply(pM1->m, pM2->m, pOut->m);
 
@@ -631,7 +631,7 @@ HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix4* pM2,HQMatrix4
 }
 
 HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix3x4* pM2,HQMatrix4* pOut){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQMatrix4 result( 0.0f , 0.0f , 0.0f , pM1->_14 ,
 					0.0f , 0.0f , 0.0f , pM1->_24 ,
 					0.0f , 0.0f , 0.0f , pM1->_34 ,
@@ -643,7 +643,7 @@ HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix3x4* pM2,HQMatri
 
 	memcpy(pOut, &result, sizeof(HQMatrix4));
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix4MultiplyMatrix3x4(pM1->m, pM2->m, pOut->m);
 
@@ -733,14 +733,14 @@ HQ_UTIL_MATH_API HQMatrix4* HQMatrix4MultiMultiply(const HQMatrix4* pM, hq_uint3
 {
 	if (numMatrices >= 2)
 	{
-#ifdef CMATH
+#ifdef HQ_CMATH
 		if (pOut != &pM[0])
 			*pOut = pM[0];
 		for (hq_uint32 i = 1 ; i < numMatrices ; ++i)
 		{
 			(*pOut) *= pM[i];
 		}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 		
 		HQNeonMultiMatrix4Multiply(pM->m, numMatrices, pOut->m);
 
@@ -993,7 +993,7 @@ HQMatrix4* HQMatrix4Inverse(const HQMatrix4* in,HQMatrix4* out){
 
 HQMatrix4* HQMatrix4Inverse(const HQMatrix4* pM,hq_float32* Determinant,HQMatrix4* pOut){
 	
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQMatrix4 trans;
 	hq_float32     f[12],det;
 	
@@ -1096,7 +1096,7 @@ HQMatrix4* HQMatrix4Inverse(const HQMatrix4* pM,hq_float32* Determinant,HQMatrix
 	pOut->_43 *= det;  
 	pOut->_44 *= det;
 
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix4Inverse(pM->m, pOut->m, Determinant);
 

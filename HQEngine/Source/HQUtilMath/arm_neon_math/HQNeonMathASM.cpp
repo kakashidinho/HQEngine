@@ -10,7 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "../../HQUtilMathCommon.h"
 
-#ifdef NEON_ASM
+#ifdef HQ_NEON_ASM
 #include "../../HQNeonMatrixInline.h"
 #include "../../HQNeonQuaternionInline.h"
 
@@ -53,4 +53,4 @@ extern "C"
 }//extern "C"
 
 
-#endif//#ifdef NEON_ASM
+#endif//#ifdef HQ_NEON_ASM

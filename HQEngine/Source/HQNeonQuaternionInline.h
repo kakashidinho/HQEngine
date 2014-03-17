@@ -17,7 +17,7 @@ COPYING.txt included with this distribution for more information.
 extern "C" {
 #endif
 
-#ifdef NEON_ASM
+#ifdef HQ_NEON_ASM
 
 	//the code is contained inside the assmebly
 
@@ -27,7 +27,7 @@ extern "C" {
 
 	HQ_UTIL_MATH_API void HQNeonQuatMultiplyScalar(const hqfloat32 *quat1, hqfloat32 f, hqfloat32 *result);
 
-#else//#ifdef NEON_ASM
+#else//#ifdef HQ_NEON_ASM
 
 	HQ_FORCE_INLINE void HQNeonQuatAdd(const hqfloat32 *quat1, const hqfloat32 *quat2, hqfloat32 *result)
 	{
@@ -68,7 +68,7 @@ extern "C" {
 				 );
 	}
 
-#endif//#ifdef NEON_ASM
+#endif//#ifdef HQ_NEON_ASM
 
 #ifdef __cplusplus
 }

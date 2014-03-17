@@ -17,7 +17,7 @@ COPYING.txt included with this distribution for more information.
 extern "C" {
 #endif
 
-#ifdef NEON_ASM
+#ifdef HQ_NEON_ASM
 	HQ_UTIL_MATH_API void HQNeonMatrix4Transpose(const hqfloat32 * matrix , hqfloat32 * result);//the code is contained inside the assembly	
 #else
 	HQ_FORCE_INLINE void HQNeonMatrix4Transpose(const hqfloat32 * matrix , hqfloat32 * result)
@@ -36,7 +36,7 @@ extern "C" {
 					 :"q0" , "q1" , "q2" , "q3" ,"memory"
 					 );
 	}
-#endif//#ifdef NEON_ASM
+#endif//#ifdef HQ_NEON_ASM
 	
 #ifdef __cplusplus
 }

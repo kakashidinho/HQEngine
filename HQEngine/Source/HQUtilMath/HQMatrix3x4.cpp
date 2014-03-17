@@ -10,7 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQUtilMathPCH.h"
 #include "../HQ3DMath.h"
-#ifdef NEON_MATH
+#ifdef HQ_NEON_MATH
 #include "arm_neon_math/HQNeonMatrix.h"
 #elif defined HQ_DIRECTX_MATH
 #include "directx_math/HQDXMatrix.h"
@@ -100,7 +100,7 @@ static const HQ_ALIGN16 hq_uint32 _3Zeros_1One_Masks[4]={0x00000000,0x00000000,0
 
 HQMatrix3x4& HQMatrix3x4::operator *=(const HQMatrix3x4 &m){
 	
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQMatrix3x4 result( 0.0f , 0.0f , 0.0f , this->_14 ,
 					0.0f , 0.0f , 0.0f , this->_24 ,
 					0.0f , 0.0f , 0.0f , this->_34 );
@@ -112,7 +112,7 @@ HQMatrix3x4& HQMatrix3x4::operator *=(const HQMatrix3x4 &m){
 	}
 	memcpy(this, &result, sizeof(HQMatrix3x4));
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix3x4Multiply(this->m , m , this->m);
 
@@ -184,7 +184,7 @@ HQMatrix3x4& HQMatrix3x4::operator *=(const HQMatrix3x4 &m){
 #ifndef HQ_EXPLICIT_ALIGN
 HQMatrix3x4 HQMatrix3x4::operator *(const HQMatrix3x4 &m) const{
 	
-#ifdef CMATH
+#ifdef HQ_CMATH
 	HQMatrix3x4 result( 0.0f , 0.0f , 0.0f , this->_14 ,
 					0.0f , 0.0f , 0.0f , this->_24 ,
 					0.0f , 0.0f , 0.0f , this->_34 );
@@ -195,7 +195,7 @@ HQMatrix3x4 HQMatrix3x4::operator *(const HQMatrix3x4 &m) const{
 				result.mt[i][j] += mt[i][k] * m.mt[k][j];
 	}
 	
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	HQA16ByteMatrix3x4Ptr pResult( NULL );
 	HQMatrix3x4 &result = *pResult;
 	
@@ -273,7 +273,7 @@ HQMatrix3x4 HQMatrix3x4::operator *(const HQMatrix3x4 &m) const{
 #endif//#ifndef HQ_EXPLICIT_ALIGN
 
 HQMatrix3x4* HQMatrix3x4Multiply(const HQMatrix3x4* pM1,const HQMatrix3x4* pM2,HQMatrix3x4* pOut){
-#ifdef CMATH
+#ifdef HQ_CMATH
 	if (pOut == pM1 || pOut == pM2)
 	{
 		HQMatrix3x4 result( 0.0f , 0.0f , 0.0f , pM1->_14 ,
@@ -304,7 +304,7 @@ HQMatrix3x4* HQMatrix3x4Multiply(const HQMatrix3x4* pM1,const HQMatrix3x4* pM2,H
 		}
 	}
 
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix3x4Multiply(pM1->m, pM2->m, pOut->m);
 	
@@ -377,14 +377,14 @@ HQ_UTIL_MATH_API HQMatrix3x4* HQMatrix3x4MultiMultiply(const HQMatrix3x4* pM, hq
 {
 	if (numMatrices >= 2)
 	{
-#ifdef CMATH
+#ifdef HQ_CMATH
 		if (pOut != &pM[0])
 			*pOut = pM[0];
 		for (hq_uint32 i = 1 ; i < numMatrices ; ++i)
 		{
 			(*pOut) *= pM[i];
 		}
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 		
 		HQNeonMultiMatrix3x4Multiply(pM->m, numMatrices, pOut->m);
 #elif defined HQ_DIRECTX_MATH
@@ -514,7 +514,7 @@ Matrix inversion
 -----------------------------*/
 HQMatrix4* HQMatrix3x4Inverse(const HQMatrix3x4* pM,hq_float32* Determinant,HQMatrix4* pOut)
 {
-	#ifdef CMATH
+	#ifdef HQ_CMATH
 	hq_float32     f[12],det;
 	
 	// transpose matrix
@@ -619,7 +619,7 @@ HQMatrix4* HQMatrix3x4Inverse(const HQMatrix3x4* pM,hq_float32* Determinant,HQMa
 	pOut->_43 *= det;  
 	pOut->_44 *= det;
 
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	HQNeonMatrix3x4InverseToMatrix4(pM->m, pOut->m, Determinant);
 	

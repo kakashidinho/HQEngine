@@ -1390,7 +1390,7 @@ public:
 
 //========================================================
 //constants
-#ifdef SSE_MATH
+#ifdef HQ_SSE_MATH
 extern const float4 _3Halves_1Zero;//{0.5 , 0.5 ,0.5 ,0}
 extern const float4 _4Threes;// {3.0f , 3.0f ,3.0f ,3.0f};
 extern const float4 _4Zeros;// { 0 , 0 , 0 , 0}

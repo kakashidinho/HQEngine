@@ -10,7 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQUtilMathPCH.h"
 #include "../HQ3DMath.h"
-#ifdef NEON_MATH
+#ifdef HQ_NEON_MATH
 #include "arm_neon_math/HQNeonVector.h"
 #elif defined HQ_DIRECTX_MATH
 #include "directx_math/HQDXVector.h"
@@ -22,12 +22,12 @@ COPYING.txt included with this distribution for more information.
 
 HQPlane& HQPlane::Normalize()
 {
-#if defined CMATH || defined NEON_ASM
+#if defined HQ_CMATH || defined HQ_NEON_ASM
 	N.w=0.0f;
 	hq_float32 _1_over_length;
 	_1_over_length = 1.0f / sqrtf(N.x * N.x + N.y * N.y + N.z * N.z);
 	N *= _1_over_length;
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 	
 	register hq_float32 _1_over_length;
 	

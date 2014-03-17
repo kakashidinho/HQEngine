@@ -17,7 +17,7 @@ COPYING.txt included with this distribution for more information.
 extern "C" {
 #endif
 
-#ifdef NEON_ASM
+#ifdef HQ_NEON_ASM
 	void HQNeonMatrix4Inverse(const float *matrix1 , float *result , float * pDeterminant);
 	
 	void HQNeonMatrix3x4InverseToMatrix4(const float *matrix1 , float *result , float * pDeterminant);
@@ -58,7 +58,7 @@ extern "C" {
 	void HQNeonVector4TransformNormalMatrix3x4(const float *vector ,const float * matrix ,  float * resultVector );
 	
 	void HQNeonMultiVector4TransformNormalMatrix3x4(const float *vector ,hq_uint32 numVec , const float * matrix ,  float * resultVector );
-#else//#ifdef NEON_ASM
+#else//#ifdef HQ_NEON_ASM
 //matrix1 (q4 - q7)  matrix2 (q8 - q11)
 #define NEON_MATRIX_MUL_ASM_BLOCK1 \
 "vmul.f32		q0  , q8 , d8[0]			\n\t"\
@@ -1164,7 +1164,7 @@ extern "C" {
 		
 	}
 
-#endif//#ifdef NEON_ASM
+#endif//#ifdef HQ_NEON_ASM
 	
 #ifdef __cplusplus
 }

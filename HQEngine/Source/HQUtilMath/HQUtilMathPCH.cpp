@@ -17,15 +17,15 @@ COPYING.txt included with this distribution for more information.
 // TODO: reference any additional headers you need in STDAFX.H
 // and not in this file
 
-#ifdef SSE_MATH
+#ifdef HQ_SSE_MATH
 #	pragma message("using SSE Math")
-#elif defined NEON_MATH
+#elif defined HQ_NEON_MATH
 #	pragma message("using Neon Math")
-#	if defined NEON_ASM
+#	if defined HQ_NEON_ASM
 #		pragma message("using Neon ASM")
 #	endif
 #elif defined HQ_DIRECTX_MATH
 #	pragma message("using DirectX Math")
-#elif defined CMATH
+#elif defined HQ_CMATH
 #	pragma message("using C Math")
 #endif

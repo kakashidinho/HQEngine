@@ -18,7 +18,7 @@ COPYING.txt included with this distribution for more information.
 extern "C" {
 #endif
 
-#ifdef NEON_ASM
+#ifdef HQ_NEON_ASM
 	float HQNeonVector4Dot(const float* v1 , const float* v2);
 	
 	float HQNeonVector4Length(const float* v);
@@ -27,7 +27,7 @@ extern "C" {
 	
 	void HQNeonVector4Normalize(const float* v , float *normalizedVec);
 
-#else//#ifdef NEON_ASM
+#else//#ifdef HQ_NEON_ASM
 	
 //vector in q0
 #define HQ_VECTOR_NORMALIZE_ASM_BLOCK\
@@ -160,7 +160,7 @@ extern "C" {
 #endif
 	}
 
-#endif//#ifdef NEON_ASM
+#endif//#ifdef HQ_NEON_ASM
 	
 	
 #ifdef __cplusplus
