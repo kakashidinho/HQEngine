@@ -5,6 +5,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 		../../../ThirdParty-mod
 		 )
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGLEW_NO_GLU")
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -DGLEW_NO_GLU")
+
 set (MAIN_SRC_FILES 
 	HQDeviceEnumGL.cpp HQDeviceGL.cpp HQDeviceGL_caps.cpp
 	HQRenderTargetFBO.cpp HQShaderGL.cpp  	HQShaderGL_Common.cpp 

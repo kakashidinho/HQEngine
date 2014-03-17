@@ -8,7 +8,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 find_package(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
-find_package(X11_randr REQUIRED)
+find_package(X11_randr)
+
+if (NOT X11_randr_FOUND)
+	MESSAGE(FATAL_ERROR "X11 RandR extension's header and library not found!")
+endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -fPIC")
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -fPIC")

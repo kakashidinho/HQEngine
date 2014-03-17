@@ -1,4 +1,4 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/zlib-1.2.6)
 
 set (MAIN_SRC_FILES 
 	3STC_DXT.cpp Bitmap.cpp BMP.cpp DDS.cpp TGA.cpp ETC.cpp ImgByteStream.cpp JPEG.cpp KTX.cpp PNGImg.cpp PVR.cpp

@@ -12,13 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define _RENDER_TARGET_MANAGER_D3D_H_
 
 #include "../BaseImpl/HQRenderTargetManagerBaseImpl.h"
-#if !defined APPLE && !defined IOS && !defined ANDROID
-#include <GL/glew.h>
-#elif defined __APPLE__
-#import "Apple.h"
-#else
-#include "AndroidGLES.h"
-#endif
+#include "glHeaders.h"
 
 struct GLdepthStencilFormat
 {
