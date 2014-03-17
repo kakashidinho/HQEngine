@@ -16,8 +16,8 @@ COPYING.txt included with this distribution for more information.
 
 #if defined ANDROID || defined HQ_IPHONE_PLATFORM
 
-#	ifndef GLES
-#		define GLES
+#	ifndef HQ_OPENGLES
+#		define HQ_OPENGLES
 #	endif
 
 #endif

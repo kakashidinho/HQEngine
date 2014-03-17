@@ -299,7 +299,7 @@ HQReturnVal HQBaseTextureManager::AddSingleColorTexture(HQColorui color ,  hq_ui
 	return HQ_OK;
 }
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 HQReturnVal HQBaseTextureManager::AddTextureBuffer(HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic , hq_uint32 *pTextureID)
 {

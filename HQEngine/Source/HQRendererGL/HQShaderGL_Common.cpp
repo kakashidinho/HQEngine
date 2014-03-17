@@ -21,7 +21,7 @@ HQBaseCommonShaderManagerGL* g_pShaderMan = NULL;
 HQShaderObjectGL::HQShaderObjectGL()
 {
 	this->isGLSL = false;
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	this->program = NULL;
 #else
 	this->shader = 0;
@@ -43,7 +43,7 @@ HQShaderObjectGL::~HQShaderObjectGL()
 		SafeDelete(this->pAttribList);
 		SafeDelete(this->pUniformSamplerList);
 	}
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	else if (this->program)
 		cgDestroyProgram(this->program);
 #endif
@@ -54,7 +54,7 @@ HQShaderObjectGL::~HQShaderObjectGL()
 /*---------HQBaseShaderProgramGL--------------*/
 HQBaseShaderProgramGL::HQBaseShaderProgramGL() 
 {
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	program = NULL;
 #endif
 }
@@ -62,7 +62,7 @@ HQBaseShaderProgramGL::~HQBaseShaderProgramGL()
 {
 	if(!isGLSL)
 	{
-#ifndef GLES
+#ifndef HQ_OPENGLES
 		if(program != NULL)
 			cgDestroyProgram(program);
 #endif
@@ -189,7 +189,7 @@ void HQBaseCommonShaderManagerGL::DestroyAllShader()
 
 void HQBaseCommonShaderManagerGL::DestroyAllResource()
 {
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	DestroyAllUniformBuffers();
 #endif
 	DestroyAllProgram();
@@ -229,7 +229,7 @@ hq_uint32 HQBaseCommonShaderManagerGL::GetParameterIndex(hq_uint32 programID ,
 }
 /*--------------------------------------*/
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 HQReturnVal HQBaseCommonShaderManagerGL::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut)
 {

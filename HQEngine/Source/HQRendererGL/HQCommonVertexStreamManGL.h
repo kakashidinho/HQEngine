@@ -26,7 +26,7 @@ struct HQBufferGL
 	GLenum usage;//GL_STATIC_DRAW or GL_DYNAMIC_DRAW
 	hq_uint32 size;
 	GLuint bufferName;
-#if defined GLES
+#if defined HQ_OPENGLES
 	void *cacheData;//use when oes_map_buffer not supported
 #endif
 };

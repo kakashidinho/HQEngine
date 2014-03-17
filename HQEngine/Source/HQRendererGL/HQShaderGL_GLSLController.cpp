@@ -240,7 +240,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 
 	/*--------set shader source---------*/
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	const char prefDefExtVersion[]	= "#define HQEXT_GLSL_ES\n";
 #else
 	const char prefDefExtVersion[]	= "#define HQEXT_GLSL\n";
@@ -463,7 +463,7 @@ void HQBaseGLSLShaderController::BindAttributeLocationGLSL(GLuint program , HQLi
 
 void HQBaseGLSLShaderController::BindUniformBlockGLSL(GLuint program)
 {
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
 	{
 		char blockName[10];

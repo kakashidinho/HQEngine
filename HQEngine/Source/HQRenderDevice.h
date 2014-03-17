@@ -217,7 +217,7 @@ public:
 
 	virtual hquint32 GetClearStencilVal() const = 0;
 
-#if !defined GLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if !defined HQ_OPENGLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 #define HQ_RENDER_RESOLUTION_CHANGEABLE 1
 	///
 	///nếu {resolutionList} = NULL, số độ phân giải sẽ được lưu vào {numResolutions}, 

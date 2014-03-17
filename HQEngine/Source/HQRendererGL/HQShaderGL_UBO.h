@@ -13,7 +13,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQShaderGL_Common.h"
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 #define MAX_UNIFORM_BUFFER_SLOTS 36
 

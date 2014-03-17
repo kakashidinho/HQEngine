@@ -2,7 +2,7 @@
 
 #include <string>
 
-//#define GLES
+//#define HQ_OPENGLES
 #if !defined HQ_ANDROID_PLATFORM && !defined HQ_IPHONE_PLATFORM
 #define GLES_EMULATION
 #endif
@@ -179,7 +179,7 @@ Game::Game()
 	pDevice = HQEngineApp::GetInstance()->GetRenderDevice();	
 	pDevice->EndRender();
 
-#if !(defined GLES || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM))
+#if !(defined HQ_OPENGLES || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM))
 	HQResolution* resolutionList;
 	hquint32 numRes;
 	pDevice->GetAllDisplayResolution(NULL , numRes);
@@ -200,7 +200,7 @@ Game::Game()
 	HQMatrix4Multiply(view, proj, this->viewProj);
 	
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 	if (API == OGL_RENDERER)
 	{
@@ -375,7 +375,7 @@ void Game::Render(HQTime dt)
 	if (API == OGL_RENDERER)
 	{
 		
-#ifndef GLES		
+#ifndef HQ_OPENGLES		
 		
 		pDevice->GetShaderManager()->SetUniformMatrix("rotation" , &scale , 1);
 
@@ -490,7 +490,7 @@ void Game::KeyPressed(HQKeyCodeType keycode)
 		OutputDebugStringA("ralt\n");
 		break;
 #endif
-#if !(defined GLES || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if !(defined HQ_OPENGLES || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	case HQKeyCode::SPACE:
 
 		pDevice->SetDisplayMode(800, 600 , !pDevice->IsWindowed());

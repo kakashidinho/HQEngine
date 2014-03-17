@@ -122,7 +122,7 @@ public:
 	//tạo texture mà chỉ chứa 1 màu
 	HQReturnVal AddSingleColorTexture(HQColorui color , hq_uint32 *pTextureID);
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	HQReturnVal AddTextureBuffer(HQTextureBufferFormat format , hq_uint32 size , void *initData , bool isDynamic ,hq_uint32 *pTextureID);
 
 	HQReturnVal MapTextureBuffer(hq_uint32 textureID , void **ppData) { return HQ_FAILED ;}
@@ -161,7 +161,7 @@ protected:
 	virtual HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex) = 0;
 	virtual HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex) = 0;
 	virtual HQReturnVal CreateSingleColorTexture(HQTexture *pTex,HQColorui color) = 0;
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	virtual HQReturnVal CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  , void *initData,bool isDynamic) { return HQ_FAILED ;}
 #endif
 	virtual HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height) = 0;

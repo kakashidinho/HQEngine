@@ -90,7 +90,7 @@ struct Caps//device capabilities
 	DWORD nFFTextureUnits;
 	bool rttInternalFormat[NUM_RTT_FORMAT];//list of supported render target texture 's internal format
 	bool dsFormat[NUM_DS_FORMAT];
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	DWORD maxDrawBuffers;
 	DWORD maxUniformBufferSlots;
 #endif
@@ -126,7 +126,7 @@ public:
 
 #ifdef ANDROID
 	jobject GetJEGLConfig();//create global reference
-#elif !defined GLES
+#elif !defined HQ_OPENGLES
 	void GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions);
 	void EnumAllDisplayModes();
 	bool ChangeSelectedDisplay(hq_uint32 width,hq_uint32 height , bool windowed);
@@ -135,7 +135,7 @@ public:
 	/*------attributes-------*/
 	Caps caps;//device capabilities
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	Resolution *selectedResolution;
 	BufferInfo* selectedBufferSetting;
 	bool windowed;
@@ -165,7 +165,7 @@ public:
 	
 private:
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	HQLinkedList<Resolution> reslist;
 	HQLinkedList<BufferInfo> bufferInfoList;
 
@@ -199,7 +199,7 @@ private:
 							jint &depth, jint& stencil);
 
 #endif//#ifdef WIN32
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	bool CheckPixelFmt(FORMAT format);
 	bool CheckDepthStencilFmt(BufferInfo& bufInfo);
 	bool CheckMultisample(BufferInfo &bufInfo);

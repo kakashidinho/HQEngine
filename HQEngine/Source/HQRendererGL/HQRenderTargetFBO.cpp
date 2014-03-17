@@ -34,7 +34,7 @@ COPYING.txt included with this distribution for more information.
 #ifdef glRenderbufferStorage
 #undef glRenderbufferStorage
 #endif
-#ifndef GLES
+#ifndef HQ_OPENGLES
 #ifdef glRenderbufferStorageMultisample
 #undef glRenderbufferStorageMultisample
 #endif
@@ -208,7 +208,7 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 		GLint internalFormat; 
 		GLenum format, type;//get texture's pixel format and pixel data type
 		HQRenderTargetManagerFBO::GetGLImageFormat(this->hqFormat, internalFormat , format , type);
-#if 0 && !defined GLES
+#if 0 && !defined HQ_OPENGLES
 		GLclampf priority = 1.0f;
 		glPrioritizeTextures(1 , (GLuint*)this->pTexture->pData , &priority);
 #endif
@@ -287,7 +287,7 @@ struct HQRenderTargetGroupGL: public HQBaseRenderTargetGroup, public HQResetable
 		  framebuffer (0)
 	{
 		glGenFramebuffers(1 , &this->framebuffer);
-#ifndef GLES
+#ifndef HQ_OPENGLES
 		if (g_pOGLDev->GetDeviceCaps().maxDrawBuffers == 1)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);
@@ -605,7 +605,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 											   hq_uint32 *pRenderTargetID_Out,
 											   hq_uint32 *pTextureID_Out)
 {
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if(!GLEW_OES_texture_non_power_of_two)//texture size must be power of two
 	{
 		hq_uint32 exp;
@@ -884,7 +884,7 @@ HQReturnVal HQRenderTargetManagerFBO::ActiveRenderTargetsImpl(HQSharedPtr<HQBase
 	this->renderTargetWidth = group->commonWidth;
 	this->renderTargetHeight = group->commonHeight;
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	if (g_pOGLDev->GetDeviceCaps().maxDrawBuffers > 1)
 		glDrawBuffers(group->numRenderTargets , group->draw_buffers);
 #endif

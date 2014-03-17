@@ -11,7 +11,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceGLPCH.h"
 
 #include "glHeaders.h"
-#ifdef GLES
+#ifdef HQ_OPENGLES
 #include "HQDeviceGL.h"
 #else
 #include "HQDeviceEnumGL.h"
@@ -357,7 +357,7 @@ HQDeviceEnumGL::HQDeviceEnumGL(){
 #	endif
 #endif
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	windowed=true;
 #else
 	selectedPixelFormat = SFMT_R5G6B5;
@@ -1034,7 +1034,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	else
 		caps.maxAF=0;
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	caps.maxUniformBufferSlots = 0;
 	if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
 	{
@@ -1049,7 +1049,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	if (GLEW_EXT_framebuffer_object || GLEW_VERSION_3_0)
 	{
 #endif
-#ifndef GLES
+#ifndef HQ_OPENGLES
 		glGetIntegerv(GL_MAX_DRAW_BUFFERS , & maxVal);
 		caps.maxDrawBuffers = maxVal;
 
@@ -1143,7 +1143,7 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 	GLdepthStencilFormat depthStencilFmt;
 	GLenum status;
 	glGetError();//reset flags;
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	if (GLEW_VERSION_3_0) {//core in openGL 3.0
 #elif defined ANDROID
 	if (GLEW_VERSION_2_0){//core in openGL es 2.0
@@ -1281,7 +1281,7 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 #endif
 }
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 void HQDeviceEnumGL::EnumAllDisplayModes()
 {
 	/*---------------------------------------------*/
@@ -1523,7 +1523,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 
 #endif
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 	this->windowed = (d1 !=0);//no use in openGL ES
 	//find resoltion in standard resolutions list that matches requested resolution
@@ -1573,7 +1573,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 
 	fscanf(save,"Device Type=%d\n",&this->unUseValue[2]);//unuse
 	fscanf(save,"BackBuffer Format=%d\n",&d1);//opengl display/pixel format lấy từ back buffer format theo chuẩn direct3D
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	this->selectedPixelFormat = (FORMAT)d1;
 #else
 	//find binfo
@@ -1590,7 +1590,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 #endif
 	fscanf(save,"DepthStencil Format=%d\n",&d1);
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	this->selectedDepthStencilFmt = (FORMAT)d1;
 #else
 	//check valid value
@@ -1605,7 +1605,7 @@ void HQDeviceEnumGL::ParseSettingFile(const char *settingFile)
 	fscanf(save,"Vertex Processing=%d\n",&this->unUseValue[3]);
 	fscanf(save,"Multisample Type=%d\n",(int*)&this->selectedMulSampleType);
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	//check valid value
 	if(selectedMulSampleType > selectedBufferSetting->maxMulSampleLevel)
 		selectedMulSampleType = selectedBufferSetting->maxMulSampleLevel;//fallback to max value supported
@@ -1624,7 +1624,7 @@ void HQDeviceEnumGL::SaveSettingFile(const char *settingFile){
 	if(!save)
 		return;
 	fprintf(save,"Basic Settings\n");
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	fprintf(save,"Width=%u\n",g_pOGLDev->GetWidth());
 	fprintf(save,"Height=%u\n", g_pOGLDev->GetHeight());
 	fprintf(save,"Windowed=%d\n",1);
@@ -1640,7 +1640,7 @@ void HQDeviceEnumGL::SaveSettingFile(const char *settingFile){
 	fprintf(save,"Advanced Settings\n");
 	fprintf(save,"Adapter=%d\n",this->unUseValue[1]);//giá trị cũ lấy trong file lúc parse setting file
 	fprintf(save,"Device Type=%d\n",this->unUseValue[2]);
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	fprintf(save,"BackBuffer Format=%d\n",(int)selectedPixelFormat);
 #else
 	fprintf(save,"BackBuffer Format=%d\n",(int)selectedBufferSetting->pixelFmt);//opengl display/pixel format là back buffer format theo chuẩn direct3D
@@ -1859,7 +1859,7 @@ void HQDeviceEnumGL::GetPixelFormat(JNIEnv *jenv, jobject jeglConfig ,
 	jenv->DeleteLocalRef(valueArray);
 }
 
-#elif !defined GLES
+#elif !defined HQ_OPENGLES
 
 //************************************************
 //get all available fullscreen display resolutions

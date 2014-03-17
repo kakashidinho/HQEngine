@@ -10,8 +10,8 @@ COPYING.txt included with this distribution for more information.
 
 #ifdef HQ_IPHONE_PLATFORM
 
-#	ifndef GLES
-#		define GLES
+#	ifndef HQ_OPENGLES
+#		define HQ_OPENGLES
 #	endif
 
 #	include "HQDeviceEnumGL.h"

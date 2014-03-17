@@ -360,7 +360,7 @@ private:
 		if (vshader == 0)//only create when it is not created before
 		{
 			const GLchar* vshaderSourceArray[] = {
-#ifdef GLES
+#ifdef HQ_OPENGLES
 				"#version 100\n"
 #else
 				version_line,
@@ -384,7 +384,7 @@ private:
 		if (pshader == 0)//only create when it is not created before
 		{
 			const GLchar* fshaderSourceArray[] = {
-#ifdef GLES
+#ifdef HQ_OPENGLES
 				"#version 100\n"
 #else
 				version_line,

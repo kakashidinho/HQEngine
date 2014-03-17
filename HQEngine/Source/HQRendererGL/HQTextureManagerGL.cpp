@@ -75,7 +75,7 @@ HQTextureGL::~HQTextureGL()
 		free (textureDesc);
 }
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 struct HQTextureBufferGL : public HQTextureGL
 {
 	HQTextureBufferGL(HQTextureManagerGL * manager) : HQTextureGL(HQ_TEXTURE_BUFFER)
@@ -138,7 +138,7 @@ namespace helper
 			return GL_RGBA8;
 		case FMT_X8B8G8R8:
 			return GL_RGB8;
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		case FMT_ETC1:
 			return GL_ETC1_RGB8_OES;
 		case FMT_PVRTC_RGB_2BPP:
@@ -207,7 +207,7 @@ namespace helper
 			format=GL_RGBA;
 			dataType = GL_UNSIGNED_BYTE;
 			break;
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		case FMT_ETC1:
 			format = GL_ETC1_RGB8_OES;
 			dataType = GL_UNSIGNED_BYTE;
@@ -239,7 +239,7 @@ namespace helper
 
 GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 {
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	return 0;
 #else
 	switch (format)
@@ -403,7 +403,7 @@ HQTextureManagerGL::HQTextureManagerGL(
 	this->texUnits = new HQTextureUnitInfoGL[maxTextureUnits];
 	this->activeTexture = 0;
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	this->currentBoundTBuffer = 0;
 
 	/*------------------*/
@@ -428,7 +428,7 @@ HQTextureManagerGL::~HQTextureManagerGL()
 
 HQTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 {
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if(type == HQ_TEXTURE_CUBE && !GLEW_VERSION_2_0)//cube texture not supported
 	{
 		Log("Cube texture is not supported!");
@@ -455,7 +455,7 @@ HQTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 
 	HQTextureGL *newTex;
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	if (type == HQ_TEXTURE_BUFFER)
 		newTex = new HQTextureBufferGL(this);
 	else
@@ -673,7 +673,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromStream(HQDataReaderStream* dataSt
 		return HQ_FAILED;
 	}
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if(!GLEW_OES_texture_non_power_of_two)//kích thước texture phải là lũy thừa của 2
 	{
 		hq_uint32 exp;
@@ -748,7 +748,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromStream(HQDataReaderStream* dataSt
 	}//if (not support DXT)
 
 	if (bitmap.IsPVRTC()//not support PVRTC
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		&& !GLEW_IMG_texture_compression_pvrtc
 #endif
 		)
@@ -762,7 +762,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromStream(HQDataReaderStream* dataSt
 #endif
 
 	if (format == FMT_ETC1
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	 && !GLEW_OES_compressed_ETC1_RGB8_texture
 #endif
 	)
@@ -876,7 +876,7 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* d
 	}//if (not support DXT)
 	
 	if (bitmap.IsPVRTC()//not support PVRTC
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		&& !GLEW_IMG_texture_compression_pvrtc
 #endif
 		)
@@ -891,7 +891,7 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* d
 	
 
 	if (format == FMT_ETC1
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	 && !GLEW_OES_compressed_ETC1_RGB8_texture
 #endif
 	)
@@ -911,7 +911,7 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* d
 	}//if (not support ETC)
 
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if(!GLEW_OES_texture_non_power_of_two)//kích thước texture phải là lũy thừa của 2
 	{
 		hq_uint32 exp;
@@ -963,7 +963,7 @@ HQReturnVal HQTextureManagerGL::CreateSingleColorTexture(HQTexture *pTex,HQColor
 	glBindTexture(GL_TEXTURE_2D , *pTextureName);
 
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1);
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1 );
 #endif
 
@@ -1050,7 +1050,7 @@ HQReturnVal HQTextureManagerGL::Create2DTexture(hq_uint32 numMipmaps,HQTexture *
 	glBindTexture(GL_TEXTURE_2D , *pTextureName);
 
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1);
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, (GLint)(numMipmaps-1));
 #endif
 	hq_uint32 w=bitmap.GetWidth();
@@ -1111,7 +1111,7 @@ HQReturnVal HQTextureManagerGL::Create2DTexture(hq_uint32 numMipmaps,HQTexture *
 			pCur +=lvlSize;
 	}//for (level)
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if (!onlyFirstLevel && (this->generateMipmap || (numMipmaps > 1 && !fullMipmaps) ))
 		glGenerateMipmap(GL_TEXTURE_2D);
 #endif
@@ -1133,7 +1133,7 @@ HQReturnVal HQTextureManagerGL::CreateCubeTexture(hq_uint32 numMipmaps,HQTexture
 	glBindTexture(GL_TEXTURE_CUBE_MAP , *pTextureName);
 
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1);
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, (GLint)(numMipmaps-1));
 #endif
 
@@ -1188,7 +1188,7 @@ HQReturnVal HQTextureManagerGL::CreateCubeTexture(hq_uint32 numMipmaps,HQTexture
 		}//for (level)
 	}//for (face)
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if (!onlyFirstLevel && (this->generateMipmap || 
 		(numMipmaps > 1 && !fullMipmaps)))
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
@@ -1283,7 +1283,7 @@ HQReturnVal HQTextureManagerGL::SetTransparency(hq_float32 alpha)
 	}
 	return HQ_OK;
 }
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 HQReturnVal HQTextureManagerGL::CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
 {
@@ -1351,7 +1351,7 @@ HQReturnVal HQTextureManagerGL::UnmapTextureBuffer(hq_uint32 textureID)
 	return HQ_OK;
 }
 
-#endif//#ifndef GLES
+#endif//#ifndef HQ_OPENGLES
 
 
 
@@ -1407,7 +1407,7 @@ HQTextureCompressionSupport HQTextureManagerGL::IsCompressionSupported(HQTexture
 		else
 			return HQ_TCS_SW;
 	case HQ_TC_ETC1: 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		if (GLEW_OES_compressed_ETC1_RGB8_texture && (textureType == HQ_TEXTURE_2D || textureType == HQ_TEXTURE_CUBE))
 			return HQ_TCS_ALL;
 #endif
@@ -1416,7 +1416,7 @@ HQTextureCompressionSupport HQTextureManagerGL::IsCompressionSupported(HQTexture
 	case HQ_TC_PVRTC_RGB_4BPP: 
 	case HQ_TC_PVRTC_RGBA_2BPP:
 	case HQ_TC_PVRTC_RGBA_4BPP:
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		if (GLEW_IMG_texture_compression_pvrtc)
 #	if PVRTC_DECOMPRESSION_SUPPORT
 			return HQ_TCS_ALL;
@@ -1498,7 +1498,7 @@ HQReturnVal HQTextureManagerGL::CreateTexture(HQTexture *pTex, const HQBaseRawPi
 
 
 	
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if(!GLEW_OES_texture_non_power_of_two)//kích thước texture phải là lũy thừa của 2
 	{
 		int result;

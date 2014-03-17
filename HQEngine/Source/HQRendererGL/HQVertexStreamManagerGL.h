@@ -133,7 +133,7 @@ public:
 	inline static void SetVertexAttribPointer(const HQVertexAttribInfoGL &vAttribInfo , hq_uint32 stride, const HQBufferGL *vbuffer);
 };
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 /*-------shader + vbo but no map buffer supported------*/
 class HQVertexStreamManagerNoMapGL : public HQVertexStreamManagerGL
 {

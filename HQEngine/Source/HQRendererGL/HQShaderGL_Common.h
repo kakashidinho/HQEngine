@@ -20,7 +20,7 @@ COPYING.txt included with this distribution for more information.
 #include <string>
 
 #include "glHeaders.h"
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 /*---------------------Cg API--------------------*/
 //#define CG_IMPLICIT_LINK
@@ -101,7 +101,7 @@ extern HQ_DECL_CG_FUNC_PTR( cgGLGetContextGLSLVersion );
 struct HQShaderParameterGL
 {
 	union{
-#ifndef GLES
+#ifndef HQ_OPENGLES
 		struct//for shader created from cg language
 		{
 			CGparameter parameter;
@@ -124,7 +124,7 @@ struct HQShaderObjectGL
 
 	union
 	{
-#ifndef GLES
+#ifndef HQ_OPENGLES
 		CGprogram program;//for shader created from cg language
 #endif
 		GLuint shader;//for shader created from glsl
@@ -156,7 +156,7 @@ struct HQBaseShaderProgramGL
 
 	/*----------attributes-----------------*/
 	union{
-#ifndef GLES
+#ifndef HQ_OPENGLES
 		CGprogram program;//for program created from cg language
 #endif
 		GLuint programGLHandle;//for program created from glsl
@@ -266,7 +266,7 @@ public:
 
 	hq_uint32 GetParameterIndex(hq_uint32 programID ,const char *parameterName);
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut);
 	HQReturnVal DestroyUniformBuffer(hq_uint32 bufferID);
 	void DestroyAllUniformBuffers();

@@ -11,8 +11,8 @@ COPYING.txt included with this distribution for more information.
 #ifndef HQ_GLES_H
 #define HQ_GLES_H
 
-#ifndef GLES
-#	define GLES
+#ifndef HQ_OPENGLES
+#	define HQ_OPENGLES
 #endif
 
 #ifndef GL_GLEXT_PROTOTYPES

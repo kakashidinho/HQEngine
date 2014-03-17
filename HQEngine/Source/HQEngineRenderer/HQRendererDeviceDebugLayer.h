@@ -57,7 +57,7 @@ public:
 		return m_pDevice->GetClearStencilVal();
 	}
 
-#if !defined GLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if !defined HQ_OPENGLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	HQReturnVal SetDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed);//thay đổi chế độ hiển thị màn hình
 	
 #endif
@@ -76,7 +76,7 @@ public:
 	/*---------------------------------
 	device capabilities
 	----------------------------------*/
-#if !defined GLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if !defined HQ_OPENGLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	void GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions)
 	{
 		m_pDevice->GetAllDisplayResolution(resolutionList , numResolutions);

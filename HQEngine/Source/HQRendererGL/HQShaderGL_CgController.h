@@ -13,7 +13,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQShaderGL_Common.h"
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 
 #ifdef WIN32
@@ -248,6 +248,6 @@ public:
 };
 
 
-#endif//ifndef GLES
+#endif//ifndef HQ_OPENGLES
 
 #endif

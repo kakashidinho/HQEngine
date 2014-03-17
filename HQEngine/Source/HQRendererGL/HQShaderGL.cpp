@@ -20,7 +20,7 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 	HQBaseShaderManagerGL * shaderMan = NULL;
 	/*---------create shader manager object based on capabilities and option---------*/
 	typedef HQShaderManagerGL<HQGLSLShaderController , HQBaseCommonShaderManagerGL> GLSLShaderManager;
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	typedef HQShaderManagerGL<HQCombineShaderController , HQBaseCommonShaderManagerGL> CombineShaderManager;
 	typedef HQShaderManagerGL<HQCombineShaderController , HQBaseShaderManagerGL_UBO> CombineShaderManagerUBO;
 	typedef HQShaderManagerGL<HQGLSLShaderController , HQBaseShaderManagerGL_UBO> GLSLShaderManagerUBO;
@@ -30,7 +30,7 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 	bool uniformBufferSupported = GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object;
 #endif
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	switch (shaderManagerType)
 	{
 	case COMBINE_SHADER_MANAGER:
@@ -59,7 +59,7 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 				shaderMan = new GLSLShaderManager(logFileStream , "GL Shader Manager - GLSL only:" , flushLog);
 		}
 		
-#ifndef GLES		
+#ifndef HQ_OPENGLES		
 		break;
 	}
 #endif

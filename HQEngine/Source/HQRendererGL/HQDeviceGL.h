@@ -64,7 +64,7 @@ struct WindowInfo
 #include "HQRenderTargetGL.h"
 #include "HQStateManagerGL.h"
 #include "HQVertexStreamManagerGL.h"
-#ifdef GLES
+#ifdef HQ_OPENGLES
 #include "HQVertexStreamManagerPreShaderGL.h"
 #endif
 
@@ -169,7 +169,7 @@ public:
 		return usingCoreProfile;
 	}
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	void GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions)
 	{
 		pEnum->GetAllDisplayResolution(resolutionList , numResolutions);
@@ -196,7 +196,7 @@ public:
 	hq_uint32 GetMaxVertexStream() {return pEnum->caps.maxVertexAttribs;}//bằng số vertex attributes
 	hq_uint32 GetMaxVertexAttribs() {return pEnum->caps.maxVertexAttribs;}
 	bool IsIndexDataTypeSupported(HQIndexDataType iDataType) {
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		if (iDataType == HQ_IDT_UINT)//openGL es not support 32 bit index
 			return false;
 #endif
@@ -233,7 +233,7 @@ public:
 	
 	//return max number of render targets can be active at a time
 	hq_uint32 GetMaxActiveRenderTargets(){
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		return 1;
 #else
 		return pEnum->caps.maxDrawBuffers;

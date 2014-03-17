@@ -43,7 +43,7 @@ public:
 	///
 	virtual HQReturnVal ActiveProgram(hq_uint32 programID)=0;
 	
-	//4 method sau chỉ dùng để tạo shader từ mã nguồn ngôn ngữ Cg (ngoại trừ openGL ES device hoặc openGL device với option "GLSL-only" là ngôn ngữ HQEngine extended GLES )
+	//4 method sau chỉ dùng để tạo shader từ mã nguồn ngôn ngữ Cg (ngoại trừ openGL ES device hoặc openGL device với option "GLSL-only" là ngôn ngữ HQEngine extended HQ_OPENGLES )
 	
 	///
 	///{pDefines} - pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần {name} và {definition} là NULL để chỉ kết thúc dãy
@@ -310,7 +310,7 @@ public:
 		return SetUniformMatrix(parameterIndex,&matrix,1);
 	};
 	
-#ifndef GLES
+#ifndef HQ_OPENGLES
 #	define HQ_RENDER_UNIFORM_BUFFER_SUPPORT 1
 	///
 	///Dynamic buffer can be updated by calling Map and Unmap methods

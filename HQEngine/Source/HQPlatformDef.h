@@ -32,16 +32,16 @@ COPYING.txt included with this distribution for more information.
 #	include <TargetConditionals.h>
 #	if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR //ios
 #		import <Availability.h>
-#		ifndef GLES
-#			define GLES
+#		ifndef HQ_OPENGLES
+#			define HQ_OPENGLES
 #		endif
 #		define HQ_IPHONE_PLATFORM
 #	else //Mac OS
 #		define HQ_MAC_PLATFORM
 #	endif
 #elif defined ANDROID//android
-#	ifndef GLES
-#		define GLES
+#	ifndef HQ_OPENGLES
+#		define HQ_OPENGLES
 #	endif
 #	define HQ_ANDROID_PLATFORM
 #elif defined WINAPI_FAMILY 

@@ -11,7 +11,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceGLPCH.h"
 #include "HQShaderGL_CgController_inline.h"
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 char *semantics[17]= {
 	"-DVPOSITION=ATTR0",
@@ -580,4 +580,4 @@ HQReturnVal HQCgShaderController::CreateProgram(	bool isGLSL ,
 }
 
 
-#endif//ifndef GLES
+#endif//ifndef HQ_OPENGLES

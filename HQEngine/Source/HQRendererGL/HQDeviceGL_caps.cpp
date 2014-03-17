@@ -46,12 +46,12 @@ bool HQDeviceGL::IsTextureBufferFormatSupported(HQTextureBufferFormat format)
 }
 bool HQDeviceGL::IsNpotTextureFullySupported(HQTextureType textureType)
 {
-	//TO DO: GL_APPLE_texture_2D_limited_npot for GLES
+	//TO DO: GL_APPLE_texture_2D_limited_npot for HQ_OPENGLES
 	switch (textureType)
 	{
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		return GLEW_OES_texture_non_power_of_two;
 #else
 		return true;
@@ -66,7 +66,7 @@ bool HQDeviceGL::IsNpotTextureSupported(HQTextureType textureType)
 	{
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		return GLEW_OES_texture_non_power_of_two;
 #else
 		return true;
@@ -91,7 +91,7 @@ bool HQDeviceGL::IsShaderSupport(HQShaderType shaderType,const char* version)
 		return false;
 	const GLubyte * glsl=glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	re=sscanf((const char*)glsl,"OpenGL ES GLSL ES %f",&fversion2);
 #else
 	re=sscanf((const char*)glsl,"%f",&fversion2);
@@ -153,11 +153,11 @@ bool HQDeviceGL::IsRTTMultisampleTypeSupported(HQRenderTargetFormat hqformat , H
 
 bool HQDeviceGL::IsDSMultisampleTypeSupported(HQDepthStencilFormat format , HQMultiSampleType multisampleType)
 {
-#if !defined HQ_MAC_PLATFORM && !defined GLES
+#if !defined HQ_MAC_PLATFORM && !defined HQ_OPENGLES
 	if (glRenderbufferStorageMultisample == NULL)
 		return false;
 #endif
-#if defined GLES
+#if defined HQ_OPENGLES
 #	if !GL_APPLE_framebuffer_multisample
 	if (multisampleType != HQ_MST_NONE)
 		return false;

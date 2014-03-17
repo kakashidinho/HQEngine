@@ -272,7 +272,7 @@ HQStateManagerGL::~HQStateManagerGL()
 
 void HQStateManagerGL::SetFillMode(HQFillMode fillMode)
 {
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	if (this->currentFillMode != fillMode)
 	{
 		switch (fillMode)
@@ -560,7 +560,7 @@ HQReturnVal HQStateManagerGL::CreateSamplerState(const HQSamplerStateDesc &desc 
 		return HQ_FAILED_MEM_ALLOC;
 	}
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	
 	if (desc.addressU == HQ_TAM_BORDER || desc.addressV == HQ_TAM_BORDER)
 	{
@@ -646,7 +646,7 @@ HQReturnVal HQStateManagerGL::SetSamplerState(hq_uint32 index , hq_uint32 sample
 				glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT , pState->maxAnisotropy);
 		}
 
-	#ifndef GLES
+	#ifndef HQ_OPENGLES
 		if (pState->addressU == GL_CLAMP_TO_BORDER || pState->addressV == GL_CLAMP_TO_BORDER)
 			glTexParameterfv(target , GL_TEXTURE_BORDER_COLOR , pState->borderColor.c);
 	#endif

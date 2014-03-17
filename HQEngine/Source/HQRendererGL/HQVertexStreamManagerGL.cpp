@@ -19,7 +19,7 @@ COPYING.txt included with this distribution for more information.
 HQBufferGL::HQBufferGL(hq_uint32 size , GLenum usage)
 {
 	this->bufferName = 0;
-#if defined GLES
+#if defined HQ_OPENGLES
 	if ((!GLEW_OES_mapbuffer && usage == GL_DYNAMIC_DRAW) || !GLEW_VERSION_1_1)
 	{
 		//we need cache data for mapping buffer if mapbuffer is not supported, or vbo is not supported
@@ -42,7 +42,7 @@ HQBufferGL::~HQBufferGL()
 #endif
 			glDeleteBuffers( 1 , &this->bufferName);
 	}
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if (cacheData != NULL)
 		free(cacheData);
 #endif
@@ -176,7 +176,7 @@ HQReturnVal HQVertexStreamManagerGL::CreateVertexBuffer(const void *initData , h
 	HQBufferGL* newVBuffer;
 	try{
 		newVBuffer = new HQVertexBufferGL(this , size ,_GL_DRAW_BUFFER_USAGE( dynamic ));
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		if (!GLEW_OES_mapbuffer &&  initData != NULL && dynamic)//map buffer is not supported
 			memcpy(newVBuffer->cacheData , initData, size);
 #endif
@@ -209,7 +209,7 @@ HQReturnVal HQVertexStreamManagerGL::CreateIndexBuffer(const void *initData , hq
 	HQIndexBufferGL* newIBuffer;
 	try{
 		newIBuffer = new HQIndexBufferGL(size , _GL_DRAW_BUFFER_USAGE( dynamic ) , dataType);
-#ifdef GLES
+#ifdef HQ_OPENGLES
 		if (!GLEW_OES_mapbuffer &&  initData != NULL && dynamic)//map buffer is not supported
 			memcpy(newIBuffer->cacheData , initData, size);
 #endif
@@ -697,7 +697,7 @@ void HQVertexStreamManagerGL::OnReset()
 }
 #endif
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 /*--------HQVertexStreamManagerNoMapGL------------------*/
 
 HQReturnVal HQVertexStreamManagerNoMapGL::MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) 

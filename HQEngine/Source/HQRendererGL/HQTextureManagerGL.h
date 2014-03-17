@@ -60,7 +60,7 @@ public:
 	~HQTextureManagerGL();
 
 	inline const HQTextureUnitInfoGL & GetActiveTextureUnitInfo() const {return texUnits[activeTexture];}
-#ifndef GLES	
+#ifndef HQ_OPENGLES	
 	GLuint GetCurrentBoundTBuffer() {return this->currentBoundTBuffer;}
 	void InvalidateCurrentBoundTBuffer() {this->currentBoundTBuffer = 0;}
 #endif
@@ -80,7 +80,7 @@ public:
 	}
 private:
 	UINT activeTexture;//current active texture unit
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	GLuint currentBoundTBuffer;
 #endif
 	HQTextureUnitInfoGL * texUnits;
@@ -91,7 +91,7 @@ private:
 		this->ActiveTextureUnit(slot);
 		glBindTexture(target , texture);
 	}
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	inline void BindTextureBuffer(GLuint buffer)
 	{
 		if (currentBoundTBuffer != buffer)
@@ -115,7 +115,7 @@ public:
 	HQReturnVal SetAlphaValue(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 B,hq_ubyte8 A);//set giá trị alpha của texel trong texture có giá trị RGB như tham số(hoặc R nến định dạng texture chỉ có kênh 8 bit greyscale) thành giá trị A.
 	HQReturnVal SetTransparency(hq_float32 alpha);//set giá trị alpha lớn nhất của toàn bộ texel thành alpha
 	
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	HQReturnVal CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic);
 	HQReturnVal MapTextureBuffer(hq_uint32 textureID , void **ppData);
 	HQReturnVal UnmapTextureBuffer(hq_uint32 textureID) ;

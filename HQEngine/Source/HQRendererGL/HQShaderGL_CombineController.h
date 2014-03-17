@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQShaderGL_CgController.h"
 #include "HQShaderGL_GLSLController.h"
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 
 //this controller accepts both Cg and GLSL based shader
@@ -185,6 +185,6 @@ public:
 };
 
 
-#endif//ifndef GLES
+#endif//ifndef HQ_OPENGLES
 
 #endif

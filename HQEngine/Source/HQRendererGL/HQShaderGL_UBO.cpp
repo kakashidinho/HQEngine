@@ -9,7 +9,7 @@ COPYING.txt included with this distribution for more information.
 */
 
 #include "HQDeviceGLPCH.h"
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 #include "glHeaders.h"
 #include "HQShaderGL_UBO.h"
@@ -128,4 +128,4 @@ HQReturnVal HQBaseShaderManagerGL_UBO::UpdateUniformBuffer(hq_uint32 bufferID, c
 	return HQ_OK;
 }
 
-#endif//ifndef GLES
+#endif//ifndef HQ_OPENGLES

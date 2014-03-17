@@ -12,7 +12,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQShaderGL_CgController_inline.h"
 #include "HQShaderGL_GLSLController_inline.h"
 #include "HQShaderGL_CombineController.h"
-#ifndef GLES
+#ifndef HQ_OPENGLES
 /*----------HQCombineShaderController----------------*/
 
 HQReturnVal HQCombineShaderController::CreateShaderFromStream(HQShaderType type,
@@ -114,4 +114,4 @@ HQReturnVal HQCombineShaderController::CreateProgram(	bool isGLSL ,
 	return re;
 }
 
-#endif //ifndef GLES
+#endif //ifndef HQ_OPENGLES

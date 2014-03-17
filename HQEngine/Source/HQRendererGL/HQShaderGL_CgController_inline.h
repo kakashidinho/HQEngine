@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQShaderGL_CgController.h"
 #include <string.h>
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 #ifndef _CGENTRY
 #	ifdef WIN32
@@ -166,7 +166,7 @@ inline HQReturnVal HQBaseCgShaderController::SetUniformMatrixCg(CGparameter para
 	return HQ_OK;
 }
 
-#endif//ifndef GLES
+#endif//ifndef HQ_OPENGLES
 
 
 #endif

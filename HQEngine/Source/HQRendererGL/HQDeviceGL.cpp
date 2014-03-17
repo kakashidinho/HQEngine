@@ -126,7 +126,7 @@ HQDeviceGL::HQDeviceGL(bool flushLog)
 #else
 HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
 #endif
-#ifdef GLES
+#ifdef HQ_OPENGLES
 :HQBaseRenderDevice("OpenGL ES" , "GL Render Device :" , flushLog)
 #else
 :HQBaseRenderDevice("OpenGL" , "GL Render Device :" , flushLog)
@@ -349,7 +349,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 
 #endif
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	pEnum->EnumAllDisplayModes();
 #endif
 #ifdef HQ_MAC_PLATFORM
@@ -363,7 +363,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 
 	if(settingFileDir)
 		this->CopySettingFileDir(settingFileDir);
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	sWidth=pEnum->selectedResolution->width;
 	sHeight=pEnum->selectedResolution->height;
 
@@ -567,7 +567,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	//save setting
 	pEnum->SaveSettingFile(settingFileDir);
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	if(pEnum->selectedMulSampleType > 0)
 	{
 		glEnable(GL_MULTISAMPLE_ARB);
@@ -633,7 +633,7 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 
 	this->EnableVSyncNonSave(pEnum->vsync != 0);
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -660,7 +660,7 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 	this->stateMan = new HQStateManagerGL(static_cast<HQTextureManagerGL*> (this->textureMan) , pEnum->caps.maxAF , this->m_pLogStream , this->m_flushLog);
 
 	//create vertex stream manager
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	if (!GLEW_VERSION_2_0)
 	{
 		if (GLEW_VERSION_1_1)
@@ -940,7 +940,7 @@ void HQDeviceGL::SetClearDepthVal(hq_float32 val){
 
 	clearDepth = val;
 
-#ifdef GLES
+#ifdef HQ_OPENGLES
 	glClearDepthf((GLclampf)val);
 #else
 	glClearDepth((GLclampd)val);
@@ -1197,7 +1197,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 
 
 
-#ifndef GLES
+#ifndef HQ_OPENGLES
 HQReturnVal HQDeviceGL::SetDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed)
 {
 	return ResizeBackBuffer(width, height, windowed, true);
@@ -1221,7 +1221,7 @@ HQReturnVal HQDeviceGL::ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool 
 		return HQ_OK;
 
 	windowed = this->IsWindowed();//get current mode
-#ifndef GLES
+#ifndef HQ_OPENGLES
 	bool found = pEnum->ChangeSelectedDisplay(width,height , windowed);
 	if(!found)
 		return HQ_FAILED;

@@ -134,7 +134,7 @@ public:
 	///add thêm 1 texture mà nó chỉ chứa 1 màu {color}
 	///
 	virtual HQReturnVal AddSingleColorTexture(HQColorui color , hq_uint32 *pTextureID)=0;
-#ifndef GLES	
+#ifndef HQ_OPENGLES	
 	///
 	///tạo texture buffer
 	///
