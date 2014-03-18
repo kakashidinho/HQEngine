@@ -1376,21 +1376,21 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
         if (modes[i].width <= maxW &&
             modes[i].height <= maxH)
             {
-		int numRates;
-		short * rates = XRRRates(dpy, 0, i, &numRates);
-		
-		for (int r = 0; r < numRates; ++r)
-		{
-		    short refresh_rate = rates[r];
-		    if (i != this->currentScreenSizeIndex || refresh_rate != currentScreenRefreshRate)//ignore current screen config
-		    {
-			myRes.width = modes[i].width;
-			myRes.height = modes[i].height;
-			myRes.x11ScreenSizeIndex = i;
-			myRes.x11RefreshRate = (double)refresh_rate;
-			this->reslist.PushBack(myRes);
-		    }
-		}
+                int numRates;
+                short * rates = XRRRates(dpy, 0, i, &numRates);
+                
+                for (int r = 0; r < numRates; ++r)
+                {
+                    short refresh_rate = rates[r];
+                    if (i != this->currentScreenSizeIndex || refresh_rate != currentScreenRefreshRate)//ignore current screen config
+                    {
+                    myRes.width = modes[i].width;
+                    myRes.height = modes[i].height;
+                    myRes.x11ScreenSizeIndex = i;
+                    myRes.x11RefreshRate = (double)refresh_rate;
+                    this->reslist.PushBack(myRes);
+                    }
+                }
             }
 
     }
