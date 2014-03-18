@@ -25,7 +25,7 @@ sematic following the attribute's declaration in the source code. This feature i
 	* Direct3D 11 new shader stages hasn't been implemented yet.
 	* The most difficult part to implement for the renderer abstract layer is that OpenGL (prior to the introduction of sampler object) doesn't separate sampler states from textures' states unlike Direct3D. I still haven't been able to remove that difference, hence, right now, the renderer's API has 2 versions for setting sampler states depends on its back-end. 
 	* Cg shader is supposed to be removed from OpenGL renderer in near future.
-- The current main maintained platforms are Windows and its variances (Phone/Metro). Android has also been maintained occasionally. IOS and Mac OSX currently have fewer maintenances due to limited resources. Linux was supported initially, but dropped because of limited documents about low level APIs.
+- The current main maintained platforms are Windows and its variances (Phone/Metro). Android has also been maintained occasionally. IOS and Mac OSX currently have fewer maintenances due to limited resources. Linux has been supported again recently.
 	
 Samples' status
 ----------------------------
@@ -47,6 +47,13 @@ Prerequisites
 	* Cygwin. (If using Windows)
 - For Windows Metro/Phone version:
 	* Visual Studio 2012 for Windows 8/Windows Phone 8. 
+- For Mac/IOS:
+	* XCode 5+
+- For Linux:
+	* OpenGL development libraries.
+	* X11 RandR extension development libraries.
+	* ALSA development libraries.
+	* cmake 2.8.8+
  
 Folder structure
 ----------------------------
@@ -60,11 +67,13 @@ Folder structure
 	* XCode. (XCode projects)
 		* HQEngine. (MacOSX 10.8+ version)
 		* HQEngineIOS. (IOS 5.0+ version)
+	* Linux. (linux's build scripts)
 - samples. (sample codes)
 - tools. (contains support tools' code)
 	* HQShaderCompiler. (has some utility projects for compiling shader in HQEngine format)
 - ThirdParty-mod. (contains code/libraries from third parties)
 	* Android-OpenAL-soft. (OpenAL library for Android)
+	* openal-soft. (OpenAL software implementation, currently used in linux build)
 	* Cg. (Cg headers and pre-built libraries for Win32)
 	* glsl_optimizer. (glsl optimizer headers and pre-built libraries for Win32)
 	* hlsl2glsl.	(Cg to glsl translator's headers and pre-built libraries for Win32)
@@ -102,6 +111,17 @@ How to build
 	* Import and build Android Eclipse project in "HQEngine/Android/HQEngine" folder.
 	* Run script "HQEngine/Android/test/push_res_sd.sh" to push resources to Android device.
 	* Import, build and run Android Eclipse project in "HQEngine/Android/test" folder.
+- Mac OSX:
+	* Open Xcode project "HQEngine/XCode/HQEngine/HQEngine.xcodeproj".
+	* Build and run "test" target. Note: the target Mac OSX version is 10.8+.
+- IOS:
+	* Open Xcode project "HQEngine/XCode/HQEngineIOS/HQEngineIOS.xcodeproj".
+	* Build and run "test" target. Note: the target IOS version is 5+.
+- Linux:
+	* Goto "HQEngine/linux" folder.
+	* Run script "initDeps.sh" to build the dependencies for the project.
+	* Run script "initProject-Debug.sh" to generate debug build's scripts in "Debug" folder. Similarly, the script "initProject.sh" is for release build.
+	* Go to "Debug"/"Release" folder, run "make". The compiled "test" executable file is in "bin" folder. 
 	
 License
 ---------------------------
