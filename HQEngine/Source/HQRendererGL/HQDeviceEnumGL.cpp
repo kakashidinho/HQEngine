@@ -954,7 +954,7 @@ void HQDeviceEnumGL::CheckCapabilities()
     swa.colormap = cmap;
     win = XCreateWindow(dpy, DefaultRootWindow(dpy), 0, 0, 640, 480, 0, vi->depth, InputOutput, vi->visual, CWColormap, &swa);
 
-    XMapWindow(dpy, win);
+    //XMapWindow(dpy, win);
     XStoreName(dpy, win, "Dummy Window");
     glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
     if(glc==NULL)

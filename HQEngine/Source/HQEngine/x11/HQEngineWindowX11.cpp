@@ -255,7 +255,17 @@ HQEngineWindow::~HQEngineWindow()
 
 HQReturnVal HQEngineWindow::Show()
 {
-	XMapWindow(GetDisplay(), GetRawWindow());
+	if (HQEngineApp::GetInstance()->GetRenderDevice()->IsWindowed())
+		XMapWindow(GetDisplay(), GetRawWindow());
+	else
+	{
+		XMapRaised(GetDisplay(), GetRawWindow());
+		
+		XGrabKeyboard(GetDisplay(), GetRawWindow(), True, GrabModeAsync,
+		    GrabModeAsync, CurrentTime);
+		XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
+		    GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);
+	}
 	return HQ_OK;
 }
 
@@ -263,6 +273,8 @@ bool HQEngineWindow::EnableCursor(bool enable){
 	
 	if (GetRawWindow() == 0)
 		return false; 
+	if (enable == HQEngineApp::GetInstance()->IsMouseCursorEnabled())
+		return true;//nothing to do
 	if (!enable)
 	{
 		if (m_inviCursor == 0)
@@ -278,10 +290,13 @@ bool HQEngineWindow::EnableCursor(bool enable){
 		}
 		
 		XDefineCursor(GetDisplay(), GetRawWindow(), m_inviCursor);
+		XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
+		    GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);//prevent cursor from going outside
 	}
 	else
 	{
 		XUndefineCursor(GetDisplay(), GetRawWindow());
+		XUngrabPointer(GetDisplay(), CurrentTime);
 	}
 
 	return true;//TO DO: error handling

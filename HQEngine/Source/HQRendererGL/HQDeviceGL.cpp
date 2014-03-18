@@ -1125,19 +1125,14 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
                     0, 0, sWidth, sHeight, 0, vi->depth, InputOutput,
                     vi->visual, wFlags, &swa);
 
-            XWarpPointer(this->dpy, None, winfo.win, 0, 0, 0, 0, 0, 0);
-            XMapRaised(this->dpy, winfo.win);
-            XGrabKeyboard(this->dpy, winfo.win, True, GrabModeAsync,
-                    GrabModeAsync, CurrentTime);
-            XGrabPointer(this->dpy, winfo.win, True, ButtonPressMask,
-                    GrabModeAsync, GrabModeAsync, winfo.win, None, CurrentTime);
+            //XMapRaised(this->dpy, winfo.win);//commented because we don't need to show the window just yet
         }
         else
         {
             winfo.win=XCreateWindow(this->dpy, winfo.parent,
                     winfo.x, winfo.y, sWidth, sHeight, 0, vi->depth, InputOutput,
                     vi->visual, wFlags, &swa);
-            XMapWindow(this->dpy, winfo.win);
+            //XMapWindow(this->dpy, winfo.win);//commented because we don't need to show the window just yet
         }
 
         glc = glXCreateContext(this->dpy, vi, NULL, GL_TRUE);
@@ -1267,7 +1262,6 @@ HQReturnVal HQDeviceGL::ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool 
 #	endif
 	
         XMoveResizeWindow(this->dpy,winfo.win,0,0,width,height);
-        //XWarpPointer(this->dpy, None, winfo.win, 0, 0, 0, 0, 0, 0);
         XMapRaised(this->dpy,winfo.win);
         XGrabKeyboard(this->dpy, winfo.win, True, GrabModeAsync,
                     GrabModeAsync, CurrentTime);

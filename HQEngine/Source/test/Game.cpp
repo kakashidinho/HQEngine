@@ -580,7 +580,7 @@ void Game::MouseReleased( HQMouseKeyCodeType button, const HQPointi &point)
 }
 void Game::MouseMove( const HQPointi &point) 
 {
-#if 0
+#if 1
 	char info[256];
 	sprintf(info , "%d , %d\n", point.x, point.y);
 	OutputDebugStringA(info);
