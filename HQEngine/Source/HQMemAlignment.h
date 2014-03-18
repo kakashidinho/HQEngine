@@ -136,7 +136,7 @@ public:
 		void *p = *this;
 		ptr = new (p) T(src);
 	}
-	HQA16ByteStoragePtr(const void* u)//use this constructor if you don't want to call default constructor of T class
+	explicit HQA16ByteStoragePtr(const void* null)//use this constructor if you don't want to call default constructor of T class
 	{
 		void *p = *this;
 		ptr = (T*)p;

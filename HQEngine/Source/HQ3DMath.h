@@ -252,7 +252,7 @@ HQ_UTIL_MATH_API void HQPrintVector4(const HQVector4* pV);
 struct HQBaseMatrix4
 {
 	HQBaseMatrix4();//construct an identity matrix
-	HQBaseMatrix4(const void * null) {}//this constructor does nothing
+	explicit HQBaseMatrix4(const void * null) {}//this constructor does nothing
 	HQBaseMatrix4(hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34,
@@ -296,7 +296,7 @@ public:
 private:
 #endif
 	HQ_FORCE_INLINE HQMatrix4();//construct an identity matrix
-	HQ_FORCE_INLINE HQMatrix4(const void * null) {}//this constructor does nothing
+	explicit HQMatrix4(const void * null): HQBaseMatrix4(NULL) {}//this constructor does nothing
 	HQ_FORCE_INLINE HQMatrix4(hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34,
@@ -309,8 +309,8 @@ private:
 public:
 #endif
 
-	static HQ_FORCE_INLINE HQMatrix4 *New() {return HQ_NEW HQMatrix4();}
-	static HQ_FORCE_INLINE HQMatrix4 *New(const void * null) {return HQ_NEW HQMatrix4(null);}
+	static HQ_FORCE_INLINE HQMatrix4 *New() {return HQ_NEW HQMatrix4();}///create an identity matrix
+	static HQ_FORCE_INLINE HQMatrix4 *UINew() {return HQ_NEW HQMatrix4(NULL);}///create a new uninitialized matrix
 	static HQ_FORCE_INLINE HQMatrix4 *New(hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34,
@@ -329,8 +329,8 @@ public:
 	static HQ_FORCE_INLINE HQMatrix4 *NewArray(size_t numElems) {return HQ_NEW HQMatrix4[numElems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p) {return new(p) HQMatrix4();}
-	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, const void * null) {return new(p) HQMatrix4(null);}
+	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p) {return new(p) HQMatrix4();}///create an identity matrix
+	static HQ_FORCE_INLINE HQMatrix4 *PlUINew(void *p) {return new(p) HQMatrix4(NULL);}///create a new uninitialized matrix
 	static HQ_FORCE_INLINE HQMatrix4 *PlNew(void *p, hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34,
@@ -470,7 +470,7 @@ HQ_UTIL_MATH_API void HQMatrix4cGetFrustum(const HQMatrix4 * pViewProjMatrix , H
 struct HQBaseMatrix3x4
 {
 	HQBaseMatrix3x4();//construct an identity matrix
-	HQBaseMatrix3x4(const void * null) {}//this constructor does nothing
+	explicit HQBaseMatrix3x4(const void * null) {}//this constructor does nothing
 	HQBaseMatrix3x4(hq_float32 _11, hq_float32 _12, hq_float32 _13,hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33 ,hq_float32 _34);
@@ -512,7 +512,7 @@ public:
 private:
 #endif
 	HQ_FORCE_INLINE HQMatrix3x4();//construct an identity matrix
-	HQ_FORCE_INLINE HQMatrix3x4(const void * null) {}//this constructor does nothing
+	explicit HQMatrix3x4(const void * null): HQBaseMatrix3x4(NULL) {}//this constructor does nothing
 	HQ_FORCE_INLINE HQMatrix3x4(hq_float32 _11, hq_float32 _12, hq_float32 _13,hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33 ,hq_float32 _34);
@@ -522,8 +522,8 @@ private:
 #ifdef HQ_EXPLICIT_ALIGN
 public:
 #endif
-	static HQ_FORCE_INLINE HQMatrix3x4 *New() {return HQ_NEW HQMatrix3x4();}
-	static HQ_FORCE_INLINE HQMatrix3x4 *New(const void * null) {return HQ_NEW HQMatrix3x4(null);}
+	static HQ_FORCE_INLINE HQMatrix3x4 *New() {return HQ_NEW HQMatrix3x4();}///create identity matrix
+	static HQ_FORCE_INLINE HQMatrix3x4 *UINew() {return HQ_NEW HQMatrix3x4(NULL);}///create new matrix without initializing its members
 	static HQ_FORCE_INLINE HQMatrix3x4 *New(hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34) 
@@ -540,8 +540,8 @@ public:
 	static HQ_FORCE_INLINE HQMatrix3x4 *NewArray(size_t numElems) {return HQ_NEW HQMatrix3x4[numElems];}
 
 	//placement new
-	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p) {return new(p) HQMatrix3x4();}
-	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p, const void * null) {return new(p) HQMatrix3x4(null);}
+	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p) {return new(p) HQMatrix3x4();}///create identity matrix
+	static HQ_FORCE_INLINE HQMatrix3x4 *PlUINew(void *p) {return new(p) HQMatrix3x4(NULL);}//create uninitialized matrix
 	static HQ_FORCE_INLINE HQMatrix3x4 *PlNew(void *p, hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34) 
@@ -1081,7 +1081,7 @@ public:
 private:
 #endif
 	HQ_FORCE_INLINE HQQuaternion() : x(0.0f ) , y(0.0f ) , z(0.0f ) , w(1.0f ){};//create unit quaternion (0,0,0,1)
-	HQ_FORCE_INLINE HQQuaternion(const void* null){}//do nothing
+	explicit HQQuaternion(const void* null){}//do nothing
 	HQ_FORCE_INLINE HQQuaternion(hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w)
 		: x( _x ) , y( _y ) , z( _z ) , w( _w ){};
 	HQ_FORCE_INLINE HQQuaternion(const HQQuaternion& src)
@@ -1092,7 +1092,7 @@ public:
 #endif
 
 	static HQ_FORCE_INLINE HQQuaternion *New() {return HQ_NEW HQQuaternion();}
-	static HQ_FORCE_INLINE HQQuaternion *New(const void* null) {return HQ_NEW HQQuaternion(null);}
+	static HQ_FORCE_INLINE HQQuaternion *UINew() {return HQ_NEW HQQuaternion(NULL);}
 	static HQ_FORCE_INLINE HQQuaternion *New(hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w) {return HQ_NEW HQQuaternion(_x, _y, _z, _w);}
 	static HQ_FORCE_INLINE HQQuaternion *New(const HQQuaternion& src) {return HQ_NEW HQQuaternion(src);}
 
@@ -1100,7 +1100,7 @@ public:
 
 	//placement new
 	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p) {return new(p) HQQuaternion();}
-	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, const void* null) {return new(p) HQQuaternion(null);}
+	static HQ_FORCE_INLINE HQQuaternion *PlUINew(void *p) {return new(p) HQQuaternion(NULL);}
 	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, hq_float32 _x,hq_float32 _y,hq_float32 _z,hq_float32 _w) {return new(p) HQQuaternion(_x, _y, _z, _w);}
 	static HQ_FORCE_INLINE HQQuaternion *PlNew(void *p, const HQQuaternion& src) {return new(p) HQQuaternion(src);}
 
@@ -1300,7 +1300,7 @@ class HQ_UTIL_MATH_API HQA16ByteMatrix4Ptr : public HQBaseA16ByteMatrix4Ptr
 public:
 	HQA16ByteMatrix4Ptr() : HQBaseA16ByteMatrix4Ptr() {};//create identity matrix
 	HQA16ByteMatrix4Ptr(const HQMatrix4 &src) : HQBaseA16ByteMatrix4Ptr(src){};
-	HQA16ByteMatrix4Ptr(const void * null) : HQBaseA16ByteMatrix4Ptr(NULL){};//create uninitialized matrix
+	explicit HQA16ByteMatrix4Ptr(const void * null) : HQBaseA16ByteMatrix4Ptr(NULL){};//create uninitialized matrix
 	HQA16ByteMatrix4Ptr(const HQMatrix3x4 &src) : HQBaseA16ByteMatrix4Ptr(NULL)
 	{
 		this->ptr = new (this->ptr) HQMatrix4(src);
@@ -1343,7 +1343,7 @@ class HQ_UTIL_MATH_API HQA16ByteMatrix3x4Ptr : public HQBaseA16ByteMatrix3x4Ptr
 public:
 	HQA16ByteMatrix3x4Ptr() : HQBaseA16ByteMatrix3x4Ptr() {};
 	HQA16ByteMatrix3x4Ptr(const HQMatrix3x4 &src) : HQBaseA16ByteMatrix3x4Ptr(src){};
-	HQA16ByteMatrix3x4Ptr(const void * null) : HQBaseA16ByteMatrix3x4Ptr(NULL){};//create uninitialized matrix
+	explicit HQA16ByteMatrix3x4Ptr(const void * null) : HQBaseA16ByteMatrix3x4Ptr(NULL){};//create uninitialized matrix
 	HQA16ByteMatrix3x4Ptr(hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
 			hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
 			hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34): HQBaseA16ByteMatrix3x4Ptr(NULL)
@@ -1379,7 +1379,7 @@ class HQ_UTIL_MATH_API HQA16ByteQuaternionPtr : public HQBaseA16ByteQuaternionPt
 public:
 	HQ_FORCE_INLINE HQA16ByteQuaternionPtr() : HQBaseA16ByteQuaternionPtr(){};//create unit quaternion (0,0,0,1)
 	HQ_FORCE_INLINE HQA16ByteQuaternionPtr(const HQQuaternion &src) : HQBaseA16ByteQuaternionPtr(src){};
-	HQ_FORCE_INLINE HQA16ByteQuaternionPtr(const void *null) :  HQBaseA16ByteQuaternionPtr(NULL) {}//create uninitialized quaternion
+	explicit HQA16ByteQuaternionPtr(const void *null) :  HQBaseA16ByteQuaternionPtr(NULL) {}//create uninitialized quaternion
 	HQ_FORCE_INLINE HQA16ByteQuaternionPtr(hq_float32 _x,hq_float32 _y,hq_float32 _z , hq_float32 _w): HQBaseA16ByteQuaternionPtr(NULL)
 	{
 		this->ptr = new (this->ptr) HQQuaternion(_x , _y , _z , _w);

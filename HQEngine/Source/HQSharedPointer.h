@@ -74,11 +74,19 @@ public:
 	static const HQBaseSharedPtr<T , PointerRelease> null;
 
 protected:
+
 	T * m_ptr;//the real pointer
 	mutable HQReference* m_ref;
 
 	void Copy(const HQBaseSharedPtr<T , PointerRelease>& sptr2);
+	
+	static const HQBaseSharedPtr<T , PointerRelease>& GetOriNullPtr() {
+		static const HQBaseSharedPtr<T , PointerRelease> original_null(0);
+		return original_null;
+	}
 
+private:
+	explicit HQBaseSharedPtr(int theNullArg);///this constructor is for creating the original null pointer
 };
 
 template <class T, class PointerRelease>
@@ -87,8 +95,9 @@ const HQBaseSharedPtr<T , PointerRelease> HQBaseSharedPtr<T , PointerRelease>::n
 template <class T, class PointerRelease>
 inline HQBaseSharedPtr<T , PointerRelease>::HQBaseSharedPtr()
 {
+	const HQBaseSharedPtr & original_null = GetOriNullPtr();
 	m_ptr = NULL;
-	m_ref = HQ_NEW HQReference();
+	m_ref = original_null.m_ref;
 	m_ref->AddRef();
 }
 
@@ -96,9 +105,10 @@ template <class T, class PointerRelease>
 inline HQBaseSharedPtr<T , PointerRelease>::HQBaseSharedPtr(T *rawptr)
 : m_ptr(rawptr)
 {
+	const HQBaseSharedPtr & original_null = GetOriNullPtr();
 	if (rawptr == NULL)
 	{
-		m_ref = null.m_ref;//point to null pointer reference
+		m_ref = original_null.m_ref;//point to null pointer reference
 	}
 	else
 	{
@@ -116,6 +126,16 @@ inline HQBaseSharedPtr<T , PointerRelease>::HQBaseSharedPtr(const HQBaseSharedPt
 	m_ref->AddRef();
 }
 
+///
+///this constructor is for creating the original null pointer
+///
+template <class T, class PointerRelease>
+inline HQBaseSharedPtr<T , PointerRelease>::HQBaseSharedPtr(int nullArg)
+{
+	m_ptr = NULL;
+	m_ref = HQ_NEW HQReference();
+	m_ref->AddRef();
+}
 
 template <class T, class PointerRelease>
 inline HQBaseSharedPtr<T , PointerRelease>::~HQBaseSharedPtr()
@@ -183,7 +203,7 @@ class HQSharedPtr : public HQBaseSharedPtr<T , HQPointerRelease<T> > {
 private:
 	typedef HQBaseSharedPtr<T , HQPointerRelease<T> > ParentType;
 public:
-	inline HQSharedPtr() : ParentType(ParentType::null) {}
+	inline HQSharedPtr() : ParentType(ParentType::GetOriNullPtr()) {}
 	inline HQSharedPtr(T *rawptr) : ParentType (rawptr) {}
 	inline HQSharedPtr(const HQSharedPtr & sptr2):ParentType(sptr2) {}//copy constructor
 	inline HQSharedPtr(const ParentType & sptr2):ParentType(sptr2) {}//copy constructor
@@ -197,7 +217,7 @@ private:
 	typedef HQBaseSharedPtr<T , HQArrayPointerRelease<T> > ParentType;
 public:
 
-	inline HQSharedArrayPtr() : ParentType(ParentType::null) {}
+	inline HQSharedArrayPtr() : ParentType(ParentType::GetOriNullPtr()) {}
 	inline HQSharedArrayPtr(T *rawptr) : ParentType  (rawptr) {}
 	inline HQSharedArrayPtr(const HQSharedArrayPtr & sptr2):ParentType(sptr2) {}//copy constructor
 	inline HQSharedArrayPtr(const ParentType & sptr2):ParentType(sptr2) {}//copy constructor
