@@ -79,7 +79,7 @@ public:
 		return GetMaxShaderStageSamplers(shaderStage);
 	}
 	/*------------------------*/
-	void GetScreenCoord(const HQMatrix4 &viewProj , const HQVector4& vPos  , HQPoint<hqint32> &pointOut)//truy vấn tọa độ của 1 điểm trong hệ tọa độ màn hình từ 1 điểm có tọa độ vPos trong hệ tọa độ thế giới
+	void GetScreenCoordr(const HQMatrix4 &viewProj , const HQVector4& vPos  , HQPoint<hqint32> &pointOut)//truy vấn tọa độ của 1 điểm trong hệ tọa độ màn hình từ 1 điểm có tọa độ vPos trong hệ tọa độ thế giới
 	{
 		hq_float32 X,Y,W_over_2,H_over_2;
 		
@@ -98,7 +98,7 @@ public:
 		pointOut.y=(long)(Y + (1.0f - projVec.y * invW)*H_over_2);
 	}
 
-	void GetRay(const HQMatrix4 &view ,const HQMatrix4 &proj , hq_float32 zNear,
+	void GetRayr(const HQMatrix4 &view ,const HQMatrix4 &proj , hq_float32 zNear,
 				const HQPoint<hqint32>& point, HQRay3D & rayOut)
 	{
 		HQ_DECL_STACK_2VAR(HQVector4, projVec, HQMatrix4, invView);
