@@ -149,6 +149,48 @@ void HQEngineWndEventHandler(HQEngineWindow* window, XEvent * event)
 	case ResizeRequest:
 		//TO DO
 		break;
+	case FocusIn:
+		//printf("focus in\n");
+		if (window->NeedKeyboardGrabbed())
+			XGrabKeyboard(window->GetDisplay(), window->GetRawWindow(), True, GrabModeAsync,
+				    GrabModeAsync, CurrentTime);
+		if (window->NeedMouseGrabbed())
+			XGrabPointer(window->GetDisplay(), window->GetRawWindow(), True, ButtonPressMask,
+				    GrabModeAsync, GrabModeAsync, window->GetRawWindow(), None, CurrentTime);
+		if (!HQEngineApp::GetInstance()->IsMouseCursorEnabled())
+		{
+			//re-disable cursor
+			window->EnableCursorNonCheck(false);
+		}
+		break;
+	case FocusOut:
+		//printf("focus out\n");
+		if (window->NeedKeyboardGrabbed())
+			XUngrabKeyboard(window->GetDisplay(), CurrentTime);
+		if (window->NeedMouseGrabbed())
+			XUngrabPointer(window->GetDisplay(), CurrentTime);
+		if (!HQEngineApp::GetInstance()->IsMouseCursorEnabled())
+		{
+			//temporarily re-enable cursor
+			/*--------------------these are SDL code----------------------------------*/
+			{
+				/*Disable Raw motion events for this display*/
+				XIEventMask eventmask;
+				unsigned char mask[3] = { 0,0,0 };
+				eventmask.deviceid = XIAllMasterDevices;
+				eventmask.mask_len = sizeof(mask);
+				eventmask.mask = mask;
+
+				//unregister raw motion event
+				if (XISelectEvents(window->GetDisplay(), DefaultRootWindow(window->GetDisplay()), &eventmask, 1) != Success) {
+					//what to do
+				}
+			}
+			/*--------------------end SDL code----------------------------------*/
+
+			XUndefineCursor(window->GetDisplay(), window->GetRawWindow());
+		}
+		break;
 	case ClientMessage:
 		if (event->xclient.data.l[0] == g_windowCloseMsg)//close button is clicked
 		{
@@ -258,7 +300,9 @@ void KeyUpMessage(XKeyEvent *event)
 HQEngineWindow::HQEngineWindow(const char *title, const char *settingFileDir ,  HQWIPPlatformSpecificType* args)
 : HQEngineBaseWindow(settingFileDir),
   m_inviCursor(0),
-  m_xinputSupported(false)
+  m_xinputSupported(false),
+  m_needKeyboardGrabbed(false),
+  m_needMouseGrabbed(false)
 {
 	if (args == NULL || args->display == NULL)
 	{
@@ -359,16 +403,24 @@ HQReturnVal HQEngineWindow::Show()
 		    GrabModeAsync, CurrentTime);
 		XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
 		    GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);
+
+		m_needKeyboardGrabbed = true;
+		m_needMouseGrabbed = true;
 	}
 	return HQ_OK;
 }
 
 bool HQEngineWindow::EnableCursor(bool enable){
 	
-	if (GetRawWindow() == 0 || !m_xinputSupported)
-		return false; 
 	if (enable == HQEngineApp::GetInstance()->IsMouseCursorEnabled())
 		return true;//nothing to do
+
+	return EnableCursorNonCheck(enable);
+}
+
+bool HQEngineWindow::EnableCursorNonCheck(bool enable)	{
+	if (GetRawWindow() == 0 || !m_xinputSupported)
+		return false;
 	if (!enable)
 	{
 		/*--------------------these are SDL code----------------------------------*/
@@ -402,9 +454,12 @@ bool HQEngineWindow::EnableCursor(bool enable){
 		}
 		
 		XDefineCursor(GetDisplay(), GetRawWindow(), m_inviCursor);
-		XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
-		    GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);//prevent cursor from going outside
-
+		if (HQEngineApp::GetInstance()->GetRenderDevice()->IsWindowed())//fullscreen window already grabs the pointer
+		{
+			XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
+					GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);//prevent cursor from going outside
+			m_needMouseGrabbed = true;
+		}
 	}
 	else
 	{
@@ -425,7 +480,11 @@ bool HQEngineWindow::EnableCursor(bool enable){
 		/*--------------------end SDL code----------------------------------*/
 
 		XUndefineCursor(GetDisplay(), GetRawWindow());
-		XUngrabPointer(GetDisplay(), CurrentTime);
+		if (HQEngineApp::GetInstance()->GetRenderDevice()->IsWindowed())//fullscreen window need mouse grabbed
+		{
+			XUngrabPointer(GetDisplay(), CurrentTime);
+			m_needMouseGrabbed = false;
+		}
 	}
 
 	return true;//TO DO: error handling

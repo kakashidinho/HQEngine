@@ -197,11 +197,14 @@ public:
 	~HQEngineWindow();
 	
 	HQRenderDeviceInitInput GetRenderDeviceInitInput() {return &m_windowInfo;}
-	Window GetRawWindow() {return m_windowInfo.window;}
-	Display * GetDisplay() {return m_display;}
+	Window GetRawWindow() const {return m_windowInfo.window;}
+	Display * GetDisplay() const {return m_display;}
+	bool NeedKeyboardGrabbed() const {return m_needKeyboardGrabbed;}
+	bool NeedMouseGrabbed() const {return m_needMouseGrabbed;}
 	HQReturnVal Show();
 	
 	bool EnableCursor(bool enable);
+	bool EnableCursorNonCheck(bool enable);//will not check if cursor is already enabled/disabled
 private:
 	void InitXinput();
 
@@ -210,6 +213,8 @@ private:
 	bool m_ownDisplay;
 	Cursor m_inviCursor;
 	bool m_xinputSupported;
+	bool m_needKeyboardGrabbed;
+	bool m_needMouseGrabbed;
 	char *m_title;
 };
 
