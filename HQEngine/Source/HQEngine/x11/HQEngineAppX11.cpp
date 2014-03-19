@@ -17,9 +17,6 @@ COPYING.txt included with this distribution for more information.
 
 static XEvent g_msg={0};
 
-//window event handler
-extern void HQEngineWndEventHandler(HQEngineWindow* window, XEvent * event);
-
 struct AppInitOnce
 {
 	AppInitOnce()
@@ -46,7 +43,7 @@ bool HQEngineApp::EventHandle()
 		XNextEvent(m_window->GetDisplay(), &g_msg);
 
 		if (g_msg.xany.window == m_window->GetRawWindow() || g_msg.type == GenericEvent)
-			HQEngineWndEventHandler(m_window, &g_msg);
+			m_window->HandleEvent(&g_msg);
 
 		hasEvent = true;
 	}

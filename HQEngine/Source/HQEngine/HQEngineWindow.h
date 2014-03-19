@@ -205,6 +205,8 @@ public:
 	
 	bool EnableCursor(bool enable);
 	bool EnableCursorNonCheck(bool enable);//will not check if cursor is already enabled/disabled
+
+	void HandleEvent(XEvent * event);
 private:
 	void InitXinput();
 
@@ -216,6 +218,13 @@ private:
 	bool m_needKeyboardGrabbed;
 	bool m_needMouseGrabbed;
 	char *m_title;
+
+	Atom m_windowCloseMsg;//for intercepting window close message
+	/* Opcode returned XQueryExtension
+	* It will be used in event processing
+	* to know that the event came from
+	* this extension */
+	int m_xinput2Opcode;
 };
 
 #else
