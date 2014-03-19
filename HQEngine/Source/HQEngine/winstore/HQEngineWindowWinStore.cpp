@@ -199,9 +199,17 @@ void HQWindowsEventHandler::OnPointerPressed(CoreWindow^ sender, PointerEventArg
 			HQEvent &newEvent = hq_engine_eventQueue_internal->BeginAddEvent();
 
 			newEvent.type = HQ_MOUSE_PRESSED;
-			//position
-			newEvent.mouseData.position.x =  (hqint32)pointer->Position.X;
-			newEvent.mouseData.position.y =  (hqint32)pointer->Position.Y;
+			if (m_mouseHide == false)
+			{
+				//position
+				newEvent.mouseData.position.x =  (hqint32)pointer->Position.X;
+				newEvent.mouseData.position.y =  (hqint32)pointer->Position.Y;
+			}
+			else
+			{
+				//it doesn't make sense to send position when we are hiding the mouse cursor
+				newEvent.mouseData.position.x = newEvent.mouseData.position.y = 0;
+			}
 
 			//button
 			if (pointer->Properties->IsLeftButtonPressed)
@@ -247,9 +255,17 @@ void HQWindowsEventHandler::OnPointerReleased(CoreWindow^ sender, PointerEventAr
 			HQEvent &newEvent = hq_engine_eventQueue_internal->BeginAddEvent();
 
 			newEvent.type = HQ_MOUSE_RELEASED;
-			//position
-			newEvent.mouseData.position.x =  (hqint32)pointer->Position.X;
-			newEvent.mouseData.position.y =  (hqint32)pointer->Position.Y;
+			if (m_mouseHide == false)
+			{
+				//position
+				newEvent.mouseData.position.x =  (hqint32)pointer->Position.X;
+				newEvent.mouseData.position.y =  (hqint32)pointer->Position.Y;
+			}
+			else
+			{
+				//it doesn't make sense to send position when we are hiding the mouse cursor
+				newEvent.mouseData.position.x = newEvent.mouseData.position.y = 0;
+			}
 
 			//button
 			if (m_leftMousePressed && !pointer->Properties->IsLeftButtonPressed)
@@ -329,9 +345,17 @@ void HQWindowsEventHandler::OnPointerWheelChanged(CoreWindow^ sender, PointerEve
 			HQEvent &newEvent = hq_engine_eventQueue_internal->BeginAddEvent();
 
 			newEvent.type = HQ_MOUSE_WHEEL;
-			//position
-			newEvent.mouseData.position.x =  (hqint32)pointer->Position.X;
-			newEvent.mouseData.position.y =  (hqint32)pointer->Position.Y;
+			if (m_mouseHide == false)
+			{
+				//position
+				newEvent.mouseData.position.x =  (hqint32)pointer->Position.X;
+				newEvent.mouseData.position.y =  (hqint32)pointer->Position.Y;
+			}
+			else
+			{
+				//it doesn't make sense to send position when we are hiding the mouse cursor
+				newEvent.mouseData.position.x = newEvent.mouseData.position.y = 0;
+			}
 			
 			//wheel delta
 			newEvent.mouseData.wheelDelta = (hqfloat32)pointer->Properties->MouseWheelDelta;
