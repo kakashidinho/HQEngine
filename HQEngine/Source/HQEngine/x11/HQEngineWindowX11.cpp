@@ -42,7 +42,11 @@ static HQEnginePrimeHashTable<KeyCode, KeyInfo> g_keyTable;
 //for storing old mouse position
 static HQPointi g_oldMousePos = {-90000, -90000};
 
+//mouse wheel delta
 static const int g_wheelDelta = 120;
+
+//for intercepting window close message
+static Atom g_windowCloseMsg = None;
 
 static HQEngineWindow* g_window = NULL;
 /*-------prototypes------------*/
@@ -117,16 +121,22 @@ void HQEngineWndEventHandler(XEvent * event)
 	case KeyRelease: 
 		KeyUpMessage(&event->xkey);
 		break;
-	/* TO DO:
-	case WM_CLOSE:
-		if(HQEngineApp::GetInstance()->GetWindowListener()->WindowClosing() == false)
-			return 0;
-		HQEngineApp::GetInstance()->Stop();
-		break;
-	*/
 	case ResizeRequest:
 		//invalidate old pointer position
 		g_oldMousePos.x = g_oldMousePos.y = -90000;
+		break;
+	case ClientMessage:
+		if (event->xclient.data.l[0] == g_windowCloseMsg)//close button is clicked
+		{
+			if(HQEngineApp::GetInstance()->GetWindowListener()->WindowClosing() == true)//if listener agree to close this window
+			{
+				HQEngineApp::GetInstance()->Stop();
+				HQEngineApp::GetInstance()->DestroyWindow();
+				HQEngineApp::GetInstance()->GetWindowListener()->WindowClosed();
+				HQEngineApp::GetInstance()->GetAppListener()->OnDestroy();
+				exit(0);
+			}
+		}
 		break;
 	case DestroyNotify:
 		HQEngineApp::GetInstance()->GetWindowListener()->WindowClosed();
@@ -233,7 +243,6 @@ HQEngineWindow::HQEngineWindow(const char *title, const char *settingFileDir ,  
 
 	g_window = this;//store global reference to this window
 
-
 	//disable mouse cursor if needed
 	if (HQEngineApp::GetInstance()->IsMouseCursorEnabled() == false)
 		this->EnableCursor(false);
@@ -246,15 +255,25 @@ HQEngineWindow::~HQEngineWindow()
 	{
 		XFreeCursor(m_display, m_inviCursor);
 	}
+	//invalidate "window close" atom
+	g_windowCloseMsg = None;
 
-	if (m_ownDisplay)
+	if (m_ownDisplay)//close display if we open it ourself
 		XCloseDisplay(m_display);
 
 	g_window  = NULL;
 }
 
 HQReturnVal HQEngineWindow::Show()
-{
+{	
+	//create "window close" atom
+	if (g_windowCloseMsg == None)
+	{
+		g_windowCloseMsg = XInternAtom(GetDisplay(), "WM_DELETE_WINDOW", False);
+   		XSetWMProtocols(GetDisplay(), GetRawWindow(), &g_windowCloseMsg, 1);
+	}
+	
+	//map window
 	if (HQEngineApp::GetInstance()->GetRenderDevice()->IsWindowed())
 		XMapWindow(GetDisplay(), GetRawWindow());
 	else

@@ -38,11 +38,14 @@ void HQEngineApp::PlatformRelease()
 
 bool HQEngineApp::EventHandle()
 {
-	const long eventMask = ExposureMask | SubstructureNotifyMask |KeyPressMask | KeyReleaseMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask;
 	bool hasEvent = false;
-	while( XCheckWindowEvent( m_window->GetDisplay(), m_window->GetRawWindow(),  eventMask, &g_msg) )
+	while( this->IsRunning() && XPending( m_window->GetDisplay()) )
 	{
-		HQEngineWndEventHandler(&g_msg);
+		XNextEvent(m_window->GetDisplay(), &g_msg);
+
+		if (g_msg.xany.window == m_window->GetRawWindow())
+			HQEngineWndEventHandler(&g_msg);
+
 		hasEvent = true;
 	}
 

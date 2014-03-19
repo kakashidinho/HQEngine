@@ -79,7 +79,7 @@ public:
 	void OnResetDevice();
 	
 #if	defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-	bool WindowClosing() {return false;}
+	bool WindowClosing() {return true;}
 	
 	void KeyPressed(HQKeyCodeType keycode);
 	void KeyReleased(HQKeyCodeType keycode);

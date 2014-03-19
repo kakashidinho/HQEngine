@@ -390,6 +390,11 @@ void HQEngineApp::CheckForNewDelegates()
 	}
 }
 
+bool HQEngineApp::IsRunning() const
+{
+	return (m_flags & HQ_APP_RUNNING) != 0;
+}
+
 HQReturnVal HQEngineApp::Run(hq_uint32 fpsLimit)
 {
 	if ( m_flags & HQ_APP_RUNNING || m_window == NULL)

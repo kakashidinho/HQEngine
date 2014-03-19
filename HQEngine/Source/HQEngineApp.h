@@ -199,6 +199,8 @@ public:
 	///
 	void Stop();
 
+	bool IsRunning() const;
+
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	HQNativeWindow GetNativeWindow();///Don't remove window procedure on Win32 or App delegates will not work. Internal use only
 #endif
