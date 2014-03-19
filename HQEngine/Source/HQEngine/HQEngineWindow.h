@@ -203,10 +203,13 @@ public:
 	
 	bool EnableCursor(bool enable);
 private:
+	void InitXinput();
+
 	HQXWindowInfo m_windowInfo;
 	Display * m_display;
 	bool m_ownDisplay;
 	Cursor m_inviCursor;
+	bool m_xinputSupported;
 	char *m_title;
 };
 

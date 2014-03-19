@@ -13,10 +13,12 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEngineWindow.h"
 #include "../HQDefaultDataStream.h"
 
+#include <X11/extensions/XInput2.h>
+
 static XEvent g_msg={0};
 
 //window event handler
-extern void HQEngineWndEventHandler(XEvent * event);
+extern void HQEngineWndEventHandler(HQEngineWindow* window, XEvent * event);
 
 struct AppInitOnce
 {
@@ -43,8 +45,8 @@ bool HQEngineApp::EventHandle()
 	{
 		XNextEvent(m_window->GetDisplay(), &g_msg);
 
-		if (g_msg.xany.window == m_window->GetRawWindow())
-			HQEngineWndEventHandler(&g_msg);
+		if (g_msg.xany.window == m_window->GetRawWindow() || g_msg.type == GenericEvent)
+			HQEngineWndEventHandler(m_window, &g_msg);
 
 		hasEvent = true;
 	}

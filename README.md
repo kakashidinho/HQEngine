@@ -50,8 +50,9 @@ Prerequisites
 - For Mac/IOS:
 	* XCode 5+
 - For Linux:
-	* OpenGL development libraries.
-	* X11 RandR extension development libraries.
+	* OpenGL development headers & libraries.
+	* X11 RandR extension development headers & libraries.
+	* X11 XInput2 extension development headers & libraries.
 	* ALSA development libraries.
 	* cmake 2.8.8+
  

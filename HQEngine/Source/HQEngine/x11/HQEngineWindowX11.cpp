@@ -11,7 +11,9 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEnginePCH.h"
 #include "../HQEngineWindow.h"
 #include "../HQEngineCommonInternal.h"
-#include "string.h"
+
+#include <string.h>
+#include <X11/extensions/XInput2.h>
 
 
 struct KeyInfo{
@@ -39,28 +41,51 @@ struct KeyInfo{
 //for detecting repeated key presses
 static HQEnginePrimeHashTable<KeyCode, KeyInfo> g_keyTable;
 
-//for storing old mouse position
-static HQPointi g_oldMousePos = {-90000, -90000};
-
 //mouse wheel delta
 static const int g_wheelDelta = 120;
+
+/* Opcode returned XQueryExtension
+* It will be used in event processing
+* to know that the event came from
+* this extension */
+static int g_xinput2Opcode;
 
 //for intercepting window close message
 static Atom g_windowCloseMsg = None;
 
-static HQEngineWindow* g_window = NULL;
 /*-------prototypes------------*/
+static void ParseRawEvent(const double *input_values, unsigned char *mask, int mask_len,
+                            double *output_values, int output_values_len);
 static void KeyDownMessage(XKeyEvent *keyEvent);
 static void KeyUpMessage(XKeyEvent *keyEvent);
+static void RawMotionMessage(XGenericEventCookie* cookie);
 static void GetMousePoint(int motionEventX, int motionEventY, HQPointi& pointOut); 
 static KeyInfo & GetKeyInfo(XKeyEvent* keyEvent);
 
 /*-------window event handler--------------*/
-void HQEngineWndEventHandler(XEvent * event)
+void HQEngineWndEventHandler(HQEngineWindow* window, XEvent * event)
 {
 	switch (event->type) 
 	{
-	case MotionNotify://mouse move
+	case GenericEvent://may be mouse's raw motion
+		{
+			XGenericEventCookie *cookie = (XGenericEventCookie*)event;
+			if (XGetEventData(window->GetDisplay(), cookie)) {
+				if(cookie->extension == g_xinput2Opcode)
+				{
+					switch (cookie->evtype)
+					{
+						case XI_RawMotion:
+							RawMotionMessage(cookie);
+						break;
+					}//switch(cookie->evtype)
+				}//if(cookie->extension != xinput2_opcode)
+				XFreeEventData(window->GetDisplay(), cookie);
+			}
+		}
+		break;
+	case MotionNotify://mouse's absolute movement
+		if (HQEngineApp::GetInstance()->IsMouseCursorEnabled())//only report absolute position if mouse's cursor is enabled
 		{
 			HQPointi point;
 			GetMousePoint(event->xmotion.x, event->xmotion.y, point);			
@@ -122,8 +147,7 @@ void HQEngineWndEventHandler(XEvent * event)
 		KeyUpMessage(&event->xkey);
 		break;
 	case ResizeRequest:
-		//invalidate old pointer position
-		g_oldMousePos.x = g_oldMousePos.y = -90000;
+		//TO DO
 		break;
 	case ClientMessage:
 		if (event->xclient.data.l[0] == g_windowCloseMsg)//close button is clicked
@@ -153,20 +177,45 @@ void GetMousePoint(int motionEventX, int motionEventY, HQPointi& pointOut)
 		pointOut.x = motionEventX;
 		pointOut.y = motionEventY;
 	}
-	else {//getting delta info
-		if (g_oldMousePos.x == -90000)
-		{
-			pointOut.x = pointOut.y = 0;
-		}
-		else
-		{
-			pointOut.x = motionEventX - g_oldMousePos.x;
-			pointOut.y = motionEventY - g_oldMousePos.y;
-		}
+	else {//we are hiding the cursor, so reported position should be zero
+		pointOut.x = pointOut.y = 0;
 	}
+}
+
+/*---------------code from SDL---------------*/
+static void ParseRawEvent(const double *input_values, unsigned char *mask, int mask_len,
+                            double *output_values, int output_values_len) 
+{
+	const int MAX_AXIS = 16;
+	int i = 0,z = 0;
+	int top = mask_len * 8;
+	if (top > MAX_AXIS)
+	top = MAX_AXIS;
+
+	memset(output_values, 0, output_values_len * sizeof(double));
+	for (; i < top && z < output_values_len; i++) {
+		if (XIMaskIsSet(mask, i)) {
+		    const int value = (int) *input_values;
+		    output_values[z] = value;
+		    input_values++;
+		}
+		z++;
+	}
+}
+
+void RawMotionMessage(XGenericEventCookie* cookie)
+{
+	const XIRawEvent *rawev = (const XIRawEvent*)cookie->data;
+	double relative_cords[2];
 	
-	g_oldMousePos.x = motionEventX;
-	g_oldMousePos.y = motionEventY;
+	//get relative mouse motion
+	ParseRawEvent(rawev->raw_values, rawev->valuators.mask,
+                      rawev->valuators.mask_len, relative_cords, 2);	
+
+	
+	//now notify listener
+	HQPointi point = {(int)relative_cords[0], (int)relative_cords[1]};
+	HQEngineApp::GetInstance()->GetMouseListener()->MouseMove(point);
 }
 
 KeyInfo & GetKeyInfo(XKeyEvent* keyEvent)
@@ -208,7 +257,8 @@ void KeyUpMessage(XKeyEvent *event)
 /*-------engine 's window class--------*/
 HQEngineWindow::HQEngineWindow(const char *title, const char *settingFileDir ,  HQWIPPlatformSpecificType* args)
 : HQEngineBaseWindow(settingFileDir),
-  m_inviCursor(0)
+  m_inviCursor(0),
+  m_xinputSupported(false)
 {
 	if (args == NULL || args->display == NULL)
 	{
@@ -241,11 +291,12 @@ HQEngineWindow::HQEngineWindow(const char *title, const char *settingFileDir ,  
 
 	g_keyTable.RemoveAll();//reset key table
 
-	g_window = this;//store global reference to this window
-
 	//disable mouse cursor if needed
 	if (HQEngineApp::GetInstance()->IsMouseCursorEnabled() == false)
 		this->EnableCursor(false);
+	
+	//init xinput
+	this->InitXinput();
 }
 
 HQEngineWindow::~HQEngineWindow()
@@ -260,8 +311,32 @@ HQEngineWindow::~HQEngineWindow()
 
 	if (m_ownDisplay)//close display if we open it ourself
 		XCloseDisplay(m_display);
+}
 
-	g_window  = NULL;
+void HQEngineWindow::InitXinput(){
+	/*
+	Note: code from SDL
+	*/
+	int event, err;
+	int major = 2, minor = 0;
+	int outmajor,outminor;
+
+	if (!XQueryExtension(GetDisplay(), "XInputExtension", &g_xinput2Opcode, &event, &err))
+		return;
+	outmajor = major;
+	outminor = minor;
+	if (XIQueryVersion(GetDisplay(), &outmajor, &outminor) != Success) {
+		return;
+	}
+
+	/*Check supported version*/
+	if(outmajor * 1000 + outminor < major * 1000 + minor) {
+		/*X server does not support the version we want*/
+		return;
+	}
+	
+
+	m_xinputSupported = true;
 }
 
 HQReturnVal HQEngineWindow::Show()
@@ -290,12 +365,30 @@ HQReturnVal HQEngineWindow::Show()
 
 bool HQEngineWindow::EnableCursor(bool enable){
 	
-	if (GetRawWindow() == 0)
+	if (GetRawWindow() == 0 || !m_xinputSupported)
 		return false; 
 	if (enable == HQEngineApp::GetInstance()->IsMouseCursorEnabled())
 		return true;//nothing to do
 	if (!enable)
 	{
+		/*--------------------these are SDL code----------------------------------*/
+		{
+			/*Enable Raw motion events for this display*/
+			XIEventMask eventmask;
+			unsigned char mask[3] = { 0,0,0 };
+			eventmask.deviceid = XIAllMasterDevices;
+			eventmask.mask_len = sizeof(mask);
+			eventmask.mask = mask;
+
+			XISetMask(mask, XI_RawMotion);
+		
+			//register raw motion event 
+			if (XISelectEvents(GetDisplay(), DefaultRootWindow(GetDisplay()), &eventmask, 1) != Success) {
+				return false;
+			}
+		}
+		/*--------------------end SDL code----------------------------------*/
+
 		if (m_inviCursor == 0)
 		{
 			/*-------create invisible cursor ----*/
@@ -311,9 +404,26 @@ bool HQEngineWindow::EnableCursor(bool enable){
 		XDefineCursor(GetDisplay(), GetRawWindow(), m_inviCursor);
 		XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
 		    GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);//prevent cursor from going outside
+
 	}
 	else
 	{
+		/*--------------------these are SDL code----------------------------------*/
+		{
+			/*Disable Raw motion events for this display*/
+			XIEventMask eventmask;
+			unsigned char mask[3] = { 0,0,0 };
+			eventmask.deviceid = XIAllMasterDevices;
+			eventmask.mask_len = sizeof(mask);
+			eventmask.mask = mask;
+		
+			//unregister raw motion event 
+			if (XISelectEvents(GetDisplay(), DefaultRootWindow(GetDisplay()), &eventmask, 1) != Success) {
+				return false;
+			}
+		}
+		/*--------------------end SDL code----------------------------------*/
+
 		XUndefineCursor(GetDisplay(), GetRawWindow());
 		XUngrabPointer(GetDisplay(), CurrentTime);
 	}

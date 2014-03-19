@@ -9,9 +9,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
 find_package(X11_randr)
+find_package(X11_xinput2)
 
 if (NOT X11_randr_FOUND)
 	MESSAGE(FATAL_ERROR "X11 RandR extension's header and library not found!")
+endif()
+if (NOT X11_xinput2_FOUND)
+	MESSAGE(FATAL_ERROR "X11 XInput2 extension's header and library not found!")
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -msse -msse2 -fPIC")
@@ -41,6 +45,7 @@ target_link_libraries(HQEngine
 	    ${OPENGL_gl_LIBRARY}
 	    ${X11_X11_LIB}
 	    ${X11_randr_LIBRARY}
+	    ${X11_xinput2_LIBRARY}
 	    ${CMAKE_VORBIS_LIB_DIR}/libvorbis.a
 	    ${CMAKE_VORBIS_LIB_DIR}/libvorbisfile.a
 	    ${CMAKE_OGG_LIB_DIR}/libogg.a
