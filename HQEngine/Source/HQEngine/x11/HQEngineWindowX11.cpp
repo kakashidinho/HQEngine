@@ -417,8 +417,8 @@ void HQEngineWindow::HandleEvent(XEvent * event)
 	case KeyRelease: 
 		KeyUpMessage(&event->xkey);
 		break;
-	case ResizeRequest:
-		//TO DO
+	case ConfigureNotify:
+		HQEngineApp::GetInstance()->GetRenderDevice()->OnWindowSizeChanged(event->xconfigure.width, event->xconfigure.height);
 		break;
 	case FocusIn:
 		//printf("focus in\n");

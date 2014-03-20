@@ -1105,7 +1105,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
         XSetWindowAttributes swa;
         swa.colormap=winfo.cmap;
         unsigned long wFlags = CWColormap | CWEventMask;
-        swa.event_mask=ExposureMask | FocusChangeMask | SubstructureNotifyMask |KeyPressMask | KeyReleaseMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask;
+        swa.event_mask=ExposureMask | FocusChangeMask | StructureNotifyMask |KeyPressMask | KeyReleaseMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask;
 
         if((flags & WINDOWED) == 0)//full screen
         {
