@@ -381,9 +381,10 @@ public:
 	///Lưu ý : -tọa độ màn hình không đồng nghĩa với tọa độ pixel . 
 	///		  -Direct3d 9 , tọa độ màn hình = tọa độ pixel. 
 	///		  -Direct3d 1x / OpenGL , tọa độ màn hình bằng tọa độ pixel + 0.5 pixel size . 
-	///Ví dụ pixel đầu tiên trong màn hình có tọa độ pixel (0,0) thì toạ độ màn hình của nó là (0.5 , 0.5)
+	///Ví dụ pixel đầu tiên trong màn hình có tọa độ pixel (0,0) thì toạ độ màn hình của nó là (0.5 , 0.5). 
+	///<viewProj>: row major
 	///
-	virtual void GetScreenCoord(const HQMatrix4 &viewProj , const HQVector4& vPos , HQPoint<hqint32> &pointOut)=0;
+	virtual void GetScreenCoordr(const HQMatrix4 &viewProj , const HQVector4& vPos , HQPoint<hqint32> &pointOut)=0;
 	
 	///
 	///truy vấn tia trong hệ tọa độ thế giới . 
@@ -393,9 +394,10 @@ public:
 	///Lưu ý : -tọa độ màn hình không đồng nghĩa với tọa độ pixel . 
 	///		  -Direct3d 9 , tọa độ màn hình = tọa độ pixel. 
 	///		  -Direct3d 1x / OpenGL , tọa độ màn hình bằng tọa độ pixel + 0.5 pixel size . 
-	///Ví dụ pixel đầu tiên trong màn hình có tọa độ pixel (0,0) thì toạ độ màn hình của nó là (0.5 , 0.5)
+	///Ví dụ pixel đầu tiên trong màn hình có tọa độ pixel (0,0) thì toạ độ màn hình của nó là (0.5 , 0.5). 
+	///<view> & <proj>: row major
 	///
-	virtual void GetRay(const HQMatrix4 &view ,const HQMatrix4 &proj , hq_float32 zNear,
+	virtual void GetRayr(const HQMatrix4 &view ,const HQMatrix4 &proj , hq_float32 zNear,
 						const HQPoint<hqint32>& point, HQRay3D & rayOut)=0;
 
 	///

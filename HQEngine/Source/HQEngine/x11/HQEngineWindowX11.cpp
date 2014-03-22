@@ -44,15 +44,6 @@ static HQEnginePrimeHashTable<KeyCode, KeyInfo> g_keyTable;
 //mouse wheel delta
 static const int g_wheelDelta = 120;
 
-/* Opcode returned XQueryExtension
-* It will be used in event processing
-* to know that the event came from
-* this extension */
-static int g_xinput2Opcode;
-
-//for intercepting window close message
-static Atom g_windowCloseMsg = None;
-
 /*-------prototypes------------*/
 static void ParseRawEvent(const double *input_values, unsigned char *mask, int mask_len,
                             double *output_values, int output_values_len);
@@ -62,112 +53,6 @@ static void RawMotionMessage(XGenericEventCookie* cookie);
 static void GetMousePoint(int motionEventX, int motionEventY, HQPointi& pointOut); 
 static KeyInfo & GetKeyInfo(XKeyEvent* keyEvent);
 
-/*-------window event handler--------------*/
-void HQEngineWndEventHandler(HQEngineWindow* window, XEvent * event)
-{
-	switch (event->type) 
-	{
-	case GenericEvent://may be mouse's raw motion
-		{
-			XGenericEventCookie *cookie = (XGenericEventCookie*)event;
-			if (XGetEventData(window->GetDisplay(), cookie)) {
-				if(cookie->extension == g_xinput2Opcode)
-				{
-					switch (cookie->evtype)
-					{
-						case XI_RawMotion:
-							RawMotionMessage(cookie);
-						break;
-					}//switch(cookie->evtype)
-				}//if(cookie->extension != xinput2_opcode)
-				XFreeEventData(window->GetDisplay(), cookie);
-			}
-		}
-		break;
-	case MotionNotify://mouse's absolute movement
-		if (HQEngineApp::GetInstance()->IsMouseCursorEnabled())//only report absolute position if mouse's cursor is enabled
-		{
-			HQPointi point;
-			GetMousePoint(event->xmotion.x, event->xmotion.y, point);			
-
-			HQEngineApp::GetInstance()->GetMouseListener()->MouseMove(point);
-		}
-		break;
-	case ButtonPress:
-		{
-			HQPointi point;	
-			GetMousePoint(event->xbutton.x, event->xbutton.y, point);
-			
-			switch(event->xbutton.button)
-			{
-			case Button1://left mouse
-				HQEngineApp::GetInstance()->GetMouseListener()->MousePressed(HQKeyCode::LBUTTON, point);
-				break;
-			case Button2://middle mouse
-				HQEngineApp::GetInstance()->GetMouseListener()->MousePressed(HQKeyCode::MBUTTON, point);
-				break;
-			case Button3://right mouse
-				HQEngineApp::GetInstance()->GetMouseListener()->MousePressed(HQKeyCode::RBUTTON, point);
-				break;
-			case Button4://wheel up
-				HQEngineApp::GetInstance()->GetMouseListener()->MouseWheel(
-					g_wheelDelta , point
-					);
-				break;
-			case Button5://wheel down
-				HQEngineApp::GetInstance()->GetMouseListener()->MouseWheel(
-					-g_wheelDelta , point
-					);
-				break;
-			}//switch(event->xbutton.button)
-		}
-		break;
-	case ButtonRelease:
-		{
-			HQPointi point;	
-			GetMousePoint(event->xbutton.x, event->xbutton.y, point);
-			switch(event->xbutton.button)
-			{
-			case Button1://left mouse
-				HQEngineApp::GetInstance()->GetMouseListener()->MouseReleased(HQKeyCode::LBUTTON, point);
-				break;
-			case Button2://middle mouse
-				HQEngineApp::GetInstance()->GetMouseListener()->MouseReleased(HQKeyCode::MBUTTON, point);
-				break;
-			case Button3://right mouse
-				HQEngineApp::GetInstance()->GetMouseListener()->MouseReleased(HQKeyCode::RBUTTON, point);
-				break;
-			}//switch(event->xbutton.button)
-		}
-		break;
-	case KeyPress: 
-		KeyDownMessage(&event->xkey);
-		break;
-	case KeyRelease: 
-		KeyUpMessage(&event->xkey);
-		break;
-	case ResizeRequest:
-		//TO DO
-		break;
-	case ClientMessage:
-		if (event->xclient.data.l[0] == g_windowCloseMsg)//close button is clicked
-		{
-			if(HQEngineApp::GetInstance()->GetWindowListener()->WindowClosing() == true)//if listener agree to close this window
-			{
-				HQEngineApp::GetInstance()->Stop();
-				HQEngineApp::GetInstance()->DestroyWindow();
-				HQEngineApp::GetInstance()->GetWindowListener()->WindowClosed();
-				HQEngineApp::GetInstance()->GetAppListener()->OnDestroy();
-				exit(0);
-			}
-		}
-		break;
-	case DestroyNotify:
-		HQEngineApp::GetInstance()->GetWindowListener()->WindowClosed();
-		break;
-
-	}
-}
 
 /*-----------get mouse point------------*/
 void GetMousePoint(int motionEventX, int motionEventY, HQPointi& pointOut)
@@ -258,7 +143,10 @@ void KeyUpMessage(XKeyEvent *event)
 HQEngineWindow::HQEngineWindow(const char *title, const char *settingFileDir ,  HQWIPPlatformSpecificType* args)
 : HQEngineBaseWindow(settingFileDir),
   m_inviCursor(0),
-  m_xinputSupported(false)
+  m_xinputSupported(false),
+  m_needKeyboardGrabbed(false),
+  m_needMouseGrabbed(false),
+  m_windowCloseMsg(None)
 {
 	if (args == NULL || args->display == NULL)
 	{
@@ -306,8 +194,6 @@ HQEngineWindow::~HQEngineWindow()
 	{
 		XFreeCursor(m_display, m_inviCursor);
 	}
-	//invalidate "window close" atom
-	g_windowCloseMsg = None;
 
 	if (m_ownDisplay)//close display if we open it ourself
 		XCloseDisplay(m_display);
@@ -321,7 +207,7 @@ void HQEngineWindow::InitXinput(){
 	int major = 2, minor = 0;
 	int outmajor,outminor;
 
-	if (!XQueryExtension(GetDisplay(), "XInputExtension", &g_xinput2Opcode, &event, &err))
+	if (!XQueryExtension(GetDisplay(), "XInputExtension", &m_xinput2Opcode, &event, &err))
 		return;
 	outmajor = major;
 	outminor = minor;
@@ -342,10 +228,10 @@ void HQEngineWindow::InitXinput(){
 HQReturnVal HQEngineWindow::Show()
 {	
 	//create "window close" atom
-	if (g_windowCloseMsg == None)
+	if (m_windowCloseMsg == None)
 	{
-		g_windowCloseMsg = XInternAtom(GetDisplay(), "WM_DELETE_WINDOW", False);
-   		XSetWMProtocols(GetDisplay(), GetRawWindow(), &g_windowCloseMsg, 1);
+		m_windowCloseMsg = XInternAtom(GetDisplay(), "WM_DELETE_WINDOW", False);
+   		XSetWMProtocols(GetDisplay(), GetRawWindow(), &m_windowCloseMsg, 1);
 	}
 	
 	//map window
@@ -359,16 +245,24 @@ HQReturnVal HQEngineWindow::Show()
 		    GrabModeAsync, CurrentTime);
 		XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
 		    GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);
+
+		m_needKeyboardGrabbed = true;
+		m_needMouseGrabbed = true;
 	}
 	return HQ_OK;
 }
 
 bool HQEngineWindow::EnableCursor(bool enable){
 	
-	if (GetRawWindow() == 0 || !m_xinputSupported)
-		return false; 
 	if (enable == HQEngineApp::GetInstance()->IsMouseCursorEnabled())
 		return true;//nothing to do
+
+	return EnableCursorNonCheck(enable);
+}
+
+bool HQEngineWindow::EnableCursorNonCheck(bool enable)	{
+	if (GetRawWindow() == 0 || !m_xinputSupported)
+		return false;
 	if (!enable)
 	{
 		/*--------------------these are SDL code----------------------------------*/
@@ -402,9 +296,12 @@ bool HQEngineWindow::EnableCursor(bool enable){
 		}
 		
 		XDefineCursor(GetDisplay(), GetRawWindow(), m_inviCursor);
-		XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
-		    GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);//prevent cursor from going outside
-
+		if (HQEngineApp::GetInstance()->GetRenderDevice()->IsWindowed())//fullscreen window already grabs the pointer
+		{
+			XGrabPointer(GetDisplay(), GetRawWindow(), True, ButtonPressMask,
+					GrabModeAsync, GrabModeAsync, GetRawWindow(), None, CurrentTime);//prevent cursor from going outside
+			m_needMouseGrabbed = true;
+		}
 	}
 	else
 	{
@@ -425,8 +322,162 @@ bool HQEngineWindow::EnableCursor(bool enable){
 		/*--------------------end SDL code----------------------------------*/
 
 		XUndefineCursor(GetDisplay(), GetRawWindow());
-		XUngrabPointer(GetDisplay(), CurrentTime);
+		if (HQEngineApp::GetInstance()->GetRenderDevice()->IsWindowed())//fullscreen window need mouse grabbed
+		{
+			XUngrabPointer(GetDisplay(), CurrentTime);
+			m_needMouseGrabbed = false;
+		}
 	}
 
 	return true;//TO DO: error handling
+}
+
+
+/*-------this's event handler--------------*/
+void HQEngineWindow::HandleEvent(XEvent * event)
+{
+	switch (event->type) 
+	{
+	case GenericEvent://may be mouse's raw motion
+		{
+			XGenericEventCookie *cookie = (XGenericEventCookie*)event;
+			if (XGetEventData(this->GetDisplay(), cookie)) {
+				if(cookie->extension == m_xinput2Opcode)
+				{
+					switch (cookie->evtype)
+					{
+						case XI_RawMotion:
+							RawMotionMessage(cookie);
+						break;
+					}//switch(cookie->evtype)
+				}//if(cookie->extension != xinput2_opcode)
+				XFreeEventData(this->GetDisplay(), cookie);
+			}
+		}
+		break;
+	case MotionNotify://mouse's absolute movement
+		if (HQEngineApp::GetInstance()->IsMouseCursorEnabled())//only report absolute position if mouse's cursor is enabled
+		{
+			HQPointi point;
+			GetMousePoint(event->xmotion.x, event->xmotion.y, point);			
+
+			HQEngineApp::GetInstance()->GetMouseListener()->MouseMove(point);
+		}
+		break;
+	case ButtonPress:
+		{
+			HQPointi point;	
+			GetMousePoint(event->xbutton.x, event->xbutton.y, point);
+			
+			switch(event->xbutton.button)
+			{
+			case Button1://left mouse
+				HQEngineApp::GetInstance()->GetMouseListener()->MousePressed(HQKeyCode::LBUTTON, point);
+				break;
+			case Button2://middle mouse
+				HQEngineApp::GetInstance()->GetMouseListener()->MousePressed(HQKeyCode::MBUTTON, point);
+				break;
+			case Button3://right mouse
+				HQEngineApp::GetInstance()->GetMouseListener()->MousePressed(HQKeyCode::RBUTTON, point);
+				break;
+			case Button4://wheel up
+				HQEngineApp::GetInstance()->GetMouseListener()->MouseWheel(
+					g_wheelDelta , point
+					);
+				break;
+			case Button5://wheel down
+				HQEngineApp::GetInstance()->GetMouseListener()->MouseWheel(
+					-g_wheelDelta , point
+					);
+				break;
+			}//switch(event->xbutton.button)
+		}
+		break;
+	case ButtonRelease:
+		{
+			HQPointi point;	
+			GetMousePoint(event->xbutton.x, event->xbutton.y, point);
+			switch(event->xbutton.button)
+			{
+			case Button1://left mouse
+				HQEngineApp::GetInstance()->GetMouseListener()->MouseReleased(HQKeyCode::LBUTTON, point);
+				break;
+			case Button2://middle mouse
+				HQEngineApp::GetInstance()->GetMouseListener()->MouseReleased(HQKeyCode::MBUTTON, point);
+				break;
+			case Button3://right mouse
+				HQEngineApp::GetInstance()->GetMouseListener()->MouseReleased(HQKeyCode::RBUTTON, point);
+				break;
+			}//switch(event->xbutton.button)
+		}
+		break;
+	case KeyPress: 
+		KeyDownMessage(&event->xkey);
+		break;
+	case KeyRelease: 
+		KeyUpMessage(&event->xkey);
+		break;
+	case ConfigureNotify:
+		HQEngineApp::GetInstance()->GetRenderDevice()->OnWindowSizeChanged(event->xconfigure.width, event->xconfigure.height);
+		break;
+	case FocusIn:
+		//printf("focus in\n");
+		if (this->NeedKeyboardGrabbed())
+			XGrabKeyboard(this->GetDisplay(), this->GetRawWindow(), True, GrabModeAsync,
+				    GrabModeAsync, CurrentTime);
+		if (this->NeedMouseGrabbed())
+			XGrabPointer(this->GetDisplay(), this->GetRawWindow(), True, ButtonPressMask,
+				    GrabModeAsync, GrabModeAsync, this->GetRawWindow(), None, CurrentTime);
+		if (!HQEngineApp::GetInstance()->IsMouseCursorEnabled())
+		{
+			//re-disable cursor
+			this->EnableCursorNonCheck(false);
+		}
+		break;
+	case FocusOut:
+		//printf("focus out\n");
+		if (this->NeedKeyboardGrabbed())
+			XUngrabKeyboard(this->GetDisplay(), CurrentTime);
+		if (this->NeedMouseGrabbed())
+			XUngrabPointer(this->GetDisplay(), CurrentTime);
+		if (!HQEngineApp::GetInstance()->IsMouseCursorEnabled())
+		{
+			//temporarily re-enable cursor
+			/*--------------------these are SDL code----------------------------------*/
+			{
+				/*Disable Raw motion events for this display*/
+				XIEventMask eventmask;
+				unsigned char mask[3] = { 0,0,0 };
+				eventmask.deviceid = XIAllMasterDevices;
+				eventmask.mask_len = sizeof(mask);
+				eventmask.mask = mask;
+
+				//unregister raw motion event
+				if (XISelectEvents(this->GetDisplay(), DefaultRootWindow(this->GetDisplay()), &eventmask, 1) != Success) {
+					//what to do
+				}
+			}
+			/*--------------------end SDL code----------------------------------*/
+
+			XUndefineCursor(this->GetDisplay(), this->GetRawWindow());
+		}
+		break;
+	case ClientMessage:
+		if (event->xclient.data.l[0] == m_windowCloseMsg)//close button is clicked
+		{
+			if(HQEngineApp::GetInstance()->GetWindowListener()->WindowClosing() == true)//if listener agree to close this this
+			{
+				HQEngineApp::GetInstance()->Stop();
+				HQEngineApp::GetInstance()->DestroyWindow();
+				HQEngineApp::GetInstance()->GetWindowListener()->WindowClosed();
+				HQEngineApp::GetInstance()->GetAppListener()->OnDestroy();
+				exit(0);
+			}
+		}
+		break;
+	case DestroyNotify:
+		HQEngineApp::GetInstance()->GetWindowListener()->WindowClosed();
+		break;
+
+	}
 }
