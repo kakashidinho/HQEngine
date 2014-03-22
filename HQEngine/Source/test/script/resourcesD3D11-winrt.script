@@ -1,0 +1,15 @@
+resources{
+	shader vs-mesh
+	{
+		type=vertex
+		src_type=bytecode
+		src="hlsl-mesh_vs.cso"
+	}
+	
+	shader ps-mesh
+	{
+		type=pixel
+		src_type=bytecode
+		src="hlsl-mesh_ps.cso"
+	}
+}

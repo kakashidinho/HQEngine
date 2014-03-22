@@ -61,7 +61,7 @@ void ImgByteStream::Seek(size_t pos)
 	if (!this->isMemoryMode)
 	{
 		if (dataStream != NULL)
-			dataStream->Seek(pos, HQDataReaderStream::BEGIN);
+			dataStream->Seek(pos, HQDataReaderStream::SSO_BEGIN);
 	}
 	else if (memory != NULL)
 		iterator = pos;
@@ -72,7 +72,7 @@ void ImgByteStream::Advance(size_t offset)
 	if (!this->isMemoryMode)
 	{
 		if (dataStream != NULL)
-			dataStream->Seek(offset, HQDataReaderStream::CURRENT);
+			dataStream->Seek(offset, HQDataReaderStream::SSO_CURRENT);
 	}
 	else if (memory != NULL)
 	{

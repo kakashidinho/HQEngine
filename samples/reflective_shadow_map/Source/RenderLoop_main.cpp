@@ -57,12 +57,12 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	if (strcmp(m_renderAPI_name, "GL") == 0)
 	{
 		this->m_renderAPI_type = HQ_RA_OGL;
-		strcpy(apiResNamXML, "rsm_resourcesGL.xml");
+		strcpy(apiResNamXML, "rsm_resourcesGL.script");
 	}
 	else
 	{
 		this->m_renderAPI_type = HQ_RA_D3D;
-		strcpy(apiResNamXML, "rsm_resourcesD3D9.xml");
+		strcpy(apiResNamXML, "rsm_resourcesD3D9.script");
 	}
 
 	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
@@ -106,9 +106,9 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	m_scene->AddChild(m_camera);
 
 	//init resources
-	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromXML(apiResNamXML);
-	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromXML("rsm_resourcesCommon.xml");
-	HQEngineApp::GetInstance()->GetEffectManager()->AddEffectsFromXML("rsm_effects.xml");
+	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromFile(apiResNamXML);
+	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromFile("rsm_resourcesCommon.script");
+	HQEngineApp::GetInstance()->GetEffectManager()->AddEffectsFromFile("rsm_effects.script");
 
 	//retrieve main effect
 	rsm_effect = HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("rsm");

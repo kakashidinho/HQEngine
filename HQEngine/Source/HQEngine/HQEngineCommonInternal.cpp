@@ -12,9 +12,55 @@ COPYING.txt included with this distribution for more information.
 #include "HQEngineCommonInternal.h"
 #include "../HQDataStream.h"
 
+#include <stdlib.h>
+
 namespace HQEngineHelper
 {
 
+static HQLinkedList<void*> g_allocatedBlocks;
+
+//allocate memory block, must not deallocate the returned pointer explicitly by free() or delete
+void* GlobalPoolMalloc(size_t size)
+{
+	void *block = malloc(size);
+	if (block == NULL)
+		throw std::bad_alloc();
+	g_allocatedBlocks.PushBack(block);
+
+	return block;
+}
+//release all previously allocated blocks
+void GlobalPoolReleaseAll()
+{
+	HQLinkedList<void*>::Iterator ite;
+	g_allocatedBlocks.GetIterator(ite);
+	for (;!ite.IsAtEnd(); ++ite)
+	{
+		void * block = *ite;
+		free(block);
+	}
+
+	g_allocatedBlocks.RemoveAll();
+}
+
+//allocate a string, must not deallocate the returned pointer explicitly by free() or delete
+char * GlobalPoolMallocString(const char* s, size_t len)
+{
+	char * newStr = NULL; 
+	try{
+		newStr = (char*)GlobalPoolMalloc(len + 1);
+	} catch (std::bad_alloc & e)
+	{
+		throw e;
+	}
+
+	strncpy(newStr, s, len);
+	newStr[len] = '\0';
+
+	return newStr;
+}
+
+/*------------C functions for data stream-----------------*/
 void seek_datastream (void* fileHandle, long offset, int origin)
 {
 	HQDataReaderStream* stream = (HQDataReaderStream*) fileHandle;

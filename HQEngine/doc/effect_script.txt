@@ -1,0 +1,90 @@
+Basic format:
+techniques{
+	technique name // must specify technique's name 
+	{
+		pass ...
+		pass ...
+		.
+		.
+		.
+	}
+}
+
+Pass format:
+	pass name // must specify pass name 
+	{
+		/* texture unit 0. 0 can be replaced by any other number. 
+		resource_name can be replaced by name of a texture/render target resource
+		Note that in Direct3D this is the texture unit for pixel shader. 
+		In OpenGL, if one texture is bound to multiple texture units, and each units has different sampler state, there will be undefined behavior.
+		For the attributes, default values are the first values specified below.
+		For example: min_filter=linear/point/anisotropic, means default value is linear.
+		max_anisotropy attribute is integer
+		*/
+		texture0{
+			min_filter=linear/point/anisotropic
+			mag_filter=linear/point/anisotropic
+			mipmap_filter=linear/point/none/anisotropic
+			address_u=wrap/mirror/clamp/border
+			address_v=wrap/mirror/clamp/border
+			max_anisotropy=1
+			border_color=0 0 0 0 //red green blue alpha
+			source=resource_name
+		} 
+		
+		//another syntax for specifying texture unit. In this case, default sampler state is used.
+		texture1=resource_name
+		
+		/*
+		Note: some value with more than one word need to be quoted.
+		For example: 
+			src_factor = src color (is not correct)
+			src_factor = "src color" (is correct)
+		*/
+		blend{
+			operator=add/sub/rev sub // default is add 
+			// default is one 
+			src_factor =one/zero/src color/one minus src color/src alpha/one minus src alpha	
+			//default is zero
+			dest_factor = one/zero/src color/one minus src color/src alpha/one minus src alpha
+			
+			alpha_operator=add/sub/rev sub 		// default is same value as 'operator' 
+			//default is the same value as src_factor
+			alpha_src_factor = one/zero/src color/one minus src color/src alpha/one minus src alpha
+			//default is the same value as dest_factor
+			alpha_dest_factor = one/zero/src color/one minus src color/src alpha/one minus src alpha
+		}
+		stencil {
+			read_mask=ffffffff	
+			write_mask=ffffffff
+			reference_value=0
+			fail_op=keep/zero/replace/incre/decre/incre wrap/decre wrap  // default is keep 
+			depth_fail_op=keep/zero/replace/incre/decre/incre wrap/decre wrap   // default is keep 
+			pass_op=keep/zero/replace/incre/decre/incre wrap/decre wrap    // default is keep 
+			compare_func=always/never/less/equal/less or equal/greater/greater or equal/not equal  // default is always 
+			
+			ccw_fail_op=keep/zero/replace/incre/decre/incre wrap/decre wrap			// default is the same value as fail_op 
+			ccw_depth_fail_op=keep/zero/replace/incre/decre/incre wrap/decre wrap		// default is the same value as depth_fail_op
+			ccw_pass_op=keep/zero/replace/incre/decre/incre wrap/decre wrap		// default is the same value as pass_op
+			ccw_compare_func=always/never/less/equal/less or equal/greater/greater or equal/not equal			// default is the same value as compare_func
+			
+		}
+		depth=full/read only/write only/none			// default is none 
+		cull=none/cw/ccw		// default is none 
+		
+		vertex_shader=shader resource name
+		pixel_shader=shader resource name
+		geometry_shader=shader resource name
+		
+		outputs  // if not specified, default render target is used 
+		{
+			/*
+			+x is positive x face of cube texture render target. 
+			cube_face can be "(+/-)(x/y/z)". default is "+x".
+			0 can be any number from 0 to max number of active render targets - 1
+			*/
+			output0 = render_target_resource_name +x
+			
+			depth_stencil_buffer_format = none/d24s8/d16/s8/d32			//default is none
+		}
+	}

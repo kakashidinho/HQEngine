@@ -20,9 +20,9 @@ class HQDataReaderStream
 public:
 	enum StreamSeekOrigin
 	{
-		BEGIN = 0,
-		CURRENT = 1,
-		END = 2
+		SSO_BEGIN = 0,
+		SSO_CURRENT = 1,
+		SSO_END = 2
 	};
 
 	virtual void Release() = 0;//close the stream and release the object

@@ -14,6 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEngineEffectManager.h"
 #include "../HQLinkedList.h"
 #include "HQEngineResManagerImpl.h"
+#include "HQEngineResParserCommon.h"
 
 //shader program
 class HQEngineShaderProgramWrapper: public HQGraphicsRelatedObj {
@@ -250,23 +251,23 @@ private:
 
 //effect loading session
 enum HQEngineEffectLoadType {
-	HQ_EELT_XML
+	HQ_EELT_STANDARD
 };
 
 class HQEngineEffectLoadSessionImpl: public HQEngineEffectLoadSession{
 public:
-	HQEngineEffectLoadSessionImpl(TiXmlDocument* doc);
+	HQEngineEffectLoadSessionImpl(HQEngineEffectParserNode* root);
 	~HQEngineEffectLoadSessionImpl();
 	bool HasMoreEffects() const;
-	TiXmlElement * CurrentXMLEffect();
-	TiXmlElement * NextXMLEffect();//advances to next effect item and returns current effect item
+	const HQEngineEffectParserNode * CurrentEffect();
+	const HQEngineEffectParserNode * NextEffect();//advances to next effect item and returns current effect item
 
 	const HQEngineEffectLoadType m_type;
 	union {
 		struct{
-			TiXmlDocument * m_effectXml;
-			TiXmlElement* m_effectGroup;
-			TiXmlElement* m_effectItem;
+			HQEngineEffectParserNode * m_root;
+			const HQEngineEffectParserNode* m_effectGroup;
+			const HQEngineEffectParserNode* m_effectItem;
 		};
 	};
 };
@@ -278,8 +279,8 @@ public:
 	HQEngineEffectManagerImpl(HQLogStream* stream, bool flushLog);
 	virtual ~HQEngineEffectManagerImpl() ;
 
-	virtual HQReturnVal AddEffectsFromXML(const char* fileName);
-	virtual HQEngineEffectLoadSession* BeginAddEffectsFromXML(const char* fileName);
+	virtual HQReturnVal AddEffectsFromFile(const char* fileName);
+	virtual HQEngineEffectLoadSession* BeginAddEffectsFromFile(const char* fileName);
 	virtual bool HasMoreEffects(HQEngineEffectLoadSession* session);
 	virtual HQReturnVal AddNextEffect(HQEngineEffectLoadSession* session);
 	virtual HQReturnVal EndAddEffects(HQEngineEffectLoadSession* session);///for releasing loading session
@@ -297,13 +298,13 @@ public:
 	virtual void RemoveAllEffects() ;
 
 private:
-	HQReturnVal LoadEffectFromXML(TiXmlElement * effectItem);
-	HQReturnVal LoadPassFromXML(TiXmlElement* passItem, HQSharedPtr<HQEngineRenderPassImpl> &newPass);
-	HQReturnVal ParseXMLStencilState(TiXmlElement *stencilElem, HQEngineDSStateWrapper::CreationParams &params);
-	HQReturnVal ParseXMLBlendState(TiXmlElement* blendElem, HQEngineBlendStateWrapper::CreationParams &params);
-	HQReturnVal ParseXMLSamplerState(TiXmlElement* textureElem, HQEngineSamplerStateWrapper::CreationParams &params);
-	HQReturnVal ParseXMLDepthStencilBuffer(TiXmlElement* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params);
-	HQReturnVal ParseXMLRTGroup(TiXmlElement* rtGroupElem, HQEngineRTGroupWrapper::CreationParams &params);
+	HQReturnVal LoadEffect(const HQEngineEffectParserNode * effectItem);
+	HQReturnVal LoadPass(const HQEngineEffectParserNode* passItem, HQSharedPtr<HQEngineRenderPassImpl> &newPass);
+	HQReturnVal ParseStencilState(const HQEngineEffectParserNode *stencilElem, HQEngineDSStateWrapper::CreationParams &params);
+	HQReturnVal ParseBlendState(const HQEngineEffectParserNode* blendElem, HQEngineBlendStateWrapper::CreationParams &params);
+	HQReturnVal ParseSamplerState(const HQEngineEffectParserNode* textureElem, HQEngineSamplerStateWrapper::CreationParams &params);
+	HQReturnVal ParseDepthStencilBuffer(const HQEngineEffectParserNode* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params);
+	HQReturnVal ParseRTGroup(const HQEngineEffectParserNode* rtGroupElem, HQEngineRTGroupWrapper::CreationParams &params);
 
 	//these methods will create new or return existing object
 	HQSharedPtr<HQEngineRTGroupWrapper> CreateOrGetRTGroup(const HQEngineRTGroupWrapper::CreationParams& params);

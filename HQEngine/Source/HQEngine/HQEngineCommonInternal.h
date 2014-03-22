@@ -160,6 +160,20 @@ protected:
 
 namespace HQEngineHelper
 {
+///
+///allocate memory block, must not deallocate the returned pointer explicitly by free() or delete. Throw std::bad_alloc if failed
+///
+void* GlobalPoolMalloc(size_t size);
+///
+///release all previously allocated blocks
+///
+void GlobalPoolReleaseAll();
+
+///
+///allocate a string, must not deallocate the returned pointer explicitly by free() or delete.  Throw std::bad_alloc if failed
+///
+char * GlobalPoolMallocString(const char* s, size_t len);
+
 //C functions for data stream
 void seek_datastream (void* fileHandle, long offset, int origin);
 size_t tell_datastream (void* fileHandle);

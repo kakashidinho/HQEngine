@@ -11,6 +11,19 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEngineApp.h"
 #include "HQEngineEffectManagerImpl.h"
 
+#include <sstream>
+
+//TO DO: reload resources when device lost
+
+//parser's functions and variables
+extern HQDataReaderStream * hqengine_effect_parser_input_stream ;
+extern std::stringstream	* hqengine_effect_parser_log_stream ;
+extern HQEngineEffectParserNode * hqengine_effect_parser_root_result;
+
+extern int hqengine_effect_parser_scan();
+extern void hqengine_effect_parser_recover_from_error();
+extern void hqengine_effect_parser_clean_up();
+
 /*--------------common hash code------------------*/
 template <class T>
 static inline hquint32 SPtrHashCode(const HQSharedPtr<T>& ptr){
@@ -598,18 +611,18 @@ hquint32 HQEngineRenderEffectImpl::GetPassIndexByName(const char* name)
 }
 
 /*----------------effect loading session----------------*/
-HQEngineEffectLoadSessionImpl::HQEngineEffectLoadSessionImpl(TiXmlDocument* doc)
-: m_effectXml(doc), m_type(HQ_EELT_XML)
+HQEngineEffectLoadSessionImpl::HQEngineEffectLoadSessionImpl(HQEngineEffectParserNode* root)
+: m_root(root), m_type(HQ_EELT_STANDARD)
 {
-	if (m_effectXml != NULL)
+	if (m_root != NULL)
 	{
 		m_effectItem = NULL;
-		m_effectGroup = m_effectXml->FirstChildElement("techniques");
+		m_effectGroup = m_root->GetFirstChild("techniques");
 		while (m_effectItem == NULL && m_effectGroup != NULL)
 		{
-			m_effectItem = m_effectGroup->FirstChildElement("technique");
+			m_effectItem = m_effectGroup->GetFirstChild("technique");
 			if (m_effectItem == NULL)//try to find in next effect group
-				m_effectGroup = m_effectGroup->NextSiblingElement("techniques");
+				m_effectGroup = m_effectGroup->GetNextSibling("techniques");
 		} 
 	}
 	else
@@ -620,15 +633,15 @@ HQEngineEffectLoadSessionImpl::HQEngineEffectLoadSessionImpl(TiXmlDocument* doc)
 
 HQEngineEffectLoadSessionImpl::~HQEngineEffectLoadSessionImpl()
 {
-	SafeDelete(m_effectXml);
+	HQEngineEffectParserNode::DeleteTree(m_root);
 }
 
 bool HQEngineEffectLoadSessionImpl::HasMoreEffects() const
 {
 	switch(m_type)
 	{
-	case HQ_EELT_XML:
-		if (m_effectXml == NULL)
+	case HQ_EELT_STANDARD:
+		if (m_root == NULL)
 			return false;
 		return (m_effectItem != NULL);
 
@@ -637,25 +650,25 @@ bool HQEngineEffectLoadSessionImpl::HasMoreEffects() const
 	}
 }
 
-TiXmlElement * HQEngineEffectLoadSessionImpl::CurrentXMLEffect()
+const HQEngineEffectParserNode * HQEngineEffectLoadSessionImpl::CurrentEffect()
 {
-	return m_type == HQ_EELT_XML ? m_effectItem: NULL;
+	return m_type == HQ_EELT_STANDARD ? m_effectItem: NULL;
 }
 
-TiXmlElement * HQEngineEffectLoadSessionImpl::NextXMLEffect() {
-	if (m_type == HQ_EELT_XML)
+const HQEngineEffectParserNode * HQEngineEffectLoadSessionImpl::NextEffect() {
+	if (m_type == HQ_EELT_STANDARD)
 	{
 		if (m_effectItem == NULL)
 			return NULL;
-		TiXmlElement * re = m_effectItem;
+		const HQEngineEffectParserNode * re = m_effectItem;
 
-		m_effectItem = m_effectItem->NextSiblingElement("technique");//advance to next item
+		m_effectItem = m_effectItem->GetNextSibling("technique");//advance to next item
 
 		while (m_effectItem == NULL && m_effectGroup != NULL)//try to find in next group
 		{
-			m_effectGroup = m_effectGroup->NextSiblingElement("techniques");
+			m_effectGroup = m_effectGroup->GetNextSibling("techniques");
 			if (m_effectGroup != NULL)
-				m_effectItem = m_effectGroup->FirstChildElement("technique");
+				m_effectItem = m_effectGroup->GetFirstChild("technique");
 		}
 
 		return re;
@@ -748,15 +761,18 @@ HQEngineEffectManagerImpl::HQEngineEffectManagerImpl(HQLogStream *stream, bool f
 	m_filterModeMap.Add("linear_linear_linear", HQ_FM_MIN_MAG_MIP_LINEAR);
 	m_filterModeMap.Add("anisotropic_anisotropic_anisotropic", HQ_FM_MIN_MAG_MIP_ANISOTROPIC);
 
+	this->Log("Init done !");
+
 }
 
 HQEngineEffectManagerImpl::~HQEngineEffectManagerImpl()
 {
+	Log("Released!");
 }
 
-HQReturnVal HQEngineEffectManagerImpl::AddEffectsFromXML(const char* fileName)
+HQReturnVal HQEngineEffectManagerImpl::AddEffectsFromFile(const char* fileName)
 {
-	HQEngineEffectLoadSession * session = this->BeginAddEffectsFromXML(fileName);
+	HQEngineEffectLoadSession * session = this->BeginAddEffectsFromFile(fileName);
 	if (session == NULL)
 		return HQ_FAILED;
 	
@@ -773,7 +789,7 @@ HQReturnVal HQEngineEffectManagerImpl::AddEffectsFromXML(const char* fileName)
 	return re;
 }
 
-HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromXML(const char* fileName)
+HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromFile(const char* fileName)
 {
 	HQDataReaderStream* data_stream = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
 	if (data_stream == NULL)
@@ -782,27 +798,27 @@ HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromXML(con
 		return NULL;
 	}
 
-	TiXmlDocument *doc = new TiXmlDocument();
+	//prepare the parser
+	std::stringstream log_stream;
+	hqengine_effect_parser_input_stream = data_stream;
+	hqengine_effect_parser_log_stream = &log_stream;
 
-	TiXmlCustomFileStream stream;
-	stream.fileHandle = data_stream;
-	stream.read = &HQEngineHelper::read_datastream;
-	stream.seek = &HQEngineHelper::seek_datastream;
-	stream.tell = &HQEngineHelper::tell_datastream;
-
-	if (doc->LoadFile(stream) == false)
+	//now parse the script
+	if (hqengine_effect_parser_scan())
 	{
-		this->Log("Error : Could not load effects from file %s! %d:%d: %s", fileName, doc->ErrorRow(), doc->ErrorCol(), doc->ErrorDesc());
-		delete doc;
+		this->Log("Error : Could not load effect from file %s! %s", fileName, hqengine_effect_parser_log_stream->str().c_str());
+		HQEngineHelper::GlobalPoolReleaseAll();
 		data_stream->Release();
 		return NULL;
 	}
-
 	data_stream->Release();
 
-	this->Log("Effects loading session from file '%s' created!", fileName);
+	this->Log("Effects loading session from file '%s' started!", fileName);
 
-	return HQ_NEW HQEngineEffectLoadSessionImpl(doc);
+	HQEngineEffectParserNode *result = hqengine_effect_parser_root_result;
+	hqengine_effect_parser_root_result = NULL;
+
+	return HQ_NEW HQEngineEffectLoadSessionImpl(result);
 }
 
 bool HQEngineEffectManagerImpl::HasMoreEffects(HQEngineEffectLoadSession* session)
@@ -821,8 +837,8 @@ HQReturnVal HQEngineEffectManagerImpl::AddNextEffect(HQEngineEffectLoadSession* 
 		return HQ_FAILED_NO_MORE_RESOURCE;
 	switch (resLoadSession-> m_type)
 	{
-	case HQ_EELT_XML:
-		return this->LoadEffectFromXML(resLoadSession->NextXMLEffect());
+	case HQ_EELT_STANDARD:
+		return this->LoadEffect(resLoadSession->NextEffect());
 	break;
 	} //switch (resLoadSession-> m_type)
 
@@ -836,37 +852,42 @@ HQReturnVal HQEngineEffectManagerImpl::EndAddEffects(HQEngineEffectLoadSession* 
 	if (resLoadSession != NULL)
 		delete resLoadSession;
 
+	//release all memory blocks allocated for parser
+	HQEngineHelper::GlobalPoolReleaseAll();
+
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::LoadEffectFromXML(TiXmlElement * effectItem)
+HQReturnVal HQEngineEffectManagerImpl::LoadEffect(const HQEngineEffectParserNode * effectItem)
 {
-	const char *effect_name = effectItem->Attribute("name");
+	int item_line = effectItem->GetSourceLine();
+	const char *effect_name = effectItem->GetStrAttribute("name");
 	if (effect_name == NULL)
 	{
-		Log("Error : Could not load effect without any name!");
+		Log("Error : %d : Could not load effect without any name!", item_line);
 		return HQ_FAILED;
 	}
 	if (m_effects.GetItemPointer(effect_name) != NULL)
 	{
-		Log("Error : Effect '%s' already exists!", effect_name);
+		Log("Error : %d : Effect '%s' already exists!", effect_name, item_line);
 		return HQ_FAILED_RESOURCE_EXISTS;
 	}
 
 	HQEngineStringHashTable<HQSharedPtr<HQEngineRenderPassImpl> > passesTable;//rendering pass mapping table. TO DO: find a more efficient way to initialize the effect's passes
 
-	TiXmlElement * pass = effectItem->FirstChildElement("pass");
-	for (; pass != NULL; pass = pass->NextSiblingElement("pass"))
+	const HQEngineEffectParserNode * pass = effectItem->GetFirstChild("pass");
+	for (; pass != NULL; pass = pass->GetNextSibling("pass"))
 	{
-		const char *pass_name = pass->Attribute("name");
+		const char *pass_name = pass->GetStrAttribute("name");
+		int pass_line = pass->GetSourceLine();
 		if (pass_name == NULL)
 		{
-			Log("Error : Could not load a rendering pass from '%s' effect without any name!", effect_name);
+			Log("Error : %d : Could not load a rendering pass from '%s' effect without any name!", pass_line, effect_name);
 			return HQ_FAILED;
 		}
 		if (passesTable.GetItemPointer(pass_name) != NULL)
 		{
-			Log("Error : Effect '%s' already has a pass named '%s'!", effect_name, pass_name);
+			Log("Error : %d : Effect '%s' already has a pass named '%s'!", pass_line, effect_name, pass_name);
 			return HQ_FAILED;
 		}
 
@@ -877,12 +898,12 @@ HQReturnVal HQEngineEffectManagerImpl::LoadEffectFromXML(TiXmlElement * effectIt
 		else
 			newPass = HQ_NEW HQEngineRenderPassD3D(pass_name);
 
-		if (HQFailed(this->LoadPassFromXML(pass, newPass)) )
+		if (HQFailed(this->LoadPass(pass, newPass)) )
 			return HQ_FAILED;
 
 		//insert to table
 		passesTable.Add(pass_name, newPass);
-	}//for (; attribute != NULL; attribute = attribute->NextSiblingElement("pass"))
+	}//for (; attribute != NULL; attribute = attribute->GetNextSibling("pass"))
 
 	//add new effect to table
 	HQSharedPtr<HQEngineRenderEffectImpl> newEffect = HQ_NEW HQEngineRenderEffectImpl(effect_name, passesTable);
@@ -893,8 +914,9 @@ HQReturnVal HQEngineEffectManagerImpl::LoadEffectFromXML(TiXmlElement * effectIt
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::LoadPassFromXML(TiXmlElement* passItem, HQSharedPtr<HQEngineRenderPassImpl> &newPass)
+HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* passItem, HQSharedPtr<HQEngineRenderPassImpl> &newPass)
 {
+	const char emptyName[] = "";
 	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
 	bool mappedValueFound = false;
 	//default values
@@ -906,34 +928,47 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPassFromXML(TiXmlElement* passItem, H
 	bool useDefaultRT = true;
 	bool useBlendState = false;
 
-	TiXmlElement * elem = passItem->FirstChildElement();
-	for (; elem != NULL; elem = elem->NextSiblingElement())
+	const HQEngineEffectParserNode * elem = passItem->GetFirstChild();
+	for (; elem != NULL; elem = elem->GetNextSibling())
 	{
-		const char *elemName = elem->Value();
+		const char *elemName = elem->GetType();
+		int elem_line = elem->GetSourceLine();
 		if (!strncmp(elemName, "texture", 7))
 		{
-			const char * textureResName = elem->GetText();
+			//get texture unit's index
 			hquint32 textureIdx = 0;
 			if (sscanf(elemName, "texture%u",  &textureIdx) == 0)
 			{
-				Log("Error : invalid token %s!", elemName);
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
 				return HQ_FAILED;
 			}
-			
+
 			//get sampler state
 			HQEngineSamplerStateWrapper::CreationParams samplerParams;
-			if (HQFailed(this->ParseXMLSamplerState(elem, samplerParams)) )
+			if (HQFailed(this->ParseSamplerState(elem, samplerParams)) )
 				return HQ_FAILED;
 			
 			HQSharedPtr<HQEngineSamplerStateWrapper> samplerState = this->CreateOrGetSamplerState(samplerParams);
 			if (samplerState == NULL)
 				return HQ_FAILED;
 
-			//get texture
+			
+			//get texture resource
+			const HQEngineEffectParserNode* textureResNameInfo = elem->GetFirstChild("source");
+			if (textureResNameInfo == NULL)
+			{
+				Log("Error: %d : texture unit missing texture resource!", elem_line);
+				return HQ_FAILED;
+			}
+
+			const char * textureResName = textureResNameInfo->GetStrAttribute("value");
+			if (textureResName == NULL)
+				textureResName = emptyName;
+
 			const HQSharedPtr<HQEngineTextureResImpl> texture = resManager->GetTextureResourceSharedPtr(textureResName);
 			if (texture == NULL)
 			{
-				Log("Error: invalid texture resource named %s!", textureResName);
+				Log("Error: %d : invalid texture resource named %s!", elem_line, textureResName);
 				return HQ_FAILED;
 			}
 			//controlled texture unit
@@ -948,70 +983,78 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPassFromXML(TiXmlElement* passItem, H
 		}//if (!strncmp(elemName, "texture", 7))
 		else if (!strcmp(elemName, "blend"))
 		{
-			if (HQFailed(this->ParseXMLBlendState(elem, blendStateParams)) )
+			if (HQFailed(this->ParseBlendState(elem, blendStateParams)) )
 				return HQ_FAILED;
 			useBlendState = true;
 		}
 		else if (!strcmp(elemName, "stencil"))
 		{
-			if (HQFailed(this->ParseXMLStencilState(elem, dsStateParams)) )
+			if (HQFailed(this->ParseStencilState(elem, dsStateParams)) )
 				return HQ_FAILED;
 		}
 		else if (!strcmp(elemName, "depth"))
 		{
-			dsStateParams.desc.depthMode = m_depthModeMap.GetItem(elem->GetText(), mappedValueFound);
+			const char *depthModeStr = elem->GetStrAttribute("value");
+			dsStateParams.desc.depthMode = m_depthModeMap.GetItem(depthModeStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid depth=%s", elem->GetText());
+				Log("Error : %d : invalid depth=%s", elem_line, depthModeStr != NULL? depthModeStr: "");
 				return HQ_FAILED;
 			}
 		}
 		else if (!strcmp(elemName, "cull"))
 		{
-			faceCullMode = m_cullModeMap.GetItem(elem->GetText(), mappedValueFound);
+			const char *cullModeStr = elem->GetStrAttribute("value");
+			faceCullMode = m_cullModeMap.GetItem(cullModeStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid cull=%s", elem->GetText());
+				Log("Error : %d : invalid cull=%s", elem_line, cullModeStr != NULL? cullModeStr : "");
 				return HQ_FAILED;
 			}
 		}
 		else if (!strcmp(elemName, "custom_targets"))
 		{
-			if (HQFailed(this->ParseXMLRTGroup(elem, rtGroupParams)))
+			if (HQFailed(this->ParseRTGroup(elem, rtGroupParams)))
 				return HQ_FAILED;
 			useDefaultRT = false;
 		}
 		else if (!strcmp(elemName, "vertex_shader"))
 		{
-			const char *shader_res_name = elem->GetText();
+			const char *shader_res_name = elem->GetStrAttribute("value");
+			if (shader_res_name == NULL)
+				shader_res_name = emptyName;
 			shaderProgramParams.vertexShader = resManager->GetShaderResourceSharedPtr(shader_res_name);
 			if (shaderProgramParams.vertexShader == NULL)
 			{
-				Log("Error : invalid vertex_shader=%s!", shader_res_name);
+				Log("Error : %d : invalid vertex_shader=%s!", elem_line, shader_res_name);
 				return HQ_FAILED;
 			}
 		}
 		else if (!strcmp(elemName, "pixel_shader"))
 		{
-			const char *shader_res_name = elem->GetText();
+			const char *shader_res_name = elem->GetStrAttribute("value");
+			if (shader_res_name == NULL)
+				shader_res_name = emptyName;
 			shaderProgramParams.pixelShader = resManager->GetShaderResourceSharedPtr(shader_res_name);
 			if (shaderProgramParams.pixelShader == NULL)
 			{
-				Log("Error : invalid pixel_shader=%s!", shader_res_name);
+				Log("Error : %d : invalid pixel_shader=%s!", elem_line, shader_res_name);
 				return HQ_FAILED;
 			}
 		}
 		else if (!strcmp(elemName, "geometry_shader"))
 		{
-			const char *shader_res_name = elem->GetText();
+			const char *shader_res_name = elem->GetStrAttribute("value");
+			if (shader_res_name == NULL)
+				shader_res_name = emptyName;
 			shaderProgramParams.geometryShader = resManager->GetShaderResourceSharedPtr(shader_res_name);
 			if (shaderProgramParams.geometryShader == NULL)
 			{
-				Log("Error : invalid geometry_shader=%s!", shader_res_name);
+				Log("Error : %d : invalid geometry_shader=%s!", elem_line, shader_res_name);
 				return HQ_FAILED;
 			}
 		}
-	}//for (; elem != NULL; elem = elem->NextSiblingElement())
+	}//for (; elem != NULL; elem = elem->GetNextSibling())
 
 	//now create the program
 	newPass->shaderProgram = this->CreateOrGetShaderProgram(shaderProgramParams);
@@ -1044,15 +1087,15 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPassFromXML(TiXmlElement* passItem, H
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stencilElem, HQEngineDSStateWrapper::CreationParams &params)
+HQReturnVal HQEngineEffectManagerImpl::ParseStencilState(const HQEngineEffectParserNode *stencilElem, HQEngineDSStateWrapper::CreationParams &params)
 {
 	bool mappedValueFound = false;
 	HQStencilOp op;
 	HQStencilFunc func;
-	bool has_ccw_fail_op = stencilElem->FirstChildElement("ccw_fail_op") != NULL;
-	bool has_ccw_depth_fail_op = stencilElem->FirstChildElement("ccw_depth_fail_op") != NULL;
-	bool has_ccw_pass_op = stencilElem->FirstChildElement("ccw_pass_op") != NULL;
-	bool has_ccw_compare_func = stencilElem->FirstChildElement("ccw_compare_func") != NULL;
+	bool has_ccw_fail_op = stencilElem->GetFirstChild("ccw_fail_op") != NULL;
+	bool has_ccw_depth_fail_op = stencilElem->GetFirstChild("ccw_depth_fail_op") != NULL;
+	bool has_ccw_pass_op = stencilElem->GetFirstChild("ccw_pass_op") != NULL;
+	bool has_ccw_compare_func = stencilElem->GetFirstChild("ccw_compare_func") != NULL;
 	//find if there is "ccw*" elements
 	if (has_ccw_fail_op
 		|| has_ccw_depth_fail_op
@@ -1072,29 +1115,49 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 		params.desc.stencilMode.failOp = params.desc.stencilMode.depthFailOp = params.desc.stencilMode.passOp = HQ_SOP_KEEP;
 		params.desc.stencilMode.compareFunc = HQ_SF_ALWAYS;
 
-		TiXmlElement * attribute = stencilElem->FirstChildElement();
-		for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+		const HQEngineEffectParserNode * attribute = stencilElem->GetFirstChild();
+		for (; attribute != NULL; attribute = attribute->GetNextSibling())
 		{
-			const char* attriName = attribute->Value();
-			const char* attriValStr = attribute->GetText();
+			int attriLine = attribute->GetSourceLine();
+			const char* attriName = attribute->GetType();
+			const HQEngineEffectParserNode::ValueType& attriVal = attribute->GetAttribute("value");
+			const char* attriValStr = attriVal.GetAsStringEmptyIfNone();
 
 			if (!strcmp(attriName, "read_mask"))
 			{
-				sscanf(attriValStr, "%x", &params.desc.readMask);
+				if (attriVal.GetAsIntPt() != NULL)
+					params.desc.readMask = (hquint32)*attriVal.GetAsIntPt(); 
+				else
+				{
+					Log("Error : %d : invalid read_mask!", attriLine);
+					return HQ_FAILED;
+				}
 			}
 			else if (!strcmp(attriName, "write_mask"))
 			{
-				sscanf(attriValStr, "%x", &params.desc.writeMask);
+				if (attriVal.GetAsIntPt() != NULL)
+					params.desc.writeMask = (hquint32)*attriVal.GetAsIntPt(); 
+				else
+				{
+					Log("Error : %d : invalid write_mask!", attriLine);
+					return HQ_FAILED;
+				}
 			}
 			else if (!strcmp(attriName, "reference_value"))
 			{
-				sscanf(attriValStr, "%u", &params.desc.refVal);
+				if (attriVal.GetAsIntPt() != NULL)
+					params.desc.refVal = (hquint32)*attriVal.GetAsIntPt(); 
+				else
+				{
+					Log("Error : %d : invalid reference_value!", attriLine);
+					return HQ_FAILED;
+				}
 			}
 			else if (!strcmp(attriName, "fail_op"))
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid fail_op=%s!", attriValStr);
+					Log("Error : %d : invalid fail_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.desc.stencilMode.failOp = op;
@@ -1103,7 +1166,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid depth_fail_op=%s!", attriValStr);
+					Log("Error : %d : invalid depth_fail_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.desc.stencilMode.depthFailOp = op;
@@ -1112,7 +1175,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid pass_op=%s!", attriValStr);
+					Log("Error : %d : invalid pass_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.desc.stencilMode.passOp = op;
@@ -1121,12 +1184,12 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				func = m_stencilFuncMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid compare_func=%s!", attriValStr);
+					Log("Error : %d : invalid compare_func=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.desc.stencilMode.compareFunc = func;
 			}
-		}//for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+		}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
 	}//if (!params.isTwoSideState)
 	else
 	{
@@ -1139,29 +1202,49 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			= params.twoSideDesc.cwFaceMode.passOp = HQ_SOP_KEEP;
 		params.twoSideDesc.cwFaceMode.compareFunc = HQ_SF_ALWAYS;
 
-		TiXmlElement * attribute = stencilElem->FirstChildElement();
-		for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+		const HQEngineEffectParserNode * attribute = stencilElem->GetFirstChild();
+		for (; attribute != NULL; attribute = attribute->GetNextSibling())
 		{
-			const char* attriName = attribute->Value();
-			const char* attriValStr = attribute->GetText();
+			int attriLine = attribute->GetSourceLine();
+			const char* attriName = attribute->GetType();
+			const HQEngineEffectParserNode::ValueType& attriVal = attribute->GetAttribute("value");
+			const char* attriValStr = attriVal.GetAsStringEmptyIfNone();
 
 			if (!strcmp(attriName, "read_mask"))
 			{
-				sscanf(attriValStr, "%x", &params.twoSideDesc.readMask);
+				if (attriVal.GetAsIntPt() != NULL)
+					params.twoSideDesc.readMask = (hquint32)*attriVal.GetAsIntPt(); 
+				else
+				{
+					Log("Error : %d : invalid read_mask!", attriLine);
+					return HQ_FAILED;
+				}
 			}
 			else if (!strcmp(attriName, "write_mask"))
 			{
-				sscanf(attriValStr, "%x", &params.twoSideDesc.writeMask);
+				if (attriVal.GetAsIntPt() != NULL)
+					params.twoSideDesc.writeMask = (hquint32)*attriVal.GetAsIntPt(); 
+				else
+				{
+					Log("Error : %d : invalid write_mask!", attriLine);
+					return HQ_FAILED;
+				}
 			}
 			else if (!strcmp(attriName, "reference_value"))
 			{
-				sscanf(attriValStr, "%u", &params.twoSideDesc.refVal);
+				if (attriVal.GetAsIntPt() != NULL)
+					params.twoSideDesc.refVal = (hquint32)*attriVal.GetAsIntPt(); 
+				else
+				{
+					Log("Error : %d : invalid reference_value!", attriLine);
+					return HQ_FAILED;
+				}
 			}
 			else if (!strcmp(attriName, "fail_op"))
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid fail_op=%s!", attriValStr);
+					Log("Error : %d : invalid fail_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.twoSideDesc.cwFaceMode.failOp = op;
@@ -1170,7 +1253,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid depth_fail_op=%s!", attriValStr);
+					Log("Error : %d : invalid depth_fail_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.twoSideDesc.cwFaceMode.depthFailOp = op;
@@ -1179,7 +1262,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid pass_op=%s!", attriValStr);
+					Log("Error : %d : invalid pass_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.twoSideDesc.cwFaceMode.passOp = op;
@@ -1188,7 +1271,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				func = m_stencilFuncMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid compare_func=%s!", attriValStr);
+					Log("Error : %d : invalid compare_func=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.twoSideDesc.cwFaceMode.compareFunc = func;
@@ -1197,7 +1280,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid ccw_fail_op=%s!", attriValStr);
+					Log("Error : %d : invalid ccw_fail_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.twoSideDesc.ccwFaceMode.failOp = op;
@@ -1206,7 +1289,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid ccw_depth_fail_op=%s!", attriValStr);
+					Log("Error : %d : invalid ccw_depth_fail_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.twoSideDesc.ccwFaceMode.depthFailOp = op;
@@ -1215,7 +1298,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				op = m_stencilOpMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid ccw_pass_op=%s!", attriValStr);
+					Log("Error : %d : invalid ccw_pass_op=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.twoSideDesc.ccwFaceMode.passOp = op;
@@ -1224,12 +1307,12 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 			{
 				func = m_stencilFuncMap.GetItem(attriValStr, mappedValueFound);
 				if (!mappedValueFound) {
-					Log("Error : invalid ccw_compare_func=%s!", attriValStr);
+					Log("Error : %d : invalid ccw_compare_func=%s!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 				params.twoSideDesc.ccwFaceMode.compareFunc = func;
 			}
-		}//for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+		}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
 
 		//set default ccwFaceMode
 		if (!has_ccw_fail_op)
@@ -1245,7 +1328,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLStencilState(TiXmlElement *stenci
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendElem, HQEngineBlendStateWrapper::CreationParams &params)
+HQReturnVal HQEngineEffectManagerImpl::ParseBlendState(const HQEngineEffectParserNode* blendElem, HQEngineBlendStateWrapper::CreationParams &params)
 {
 	HQBlendOp op;
 	HQBlendFactor factor;
@@ -1258,17 +1341,20 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 	params.isExState = false;
 	params.descEx = HQBlendStateExDesc();
 
-	TiXmlElement * attribute = blendElem->FirstChildElement();
-	for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+	const HQEngineEffectParserNode * attribute = blendElem->GetFirstChild();
+	for (; attribute != NULL; attribute = attribute->GetNextSibling())
 	{
-		const char* attriName = attribute->Value();
-		const char* attriValStr = attribute->GetText();
+		int attriLine = attribute->GetSourceLine();
+		const char* attriName = attribute->GetType();
+		const HQEngineEffectParserNode::ValueType& attriVal = attribute->GetAttribute("value");
+		const char* attriValStr = attriVal.GetAsStringEmptyIfNone();
+
 		if (!strcmp(attriName, "src_factor"))
 		{
 			factor = m_blendFactorMap.GetItem(attriValStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid src_factor=%s", attriValStr);
+				Log("Error : %d : invalid src_factor=%s", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			params.descEx.srcFactor = factor;
@@ -1278,7 +1364,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 			factor = m_blendFactorMap.GetItem(attriValStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid dest_factor=%s", attriValStr);
+				Log("Error : %d : invalid dest_factor=%s", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			params.descEx.destFactor = factor;
@@ -1288,7 +1374,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 			op = m_blendOpMap.GetItem(attriValStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid operator=%s", attriValStr);
+				Log("Error : %d : invalid operator=%s", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			params.isExState = true; params.descEx.blendOp = op;
@@ -1298,7 +1384,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 			op = m_blendOpMap.GetItem(attriValStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid alpha_operator=%s", attriValStr);
+				Log("Error : %d: invalid alpha_operator=%s", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			params.isExState = true; params.descEx.alphaBlendOp = op; 
@@ -1309,7 +1395,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 			factor = m_blendFactorMap.GetItem(attriValStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid alpha_src_factor=%s", attriValStr);
+				Log("Error : %d : invalid alpha_src_factor=%s", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			params.isExState = true; params.descEx.srcAlphaFactor = factor;
@@ -1320,13 +1406,13 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 			factor = m_blendFactorMap.GetItem(attriValStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid alpha_dest_factor=%s", attriValStr);
+				Log("Error : %d : invalid alpha_dest_factor=%s", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			params.isExState = true; params.descEx.destAlphaFactor = factor;
 			alphaDstFactorOverride = true;
 		}
-	}//for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+	}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
 
 	if (params.isExState)
 	{
@@ -1342,7 +1428,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLBlendState(TiXmlElement* blendEle
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::ParseXMLSamplerState(TiXmlElement* textureElem, HQEngineSamplerStateWrapper::CreationParams &params)
+HQReturnVal HQEngineEffectManagerImpl::ParseSamplerState(const HQEngineEffectParserNode* textureElem, HQEngineSamplerStateWrapper::CreationParams &params)
 {
 	HQTexAddressMode tAddrMode;
 	const char defaultfilter[] = "linear";
@@ -1355,17 +1441,20 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLSamplerState(TiXmlElement* textur
 	//initialize default values
 	params = HQEngineSamplerStateWrapper::CreationParams();
 
-	TiXmlAttribute * attribute = textureElem->FirstAttribute();
-	for (; attribute != NULL; attribute = attribute->Next())
+	const HQEngineEffectParserNode * attribute = textureElem->GetFirstChild();
+	for (; attribute != NULL; attribute = attribute->GetNextSibling())
 	{
-		const char* attriName = attribute->Name();
-		const char* attriValStr = attribute->Value();
+		int attriLine = attribute->GetSourceLine();
+		const char* attriName = attribute->GetType();
+		const HQEngineEffectParserNode::ValueType& attriVal = attribute->GetAttribute("value");
+		const char* attriValStr = attriVal.GetAsStringEmptyIfNone();
+
 		if (!strcmp(attriName, "address_u"))
 		{
 			tAddrMode = m_taddrModeMap.GetItem(attriValStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid address_u=%s", attriValStr);
+				Log("Error : %d : invalid address_u=%s", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			params.addressU = tAddrMode;
@@ -1375,18 +1464,32 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLSamplerState(TiXmlElement* textur
 			tAddrMode = m_taddrModeMap.GetItem(attriValStr, mappedValueFound);
 			if (!mappedValueFound)
 			{
-				Log("Error : invalid address_v=%s", attriValStr);
+				Log("Error : %d : invalid address_v=%s", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			params.addressV = tAddrMode;
 		}
 		else if (!strcmp(attriName, "max_anisotropy"))
 		{
-			sscanf(attriValStr, "%u", &params.maxAnisotropy);
+			if (attriVal.GetAsIntPt() != NULL)
+				params.maxAnisotropy = (hquint32)*attriVal.GetAsIntPt(); 
+			else
+			{
+				Log("Error : %d : invalid max_anisotropy!", attriLine);
+				return HQ_FAILED;
+			}
 		}
 		else if (!strcmp(attriName, "border_color")) {
 			hquint32 color;
-			sscanf(attriValStr, "%x", &color);
+
+			if (attriVal.GetAsIntPt() != NULL)
+				color = (hquint32)*attriVal.GetAsIntPt(); 
+			else
+			{
+				Log("Error : %d : invalid border_color!", attriLine);
+				return HQ_FAILED;
+			}
+
 			hqubyte8 r = (color >> 24) & 0xff;
 			hqubyte8 g = (color >> 16) & 0xff;
 			hqubyte8 b = (color >> 8) & 0xff;
@@ -1403,7 +1506,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLSamplerState(TiXmlElement* textur
 		{
 			mip_filter_str = attriValStr;
 		}
-	}//for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+	}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
 
 #if defined HQ_WIN_PHONE_PLATFORM//require mipmap in phone devices
 	if (strcmp(mip_filter_str, "none") == 0)
@@ -1434,7 +1537,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLSamplerState(TiXmlElement* textur
 		params.filterMode = filterMode;
 	else
 	{
-		Log("Error: unrecognized min-filer/mag-filter/mipnap-filter!");
+		Log("Error: %d : unrecognized min-filer/mag-filter/mipnap-filter!", textureElem->GetSourceLine());
 		return HQ_FAILED;
 	}
 	
@@ -1442,15 +1545,15 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLSamplerState(TiXmlElement* textur
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::ParseXMLDepthStencilBuffer(TiXmlElement* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params)
+HQReturnVal HQEngineEffectManagerImpl::ParseDepthStencilBuffer(const HQEngineEffectParserNode* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params)
 {
 	HQDepthStencilFormat format;
 	bool mappedValueFound = false;
 
-	format = m_dsFmtMap.GetItem(dsBufElem->GetText(), mappedValueFound);
+	format = m_dsFmtMap.GetItem(dsBufElem->GetStrAttributeEmptyIfNone("value"), mappedValueFound);
 	if (!mappedValueFound)
 	{
-		Log("Error : invalid depth_stencil_buffer_format=%s!", dsBufElem->GetText());
+		Log("Error : %d : invalid depth_stencil_buffer_format!", dsBufElem->GetSourceLine());
 		return HQ_FAILED;
 	}
 
@@ -1459,7 +1562,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLDepthStencilBuffer(TiXmlElement* 
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem, HQEngineRTGroupWrapper::CreationParams &params)
+HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNode* rtGroupElem, HQEngineRTGroupWrapper::CreationParams &params)
 {
 	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
 	HQEngineDSBufferWrapper::CreationParams dsBufferParams;
@@ -1471,32 +1574,34 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem
 	hquint32 global_height = 0xffffffff;
 	hquint32 width, height;
 
-	TiXmlElement * attribute = rtGroupElem->FirstChildElement();
-	for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+	const HQEngineEffectParserNode * attribute = rtGroupElem->GetFirstChild();
+	for (; attribute != NULL; attribute = attribute->GetNextSibling())
 	{
-		const char* attriName = attribute->Value();
-		const char* attriValStr = attribute->GetText();
+		int attriLine = attribute->GetSourceLine();
+		const char* attriName = attribute->GetType();
+		const HQEngineEffectParserNode::ValueType& attriVal = attribute->GetAttribute("value");
+		const char* attriValStr = attriVal.GetAsStringEmptyIfNone();
 
 		if (!strcmp(attriName, "depth_stencil_buffer_format"))
 		{
 			useDSBuffer = true;
-			if (HQFailed(this->ParseXMLDepthStencilBuffer(attribute, dsBufferParams)))
+			if (HQFailed(this->ParseDepthStencilBuffer(attribute, dsBufferParams)))
 				return HQ_FAILED;
 		}
-		else if (!strncmp(attriName, "target", 6))
+		else if (!strncmp(attriName, "output", 6))
 		{
 			hquint32 targetIdx = 0;
 			HQEngineRenderTargetWrapper rtOutput;
 			const char defaultCubeFaceStr[] = "+x";
 			const char* cubeFaceStr = defaultCubeFaceStr;
-			if (sscanf(attriName, "target%u", &targetIdx) != 1)
+			if (sscanf(attriName, "output%u", &targetIdx) != 1)
 			{
-				Log("Error : invald token %s!", attriName);
+				Log("Error : %d : invald token %s!", attriLine, attriName);
 				return HQ_FAILED;
 			}
 			//get cube face
-			const char *xmlCubeFaceAttrStr = attribute->Attribute("cube_face");
-			if (xmlCubeFaceAttrStr != NULL) cubeFaceStr = xmlCubeFaceAttrStr;
+			const char *scriptCubeFaceAttrStr = attribute->GetStrAttribute("cube_face");
+			if (scriptCubeFaceAttrStr != NULL) cubeFaceStr = scriptCubeFaceAttrStr;
 			
 			if (!strcmp(cubeFaceStr, "+x"))
 				rtOutput.cubeFace = HQ_CTF_POS_X;
@@ -1511,7 +1616,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem
 			else if (!strcmp(cubeFaceStr, "-z"))
 				rtOutput.cubeFace = HQ_CTF_NEG_Z;
 			else {
-				Log("Error : invald cube_face=%s!", cubeFaceStr);
+				Log("Error : %d : invald cube_face=%s!", attriLine, cubeFaceStr);
 				return HQ_FAILED;
 			}
 
@@ -1519,7 +1624,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem
 			rtOutput.outputTexture = resManager->GetTextureResourceSharedPtr(attriValStr);
 			if (rtOutput.outputTexture == NULL || rtOutput.outputTexture->IsRenderTarget() == false)
 			{
-				Log("Error : invald render target resource=%s!", attriValStr);
+				Log("Error : %d : invald render target resource=%s!", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 			
@@ -1535,7 +1640,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem
 				//check if the size is valid
 				if (global_width != width || global_height != height)
 				{
-					Log("Error : invald render target resource=%s! This resource has different size from the rest of the group!", attriValStr);
+					Log("Error : %d : invald render target resource=%s! This resource has different size from the rest of the group!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 
@@ -1548,7 +1653,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseXMLRTGroup(TiXmlElement* rtGroupElem
 
 		}//else if (!strncmp(attriName, "target", 6))
 
-	}//for (; attribute != NULL; attribute = attribute->NextSiblingElement())
+	}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
 
 	params.numOutputs = numOutputs;
 	params.outputs = outputArray;

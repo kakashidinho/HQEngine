@@ -708,7 +708,7 @@ namespace HQWinStoreFileSystem
 
 	void BufferedDataReader::Rewind()
 	{
-		Seek(0, BEGIN);
+		Seek(0, SSO_BEGIN);
 	}
 
 	long long BufferedDataReader::Tell() const
@@ -884,13 +884,13 @@ namespace HQWinStoreFileSystem
 
 		switch (origin)
 		{
-		case BEGIN:
+		case SSO_BEGIN:
 			position = CLAMP_TO_ZERO(offset);
 			break;
-		case CURRENT:
+		case SSO_CURRENT:
 			position = CLAMP_TO_ZERO(currentPosition + offset);
 			break;
-		case END:
+		case SSO_END:
 			if (offset > 0)
 				position = this->totalSize;
 			else
@@ -905,7 +905,7 @@ namespace HQWinStoreFileSystem
 
 	void BufferedDataReader::Rewind()
 	{
-		Seek(0, BEGIN);
+		Seek(0, SSO_BEGIN);
 	}
 
 	long long BufferedDataReader::Tell() const

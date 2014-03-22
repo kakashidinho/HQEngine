@@ -13,7 +13,18 @@ COPYING.txt included with this distribution for more information.
 #include "../HQGrowableArray.h"
 #include "HQEngineResManagerImpl.h"
 
+#include <sstream>
+
 //TO DO: reload resources when device lost
+
+//parser's functions and variables
+extern HQDataReaderStream * hqengine_res_parser_input_stream ;
+extern std::stringstream	* hqengine_res_parser_log_stream ;
+extern HQEngineResParserNode * hqengine_res_parser_root_result;
+
+extern int hqengine_res_parser_scan();
+extern void hqengine_res_parser_recover_from_error();
+extern void hqengine_res_parser_clean_up();
 
 /*------------texture resource----------*/
 HQEngineTextureResImpl::HQEngineTextureResImpl(const char* name)
@@ -47,18 +58,18 @@ HQEngineShaderResImpl::~HQEngineShaderResImpl()
 }
 
 /*----------------resource loading session----------------*/
-HQEngineResLoadSessionImpl::HQEngineResLoadSessionImpl(TiXmlDocument* doc)
-: m_resXml(doc), m_type(HQ_ERLT_XML)
+HQEngineResLoadSessionImpl::HQEngineResLoadSessionImpl(HQEngineResParserNode* root)
+: m_root(root), m_type(HQ_ERLT_STANDARD)
 {
-	if (m_resXml != NULL)
+	if (m_root != NULL)
 	{
 		m_resourceItem = NULL;
-		m_resGroup = m_resXml->FirstChildElement("resources");
+		m_resGroup = m_root->GetFirstChild("resources");
 		while (m_resourceItem == NULL && m_resGroup != NULL)
 		{
-			m_resourceItem = m_resGroup->FirstChildElement();
+			m_resourceItem = m_resGroup->GetFirstChild();
 			if (m_resourceItem == NULL)//try to find in next resource group
-				m_resGroup = m_resGroup->NextSiblingElement("resources");
+				m_resGroup = m_resGroup->GetNextSibling("resources");
 		} 
 	}
 	else
@@ -69,15 +80,15 @@ HQEngineResLoadSessionImpl::HQEngineResLoadSessionImpl(TiXmlDocument* doc)
 
 HQEngineResLoadSessionImpl::~HQEngineResLoadSessionImpl()
 {
-	SafeDelete(m_resXml);
+	HQEngineResParserNode::DeleteTree(m_root);
 }
 
 bool HQEngineResLoadSessionImpl::HasMoreResources() const
 {
 	switch(m_type)
 	{
-	case HQ_ERLT_XML:
-		if (m_resXml == NULL)
+	case HQ_ERLT_STANDARD:
+		if (m_root == NULL)
 			return false;
 		return (m_resourceItem != NULL);
 
@@ -86,25 +97,25 @@ bool HQEngineResLoadSessionImpl::HasMoreResources() const
 	}
 }
 
-TiXmlElement * HQEngineResLoadSessionImpl::CurrentXMLResource()
+const HQEngineResParserNode * HQEngineResLoadSessionImpl::CurrentResource()
 {
-	return m_type == HQ_ERLT_XML ? m_resourceItem: NULL;
+	return m_type == HQ_ERLT_STANDARD ? m_resourceItem: NULL;
 }
 
-TiXmlElement * HQEngineResLoadSessionImpl::NextXMLResource() {
-	if (m_type == HQ_ERLT_XML)
+const HQEngineResParserNode * HQEngineResLoadSessionImpl::NextResource() {
+	if (m_type == HQ_ERLT_STANDARD)
 	{
 		if (m_resourceItem == NULL)
 			return NULL;
-		TiXmlElement * re = m_resourceItem;
+		const HQEngineResParserNode * re = m_resourceItem;
 
-		m_resourceItem = m_resourceItem->NextSiblingElement();//advance to next item
+		m_resourceItem = m_resourceItem->GetNextSibling();//advance to next item
 
 		while (m_resourceItem == NULL && m_resGroup != NULL)//try to find in next group
 		{
-			m_resGroup = m_resGroup->NextSiblingElement("resources");
+			m_resGroup = m_resGroup->GetNextSibling("resources");
 			if (m_resGroup != NULL)
-				m_resourceItem = m_resGroup->FirstChildElement();
+				m_resourceItem = m_resGroup->GetFirstChild();
 		}
 
 		return re;
@@ -126,9 +137,9 @@ HQEngineResManagerImpl::~HQEngineResManagerImpl()
 	this->Log("Released!");
 }
 
-HQReturnVal HQEngineResManagerImpl::AddResourcesFromXML(const char* fileName)
+HQReturnVal HQEngineResManagerImpl::AddResourcesFromFile(const char* fileName)
 {
-	HQEngineResLoadSession * session = this->BeginAddResourcesFromXML(fileName);
+	HQEngineResLoadSession * session = this->BeginAddResourcesFromFile(fileName);
 	if (session == NULL)
 		return HQ_FAILED;
 	
@@ -145,7 +156,7 @@ HQReturnVal HQEngineResManagerImpl::AddResourcesFromXML(const char* fileName)
 	return re;
 }
 
-HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromXML(const char* fileName)
+HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromFile(const char* fileName)
 {
 	HQDataReaderStream* data_stream = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
 	if (data_stream == NULL)
@@ -154,25 +165,27 @@ HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromXML(const c
 		return NULL;
 	}
 
-	TiXmlDocument *doc = new TiXmlDocument();
+	//prepare the parser
+	std::stringstream log_stream;
+	hqengine_res_parser_input_stream = data_stream;
+	hqengine_res_parser_log_stream = &log_stream;
 
-	TiXmlCustomFileStream stream;
-	stream.fileHandle = data_stream;
-	stream.read = &HQEngineHelper::read_datastream;
-	stream.seek = &HQEngineHelper::seek_datastream;
-	stream.tell = &HQEngineHelper::tell_datastream;
-
-	if (doc->LoadFile(stream) == false)
+	//now parse the script
+	if (hqengine_res_parser_scan())
 	{
-		this->Log("Error : Could not load resources from file %s! %d:%d: %s", fileName, doc->ErrorRow(), doc->ErrorCol(), doc->ErrorDesc());
-		delete doc;
+		this->Log("Error : Could not load resources from file %s! %s", fileName, hqengine_res_parser_log_stream->str().c_str());
+		HQEngineHelper::GlobalPoolReleaseAll();
 		data_stream->Release();
 		return NULL;
 	}
-
 	data_stream->Release();
 
-	return HQ_NEW HQEngineResLoadSessionImpl(doc);
+	HQEngineResParserNode *result = hqengine_res_parser_root_result;
+	hqengine_res_parser_root_result = NULL;
+
+	this->Log("Resource loading session from file '%s' started!", fileName);
+
+	return HQ_NEW HQEngineResLoadSessionImpl(result);
 }
 
 bool HQEngineResManagerImpl::HasMoreResources(HQEngineResLoadSession* session)
@@ -191,8 +204,8 @@ HQReturnVal HQEngineResManagerImpl::AddNextResource(HQEngineResLoadSession* sess
 		return HQ_FAILED_NO_MORE_RESOURCE;
 	switch (resLoadSession-> m_type)
 	{
-	case HQ_ERLT_XML:
-		return this->LoadResourceFromXML(resLoadSession->NextXMLResource());
+	case HQ_ERLT_STANDARD:
+		return this->LoadResource(resLoadSession->NextResource());
 	break;
 	} //switch (resLoadSession-> m_type)
 
@@ -206,113 +219,109 @@ HQReturnVal HQEngineResManagerImpl::EndAddResources(HQEngineResLoadSession* sess
 	if (resLoadSession != NULL)
 		delete resLoadSession;
 
+	//release all memory blocks allocated for parser
+	HQEngineHelper::GlobalPoolReleaseAll();
+
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineResManagerImpl::LoadResourceFromXML(TiXmlElement* item)
+HQReturnVal HQEngineResManagerImpl::LoadResource(const HQEngineResParserNode* item)
 {
 	HQReturnVal re = HQ_OK;
-	if (strcmp(item->Value(), "texture") == 0)
+	if (strcmp(item->GetType(), "texture") == 0)
 	{
 		//texture resource
-		if (LoadTextureFromXML(item) != HQ_OK)
+		if (LoadTexture(item) != HQ_OK)
 			re = HQ_FAILED;
 	}
-	else if (strcmp(item->Value(), "shader") == 0)
+	else if (strcmp(item->GetType(), "render_target") == 0)
+	{
+		//texture resource
+		if (LoadTexture(item, true) != HQ_OK)
+			re = HQ_FAILED;
+	}
+	else if (strcmp(item->GetType(), "shader") == 0)
 	{
 		//shader resource
-		if (LoadShaderFromXML(item) != HQ_OK)
+		if (LoadShader(item) != HQ_OK)
 			re = HQ_FAILED;
 	}
 		
 	return re;
 }
 
-HQReturnVal HQEngineResManagerImpl::LoadTextureFromXML(TiXmlElement* textureItem)
+HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* texture_info, bool renderTarget)
 {
-	/*
-	Texture resource format:
-	<texture name="texture1">
-		<type>2d/cube</type> <!-- default to 2D if not specified -->
-		<render_target> <!-- info for render target -->
-			<size> 
-				<width>100</width>
-				<height>100</height>
-			</size>
-			<format>
-				r32f/r16f/rgba32f/rgba16f/rg32f/rg16f/rgba8ub/r8ui/a8ui
-			</format>
-		</render_target>
-		<src generate_mipmap="true/false">image.bmp</src> <!-- image file, "src", "cube_src" and "renderTarget" elements are mutually exclusive -->
-		<cube_src generate_mipmap="true/false">
-			<positive_x>img1.bmp</positive_x>
-			<negative_x>img2.bmp</negative_x>
-			<positive_y>img3.bmp</positive_y>
-			<negative_y>img4.bmp</negative_y>
-			<positive_z>img5.bmp</positive_z>
-			<negative_z>img6.bmp</negative_z>
-		</cube_src>
-	</texture>
-	*/
 	HQTextureType textureType = HQ_TEXTURE_2D;
+	typedef HQEngineResParserNode::ValueType NodeAttrType;
 
 	//get type info
-	TiXmlElement * typeInfo = textureItem->FirstChildElement("type");
+	const HQEngineResParserNode * typeInfo = texture_info->GetFirstChild("type");
 	if (typeInfo != NULL)
 	{
-		if (strcmp(typeInfo->GetText(), "cube") == 0 )
+		const NodeAttrType &value = typeInfo->GetAttribute("value");
+		const char *valueStr = value.GetAsString();
+		if (valueStr != NULL)
 		{
-			textureType = HQ_TEXTURE_CUBE;
+			if (strcmp(valueStr, "cube") == 0 )
+				textureType = HQ_TEXTURE_CUBE;
 		}
 	}
 	//
 	const char * res_Name = NULL;
 	bool genMipmap = false;
-	TiXmlElement * texture_info = NULL;
-	TiXmlElement * texture_info_elem = NULL;
+	const HQEngineResParserNode * texture_info_elem = NULL;
 
-	res_Name = textureItem->Attribute("name");
+	res_Name = texture_info->GetStrAttribute("name");
 	//if texture is render target
-	texture_info = textureItem->FirstChildElement("render_target");
-	if (texture_info != NULL)
+	if (renderTarget)
 	{
 		if (res_Name == NULL)
 		{
-			Log("Error : Cannot create render target texture resource without name!");
+			Log("Error : %d : Cannot create render target texture resource without name!", texture_info->GetSourceLine());
 			return HQ_FAILED;
 		}
 		hquint32 width, height;
 		HQRenderTargetFormat format;
 		bool hasMipmap;
-		const char* hasMipmapStr = texture_info->Attribute("has_mipmap");
+		const char* hasMipmapStr = texture_info->GetStrAttribute("has_mipmap");
 		hasMipmap = hasMipmapStr != NULL? strcmp(hasMipmapStr, "true") == 0: false;
 
 		//size
-		texture_info_elem = texture_info->FirstChildElement("size");
-		if (texture_info_elem == NULL)
-		{
-			Log("Error : Render target texture missing size info!");
-			return HQ_FAILED;
-		}
-		TiXmlElement* widthInfo = texture_info_elem->FirstChildElement("width");
-		TiXmlElement* heightInfo = texture_info_elem->FirstChildElement("height");
+		const HQEngineResParserNode* widthInfo = texture_info->GetFirstChild("width");
+		const HQEngineResParserNode* heightInfo = texture_info->GetFirstChild("height");
 		if (widthInfo == NULL || heightInfo == NULL)
 		{
-			Log("Error : Render target texture missing size info!");
+			Log("Error : %d : Render target texture missing size info!", texture_info->GetSourceLine());
 			return HQ_FAILED;
 		}
-		sscanf(widthInfo->GetText(), "%u", &width);
-		sscanf(heightInfo->GetText(), "%u", &height);
+		const hqint32 * wPtr = widthInfo->GetIntAttributePtr("value");
+		const hqint32 * hPtr = heightInfo->GetIntAttributePtr("value");
+
+		if (wPtr == NULL || hPtr == NULL)
+		{
+			Log("Error : %d : Render target texture has invalid size info!", texture_info->GetSourceLine());
+			return HQ_FAILED;
+		}
+
+		width = (hquint32)*wPtr;
+		height = (hquint32)*hPtr;
 
 		//format
-		TiXmlElement* formatInfo = texture_info->FirstChildElement("format");
+		const HQEngineResParserNode* formatInfo = texture_info->GetFirstChild("format");
 		if (formatInfo == NULL)
 		{
-			Log("Error : Render target texture missing format info!");
+			Log("Error : %d : Render target texture missing format info!", texture_info->GetSourceLine());
 			return HQ_FAILED;
 		}
 
-		const char *formatStr = formatInfo->GetText();
+		const char *formatStr = formatInfo->GetStrAttribute("value");
+		if (formatStr == NULL)
+		{
+			Log("Error : %d : Render target texture has invalid format info!", texture_info->GetSourceLine());
+			return HQ_FAILED;
+		}
+
 		if (!strcmp(formatStr, "r32f"))
 			format = HQ_RTFMT_R_FLOAT32;
 		else if (!strcmp(formatStr, "r16f"))
@@ -333,7 +342,7 @@ HQReturnVal HQEngineResManagerImpl::LoadTextureFromXML(TiXmlElement* textureItem
 			format = HQ_RTFMT_A_UINT8;
 		else
 		{
-			Log("Error : Render target texture has invalid format info!");
+			Log("Error : %d : Render target texture has invalid format info!", texture_info->GetSourceLine());
 			return HQ_FAILED;
 		}
 
@@ -343,18 +352,24 @@ HQReturnVal HQEngineResManagerImpl::LoadTextureFromXML(TiXmlElement* textureItem
 														format,
 														HQ_MST_NONE,
 														textureType);
-	}//if (texture_info != NULL)
+	}//if (renderTarget)
 	else
 	{
-		texture_info = textureItem->FirstChildElement("src");
-		if (texture_info != NULL)
+		const HQEngineResParserNode * texture_image_info = texture_info->GetFirstChild("image");
+		if (texture_image_info != NULL)
 		{
 			const char * src_file_name = NULL;
 			//if texture source is one image only
-			src_file_name = texture_info->GetText();
+			src_file_name = texture_image_info->GetStrAttribute("value");
+			if (src_file_name == NULL)
+			{
+				Log("Error : %d : texture has invalid source image!", texture_image_info->GetSourceLine());
+				return HQ_FAILED;
+			}
+
 
 			//generate mipmap for image?
-			const char* genMipStr = texture_info->Attribute("generate_mipmap");
+			const char* genMipStr = texture_info->GetStrAttribute("generate_mipmap");
 			genMipmap = genMipStr != NULL? strcmp(genMipStr, "true") == 0 : false;
 
 			if (res_Name == NULL) res_Name = src_file_name;
@@ -363,101 +378,87 @@ HQReturnVal HQEngineResManagerImpl::LoadTextureFromXML(TiXmlElement* textureItem
 											src_file_name,
 											genMipmap,
 											textureType);
-		}
-		else if (textureType == HQ_TEXTURE_CUBE) {
-			texture_info = textureItem->FirstChildElement("cube_src");
-			if (texture_info != NULL)
+		}//if (texture_image_info != NULL)
+		else {
+			//if texture source are 6 images
+			const char * src_file_names[6] = {NULL};
+			if (res_Name == NULL)
 			{
-				//if texture source are 6 images
-				const char * src_file_names[6] = {NULL};
-				if (res_Name == NULL)
-				{
-					Log("Error : Cannot create render target texture resource without name!");
-					return HQ_FAILED;
-				}
+				Log("Error : %d : Cannot create render target texture resource without name!", texture_info->GetSourceLine());
+				return HQ_FAILED;
+			}
 
-				const char* genMipStr = texture_info->Attribute("generate_mipmap");
-				genMipmap = genMipStr != NULL? strcmp(genMipStr, "true") == 0 : false;
+			const char* genMipStr = texture_info->GetStrAttribute("generate_mipmap");
+			genMipmap = genMipStr != NULL? strcmp(genMipStr, "true") == 0 : false;
 
-				texture_info_elem = texture_info->FirstChildElement("positive_x");
-				if (texture_info_elem != NULL)
-					src_file_names[0] = texture_info_elem->GetText();
-				else
-				{
-					Log("Error : Cube Texture Reource missing positive_x image!");
-					return HQ_FAILED;
-				}
+			texture_info_elem = texture_info->GetFirstChild("positive_x");
+			if (texture_info_elem != NULL)
+				src_file_names[0] = texture_info_elem->GetStrAttribute("value");
+			else
+			{
+				Log("Error : %d : Cube Texture Reource missing positive_x image!", texture_info->GetSourceLine());
+				return HQ_FAILED;
+			}
 
-				texture_info_elem = texture_info->FirstChildElement("negative_x");
-				if (texture_info_elem != NULL)
-					src_file_names[1] = texture_info_elem->GetText();
-				else
-				{
-					Log("Error : Cube Texture Reource missing negative_x image!");
-					return HQ_FAILED;
-				}
+			texture_info_elem = texture_info->GetFirstChild("negative_x");
+			if (texture_info_elem != NULL)
+				src_file_names[1] = texture_info_elem->GetStrAttribute("value");
+			else
+			{
+				Log("Error : %d : Cube Texture Reource missing negative_x image!", texture_info->GetSourceLine());
+				return HQ_FAILED;
+			}
 
-				texture_info_elem = texture_info->FirstChildElement("positive_y");
-				if (texture_info_elem != NULL)
-					src_file_names[2] = texture_info_elem->GetText();
-				else
-				{
-					Log("Error : Cube Texture Reource missing positive_y image!");
-					return HQ_FAILED;
-				}
+			texture_info_elem = texture_info->GetFirstChild("positive_y");
+			if (texture_info_elem != NULL)
+				src_file_names[2] = texture_info_elem->GetStrAttribute("value");
+			else
+			{
+				Log("Error : %d : Cube Texture Reource missing positive_y image!", texture_info->GetSourceLine());
+				return HQ_FAILED;
+			}
 
-				texture_info_elem = texture_info->FirstChildElement("negative_y");
-				if (texture_info_elem != NULL)
-					src_file_names[3] = texture_info_elem->GetText();
-				else
-				{
-					Log("Error : Cube Texture Reource missing negative_y image!");
-					return HQ_FAILED;
-				}
+			texture_info_elem = texture_info->GetFirstChild("negative_y");
+			if (texture_info_elem != NULL)
+				src_file_names[3] = texture_info_elem->GetStrAttribute("value");
+			else
+			{
+				Log("Error : %d : Cube Texture Reource missing negative_y image!", texture_info->GetSourceLine());
+				return HQ_FAILED;
+			}
 
-				texture_info_elem = texture_info->FirstChildElement("positive_z");
-				if (texture_info_elem != NULL)
-					src_file_names[4] = texture_info_elem->GetText();
-				else
-				{
-					Log("Error : Cube Texture Reource missing positive_z image!");
-					return HQ_FAILED;
-				}
+			texture_info_elem = texture_info->GetFirstChild("positive_z");
+			if (texture_info_elem != NULL)
+				src_file_names[4] = texture_info_elem->GetStrAttribute("value");
+			else
+			{
+				Log("Error : %d : Cube Texture Reource missing positive_z image!", texture_info->GetSourceLine());
+				return HQ_FAILED;
+			}
 
-				texture_info_elem = texture_info->FirstChildElement("negative_z");
-				if (texture_info_elem != NULL)
-					src_file_names[5] = texture_info_elem->GetText();
-				else
-				{
-					Log("Error : Cube Texture Reource missing negative_z image!");
-					return HQ_FAILED;
-				}
+			texture_info_elem = texture_info->GetFirstChild("negative_z");
+			if (texture_info_elem != NULL)
+				src_file_names[5] = texture_info_elem->GetStrAttribute("value");
+			else
+			{
+				Log("Error : %d : Cube Texture Reource missing negative_z image!", texture_info->GetSourceLine());
+				return HQ_FAILED;
+			}
 
-				return this->AddCubeTextureResource(res_Name,
-					src_file_names,
-					genMipmap);
-			}//"cube_src" element
-		}//"src" element
-	}//"render_target" element
+			return this->AddCubeTextureResource(res_Name,
+				src_file_names,
+				genMipmap);
+		}//cube 6 images case
+	}//else of if (renderTarget)
 
-	this->Log("Error : Resource lacks informations.");
+	this->Log("Error : %d : Resource lacks informations.", texture_info->GetSourceLine());
 
 	return HQ_FAILED;
 }
 
-HQReturnVal HQEngineResManagerImpl::LoadShaderFromXML(TiXmlElement* shaderItem)
+HQReturnVal HQEngineResManagerImpl::LoadShader(const HQEngineResParserNode* shaderItem)
 {
-	/*
-	Shader resource format:
-	<shader name="shader1"> <!-- name will be default to source file name -->
-		<type>vertex shader</type> <!-- vertex/pixel/geometry shader. default to vertex -->
-		<src_type>hlsl/glsl/cg/bytecode</src_type> <!-- default is cg -->
-		<entry>main</entry> <!-- entry function. default is 'main'. ignored in bytecode/glsl src_type -->
-		<src>file.txt</src> <!-- source file -->
-		<definition name="name1">value</definition> <!-- macro definition for compiling the source code. Can have more than one or none. -->
-	</shader>
-	*/
-	const char* res_name = shaderItem->Attribute("name");
+	const char* res_name = shaderItem->GetStrAttribute("name");
 	const char* src_file = NULL;
 	const char defaultEntry[] = "main";
 	const char *entry = defaultEntry;
@@ -466,11 +467,12 @@ HQReturnVal HQEngineResManagerImpl::LoadShaderFromXML(TiXmlElement* shaderItem)
 	bool byteCode = false;
 	HQGrowableArray<HQShaderMacro> macros;
 
-	TiXmlElement * item_elem = shaderItem->FirstChildElement();
+	const HQEngineResParserNode * item_elem = shaderItem->GetFirstChild();
 	while(item_elem != NULL)
 	{
-		const char *elemName = item_elem->Value();
-		const char *elemStr = item_elem->GetText();
+		int elemLine = item_elem->GetSourceLine();
+		const char *elemName = item_elem->GetType();
+		const char *elemStr = item_elem->GetStrAttribute("value");
 		//source file
 		if (!strcmp(elemName, "src"))
 		{
@@ -478,15 +480,15 @@ HQReturnVal HQEngineResManagerImpl::LoadShaderFromXML(TiXmlElement* shaderItem)
 		}
 		else if (!strcmp(elemName, "type"))
 		{
-			if (!strcmp(elemStr, "vertex shader"))
+			if (!strcmp(elemStr, "vertex"))
 				shaderType = HQ_VERTEX_SHADER;
-			else if (!strcmp(elemStr, "pixel shader"))
+			else if (!strcmp(elemStr, "pixel"))
 				shaderType = HQ_PIXEL_SHADER;
-			else if (!strcmp(elemStr, "geometry shader"))
+			else if (!strcmp(elemStr, "geometry"))
 				shaderType = HQ_GEOMETRY_SHADER;
 			else
 			{
-				Log("Error : unknown shader type %s!", elemStr);
+				Log("Error : %d : unknown shader type %s!", elemLine, elemStr);
 				return HQ_FAILED;
 			}
 		}//else if (!strcmp(elemName, "type"))
@@ -511,7 +513,7 @@ HQReturnVal HQEngineResManagerImpl::LoadShaderFromXML(TiXmlElement* shaderItem)
 			}
 			else
 			{
-				Log("Error : unknown shader source type %s!", elemStr);
+				Log("Error : %d : unknown shader source type %s!", elemLine, elemStr);
 				return HQ_FAILED;
 			}
 		}//else if (!strcmp(elemName, "src_type"))
@@ -523,23 +525,23 @@ HQReturnVal HQEngineResManagerImpl::LoadShaderFromXML(TiXmlElement* shaderItem)
 		{
 			const char emptyDef[] = "";
 			HQShaderMacro newMacro;
-			newMacro.name = item_elem->Attribute("name");
+			newMacro.name = item_elem->GetStrAttribute("name");
 			newMacro.definition = elemStr != NULL? elemStr : emptyDef;
 			if (newMacro.name == NULL)
 			{
-				Log("Warning : Shader resource loading ignored no named definition!");
+				Log("Warning : %d : Shader resource loading ignored no named definition!", elemLine);
 			}
 			else{
 				macros.Add(newMacro);
 			}
 		}//else if (!strcmp(elemName, "definition"))
 
-		item_elem = item_elem->NextSiblingElement();
+		item_elem = item_elem->GetNextSibling();
 	}//while(item_elem != NULL)
 	
 	if (src_file == NULL)
 	{
-		Log("Error : shader resource missing source file!");
+		Log("Error : %d : shader resource missing source file!", shaderItem->GetSourceLine());
 		return HQ_FAILED;
 	}
 	if (res_name == NULL) res_name = src_file;//if there is no name. default name is source file name

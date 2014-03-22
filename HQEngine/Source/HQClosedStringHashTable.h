@@ -41,6 +41,8 @@ public:
 	/*--------additional methods using C string as key-------------*/
 	bool Find(const char* key , hq_uint32 &foundIndex) const
 	{
+		if (key == NULL)
+			return false;
 		if (this->m_numItems == 0)
 			return false;
 		hq_uint32 hashCode = this->m_hashFunction(key);

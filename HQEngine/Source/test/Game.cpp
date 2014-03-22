@@ -130,7 +130,7 @@ Game::Game()
 	HQEngineApp::GetInstance()->AddFileSearchPath("Assets/test/meshes");
 	HQEngineApp::GetInstance()->AddFileSearchPath("Assets/test/shader");
 
-	char apiResFile[256] = "resourcesD3D11-winrt.xml";
+	char apiResFile[256] = "resourcesD3D11-winrt.script";
 #else
 	//setup file search paths
 	HQEngineApp::GetInstance()->AddFileSearchPath("script");
@@ -139,18 +139,18 @@ Game::Game()
 	HQEngineApp::GetInstance()->AddFileSearchPath("meshes");
 	HQEngineApp::GetInstance()->AddFileSearchPath("shader");
 
-	char apiResFile[256] = "resourcesD3D9.xml";
+	char apiResFile[256] = "resourcesD3D9.script";
 	if (API == D3D11_RENDERER)
-		sprintf(apiResFile, "resourcesD3D11.xml");
+		sprintf(apiResFile, "resourcesD3D11.script");
 	else if (API == OGL_RENDERER)
-		sprintf(apiResFile, "resourcesGL.xml");
+		sprintf(apiResFile, "resourcesGL.script");
 
 #endif
 
 	//load resources
-	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromXML(apiResFile);
-	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromXML("resourcesCommon.xml");
-	HQEngineApp::GetInstance()->GetEffectManager()->AddEffectsFromXML("effects.xml");
+	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromFile(apiResFile);
+	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromFile("resourcesCommon.script");
+	HQEngineApp::GetInstance()->GetEffectManager()->AddEffectsFromFile("effects.script");
 
 
 	//load audio	

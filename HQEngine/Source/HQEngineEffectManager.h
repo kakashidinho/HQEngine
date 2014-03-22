@@ -46,8 +46,8 @@ protected:
 ///
 class HQEngineEffectManager {
 public:
-	virtual HQReturnVal AddEffectsFromXML(const char* fileName) = 0;
-	virtual HQEngineEffectLoadSession* BeginAddEffectsFromXML(const char* fileName) = 0;
+	virtual HQReturnVal AddEffectsFromFile(const char* fileName) = 0;
+	virtual HQEngineEffectLoadSession* BeginAddEffectsFromFile(const char* fileName) = 0;
 	virtual bool HasMoreEffects(HQEngineEffectLoadSession* session) = 0;
 	virtual HQReturnVal AddNextEffect(HQEngineEffectLoadSession* session) = 0;
 	virtual HQReturnVal EndAddEffects(HQEngineEffectLoadSession* session) = 0;///for releasing loading session

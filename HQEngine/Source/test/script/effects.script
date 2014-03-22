@@ -1,0 +1,25 @@
+techniques{
+	technique "mesh-effect"{
+		pass "pass-0"
+		{
+			vertex_shader=vs-mesh
+			pixel_shader=ps-mesh
+			texture0 {
+				min_filter=linear
+				mag_filter=linear
+				mipmap_filter=none
+				source="Bat_Albedo.jpg"
+			}
+			stencil{
+				reference_value=1
+				compare_func=less
+			}
+			depth=full
+			blend {
+				operator=add
+				src_factor="one minus src alpha"
+				dest_factor="src alpha"
+			}
+		}
+	}
+}

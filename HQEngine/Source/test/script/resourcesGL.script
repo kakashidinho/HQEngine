@@ -1,0 +1,22 @@
+
+resources{
+	shader vs-mesh
+	{
+		type=vertex
+		src_type=glsl
+		src="vs-mesh.txt"
+		define TEXTURE_COLOR = 0
+		define NOT_ORIGIN
+		define NUNIFORM_BUFFER
+	}
+	
+	shader ps-mesh
+	{
+		type=pixel
+		src_type=glsl
+		src="ps-mesh.txt"
+		define TEXTURE_COLOR = 0
+		define NOT_ORIGIN
+		define NUNIFORM_BUFFER
+	}
+}

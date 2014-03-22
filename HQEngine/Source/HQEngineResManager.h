@@ -56,8 +56,8 @@ public:
 		</shader>
 	</resources>
 	*/
-	virtual HQReturnVal AddResourcesFromXML(const char* fileName) = 0;
-	virtual HQEngineResLoadSession* BeginAddResourcesFromXML(const char* fileName) = 0;
+	virtual HQReturnVal AddResourcesFromFile(const char* fileName) = 0;
+	virtual HQEngineResLoadSession* BeginAddResourcesFromFile(const char* fileName) = 0;
 	virtual bool HasMoreResources(HQEngineResLoadSession* session) = 0;
 	virtual HQReturnVal AddNextResource(HQEngineResLoadSession* session) = 0;
 	virtual HQReturnVal EndAddResources(HQEngineResLoadSession* session) = 0;///for releasing loading session

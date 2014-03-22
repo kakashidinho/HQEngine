@@ -1,0 +1,6 @@
+resources {
+	texture "Bat_Albedo.jpg"
+	{
+		image="Bat_Albedo.jpg"
+	}
+}

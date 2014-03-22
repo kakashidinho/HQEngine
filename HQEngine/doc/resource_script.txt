@@ -1,0 +1,47 @@
+Basic Format:
+resources {
+	texture 
+	shader 
+	.
+	.
+	.
+}
+
+Texture resource format, can be one of the following:
+	render_target name {
+		type=2d/cube // default to 2D if not specified 
+		has_mipmap=true/false  //default is false
+		width=100
+		height=100
+		
+		format=r32f/r16f/rgba32f/rgba16f/rg32f/rg16f/rgba8ub/r8ui/a8ui
+	}
+	/* If not specified, name will be set to file name in one image source case. In other cases, no default name, resource will not be loaded if there is there's no name specified */
+	texture name 
+	{
+		type=2d/cube // default to 2D if not specified 
+		generate_mipmap=true/false //default is false
+		image="image.bmp"
+	}
+	
+	texture name 
+	{
+		generate_mipmap=true/false //default is false
+		positive_x="img1.bmp"
+		negative_x="img2.bmp"
+		positive_y="img3.bmp"
+		negative_y="img4.bmp"
+		positive_z="img5.bmp"
+		negative_z="img6.bmp"
+	}
+	
+Shader resource format:
+	//name will be source file name if not being specified.
+	shader name
+	{
+		type=vertex  // vertex/pixel/geometry shader. default is vertex 
+		src_type=hlsl/glsl/cg/bytecode   default is cg 
+		entry=main			// entry function. default is 'main'. ignored in bytecode/glsl "src_type" 
+		src="file.txt" 		// source file 
+		define name [=value]	// macro definition for compiling the source code. Can have more than one or none. -->
+	}

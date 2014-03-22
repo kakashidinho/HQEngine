@@ -111,7 +111,7 @@ struct OneTimeInit
 #if defined WIN32 || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #	if defined (_DEBUG) || defined(DEBUG)
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_crtBreakAlloc = 1053;
+	//_crtBreakAlloc = 872;
 
 #	endif
 #endif

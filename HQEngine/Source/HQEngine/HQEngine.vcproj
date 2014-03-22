@@ -482,6 +482,10 @@
 				RelativePath=".\HQEngineResManagerImpl.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\HQEngineResParserCommon.cpp"
+				>
+			</File>
 			<Filter
 				Name="win32"
 				>
@@ -1391,10 +1395,10 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="tinyxml"
+				Name="generated_parser_code"
 				>
 				<File
-					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinystr.cpp"
+					RelativePath=".\gen_effect_script_parser.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1438,7 +1442,60 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinyxml.cpp"
+					RelativePath=".\gen_effect_script_parser.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gen_effect_script_tokens.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\gen_res_script_parser.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1482,13 +1539,18 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinyxmlerror.cpp"
+					RelativePath=".\gen_res_script_parser.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gen_res_script_tokens.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
@@ -1497,6 +1559,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mode/GnuWin32/include"
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
@@ -1505,6 +1568,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mode/GnuWin32/include"
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
@@ -1513,6 +1577,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mode/GnuWin32/include"
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
@@ -1521,51 +1586,228 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../ThirdParty-mode/GnuWin32/include"
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
 				</File>
+			</Filter>
+			<Filter
+				Name="parser_code"
+				>
 				<File
-					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinyxmlparser.cpp"
+					RelativePath=".\effect_script_parser.y"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
 						>
 						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
 						>
 						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release static CRT|Win32"
 						>
 						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug static CRT|Win32"
 						>
 						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release noptimize|Win32"
 						>
 						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\effect_script_tokens.l"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static CRT|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static CRT|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\res_script_parser.y"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static CRT|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static CRT|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="bison   $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_$(InputName).cpp $(InputName).y"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\res_script_tokens.l"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static CRT|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static CRT|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
 				</File>
@@ -1629,6 +1871,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HQEngineResParserCommon.h"
+				>
+			</File>
+			<File
 				RelativePath=".\HQEngineWindow.h"
 				>
 			</File>
@@ -1652,18 +1898,6 @@
 				RelativePath=".\targetver.h"
 				>
 			</File>
-			<Filter
-				Name="tinyxml"
-				>
-				<File
-					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinystr.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\ThirdParty-mod\tinyxml\tinyxml.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

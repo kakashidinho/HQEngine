@@ -13,7 +13,7 @@ Current status
 	* Images loader. (supports various file formats including compressed ones used by OpenGL and Direct3D like DXT and ETC)
 	* Rendering API layer. (supports Direct3D (9/11), OpenGL (ES) back-ends)
 	* Audio layer. (supports OpenAL and XAudio 2 back-ends)
-	* XML-based resources and effects scripting
+	* Basic resources and effects scripting
 	* Single code-base for Window creation and Game loop. (hides the setting up of window in various platforms)
 	* Threading system. (supports win32, C++11, pthread back-ends)
 	* Template hash table, memory alignment, linked list, stack.  (this removes the dependence of C++ STL in some platforms not supporting it, or not supporting C++11)
@@ -70,7 +70,7 @@ Folder structure
 		* HQEngineIOS. (IOS 5.0+ version)
 	* Linux. (linux's build scripts)
 - samples. (sample codes)
-- tools. (contains support tools' code)
+- tools. (contains supporting tools' code (incomplete) as well as third party tools)
 	* HQShaderCompiler. (has some utility projects for compiling shader in HQEngine format)
 - ThirdParty-mod. (contains code/libraries from third parties)
 	* Android-OpenAL-soft. (OpenAL library for Android)

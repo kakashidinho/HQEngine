@@ -1,0 +1,23 @@
+resources{
+	shader vs-mesh
+	{
+		type=vertex
+		src_type=hlsl
+		entry=VS
+		src="hlsl-mesh.txt"
+		define TEXTURE_COLOR = 0
+		define BLENDWEIGHT3 = 1
+		define TEXTURE_BUFFER= 0
+	}
+	
+	shader ps-mesh
+	{
+		type=pixel
+		src_type=hlsl
+		entry=PS
+		src="hlsl-mesh.txt"
+		define TEXTURE_COLOR = 0
+		define BLENDWEIGHT3 = 1
+		define TEXTURE_BUFFER= 0
+	}
+}

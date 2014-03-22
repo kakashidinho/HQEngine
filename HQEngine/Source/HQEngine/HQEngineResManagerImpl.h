@@ -14,8 +14,8 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEngineResManager.h"
 #include "../HQLoggableObject.h"
 #include "../HQSharedPointer.h"
-#include "../../../ThirdParty-mod/tinyxml/tinyxml.h"
 #include "HQEngineCommonInternal.h"
+#include "HQEngineResParserCommon.h"
 
 #ifdef WIN32
 #	pragma warning( push )
@@ -60,24 +60,24 @@ private:
 #endif
 
 enum HQEngineResLoadType {
-	HQ_ERLT_XML
+	HQ_ERLT_STANDARD
 };
 
 //resource loading session
 class HQEngineResLoadSessionImpl: public HQEngineResLoadSession{
 public:
-	HQEngineResLoadSessionImpl(TiXmlDocument* doc);
+	HQEngineResLoadSessionImpl(HQEngineResParserNode* root);
 	~HQEngineResLoadSessionImpl();
 	bool HasMoreResources() const;
-	TiXmlElement * CurrentXMLResource();
-	TiXmlElement * NextXMLResource();//advances to next resource item and returns current resource item
+	const HQEngineResParserNode * CurrentResource();
+	const HQEngineResParserNode * NextResource();//advances to next resource item and returns current resource item
 
-	const HQEngineResLoadType m_type;
+	HQEngineResLoadType m_type;
 	union {
 		struct{
-			TiXmlDocument * m_resXml;
-			TiXmlElement* m_resGroup;
-			TiXmlElement* m_resourceItem;
+			HQEngineResParserNode * m_root;
+			const HQEngineResParserNode* m_resGroup;
+			const HQEngineResParserNode* m_resourceItem;
 		};
 	};
 };
@@ -88,8 +88,8 @@ public:
 	HQEngineResManagerImpl(HQLogStream* stream, bool flushLog);
 	~HQEngineResManagerImpl();
 
-	virtual HQReturnVal AddResourcesFromXML(const char* fileName);
-	virtual HQEngineResLoadSession* BeginAddResourcesFromXML(const char* fileName);
+	virtual HQReturnVal AddResourcesFromFile(const char* fileName);
+	virtual HQEngineResLoadSession* BeginAddResourcesFromFile(const char* fileName);
 	virtual bool HasMoreResources(HQEngineResLoadSession* session);
 	virtual HQReturnVal AddNextResource(HQEngineResLoadSession* session);
 	virtual HQReturnVal EndAddResources(HQEngineResLoadSession* session);
@@ -135,9 +135,9 @@ public:
 	virtual HQReturnVal RemoveShaderResource(HQEngineShaderResource* res);
 	virtual void RemoveAllResources();
 private:
-	HQReturnVal LoadResourceFromXML(TiXmlElement* resource);
-	HQReturnVal LoadTextureFromXML(TiXmlElement* textureItem);
-	HQReturnVal LoadShaderFromXML(TiXmlElement* shaderItem);
+	HQReturnVal LoadResource(const HQEngineResParserNode* resource);
+	HQReturnVal LoadTexture(const HQEngineResParserNode* textureItem, bool renderTarget = false);
+	HQReturnVal LoadShader(const HQEngineResParserNode* shaderItem);
 
 
 	HQEngineStringHashTable<HQSharedPtr<HQEngineTextureResImpl> > m_textures;
