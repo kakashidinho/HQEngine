@@ -10,6 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 %{
 	#include "HQEngineCommonInternal.h"
+
 	#include "HQEngineResParserCommon.h"
 	
 	#include <sstream>

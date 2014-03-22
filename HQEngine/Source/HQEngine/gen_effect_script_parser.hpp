@@ -67,7 +67,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 41 "effect_script_parser.y"
+#line 42 "effect_script_parser.y"
 
 	struct {
 		int line;

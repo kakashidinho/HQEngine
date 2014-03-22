@@ -452,12 +452,6 @@
     <ClCompile Include="..\..\..\..\Source\test\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="Assets\test\script\effects.xml" />
-    <Xml Include="Assets\test\script\resourcesCommon.xml" />
-    <Xml Include="Assets\test\script\resourcesD3D11-winrt.xml" />
-    <Xml Include="Assets\test\script\resourcesD3D11.xml" />
-    <Xml Include="Assets\test\script\resourcesD3D9.xml" />
-    <Xml Include="Assets\test\script\resourcesGL.xml" />
     <Xml Include="WMAppManifest.xml">
       <SubType>Designer</SubType>
     </Xml>
@@ -850,6 +844,314 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</DeploymentContent>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\..\Source\test\script\effects.script">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</TreatOutputAsContent>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesCommon.script">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</TreatOutputAsContent>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D11-winrt.script">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</TreatOutputAsContent>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D11.script">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</TreatOutputAsContent>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D9.script">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</TreatOutputAsContent>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesGL.script">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">xcopy /q /y  %(FullPath)  $(OutDir)Assets\test\script</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</TreatOutputAsContent>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsPhone\v$(TargetPlatformVersion)\Microsoft.Cpp.WindowsPhone.$(TargetPlatformVersion).targets" />

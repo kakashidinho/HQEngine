@@ -42,6 +42,7 @@
   <ItemGroup>
     <None Include="test_TemporaryKey.pfx" />
     <None Include="ClassDiagram.cd" />
+    <None Include="..\..\..\..\Source\test\script\effects.script" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\test\meshes\Bat_Albedo.jpg">
@@ -64,11 +65,10 @@
     <Media Include="Assets\test\meshes\bat.hqmesh" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="Assets\test\script\effects.xml" />
-    <Xml Include="Assets\test\script\resourcesCommon.xml" />
-    <Xml Include="Assets\test\script\resourcesD3D9.xml" />
-    <Xml Include="Assets\test\script\resourcesD3D11.xml" />
-    <Xml Include="Assets\test\script\resourcesD3D11-winrt.xml" />
-    <Xml Include="Assets\test\script\resourcesGL.xml" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesCommon.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D11-winrt.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D11.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D9.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesGL.script" />
   </ItemGroup>
 </Project>

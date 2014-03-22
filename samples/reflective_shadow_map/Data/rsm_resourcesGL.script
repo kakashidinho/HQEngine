@@ -1,0 +1,51 @@
+resources {
+	shader "noise_decoding_vs" // name will be default to source file name 
+	{
+		type="vertex"
+		src_type="glsl"
+		src="noise_decoding-compiled-cg.glslv" 			/* source file */
+	}
+	
+	shader "noise_decoding_ps" { 			/* name will be default to source file name */
+		type="pixel"
+		src_type="glsl"
+		src="noise_decoding-compiled-cg.glslf" 			/* source file */
+	}
+	
+	shader "depth-pass_vs" 	{		/* name will be default to source file name */
+		type="vertex"
+		src_type="glsl"
+		src="depth-pass-compiled-cg.glslv" 			/* source file */
+	}
+	
+	shader "depth-pass_ps" { 			/* name will be default to source file name */
+		type="pixel"
+		src_type="glsl"
+		src="depth-pass-compiled-cg.glslf" 			/* source file */
+	}
+	
+	shader "lowres-pass_vs" { 			/* name will be default to source file name */
+		type="vertex"
+		src_type="glsl"
+		src="lowres-pass-compiled-cg.glslv" 			/* source file */
+	}
+	
+	shader "lowres-pass_ps" { 			/* name will be default to source file name */
+		type="pixel"
+		src_type="glsl"
+		src="lowres-pass-compiled-cg.glslf" 			/* source file */
+	}
+	
+	
+	shader "final-gathering_vs" { 			/* name will be default to source file name */
+		type="vertex"
+		src_type="glsl"
+		src="final-gathering-compiled-cg.glslv" 			/* source file */
+	}
+	
+	shader "final-gathering_ps" { 			/* name will be default to source file name */
+		type="pixel"
+		src_type="glsl"
+		src="final-gathering-compiled-cg.glslf" 			/* source file */
+	}
+}

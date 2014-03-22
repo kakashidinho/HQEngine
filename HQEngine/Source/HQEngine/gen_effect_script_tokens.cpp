@@ -692,7 +692,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 54 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 53 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 
 
 #line 699 "gen_effect_script_tokens.cpp"
@@ -788,137 +788,137 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 56 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 55 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {   ;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 58 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 57 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {return SEMI_COLON; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 60 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 59 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {return LBRACE;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 61 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 60 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {return RBRACE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 62 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 61 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {BEGIN(COMMENT_LINE);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 63 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 62 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {BEGIN(COMMENT_BLOCK);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 65 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 64 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {SAVE_LINE;  return (TECHNIQUES_GROUP_KEYWORD);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 66 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 65 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {SAVE_LINE;  return (TECHNIQUE_KEYWORD);}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 67 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 66 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {SAVE_LINE;  return (PASS_KEYWORD);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 68 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 67 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {SAVE_LINE;  return (BLEND_KEYWORD);}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 69 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 68 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {SAVE_LINE;	 return (STENCIL_KEYWORD); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 70 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 69 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {SAVE_LINE;  return (OUTPUTS_KEYWORD);}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 71 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 70 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {SAVE_LINE;  return (BORDER_COLOR_KEYWORD);}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 73 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 72 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (TEXUNIT);}	
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 74 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 73 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (OUTPUT);}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 77 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 76 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 { SAVE_LINE; return (EQUAL);}	
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 78 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 77 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng);  return (CUBE_FACE);}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 81 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 80 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {  SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng);  return IDENTIFIER; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 82 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 81 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {  SAVE_LINE; yylval.lex.fconst = strtod(yytext, NULL); return (FLOATCONSTANT); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 83 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 82 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {  SAVE_LINE; yylval.lex.fconst = strtod(yytext, NULL); return (FLOATCONSTANT); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 84 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 83 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {  SAVE_LINE; yylval.lex.fconst = strtod(yytext, NULL); return (FLOATCONSTANT); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 85 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 84 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {  SAVE_LINE; yylval.lex.fconst = strtod(yytext, NULL); return (FLOATCONSTANT); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 87 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 86 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {  SAVE_LINE; yylval.lex.iconst = (hqint32)strtol(yytext, NULL, 0); return (INTCONSTANT); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 88 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 87 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {  SAVE_LINE; yylval.lex.iconst = (hqint32)strtol(yytext, NULL, 0); return (INTCONSTANT); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 89 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 88 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {  SAVE_LINE; yylval.lex.iconst = (hqint32)strtol(yytext, NULL, 0); return (INTCONSTANT); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 91 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 90 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 { SAVE_LINE;  yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext + 1, yyleng - 2);  return STRING_CONST; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 93 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 92 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {	 
 	char errMsg[256]; 
 	sprintf(errMsg, "unexpected character %s", yytext); 
@@ -929,40 +929,40 @@ YY_RULE_SETUP
 
 case 28:
 YY_RULE_SETUP
-#line 102 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 101 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 BEGIN(INITIAL);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 103 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 102 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 // eat comment in chunks
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 104 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 103 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 // eat the lone star
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 105 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 104 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 yylineno++;
 	YY_BREAK
 
 
 case 32:
 YY_RULE_SETUP
-#line 109 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 108 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 {	BEGIN(INITIAL);		yylineno++;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 110 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 109 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 // eat comment in chunks
 	YY_BREAK
 
 case 34:
 YY_RULE_SETUP
-#line 113 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 112 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 ECHO;
 	YY_BREAK
 #line 969 "gen_effect_script_tokens.cpp"
@@ -1851,7 +1851,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 113 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
+#line 112 "e:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_tokens.l"
 
 
 void hqengine_effect_parser_clean_up_lexer(){

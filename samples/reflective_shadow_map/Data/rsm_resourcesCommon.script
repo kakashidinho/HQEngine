@@ -1,0 +1,80 @@
+resources {
+	texture "random_factors_img" {
+		image="random_factors_20x20.tga"
+	}
+	/* render targets */
+	render_target "decoded_random_factors_img" {
+		width=20
+		height=20
+			
+		format=rgba16f
+		
+	}
+	
+	/*---------------- for depth pass -------------------------*/
+	render_target "depth_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=512
+		height=512
+			
+		format=r32f
+		
+	}
+	render_target "world_pos_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=512
+		height=512
+			
+		format=rgba16f
+		
+	}
+	render_target "world_normal_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=512
+		height=512
+			
+		format=rgba16f
+		
+	}
+	render_target "flux_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=512
+		height=512
+			
+		format=rgba8ub
+		
+	}
+	
+	/* for low res pass */
+	render_target "low_illumination_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=128
+		height=128
+			
+		format=rgba8ub
+		
+	}
+	render_target "low_world_pos_img" {
+		 /* info for render target. "has_mipmap" default is false. */
+			 
+		width=128
+		height=128
+			
+		format=rgba32f
+		
+	}
+	render_target "low_world_normal_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=128
+		height=128
+			
+		format=rgba16f
+		
+	}
+}

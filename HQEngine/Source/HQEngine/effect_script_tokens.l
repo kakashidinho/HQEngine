@@ -38,7 +38,6 @@ extern "C" int yywrap() { return 1; }
 
 %option   yylineno
 %option	  never-interactive
-%option   outfile="gen_effect_script_tokens.cpp"
 
 %x	COMMENT_BLOCK
 %x	COMMENT_LINE

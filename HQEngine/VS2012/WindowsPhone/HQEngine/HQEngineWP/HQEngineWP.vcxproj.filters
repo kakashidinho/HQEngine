@@ -77,8 +77,8 @@
     <Filter Include="Source\HQEngine\Android">
       <UniqueIdentifier>{3168db69-6e62-40f7-8470-edda4eef7826}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\tinyxml">
-      <UniqueIdentifier>{d29408f1-4564-401c-b490-79c6f0f1a69c}</UniqueIdentifier>
+    <Filter Include="Source\HQEngine\res_parser">
+      <UniqueIdentifier>{d04f4a4a-f0d3-4a5b-b6c8-d4959f10532e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -581,11 +581,14 @@
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.h">
       <Filter>Source\HQEngine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.h">
-      <Filter>Source\tinyxml</Filter>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\gen_effect_script_parser.hpp">
+      <Filter>Source\HQEngine\res_parser</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.h">
-      <Filter>Source\tinyxml</Filter>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\gen_res_script_parser.hpp">
+      <Filter>Source\HQEngine\res_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResParserCommon.h">
+      <Filter>Source\HQEngine\res_parser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1045,17 +1048,20 @@
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.cpp">
       <Filter>Source\HQEngine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.cpp">
-      <Filter>Source\tinyxml</Filter>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\gen_effect_script_parser.cpp">
+      <Filter>Source\HQEngine\res_parser</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.cpp">
-      <Filter>Source\tinyxml</Filter>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\gen_effect_script_tokens.cpp">
+      <Filter>Source\HQEngine\res_parser</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlerror.cpp">
-      <Filter>Source\tinyxml</Filter>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\gen_res_script_parser.cpp">
+      <Filter>Source\HQEngine\res_parser</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlparser.cpp">
-      <Filter>Source\tinyxml</Filter>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\gen_res_script_tokens.cpp">
+      <Filter>Source\HQEngine\res_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResParserCommon.cpp">
+      <Filter>Source\HQEngine\res_parser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1076,6 +1082,18 @@
     </None>
     <None Include="..\..\..\..\Source\BaseImpl\HQFFEmuShaderD3D1x.hlsl">
       <Filter>Source\HQRenderer\BaseImplement</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\HQEngine\effect_script_parser.y">
+      <Filter>Source\HQEngine\res_parser</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\HQEngine\effect_script_tokens.l">
+      <Filter>Source\HQEngine\res_parser</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\HQEngine\res_script_parser.y">
+      <Filter>Source\HQEngine\res_parser</Filter>
+    </None>
+    <None Include="..\..\..\..\Source\HQEngine\res_script_tokens.l">
+      <Filter>Source\HQEngine\res_parser</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

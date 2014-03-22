@@ -1,0 +1,110 @@
+techniques{
+	technique "decode_random_factors" { /*  must specify technique name  */
+		pass "0" {
+			vertex_shader=noise_decoding_vs
+			pixel_shader=noise_decoding_ps
+			texture0 {
+				min_filter="point" mag_filter="point" mipmap_filter="none"
+				address_u="clamp" address_v="clamp"
+				source=random_factors_img
+			}
+			outputs {  /*  if not specified, default render target is used  */
+				output0=decoded_random_factors_img 
+			}
+		}
+	}
+	technique "rsm" { /*  must specify technique name  */
+		pass "depth-pass" {
+			vertex_shader="depth-pass_vs"
+			pixel_shader="depth-pass_ps"
+			depth=full
+			cull=ccw
+			outputs {  /*  if not specified, default render target is used  */
+				output0=depth_img 
+				output1=world_pos_img 
+				output2=world_normal_img 
+				output3=flux_img 
+				depth_stencil_buffer_format=d24s8
+			}
+		}
+		pass "lowres-pass" {
+			vertex_shader="lowres-pass_vs"
+			pixel_shader="lowres-pass_ps"
+			depth=full
+			cull=ccw
+			outputs {  /*  if not specified, default render target is used  */
+				output0=low_illumination_img 
+				output1=low_world_pos_img 
+				output2=low_world_normal_img 
+				depth_stencil_buffer_format=d24s8
+			}
+			texture0 {
+				min_filter="point" mag_filter="point" mipmap_filter="none"
+				address_u="clamp" address_v="clamp"
+				source=decoded_random_factors_img
+			}
+			texture1 {
+				min_filter="linear" mag_filter="linear" mipmap_filter="none"
+				address_u="border" address_v="border" border_color=0 0 0 255
+				source=world_pos_img
+			}
+			texture2 {
+				min_filter="linear" mag_filter="linear" mipmap_filter="none"
+				address_u="border" address_v="border" border_color=0 0 0 255
+				source=world_normal_img
+			}
+			texture3 {
+				min_filter="linear" mag_filter="linear" mipmap_filter="none"
+				address_u="border" address_v="border" border_color=0 0 0 255
+				source=flux_img
+			}
+		}
+		
+		pass "final-gathering" {
+			vertex_shader="final-gathering_vs"
+			pixel_shader="final-gathering_ps"
+			depth=full
+			cull=ccw
+			texture0 {
+				min_filter="point" mag_filter="point" mipmap_filter="none"
+				address_u="clamp" address_v="clamp"
+				source=depth_img
+			}
+			texture1 {
+				min_filter="linear" mag_filter="linear" mipmap_filter="none"
+				address_u="border" address_v="border" border_color=0 0 0 255
+				source=world_pos_img
+			}
+			texture2 {
+				min_filter="linear" mag_filter="linear" mipmap_filter="none"
+				address_u="border" address_v="border" border_color=0 0 0 255
+				source=world_normal_img
+			}
+			texture3 {
+				min_filter="linear" mag_filter="linear" mipmap_filter="none"
+				address_u="border" address_v="border" border_color=0 0 0 255
+				source=flux_img
+			}
+			texture4 {
+				min_filter="point" mag_filter="point" mipmap_filter="none"
+				address_u="clamp" address_v="clamp"
+				source=decoded_random_factors_img
+			}
+			texture5 {
+				min_filter="point" mag_filter="point" mipmap_filter="none"
+				address_u="clamp" address_v="clamp"
+				source=low_illumination_img
+			}
+			texture6 {
+				min_filter="point" mag_filter="point" mipmap_filter="none"
+				address_u="clamp" address_v="clamp"
+				source=low_world_pos_img
+			}
+			texture7 {
+				min_filter="point" mag_filter="point" mipmap_filter="none"
+				address_u="clamp" address_v="clamp"
+				source=low_world_normal_img
+			}
+		}
+	}
+}

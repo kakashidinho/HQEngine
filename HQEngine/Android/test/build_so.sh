@@ -1,6 +1,10 @@
 #!/bin/bash
+
+source generate_engine_parsers.sh
+
 cd ../HQEngine
 source setEnv.sh
+
 $ndk_build_script -j 8 "$@"
 
 cd ../HQAudio

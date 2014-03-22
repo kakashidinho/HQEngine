@@ -1658,7 +1658,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ -ogen_$(InputName).cpp $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1668,7 +1668,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ -ogen_$(InputName).cpp $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1678,7 +1678,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ -ogen_$(InputName).cpp $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1688,7 +1688,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ -ogen_$(InputName).cpp $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1698,7 +1698,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_effect_parser_ -ogen_$(InputName).cpp $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1766,7 +1766,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ -ogen_$(InputName).cpp  $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1776,7 +1776,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ -ogen_$(InputName).cpp  $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1786,7 +1786,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ -ogen_$(InputName).cpp  $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1796,7 +1796,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ -ogen_$(InputName).cpp  $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>
@@ -1806,7 +1806,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="flex $(InputPath)"
-							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ $(InputPath)"
+							CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_res_parser_ -ogen_$(InputName).cpp  $(InputPath)"
 							Outputs="gen_$(InputName).cpp"
 						/>
 					</FileConfiguration>

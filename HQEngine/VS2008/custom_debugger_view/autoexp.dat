@@ -3006,12 +3006,15 @@ tagPROPVARIANT|tagVARIANT|PROPVARIANT|VARIANT{
 HQLinkedList<*,*>{
 	children
 	(
-		#list
-		(
-			head : $e.m_pRoot,
-			size : $e.m_size,
-			next : m_pNext
-		) : $e.m_element
+		#(
+			#list
+			(
+				head : *$e.m_pRoot,
+				size : $e.m_size,
+				next : m_pNext
+			) : $e.m_element, 
+			raw_view:  [$c,!]
+		)
 	)
 	preview
 	(

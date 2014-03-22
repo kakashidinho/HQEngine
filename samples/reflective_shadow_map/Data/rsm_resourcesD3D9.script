@@ -1,0 +1,58 @@
+resources {
+	shader "noise_decoding_vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=cg  			/* default is cg */
+		entry=VS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="noise_decoding.cg" 			/* source file */
+	}
+	
+	shader "noise_decoding_ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=cg  			/* default is cg */
+		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="noise_decoding.cg" 			/* source file */
+	}
+	
+	shader "depth-pass_vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=cg  			/* default is cg */
+		entry=VS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="depth-pass.cg" 			/* source file */
+	}
+	
+	shader "depth-pass_ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=cg  			/* default is cg */
+		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="depth-pass.cg" 			/* source file */
+	}
+	
+	shader "lowres-pass_vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=cg  			/* default is cg */
+		entry=VS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="lowres-pass.cg" 			/* source file */
+	}
+	
+	shader "lowres-pass_ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=cg  			/* default is cg */
+		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="lowres-pass.cg" 			/* source file */
+	}
+	
+	
+	shader "final-gathering_vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=cg  			/* default is cg */
+		entry=VS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="final-gathering.cg" 			/* source file */
+	}
+	
+	shader "final-gathering_ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=cg  			/* default is cg */
+		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="final-gathering.cg" 			/* source file */
+	}
+}

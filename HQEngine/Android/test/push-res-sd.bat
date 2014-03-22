@@ -16,8 +16,8 @@ adb push shader/ps-mesh.txt %DATA_PATH%/shader/ps-mesh.txt
 adb push meshes/bat.hqmesh %DATA_PATH%/meshes/bat.hqmesh
 adb push meshes/bat.hqanimation %DATA_PATH%/meshes/bat.hqanimation
 adb push meshes/Bat_Albedo.jpg  %DATA_PATH%/meshes/Bat_Albedo.jpg
-adb push script/effects.xml %DATA_PATH%/script/effects.xml
-adb push script/resourcesGL.xml %DATA_PATH%/script/resourcesGL.xml
-adb push script/resourcesCommon.xml %DATA_PATH%/script/resourcesCommon.xml
+adb push script/effects.script %DATA_PATH%/script/effects.script
+adb push script/resourcesGL.script %DATA_PATH%/script/resourcesGL.script
+adb push script/resourcesCommon.script %DATA_PATH%/script/resourcesCommon.script
 
 popd

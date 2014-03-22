@@ -39,7 +39,6 @@ void hqengine_res_parser_clean_up_lexer();
 
 %option   yylineno
 %option	  never-interactive
-%option   outfile="gen_res_script_tokens.cpp"
 
 %x	COMMENT_BLOCK
 %x	COMMENT_LINE

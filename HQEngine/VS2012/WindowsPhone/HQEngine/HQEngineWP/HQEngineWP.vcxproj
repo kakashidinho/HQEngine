@@ -448,8 +448,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.h" />
-    <ClInclude Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h" />
@@ -506,12 +504,15 @@
     <ClInclude Include="..\..\..\..\Source\HQEngineRenderer\HQRendererDeviceDebugLayer.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngineRenderer\HQReturnValDebugString.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngineResManager.h" />
+    <ClInclude Include="..\..\..\..\Source\HQEngine\gen_effect_script_parser.hpp" />
+    <ClInclude Include="..\..\..\..\Source\HQEngine\gen_res_script_parser.hpp" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultDataStream.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineCommonInternal.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineEffectManagerImpl.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEnginePCH.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.h" />
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResParserCommon.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineWindow.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEventSeparateThread.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\winstore\HQWinStoreFileSystem.h" />
@@ -713,10 +714,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinystr.cpp" />
-    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxml.cpp" />
-    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="..\..\..\..\..\ThirdParty-mod\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="..\..\..\..\Source\BaseImpl\HQTextureManagerBaseImpl.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">..\..\..\..\Source\HQRendererD3D11;..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">..\..\..\..\Source\HQRendererD3D11;..\..\..\..\..\libogg\include;..\..\..\..\..\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6</AdditionalIncludeDirectories>
@@ -1012,6 +1009,44 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\gen_effect_script_parser.cpp" />
+    <ClCompile Include="..\..\..\..\Source\HQEngine\gen_effect_script_tokens.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQEngine\gen_res_script_parser.cpp" />
+    <ClCompile Include="..\..\..\..\Source\HQEngine\gen_res_script_tokens.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">..\..\..\..\..\ThirdParty-mod\GnuWin32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineApp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
@@ -1116,6 +1151,7 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(IntDir)HQEnginePCH.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResManagerImpl.cpp" />
+    <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResParserCommon.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEventSeparateThread.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">Use</PrecompiledHeader>
@@ -4621,8 +4657,212 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</ExcludedFromBuild>
     </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\HQEngine\res_script_parser.y">
+      <FileType>Document</FileType>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\HQEngine\res_script_tokens.l">
+      <FileType>Document</FileType>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="..\..\..\..\Source\HQEngine\effect_script_parser.y">
+      <FileType>Document</FileType>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\HQEngine\effect_script_tokens.l">
+      <FileType>Document</FileType>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(Command)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+    </CustomBuild>
     <None Include="..\..\..\..\Source\HQEngine\ios\HQEngineAppIOS.mm">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
