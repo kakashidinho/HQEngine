@@ -6,7 +6,6 @@ resources{
 		src_type=glsl
 		src="vs-mesh.txt"
 		define TEXTURE_COLOR = 0
-		define version = 120
 		define NOT_ORIGIN
 		define NUNIFORM_BUFFER
 	}

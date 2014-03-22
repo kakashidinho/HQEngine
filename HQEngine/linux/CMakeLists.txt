@@ -10,6 +10,8 @@ find_package(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
 find_package(X11_randr)
 find_package(X11_xinput2)
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
 
 if (NOT X11_randr_FOUND)
 	MESSAGE(FATAL_ERROR "X11 RandR extension's header and library not found!")

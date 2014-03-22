@@ -143,7 +143,11 @@ Game::Game()
 	if (API == D3D11_RENDERER)
 		sprintf(apiResFile, "resourcesD3D11.script");
 	else if (API == OGL_RENDERER)
+#if defined HQ_OPENGLES
+		sprintf(apiResFile, "resourcesGLES.script");
+#else
 		sprintf(apiResFile, "resourcesGL.script");
+#endif
 
 #endif
 

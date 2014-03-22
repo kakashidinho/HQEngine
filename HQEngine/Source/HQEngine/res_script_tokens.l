@@ -106,14 +106,22 @@ I           [uUlL]
 
 
 void hqengine_res_parser_clean_up_lexer(){
+#ifdef YY_CURRENT_BUFFER_LVALUE /*flex version found in other systems other than Windows*/
+	hqengine_res_parser_lex_destroy();
+#else
 	if (YY_CURRENT_BUFFER)
 	{
 		yy_delete_buffer(YY_CURRENT_BUFFER);
 		YY_CURRENT_BUFFER = NULL;
 	}
+#endif
 }
 
 void hqengine_res_parser_start_lexer()
 {
+#ifdef YY_CURRENT_BUFFER_LVALUE /*flex version found in other systems other than Windows*/
+	yy_init_globals();
+#else
 	yyrestart(0);
+#endif
 }
