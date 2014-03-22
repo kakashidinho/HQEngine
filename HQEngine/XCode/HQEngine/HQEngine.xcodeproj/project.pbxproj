@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		D6C660FF18DDA32300471BD0 /* Code_gen */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D6C6610018DDA32300471BD0 /* Build configuration list for PBXAggregateTarget "Code_gen" */;
+			buildPhases = (
+				D6C6610318DDA33100471BD0 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Code_gen;
+			productName = Code_gen;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		D682AE8618CDC643004E3C6F /* HQAudioInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AE8418CDC643004E3C6F /* HQAudioInternal.cpp */; };
 		D682AE8718CDC643004E3C6F /* HQAudioInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AE8518CDC643004E3C6F /* HQAudioInternal.h */; };
@@ -20,12 +34,19 @@
 		D682AE9B18CDC6AB004E3C6F /* HQEngineEffectManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AE9318CDC6AB004E3C6F /* HQEngineEffectManagerImpl.h */; };
 		D682AE9C18CDC6AB004E3C6F /* HQEngineResManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AE9418CDC6AB004E3C6F /* HQEngineResManagerImpl.cpp */; };
 		D682AE9D18CDC6AB004E3C6F /* HQEngineResManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AE9518CDC6AB004E3C6F /* HQEngineResManagerImpl.h */; };
-		D682AEA518CDC6DE004E3C6F /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AE9F18CDC6DE004E3C6F /* tinystr.cpp */; };
-		D682AEA618CDC6DE004E3C6F /* tinystr.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AEA018CDC6DE004E3C6F /* tinystr.h */; };
-		D682AEA718CDC6DE004E3C6F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEA118CDC6DE004E3C6F /* tinyxml.cpp */; };
-		D682AEA818CDC6DE004E3C6F /* tinyxml.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AEA218CDC6DE004E3C6F /* tinyxml.h */; };
-		D682AEA918CDC6DE004E3C6F /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEA318CDC6DE004E3C6F /* tinyxmlerror.cpp */; };
-		D682AEAA18CDC6DE004E3C6F /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEA418CDC6DE004E3C6F /* tinyxmlparser.cpp */; };
+		D6C660EC18DDA10C00471BD0 /* gen_effect_script_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C660E218DDA10C00471BD0 /* gen_effect_script_parser.cpp */; };
+		D6C660ED18DDA10C00471BD0 /* gen_effect_script_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D6C660E318DDA10C00471BD0 /* gen_effect_script_parser.hpp */; };
+		D6C660EE18DDA10C00471BD0 /* gen_effect_script_tokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C660E418DDA10C00471BD0 /* gen_effect_script_tokens.cpp */; };
+		D6C660EF18DDA10C00471BD0 /* gen_res_script_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C660E518DDA10C00471BD0 /* gen_res_script_parser.cpp */; };
+		D6C660F018DDA10C00471BD0 /* gen_res_script_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D6C660E618DDA10C00471BD0 /* gen_res_script_parser.hpp */; };
+		D6C660F118DDA10C00471BD0 /* gen_res_script_tokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C660E718DDA10C00471BD0 /* gen_res_script_tokens.cpp */; };
+		D6C660F618DDA12300471BD0 /* HQEngineResParserCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C660F418DDA12300471BD0 /* HQEngineResParserCommon.cpp */; };
+		D6C660F718DDA12300471BD0 /* HQEngineResParserCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = D6C660F518DDA12300471BD0 /* HQEngineResParserCommon.h */; };
+		D6C6616518DDA49B00471BD0 /* audio in Resources */ = {isa = PBXBuildFile; fileRef = D6C6616018DDA49B00471BD0 /* audio */; };
+		D6C6616618DDA49B00471BD0 /* meshes in Resources */ = {isa = PBXBuildFile; fileRef = D6C6616118DDA49B00471BD0 /* meshes */; };
+		D6C6616718DDA49B00471BD0 /* script in Resources */ = {isa = PBXBuildFile; fileRef = D6C6616218DDA49B00471BD0 /* script */; };
+		D6C6616818DDA49B00471BD0 /* setting in Resources */ = {isa = PBXBuildFile; fileRef = D6C6616318DDA49B00471BD0 /* setting */; };
+		D6C6616918DDA49B00471BD0 /* shader in Resources */ = {isa = PBXBuildFile; fileRef = D6C6616418DDA49B00471BD0 /* shader */; };
 		D6FDD8DD18C7A61D00825C3C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8DC18C7A61D00825C3C /* Cocoa.framework */; };
 		D6FDD8E718C7A61D00825C3C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D6FDD8E518C7A61D00825C3C /* InfoPlist.strings */; };
 		D6FDD93B18C7A7CE00825C3C /* Apple.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD90818C7A7CE00825C3C /* Apple.h */; };
@@ -316,10 +337,16 @@
 		D6FDDC5518C7D28B00825C3C /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDDB9218C7CF1700825C3C /* Game.cpp */; };
 		D6FDDC7518C7D85A00825C3C /* test-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6FDDC7418C7D85A00825C3C /* test-Info.plist */; };
 		D6FDDC7618C7D91D00825C3C /* HQEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FDD8D918C7A61D00825C3C /* HQEngine.framework */; };
-		D6FDDC7B18C7DE6F00825C3C /* test in Resources */ = {isa = PBXBuildFile; fileRef = D6FDDC7A18C7DE6F00825C3C /* test */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		D6C6610418DDA3B200471BD0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D6FDD8D018C7A61D00825C3C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D6C660FF18DDA32300471BD0;
+			remoteInfo = Code_gen;
+		};
 		D6FDDC5618C7D2C700825C3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D6FDD8D018C7A61D00825C3C /* Project object */;
@@ -343,12 +370,23 @@
 		D682AE9318CDC6AB004E3C6F /* HQEngineEffectManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineEffectManagerImpl.h; path = ../../../Source/HQEngine/HQEngineEffectManagerImpl.h; sourceTree = "<group>"; };
 		D682AE9418CDC6AB004E3C6F /* HQEngineResManagerImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQEngineResManagerImpl.cpp; path = ../../../Source/HQEngine/HQEngineResManagerImpl.cpp; sourceTree = "<group>"; };
 		D682AE9518CDC6AB004E3C6F /* HQEngineResManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineResManagerImpl.h; path = ../../../Source/HQEngine/HQEngineResManagerImpl.h; sourceTree = "<group>"; };
-		D682AE9F18CDC6DE004E3C6F /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinystr.cpp"; sourceTree = "<group>"; };
-		D682AEA018CDC6DE004E3C6F /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = "../../../../ThirdParty-mod/tinyxml/tinystr.h"; sourceTree = "<group>"; };
-		D682AEA118CDC6DE004E3C6F /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxml.cpp"; sourceTree = "<group>"; };
-		D682AEA218CDC6DE004E3C6F /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = "../../../../ThirdParty-mod/tinyxml/tinyxml.h"; sourceTree = "<group>"; };
-		D682AEA318CDC6DE004E3C6F /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxmlerror.cpp"; sourceTree = "<group>"; };
-		D682AEA418CDC6DE004E3C6F /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = "../../../../ThirdParty-mod/tinyxml/tinyxmlparser.cpp"; sourceTree = "<group>"; };
+		D6C660E018DDA10C00471BD0 /* effect_script_parser.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = effect_script_parser.y; path = ../../../Source/HQEngine/effect_script_parser.y; sourceTree = "<group>"; };
+		D6C660E118DDA10C00471BD0 /* effect_script_tokens.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = effect_script_tokens.l; path = ../../../Source/HQEngine/effect_script_tokens.l; sourceTree = "<group>"; };
+		D6C660E218DDA10C00471BD0 /* gen_effect_script_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gen_effect_script_parser.cpp; path = ../../../Source/HQEngine/gen_effect_script_parser.cpp; sourceTree = "<group>"; };
+		D6C660E318DDA10C00471BD0 /* gen_effect_script_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = gen_effect_script_parser.hpp; path = ../../../Source/HQEngine/gen_effect_script_parser.hpp; sourceTree = "<group>"; };
+		D6C660E418DDA10C00471BD0 /* gen_effect_script_tokens.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gen_effect_script_tokens.cpp; path = ../../../Source/HQEngine/gen_effect_script_tokens.cpp; sourceTree = "<group>"; };
+		D6C660E518DDA10C00471BD0 /* gen_res_script_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gen_res_script_parser.cpp; path = ../../../Source/HQEngine/gen_res_script_parser.cpp; sourceTree = "<group>"; };
+		D6C660E618DDA10C00471BD0 /* gen_res_script_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = gen_res_script_parser.hpp; path = ../../../Source/HQEngine/gen_res_script_parser.hpp; sourceTree = "<group>"; };
+		D6C660E718DDA10C00471BD0 /* gen_res_script_tokens.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gen_res_script_tokens.cpp; path = ../../../Source/HQEngine/gen_res_script_tokens.cpp; sourceTree = "<group>"; };
+		D6C660E818DDA10C00471BD0 /* res_script_parser.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = res_script_parser.y; path = ../../../Source/HQEngine/res_script_parser.y; sourceTree = "<group>"; };
+		D6C660E918DDA10C00471BD0 /* res_script_tokens.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = res_script_tokens.l; path = ../../../Source/HQEngine/res_script_tokens.l; sourceTree = "<group>"; };
+		D6C660F418DDA12300471BD0 /* HQEngineResParserCommon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQEngineResParserCommon.cpp; path = ../../../Source/HQEngine/HQEngineResParserCommon.cpp; sourceTree = "<group>"; };
+		D6C660F518DDA12300471BD0 /* HQEngineResParserCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineResParserCommon.h; path = ../../../Source/HQEngine/HQEngineResParserCommon.h; sourceTree = "<group>"; };
+		D6C6616018DDA49B00471BD0 /* audio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audio; path = ../../Source/test/audio; sourceTree = "<group>"; };
+		D6C6616118DDA49B00471BD0 /* meshes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = meshes; path = ../../Source/test/meshes; sourceTree = "<group>"; };
+		D6C6616218DDA49B00471BD0 /* script */ = {isa = PBXFileReference; lastKnownFileType = folder; name = script; path = ../../Source/test/script; sourceTree = "<group>"; };
+		D6C6616318DDA49B00471BD0 /* setting */ = {isa = PBXFileReference; lastKnownFileType = folder; name = setting; path = ../../Source/test/setting; sourceTree = "<group>"; };
+		D6C6616418DDA49B00471BD0 /* shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shader; path = ../../Source/test/shader; sourceTree = "<group>"; };
 		D6FDD8D918C7A61D00825C3C /* HQEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HQEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6FDD8DC18C7A61D00825C3C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D6FDD8DF18C7A61D00825C3C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -666,7 +704,6 @@
 		D6FDDC1F18C7D03B00825C3C /* winmain.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = winmain.cpp; path = ../../Source/test/winmain.cpp; sourceTree = "<group>"; };
 		D6FDDC2618C7D24900825C3C /* test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = test.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6FDDC7418C7D85A00825C3C /* test-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "test-Info.plist"; path = "HQEngine/test-Info.plist"; sourceTree = "<group>"; };
-		D6FDDC7A18C7DE6F00825C3C /* test */ = {isa = PBXFileReference; lastKnownFileType = folder; name = test; path = HQEngine/Resources/test; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -692,17 +729,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D682AE9E18CDC6B8004E3C6F /* tinyxml */ = {
+		D6C660DF18DDA0BF00471BD0 /* res_parser */ = {
 			isa = PBXGroup;
 			children = (
-				D682AE9F18CDC6DE004E3C6F /* tinystr.cpp */,
-				D682AEA018CDC6DE004E3C6F /* tinystr.h */,
-				D682AEA118CDC6DE004E3C6F /* tinyxml.cpp */,
-				D682AEA218CDC6DE004E3C6F /* tinyxml.h */,
-				D682AEA318CDC6DE004E3C6F /* tinyxmlerror.cpp */,
-				D682AEA418CDC6DE004E3C6F /* tinyxmlparser.cpp */,
+				D6C660F418DDA12300471BD0 /* HQEngineResParserCommon.cpp */,
+				D6C660F518DDA12300471BD0 /* HQEngineResParserCommon.h */,
+				D6C660E018DDA10C00471BD0 /* effect_script_parser.y */,
+				D6C660E118DDA10C00471BD0 /* effect_script_tokens.l */,
+				D6C660E218DDA10C00471BD0 /* gen_effect_script_parser.cpp */,
+				D6C660E318DDA10C00471BD0 /* gen_effect_script_parser.hpp */,
+				D6C660E418DDA10C00471BD0 /* gen_effect_script_tokens.cpp */,
+				D6C660E518DDA10C00471BD0 /* gen_res_script_parser.cpp */,
+				D6C660E618DDA10C00471BD0 /* gen_res_script_parser.hpp */,
+				D6C660E718DDA10C00471BD0 /* gen_res_script_tokens.cpp */,
+				D6C660E818DDA10C00471BD0 /* res_script_parser.y */,
+				D6C660E918DDA10C00471BD0 /* res_script_tokens.l */,
 			);
-			name = tinyxml;
+			name = res_parser;
 			sourceTree = "<group>";
 		};
 		D6FDD8CF18C7A61D00825C3C = {
@@ -760,7 +803,6 @@
 				D6FDD9FE18C7A94C00825C3C /* BaseImpl */,
 				D6FDD9F318C7A90C00825C3C /* HQRendererFactory */,
 				D6FDD90718C7A72E00825C3C /* HQRendererGL */,
-				D682AE9E18CDC6B8004E3C6F /* tinyxml */,
 				D6FDD8E318C7A61D00825C3C /* Supporting Files */,
 			);
 			path = HQEngine;
@@ -1235,6 +1277,7 @@
 			isa = PBXGroup;
 			children = (
 				D6FDDB7E18C7C39800825C3C /* apple */,
+				D6C660DF18DDA0BF00471BD0 /* res_parser */,
 				D682AE8E18CDC6AB004E3C6F /* HQDefaultFileManager.cpp */,
 				D682AE8F18CDC6AB004E3C6F /* HQDefaultFileManager.h */,
 				D682AE9018CDC6AB004E3C6F /* HQEngineCommonInternal.cpp */,
@@ -1276,7 +1319,11 @@
 		D6FDDC7918C7DE5E00825C3C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D6FDDC7A18C7DE6F00825C3C /* test */,
+				D6C6616018DDA49B00471BD0 /* audio */,
+				D6C6616118DDA49B00471BD0 /* meshes */,
+				D6C6616218DDA49B00471BD0 /* script */,
+				D6C6616318DDA49B00471BD0 /* setting */,
+				D6C6616418DDA49B00471BD0 /* shader */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1309,13 +1356,13 @@
 				D6FDDB6918C7B13900825C3C /* trees.h in Headers */,
 				D6FDDB5818C7B13900825C3C /* crc32.h in Headers */,
 				D6FDD94A18C7A7CE00825C3C /* HQDeviceGL.h in Headers */,
-				D682AEA618CDC6DE004E3C6F /* tinystr.h in Headers */,
 				D6FDD95918C7A7CE00825C3C /* HQShaderGL_GLSL_VarParser.h in Headers */,
 				D6FDD9C618C7A8ED00825C3C /* HQGrowableArray.h in Headers */,
 				D6FDDB2518C7B0BC00825C3C /* png.h in Headers */,
 				D6FDD9B318C7A8ED00825C3C /* HQAssert.h in Headers */,
 				D6FDD9CB18C7A8ED00825C3C /* HQLoggableObject.h in Headers */,
 				D6FDDAFA18C7AF7D00825C3C /* jerror.h in Headers */,
+				D6C660ED18DDA10C00471BD0 /* gen_effect_script_parser.hpp in Headers */,
 				D6FDD9DA18C7A8ED00825C3C /* HQRenderDevice.h in Headers */,
 				D6FDDA3518C7A9E800825C3C /* HQUtilMathPCH.h in Headers */,
 				D6FDD9D018C7A8ED00825C3C /* HQMiscDataType.h in Headers */,
@@ -1326,6 +1373,7 @@
 				D6FDD9C818C7A8ED00825C3C /* HQItemManager.h in Headers */,
 				D6FDDB2E18C7B0BC00825C3C /* pngpriv.h in Headers */,
 				D682AE9D18CDC6AB004E3C6F /* HQEngineResManagerImpl.h in Headers */,
+				D6C660F718DDA12300471BD0 /* HQEngineResParserCommon.h in Headers */,
 				D6FDD9B218C7A8ED00825C3C /* HQ3DMathInline.h in Headers */,
 				D6FDD9D418C7A8ED00825C3C /* HQOctreeSceneManager.h in Headers */,
 				D6FDDA8D18C7ACD600825C3C /* Bitmap.h in Headers */,
@@ -1348,7 +1396,6 @@
 				D6FDD9E318C7A8ED00825C3C /* HQSceneManagementCommon.h in Headers */,
 				D6FDD94E18C7A7CE00825C3C /* HQFixedFunctionShaderManagerGL.h in Headers */,
 				D6FDDA5818C7ABF300825C3C /* HQAudioBase.h in Headers */,
-				D682AEA818CDC6DE004E3C6F /* tinyxml.h in Headers */,
 				D6FDDA5F18C7ABF300825C3C /* HQAudioSourceAL.h in Headers */,
 				D6FDD9D118C7A8ED00825C3C /* HQMutex.h in Headers */,
 				D6FDDA5D18C7ABF300825C3C /* HQAudioAL.h in Headers */,
@@ -1435,6 +1482,7 @@
 				D6FDD9C918C7A8ED00825C3C /* HQKeyCode.h in Headers */,
 				D6FDD9B818C7A8ED00825C3C /* HQBoundingVolume.h in Headers */,
 				D6FDDA5E18C7ABF300825C3C /* HQAudioBufferAL.h in Headers */,
+				D6C660F018DDA10C00471BD0 /* gen_res_script_parser.hpp in Headers */,
 				D6FDDB6518C7B13900825C3C /* inflate.h in Headers */,
 				D6FDD9FD18C7A93E00825C3C /* HQReturnValDebugString.h in Headers */,
 				D6FDD9C418C7A8ED00825C3C /* HQEngineCommon.h in Headers */,
@@ -1458,6 +1506,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D6C6610518DDA3B200471BD0 /* PBXTargetDependency */,
 			);
 			name = HQEngine;
 			productName = HQEngine;
@@ -1506,6 +1555,7 @@
 			targets = (
 				D6FDD8D818C7A61D00825C3C /* HQEngine */,
 				D6FDDC2518C7D24900825C3C /* test */,
+				D6C660FF18DDA32300471BD0 /* Code_gen */,
 			);
 		};
 /* End PBXProject section */
@@ -1524,12 +1574,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6FDDC7B18C7DE6F00825C3C /* test in Resources */,
 				D6FDDC7518C7D85A00825C3C /* test-Info.plist in Resources */,
+				D6C6616918DDA49B00471BD0 /* shader in Resources */,
+				D6C6616818DDA49B00471BD0 /* setting in Resources */,
+				D6C6616518DDA49B00471BD0 /* audio in Resources */,
+				D6C6616618DDA49B00471BD0 /* meshes in Resources */,
+				D6C6616718DDA49B00471BD0 /* script in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D6C6610318DDA33100471BD0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = ../../Source/HQEngine/generate_parsers.sh;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D6FDD8D418C7A61D00825C3C /* Sources */ = {
@@ -1549,6 +1620,7 @@
 				D6FDDB0218C7AF7D00825C3C /* jmemansi.c in Sources */,
 				D6FDDA9718C7ACD600825C3C /* KTX.cpp in Sources */,
 				D6FDDA6918C7AC1F00825C3C /* helperFunctions.cpp in Sources */,
+				D6C660EE18DDA10C00471BD0 /* gen_effect_script_tokens.cpp in Sources */,
 				D6FDDA8A18C7ACD500825C3C /* 3STC_DXT.cpp in Sources */,
 				D6FDDB5F18C7B13900825C3C /* gzwrite.c in Sources */,
 				D6FDDAFB18C7AF7D00825C3C /* jfdctflt.c in Sources */,
@@ -1567,7 +1639,7 @@
 				D6FDD96418C7A7CE00825C3C /* HQTextureManagerGL.cpp in Sources */,
 				D6FDDB8918C7C39900825C3C /* HQEngineApp.cpp in Sources */,
 				D6FDD95418C7A7CE00825C3C /* HQShaderGL_CombineController.cpp in Sources */,
-				D682AEAA18CDC6DE004E3C6F /* tinyxmlparser.cpp in Sources */,
+				D6C660F118DDA10C00471BD0 /* gen_res_script_tokens.cpp in Sources */,
 				D6FDDB0B18C7AF7D00825C3C /* jutils.c in Sources */,
 				D6FDDB0018C7AF7D00825C3C /* jidctint.c in Sources */,
 				D6FDDADA18C7AF7D00825C3C /* jccolor.c in Sources */,
@@ -1577,6 +1649,7 @@
 				D6FDDAFF18C7AF7D00825C3C /* jidctfst.c in Sources */,
 				D6FDDA3118C7A9E800825C3C /* HQPrimeNumber.cpp in Sources */,
 				D6FDDB3018C7B0BC00825C3C /* pngrio.c in Sources */,
+				D6C660F618DDA12300471BD0 /* HQEngineResParserCommon.cpp in Sources */,
 				D6FDDA9818C7ACD600825C3C /* PNGImg.cpp in Sources */,
 				D6FDDAEB18C7AF7D00825C3C /* jdatasrc.c in Sources */,
 				D6FDD95B18C7A7CE00825C3C /* HQShaderGL_GLSLController.cpp in Sources */,
@@ -1610,7 +1683,6 @@
 				D6FDDA3C18C7AA6600825C3C /* HQTimerApple.cpp in Sources */,
 				D682AE9A18CDC6AB004E3C6F /* HQEngineEffectManagerImpl.cpp in Sources */,
 				D6FDDB5B18C7B13900825C3C /* gzclose.c in Sources */,
-				D682AEA518CDC6DE004E3C6F /* tinystr.cpp in Sources */,
 				D6FDDAE118C7AF7D00825C3C /* jcomapi.c in Sources */,
 				D6FDDB6418C7B13900825C3C /* inflate.c in Sources */,
 				D6FDD95E18C7A7CE00825C3C /* HQShaderGL_UBO.cpp in Sources */,
@@ -1618,6 +1690,7 @@
 				D6FDDAF318C7AF7D00825C3C /* jdmarker.c in Sources */,
 				D6FDDAF718C7AF7D00825C3C /* jdsample.c in Sources */,
 				D6FDDA2A18C7A9E800825C3C /* HQAABB.cpp in Sources */,
+				D6C660EC18DDA10C00471BD0 /* gen_effect_script_parser.cpp in Sources */,
 				D6FDDAF118C7AF7D00825C3C /* jdinput.c in Sources */,
 				D6FDDB6A18C7B13900825C3C /* uncompr.c in Sources */,
 				D682AE8618CDC643004E3C6F /* HQAudioInternal.cpp in Sources */,
@@ -1644,12 +1717,12 @@
 				D6FDDAF218C7AF7D00825C3C /* jdmainct.c in Sources */,
 				D6FDDB2F18C7B0BC00825C3C /* pngread.c in Sources */,
 				D6FDDA6C18C7AC1F00825C3C /* HQMeshNode_Animation.cpp in Sources */,
+				D6C660EF18DDA10C00471BD0 /* gen_res_script_parser.cpp in Sources */,
 				D6FDD95218C7A7CE00825C3C /* HQShaderGL_CgController.cpp in Sources */,
 				D6FDDAF018C7AF7D00825C3C /* jdhuff.c in Sources */,
 				D6FDDA6B18C7AC1F00825C3C /* HQCamera.cpp in Sources */,
 				D6FDD9F918C7A93E00825C3C /* HQRenderDeviceDebugLayer.cpp in Sources */,
 				D6FDDAFC18C7AF7D00825C3C /* jfdctfst.c in Sources */,
-				D682AEA918CDC6DE004E3C6F /* tinyxmlerror.cpp in Sources */,
 				D6FDDA4918C7AA8000825C3C /* HQThreadPthread.cpp in Sources */,
 				D6FDDA6018C7ABF300825C3C /* HQAudioStreamBufferAL.cpp in Sources */,
 				D6FDDB3A18C7B0BC00825C3C /* pngwutil.c in Sources */,
@@ -1674,7 +1747,6 @@
 				D6FDDA2E18C7A9E800825C3C /* HQOBB.cpp in Sources */,
 				D6FDDAEF18C7AF7D00825C3C /* jddctmgr.c in Sources */,
 				D6FDDAE418C7AF7D00825C3C /* jcprepct.c in Sources */,
-				D682AEA718CDC6DE004E3C6F /* tinyxml.cpp in Sources */,
 				D6FDDA3218C7A9E800825C3C /* HQQuaternion.cpp in Sources */,
 				D6FDD93C18C7A7CE00825C3C /* Apple.mm in Sources */,
 				D6FDDB2D18C7B0BC00825C3C /* pngpread.c in Sources */,
@@ -1698,6 +1770,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		D6C6610518DDA3B200471BD0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D6C660FF18DDA32300471BD0 /* Code_gen */;
+			targetProxy = D6C6610418DDA3B200471BD0 /* PBXContainerItemProxy */;
+		};
 		D6FDDC5718C7D2C700825C3C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D6FDD8D818C7A61D00825C3C /* HQEngine */;
@@ -1717,6 +1794,20 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D6C6610118DDA32300471BD0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D6C6610218DDA32300471BD0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		D6FDD8FF18C7A61D00825C3C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1884,6 +1975,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D6C6610018DDA32300471BD0 /* Build configuration list for PBXAggregateTarget "Code_gen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6C6610118DDA32300471BD0 /* Debug */,
+				D6C6610218DDA32300471BD0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		D6FDD8D318C7A61D00825C3C /* Build configuration list for PBXProject "HQEngine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

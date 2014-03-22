@@ -41,11 +41,11 @@ Game::Game()
 	NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
     
 	int len = [resourcePath lengthOfBytesUsingEncoding:NSASCIIStringEncoding] + 1 ;
-	char * cDir = HQ_NEW char[len + strlen("/test")];
+	char * cDir = HQ_NEW char[len];
 	[resourcePath getCString:cDir maxLength:len
 					encoding:NSASCIIStringEncoding];
     
-	strcat(cDir, "/test");
+
     //simulate the working directory of Windows
 	chdir(cDir);
     
