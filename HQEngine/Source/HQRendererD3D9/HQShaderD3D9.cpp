@@ -348,7 +348,6 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 		//check for errors
 		ID3DXBuffer* byteCode = NULL;
 		ID3DXBuffer* errorMsg = NULL;
-		ID3DXConstantTable* constTable = NULL;
 		DWORD compileFlags = debugMode? (D3DXSHADER_DEBUG | D3DXSHADER_SKIPOPTIMIZATION): 0;
 		compileFlags |= D3DXSHADER_ENABLE_BACKWARDS_COMPATIBILITY;
 		const char * d3dprofile = type == HQ_VERTEX_SHADER? D3DXGetVertexShaderProfile(pD3DDevice): D3DXGetPixelShaderProfile(pD3DDevice);
@@ -382,7 +381,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 						compileFlags,
 						&byteCode,
 						&errorMsg,
-						&constTable
+						NULL
 						);
 			}
 		}
@@ -400,7 +399,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 					compileFlags,
 					&byteCode,
 					&errorMsg,
-					&constTable
+					NULL
 					);
 		}
 
@@ -414,7 +413,6 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 				this->Log("Shader compile from stream %s error !", streamName);
 
 			delete sobject;
-			SafeRelease(constTable);
 			SafeRelease(byteCode);
 			SafeRelease(errorMsg);
 			return HQ_FAILED;
@@ -425,7 +423,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 		else
 			pD3DDevice->CreatePixelShader((DWORD*) byteCode->GetBufferPointer(), &sobject->pshader);
 
-		sobject->consTable = constTable;
+		D3DXGetShaderConstantTableEx((DWORD*)byteCode->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &sobject->consTable);
 
 		SafeRelease(byteCode);
 		SafeRelease(errorMsg);
@@ -488,7 +486,6 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 		//check for errors
 		ID3DXBuffer* byteCode = NULL;
 		ID3DXBuffer* errorMsg = NULL;
-		ID3DXConstantTable* constTable = NULL;
 		DWORD compileFlags = debugMode? (D3DXSHADER_DEBUG): 0;
 		const char * d3dprofile = type == HQ_VERTEX_SHADER? D3DXGetVertexShaderProfile(pD3DDevice): D3DXGetPixelShaderProfile(pD3DDevice);
 
@@ -506,7 +503,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 				compileFlags,
 				&byteCode,
 				&errorMsg,
-				&constTable
+				NULL
 				);
 
 		cgDestroyProgram(cgprogram);//no more thing to do with cg program
@@ -518,7 +515,6 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 			else
 				this->Log("Shader compile from memory error !");
 
-			SafeRelease(constTable);
 			delete sobject;
 			SafeRelease(byteCode);
 			SafeRelease(errorMsg);
@@ -530,7 +526,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 		else
 			pD3DDevice->CreatePixelShader((DWORD*) byteCode->GetBufferPointer(), &sobject->pshader);
 
-		sobject->consTable = constTable;
+		D3DXGetShaderConstantTableEx((DWORD*)byteCode->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &sobject->consTable);
 
 		SafeRelease(byteCode);
 		SafeRelease(errorMsg);

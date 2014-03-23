@@ -2,7 +2,7 @@ Basic Settings
 Width=800
 Height=600
 Windowed=1
-RefreshRate=59
+RefreshRate=60
 VSync=1
 
 Advanced Settings
