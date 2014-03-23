@@ -465,6 +465,7 @@ HQReturnVal HQEngineResManagerImpl::LoadShader(const HQEngineResParserNode* shad
 	HQShaderType shaderType = HQ_VERTEX_SHADER;
 	HQShaderCompileMode compileMode = HQ_SCM_CG;
 	bool byteCode = false;
+	bool debug = false;
 	HQGrowableArray<HQShaderMacro> macros;
 
 	const HQEngineResParserNode * item_elem = shaderItem->GetFirstChild();
@@ -521,6 +522,10 @@ HQReturnVal HQEngineResManagerImpl::LoadShader(const HQEngineResParserNode* shad
 		{
 			entry = elemStr;
 		}//else if (!strcmp(elemName, "entry"))
+		else if (!strcmp(elemName, "debug"))
+		{
+			debug = strcmp(elemStr, "true") == 0;
+		}
 		else if (!strcmp(elemName, "definition"))
 		{
 			const char emptyDef[] = "";
@@ -539,6 +544,24 @@ HQReturnVal HQEngineResManagerImpl::LoadShader(const HQEngineResParserNode* shad
 		item_elem = item_elem->GetNextSibling();
 	}//while(item_elem != NULL)
 	
+#if defined DEBUG || defined _DEBUG
+	if (debug)
+	{
+		switch (compileMode)
+		{
+		case HQ_SCM_CG:
+			compileMode = HQ_SCM_CG_DEBUG;
+			break;
+		case HQ_SCM_GLSL:
+			compileMode = HQ_SCM_GLSL_DEBUG;
+			break;
+		case HQ_SCM_HLSL_10:
+			compileMode = HQ_SCM_HLSL_10_DEBUG;
+			break;
+		}
+	}
+#endif
+
 	if (src_file == NULL)
 	{
 		Log("Error : %d : shader resource missing source file!", shaderItem->GetSourceLine());

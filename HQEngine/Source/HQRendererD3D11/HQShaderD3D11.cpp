@@ -12,8 +12,10 @@ COPYING.txt included with this distribution for more information.
 #include "HQShaderD3D11.h"
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 #include "d3dx11.h"
+#define WRITE_DEBUG_SHADER_TO_TEMP_FILE 0
 #else
 #include "../HQEngine/winstore/HQWinStoreFileSystem.h"
+#define WRITE_DEBUG_SHADER_TO_TEMP_FILE 0
 #endif
 #include <string.h>
 #include <stdio.h>
@@ -833,9 +835,43 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamHLSL(HQShaderType type,
 	
 	D3D10_SHADER_MACRO *macros = this->GetPredefineMacroArgumentsHLSL(pDefines);	
 
-	if(FAILED(D3DX11CompileFromMemory(streamContent, dataStream->TotalSize(), dataStream->GetName() , macros , NULL , entryFunctionName , profile , 
-							flags , 0 , NULL,
-							&pBlob , &pError , NULL)) || 
+	HRESULT hr;
+#if defined DEBUG || defined _DEBUG
+	bool writeToTemp = debugMode && WRITE_DEBUG_SHADER_TO_TEMP_FILE;
+	if (debugMode && dataStream->GetName() != NULL)
+	{
+		//write translated code to temp file
+		std::string tempFileName = dataStream->GetName();
+		tempFileName += ".";
+		tempFileName += profile;
+		tempFileName += ".temp";
+		FILE* tempf = fopen(tempFileName.c_str(), "wb");
+		if (tempf == NULL)
+			writeToTemp = false;
+		else
+		{
+			fwrite(streamContent, dataStream->TotalSize(), 1, tempf);//write translated code to temp file
+			fclose(tempf);
+
+			//compile by d3dx
+			hr = D3DX11CompileFromFileA(tempFileName.c_str(), 
+				macros, NULL, 
+				entryFunctionName, profile,
+				flags, 0, NULL,
+				&pBlob, &pError, NULL);
+		}
+	}
+
+	if (!writeToTemp)
+#endif
+		hr = D3DX11CompileFromMemory(streamContent, dataStream->TotalSize(), 
+			dataStream->GetName(), 
+			macros, NULL, 
+			entryFunctionName, profile,
+			flags, 0, NULL,
+			&pBlob, &pError, NULL);
+
+	if(FAILED(hr) || 
 		this->CreateShader(type , pBlob , sobject)!= HQ_OK)
 	{
 		if(pError)

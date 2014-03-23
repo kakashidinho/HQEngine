@@ -305,7 +305,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 	const char nullStreamName[] = "";
 	const char *streamName = dataStream->GetName() != NULL? dataStream->GetName(): nullStreamName;
 #if defined DEBUG || defined _DEBUG
-	debugMode = true;
+	//debugMode = true; force debugging
 #endif
 
 	if (isPreCompiled)

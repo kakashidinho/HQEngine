@@ -30,30 +30,30 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -81,6 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)\Output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
@@ -97,6 +98,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)D</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -193,39 +195,213 @@
     <ClInclude Include="..\HQVertexAttribute.h" />
     <ClInclude Include="..\HQVertexAttributeInline.h" />
     <ClInclude Include="..\HQVertexStreamManager.h" />
-    <ClInclude Include="..\BaseImpl\HQBaseImplCommon.h" />
-    <ClInclude Include="..\BaseImpl\HQClearViewportShaderCodeD3D1x.h" />
-    <ClInclude Include="..\BaseImpl\HQRenderDeviceBaseImpl.h" />
-    <ClInclude Include="..\BaseImpl\HQRenderTargetManagerBaseImpl.h" />
-    <ClInclude Include="..\BaseImpl\HQShaderParameterIndexTable.h" />
-    <ClInclude Include="..\BaseImpl\HQTextureManagerBaseImpl.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex_debug.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_tex.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_tex_debug.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_notex.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_notex_debug.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_tex.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_tex_debug.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_notex.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_notex_debug.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_tex.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_tex_debug.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_notex.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_notex_debug.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex.h" />
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex_debug.h" />
-    <ClInclude Include="..\BaseImpl\BaseImplShaderString\HQClearViewportShaderCodeD3D1x.h" />
-    <ClInclude Include="..\BaseImpl\BaseImplShaderString\HQFFEmuShaderD3D1x.h" />
-    <ClInclude Include="..\BaseImpl\BaseImplShaderString\HQFFEmuShaderGL.h" />
+    <ClInclude Include="..\BaseImpl\HQBaseImplCommon.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\HQClearViewportShaderCodeD3D1x.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\HQRenderDeviceBaseImpl.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\HQRenderTargetManagerBaseImpl.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\HQShaderParameterIndexTable.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\HQTextureManagerBaseImpl.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex_debug.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_tex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_tex_debug.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_notex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_notex_debug.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_tex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_nospec_tex_debug.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_notex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_notex_debug.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_tex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_light_spec_tex_debug.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_notex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_notex_debug.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex_debug.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\BaseImplShaderString\HQClearViewportShaderCodeD3D1x.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\BaseImplShaderString\HQFFEmuShaderD3D1x.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\BaseImpl\BaseImplShaderString\HQFFEmuShaderGL.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="HQRendererDeviceDebugLayer.h" />
     <ClInclude Include="HQReturnValDebugString.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\BaseImpl\compileBaseImplShader.bat" />
-    <None Include="..\BaseImpl\makeBaseImplShaderString.bat" />
+    <None Include="..\BaseImpl\compileBaseImplShader.bat">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\BaseImpl\makeBaseImplShaderString.bat">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl">

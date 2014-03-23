@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Resource Files\setting">
+      <UniqueIdentifier>{d6650e63-6503-4d73-87de-fc79466773ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shader">
+      <UniqueIdentifier>{07b7a6d1-0403-4abd-99f5-6c7b05b986a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\script">
+      <UniqueIdentifier>{b04cfab1-1c2c-4035-9c90-94759b53b3e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AllocMeshX.cpp">
@@ -38,5 +47,113 @@
     <ClInclude Include="MeshX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="setting\API.txt">
+      <Filter>Resource Files\setting</Filter>
+    </Text>
+    <Text Include="setting\Setting.txt">
+      <Filter>Resource Files\setting</Filter>
+    </Text>
+    <Text Include="setting\Setting2.txt">
+      <Filter>Resource Files\setting</Filter>
+    </Text>
+    <Text Include="shader\cg.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\cg2.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\cg2_to_ps_4_0.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\cg2-2.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\cg2-2_to_ps_4_0.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\cg2-mesh.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\cg2object.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\cg3.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\hlsl.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\hlsl2.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\hlsl-mesh.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\hlslobject.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\ps.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\ps-mesh.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\vs.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+    <Text Include="shader\vs-mesh.txt">
+      <Filter>Resource Files\shader</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\cg2.asm">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\thu.cg">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="script\effects.script">
+      <Filter>Resource Files\script</Filter>
+    </None>
+    <None Include="script\resourcesCommon.script">
+      <Filter>Resource Files\script</Filter>
+    </None>
+    <None Include="script\resourcesD3D9.script">
+      <Filter>Resource Files\script</Filter>
+    </None>
+    <None Include="script\resourcesD3D11.script">
+      <Filter>Resource Files\script</Filter>
+    </None>
+    <None Include="script\resourcesD3D11-winrt.script">
+      <Filter>Resource Files\script</Filter>
+    </None>
+    <None Include="script\resourcesGL.script">
+      <Filter>Resource Files\script</Filter>
+    </None>
+    <None Include="script\resourcesGLES.script">
+      <Filter>Resource Files\script</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader\hlsl_ps.hlsl">
+      <Filter>Resource Files\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\hlsl_vs.hlsl">
+      <Filter>Resource Files\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\hlsl-mesh_ps.hlsl">
+      <Filter>Resource Files\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\hlsl-mesh_vs.hlsl">
+      <Filter>Resource Files\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\VS.hlsl">
+      <Filter>Resource Files\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\VSo.hlsl">
+      <Filter>Resource Files\shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

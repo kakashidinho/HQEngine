@@ -5,6 +5,7 @@ resources{
 		src_type=hlsl
 		entry=VS
 		src="hlsl-mesh.txt"
+		debug=true
 		define TEXTURE_COLOR = 0
 		define BLENDWEIGHT3 = 1
 		define TEXTURE_BUFFER= 0
@@ -15,6 +16,7 @@ resources{
 		type=pixel
 		src_type=hlsl
 		entry=PS
+		debug=true
 		src="hlsl-mesh.txt"
 		define TEXTURE_COLOR = 0
 		define BLENDWEIGHT3 = 1

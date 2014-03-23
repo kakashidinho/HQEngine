@@ -43,5 +43,6 @@ Shader resource format:
 		src_type=hlsl/glsl/cg/bytecode   default is cg 
 		entry=main			// entry function. default is 'main'. ignored in bytecode/glsl "src_type" 
 		src="file.txt" 		// source file 
+		debug=true			//default is false. ignore in Release build
 		define name [=value]	// macro definition for compiling the source code. Can have more than one or none. -->
 	}
