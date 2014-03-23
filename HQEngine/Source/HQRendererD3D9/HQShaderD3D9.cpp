@@ -71,6 +71,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 		COLON1,
 		COLON2_1,
 		COLON2_1_TOKEN,
+		COLON2_1_TOKEN_END_WITH_COLON,
 		COLON2_1_COMMA,
 		COLON2_2,
 		COLON3,
@@ -210,7 +211,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			if (c == '\n')
 				state = BEGIN;
 			else if (c == ':')
-				state = EAT_INPUT;
+				state = COLON2_1_TOKEN_END_WITH_COLON;
 			else if (c == ',')
 			{
 				state = COLON2_1_COMMA;
@@ -218,11 +219,16 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			else 
 				tokenStr << c;
 			break;
-		case COLON2_1_COMMA:
+		case COLON2_1_COMMA: case COLON2_1_TOKEN_END_WITH_COLON:
 			{
 				std::string token = tokenStr.str();
 				if (sscanf(token.c_str(), "c[%d]", &regIndex) == 1)
-					state = COLON2_2;
+				{
+					if (state == COLON2_1_TOKEN_END_WITH_COLON)
+						state = COLON3;
+					else
+						state = COLON2_2;
+				}
 				else
 					state = EAT_INPUT;
 			}
