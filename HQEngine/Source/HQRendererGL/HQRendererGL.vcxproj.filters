@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\glew">
+      <UniqueIdentifier>{cb83ecd9-9e4a-441d-ac6c-98d1325a1f5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Android">
+      <UniqueIdentifier>{758835a2-4f7d-4eca-96e2-cb03e7b0f2a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Apple">
+      <UniqueIdentifier>{5e0f8953-71d9-4be6-a79e-4c2138ba78b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\glew">
+      <UniqueIdentifier>{62d9ac65-7977-446a-9879-e4c2fdc41d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQDeviceEnumGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQDeviceGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQDeviceGL_caps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQDeviceGLPCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQFFEmuShaderControllerGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQFixedFunctionShaderManagerGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQRenderTargetFBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQShaderGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQShaderGL_CgController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQShaderGL_CombineController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQShaderGL_Common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQShaderGL_GLSL_VarParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQShaderGL_GLSLController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQShaderGL_UBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQStateManagerGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BaseImpl\HQTextureManagerBaseImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQTextureManagerGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQVertexStreamManagerGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQVertexStreamManagerPreShaderGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glew\src\glew.c">
+      <Filter>Source Files\glew</Filter>
+    </ClCompile>
+    <ClCompile Include="Android.cpp">
+      <Filter>Source Files\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="AndroidGLES.cpp">
+      <Filter>Source Files\Android</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HQRendererGLDef.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cgFunctionPointers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glHeaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQCommonVertexStreamManGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQCommonVertexStreamManGL_inline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQDeviceEnumGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQDeviceGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQDeviceGLPCH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQRenderTargetGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_CgController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_CgController_inline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_CombineController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_GLSL_VarParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_GLSLController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_GLSLController_inline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_template_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_UBO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQStateManagerGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQTextureManagerGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQVertexStreamManagerGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glew\include\GL\glew.h">
+      <Filter>Header Files\glew</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HQRendererGL.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Android.h">
+      <Filter>Source Files\Android</Filter>
+    </CustomBuild>
+    <CustomBuild Include="AndroidGLES.h">
+      <Filter>Source Files\Android</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Apple.h">
+      <Filter>Source Files\Apple</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Apple.mm">
+      <Filter>Source Files\Apple</Filter>
+    </CustomBuild>
+    <CustomBuild Include="HQFixedFunctionShaderManagerGL.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="HQVertexStreamManagerPreShaderGL.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

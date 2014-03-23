@@ -4,6 +4,8 @@
 *.suo
 *.pdb
 *.idb
+*.opensdf
+*.bak
 *~
 ThirdParty-mod/libogg/xcode/build
 ThirdParty-mod/libvorbis/xcode/build
@@ -27,6 +29,9 @@ HQEngine/Android/test/obj
 tools/HQEngineDeployDll/obj
 HQEngine/VS2008/Output
 HQEngine/VS2008/VS_int_files
+HQEngine/VS2013/Desktop/Output
+HQEngine/VS2013/Desktop/VS_int_files
+HQEngine/VS2013/Desktop/ipch
 HQEngine/Xcode/HQEngine/Output
 HQEngine/Xcode/HQEngine/build
 HQEngine/Xcode/HQEngineIOS/Output

@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\openAL">
+      <UniqueIdentifier>{e1488534-a10e-47b7-901c-92adce7ba8ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\xaudio2">
+      <UniqueIdentifier>{d5fe726b-a97e-458b-a1f2-5daac2221457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\openAL">
+      <UniqueIdentifier>{45616e60-4a9b-4115-98d8-a5a2d921b016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\xaudio2">
+      <UniqueIdentifier>{b2510be0-7d9a-4bca-9974-f940a755ad41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQAudioBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQAudioInternal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQAudioPCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="openAL\alFunctionPointers.cpp">
+      <Filter>Source Files\openAL</Filter>
+    </ClCompile>
+    <ClCompile Include="openAL\HQAudioAL.cpp">
+      <Filter>Source Files\openAL</Filter>
+    </ClCompile>
+    <ClCompile Include="openAL\HQAudioStreamBufferAL.cpp">
+      <Filter>Source Files\openAL</Filter>
+    </ClCompile>
+    <ClCompile Include="xaudio2\HQXAudio.cpp">
+      <Filter>Source Files\xaudio2</Filter>
+    </ClCompile>
+    <ClCompile Include="xaudio2\HQXAudioSource.cpp">
+      <Filter>Source Files\xaudio2</Filter>
+    </ClCompile>
+    <ClCompile Include="xaudio2\HQXAudioStreamBuffer.cpp">
+      <Filter>Source Files\xaudio2</Filter>
+    </ClCompile>
+    <ClCompile Include="xaudio2\xFunctionPointers.cpp">
+      <Filter>Source Files\xaudio2</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\HQAudio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQAudioBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQAudioInternal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQAudioPCH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="openAL\alFunctionPointers.h">
+      <Filter>Header Files\openAL</Filter>
+    </ClInclude>
+    <ClInclude Include="openAL\HQAudioAL.h">
+      <Filter>Header Files\openAL</Filter>
+    </ClInclude>
+    <ClInclude Include="openAL\HQAudioBufferAL.h">
+      <Filter>Header Files\openAL</Filter>
+    </ClInclude>
+    <ClInclude Include="openAL\HQAudioSourceAL.h">
+      <Filter>Header Files\openAL</Filter>
+    </ClInclude>
+    <ClInclude Include="xaudio2\HQXAudio.h">
+      <Filter>Header Files\xaudio2</Filter>
+    </ClInclude>
+    <ClInclude Include="xaudio2\HQXAudioBuffer.h">
+      <Filter>Header Files\xaudio2</Filter>
+    </ClInclude>
+    <ClInclude Include="xaudio2\HQXAudioSource.h">
+      <Filter>Header Files\xaudio2</Filter>
+    </ClInclude>
+    <ClInclude Include="xaudio2\xFunctionPointers.h">
+      <Filter>Header Files\xaudio2</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HQAudio.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

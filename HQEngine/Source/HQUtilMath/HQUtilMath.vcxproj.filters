@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\arm_neon_maths">
+      <UniqueIdentifier>{cf3f7d96-d178-4189-9595-d54623eacc6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\directx_maths">
+      <UniqueIdentifier>{325143d1-4f90-42ac-94d9-8b0b9848f375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\directx_maths">
+      <UniqueIdentifier>{7fb44576-f621-496a-a990-42b99acb445a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arm_neon_maths">
+      <UniqueIdentifier>{b174846b-0f82-43b9-a29b-862e0971b918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQAABB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQBSP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQMatrix3x4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQMatrix4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQOBB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQPolygon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQPrimeNumber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQQuaternion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQRay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQSphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQUtilMathPCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQVector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arm_neon_math\HQNeonMathASM.cpp">
+      <Filter>Source Files\arm_neon_maths</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\HQ2DMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQ2DMathInline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQ3DMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQ3DMathInline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQMiscDataType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQPrimeNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQPrimitiveDataType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQUtilMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQUtilMathCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQUtilMathPCH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Q_Util.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="arm_neon_math\HQNeonMatrix.h">
+      <Filter>Source Files\arm_neon_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="arm_neon_math\HQNeonMatrix.s">
+      <Filter>Source Files\arm_neon_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="arm_neon_math\HQNeonQuaternion.h">
+      <Filter>Source Files\arm_neon_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="arm_neon_math\HQNeonQuaternion.s">
+      <Filter>Source Files\arm_neon_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="arm_neon_math\HQNeonVector.h">
+      <Filter>Source Files\arm_neon_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="arm_neon_math\HQNeonVector.s">
+      <Filter>Source Files\arm_neon_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="directx_math\HQDXMatrix.h">
+      <Filter>Source Files\directx_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="directx_math\HQDXQuaternion.h">
+      <Filter>Source Files\directx_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="directx_math\HQDXVector.h">
+      <Filter>Source Files\directx_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\HQDXMatrixInline.h">
+      <Filter>Header Files\directx_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\HQDXQuaternionInline.h">
+      <Filter>Header Files\directx_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\HQUtilDXMath.h">
+      <Filter>Header Files\directx_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\HQNeonMatrixInline.h">
+      <Filter>Header Files\arm_neon_maths</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\HQNeonQuaternionInline.h">
+      <Filter>Header Files\arm_neon_maths</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

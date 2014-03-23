@@ -1,0 +1,232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\win32">
+      <UniqueIdentifier>{b767f83d-659a-4c90-b416-693a7c10e933}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Android">
+      <UniqueIdentifier>{30a83b90-963f-4022-9fc8-2f230d6d3639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\winstore">
+      <UniqueIdentifier>{cb2768b4-ce96-45ed-bca2-be1104a0aee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\macosx">
+      <UniqueIdentifier>{4f81dce5-1d6b-4d3d-9719-3356701f52ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ios">
+      <UniqueIdentifier>{144e4b12-06b3-424d-a81a-18240511be08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SeparateEventQueueThread">
+      <UniqueIdentifier>{0a183105-eebe-4bab-98b1-9eea15c29ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\generated_parser_code">
+      <UniqueIdentifier>{786e294b-c65f-4260-99bb-237e81a3422d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\parser_code">
+      <UniqueIdentifier>{359c43b5-de1e-4bef-8968-20a26efa98af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="HQDefaultFileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQEngineApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQEngineBaseWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQEngineCommonInternal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQEngineEffectManagerImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQEnginePCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQEngineResManagerImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HQEngineResParserCommon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\dllmain.cpp">
+      <Filter>Source Files\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\HQEngineAppWin32.cpp">
+      <Filter>Source Files\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\HQEngineWindowWin32.cpp">
+      <Filter>Source Files\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="android\HQAndroidGameThread.cpp">
+      <Filter>Source Files\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="android\HQEngineAppAndroid.cpp">
+      <Filter>Source Files\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="android\HQEngineJNI.cpp">
+      <Filter>Source Files\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="android\HQEngineWindowAndroid.cpp">
+      <Filter>Source Files\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="winstore\HQEngineAppWinStore.cpp">
+      <Filter>Source Files\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="winstore\HQEngineWindowWinStore.cpp">
+      <Filter>Source Files\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="winstore\HQWinStoreFileSystem.cpp">
+      <Filter>Source Files\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="winstore\HQWinStoreUtil.cpp">
+      <Filter>Source Files\winstore</Filter>
+    </ClCompile>
+    <ClCompile Include="ios\HQIOSGameThread.cpp">
+      <Filter>Source Files\ios</Filter>
+    </ClCompile>
+    <ClCompile Include="HQEventSeparateThread.cpp">
+      <Filter>Source Files\SeparateEventQueueThread</Filter>
+    </ClCompile>
+    <ClCompile Include="gen_effect_script_parser.cpp">
+      <Filter>Source Files\generated_parser_code</Filter>
+    </ClCompile>
+    <ClCompile Include="gen_effect_script_tokens.cpp">
+      <Filter>Source Files\generated_parser_code</Filter>
+    </ClCompile>
+    <ClCompile Include="gen_res_script_parser.cpp">
+      <Filter>Source Files\generated_parser_code</Filter>
+    </ClCompile>
+    <ClCompile Include="gen_res_script_tokens.cpp">
+      <Filter>Source Files\generated_parser_code</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gen_effect_script_parser.hpp">
+      <Filter>Source Files\generated_parser_code</Filter>
+    </ClInclude>
+    <ClInclude Include="gen_res_script_parser.hpp">
+      <Filter>Source Files\generated_parser_code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQDataStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQDefaultDataStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQDefaultFileManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQEngineApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQEngineAppDelegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQEngineCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQEngineCommonInternal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQEngineCustomHeap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQEngineEffectManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQEngineEffectManagerImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQEnginePCH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQEngineResManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQEngineResManagerImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQEngineResParserCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQEngineWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQFileManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQKeyCode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HQPlatformDef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HQEngine.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="winstore\HQWinStoreFileSystem.h">
+      <Filter>Source Files\winstore</Filter>
+    </CustomBuild>
+    <CustomBuild Include="winstore\HQWinStoreUtil.h">
+      <Filter>Source Files\winstore</Filter>
+    </CustomBuild>
+    <CustomBuild Include="apple\HQEngineAppOSX.mm">
+      <Filter>Source Files\macosx</Filter>
+    </CustomBuild>
+    <CustomBuild Include="apple\HQEngineWindowOSX.mm">
+      <Filter>Source Files\macosx</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ios\HQEngineAppIOS.mm">
+      <Filter>Source Files\ios</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ios\HQEngineWindowIOS.mm">
+      <Filter>Source Files\ios</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ios\HQIOSAppDelegate.mm">
+      <Filter>Source Files\ios</Filter>
+    </CustomBuild>
+    <CustomBuild Include="HQEventSeparateThread.h">
+      <Filter>Source Files\SeparateEventQueueThread</Filter>
+    </CustomBuild>
+    <CustomBuild Include="effect_script_parser.y">
+      <Filter>Source Files\parser_code</Filter>
+    </CustomBuild>
+    <CustomBuild Include="effect_script_tokens.l">
+      <Filter>Source Files\parser_code</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res_script_parser.y">
+      <Filter>Source Files\parser_code</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res_script_tokens.l">
+      <Filter>Source Files\parser_code</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>
