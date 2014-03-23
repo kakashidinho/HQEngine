@@ -5,6 +5,7 @@ resources{
 		type=vertex
 		src_type=cg
 		entry=VS
+		debug=true
 		src="cg2-mesh.txt"
 		define TEXTURE_COLOR = 0
 		define NOT_ORIGIN
@@ -16,6 +17,7 @@ resources{
 		type=pixel
 		src_type=cg
 		entry=PS
+		debug=true
 		src="cg2-mesh.txt"
 		define TEXTURE_COLOR = 0
 		define NOT_ORIGIN
