@@ -49,7 +49,21 @@ void cgErrorCallBack(void)
 }
 
 #if !HQ_TRANSLATE_CG_TO_HLSL
+
+
 /*--------------class HQConstantTableD3D9 -------*/
+class HQConstantTableD3D9  {
+public:
+	HQConstantTableD3D9(const char *cgCompiledCode);
+	void Release() { delete this; }
+	void AddConstant(const std::string & name, DWORD regIndex);
+	DWORD GetConstantRegIndex(const char *name, bool& found);
+protected:
+	~HQConstantTableD3D9() {}
+
+	hash_map_type<std::string, DWORD> table;
+};
+
 HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 	/*example of constant in compiled code
 	* //var float3x4 rotation :  : c[0], 3 : 1 : 1
@@ -312,6 +326,20 @@ DWORD HQConstantTableD3D9::GetConstantRegIndex(const char *name, bool& found)
 
 #endif
 
+/*------------HQShaderObjectD3D9---------------*/
+HQShaderObjectD3D9::HQShaderObjectD3D9()
+{
+	vshader = NULL;
+	consTable = NULL;
+}
+HQShaderObjectD3D9::~HQShaderObjectD3D9()
+{
+	if (consTable)
+		consTable->Release();
+	if (vshader)
+		vshader->Release();
+}
+
 /*---------HQShaderManagerD3D9--------------*/
 HQShaderManagerD3D9::HQShaderManagerD3D9(LPDIRECT3DDEVICE9 pD3DDevice,HQLogStream* logFileStream,bool flushLog)
 : HQLoggableObject(logFileStream , "D3D9 Shader Manager :" , flushLog , 1024)
@@ -513,17 +541,24 @@ char ** HQShaderManagerD3D9::GetCompileArguments(const HQShaderMacro * pDefines,
 	if(numDefines == 0)
 		return semantics;
 	/*------create arguments---------*/
-	char ** args = new char *[numDefines + 18];
+	char ** args = new char *[numDefines + 19];
 	for (int i = 0 ; i < 16 ; ++i)
 		args[i] = semantics[i];
 
 	//optimize option
 	args[numDefines + 16] = HQ_NEW char[4];
 	if (debug)
+	{
 		strcpy(args[numDefines + 16], "-O0");
+		args[numDefines + 17] = HQ_NEW char[7];
+		strcpy(args[numDefines + 17], "-debug");
+	}
 	else
+	{
 		strcpy(args[numDefines + 16], "-O3");
-	args[numDefines + 17] = NULL;
+		args[numDefines + 17] = NULL;
+	}
+	args[numDefines + 18] = NULL;
 
 	pD = pDefines;
 	

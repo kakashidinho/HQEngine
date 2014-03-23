@@ -34,9 +34,10 @@ float3 mulMatrix3x4(float3x4 mat, float4 v)
 	
 	return re;
 }
-
-uniform float4x4 viewProj;
-uniform float3x4 boneMatrices[36];
+uniform cbuffer {
+float4x4 viewProj;
+float3x4 boneMatrices[36];
+};
 
 vOut VS(uniform sampler2D texture0 : TEXUNIT3,
 	uniform float3x4 rotation,
@@ -81,12 +82,15 @@ vs_4_0 vs_5_0 vOut2 VS(uniform sampler2D texture0 : TEXUNIT3,
 	else
 		output.color = float4(1,1,1,1);
 	output.texcoord = input.texcoord0 ;
-	output.position.w = 1.0;
+	float hlslv = 10;
+	output.position.w = hlslv;
 	float4 pos = float4(input.position.xyz , 1.0);
 	output.position.x = dot(pos , rotation2[0]);
 	output.position.y = dot(pos , rotation2[1]);
+
+	hlslv +=  rotation2[1];
 	output.position.z = dot(pos , rotation2[2]);
-	output.position = mul(output.position , viewProj2);
+	output.position = hlslv * mul(output.position , viewProj2);
 	return output;
 }
 

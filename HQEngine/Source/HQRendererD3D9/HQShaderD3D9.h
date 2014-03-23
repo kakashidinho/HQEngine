@@ -38,33 +38,13 @@ struct HQParameterD3D9
 #if HQ_TRANSLATE_CG_TO_HLSL
 typedef ID3DXConstantTable HQConstantTableD3D9;
 #else
-class HQConstantTableD3D9  {
-public:
-	HQConstantTableD3D9(const char *cgCompiledCode);
-	void Release() { delete this; }
-	void AddConstant(const std::string & name, DWORD regIndex);
-	DWORD GetConstantRegIndex(const char *name, bool& found);
-protected:
-	~HQConstantTableD3D9() {}
-
-	hash_map_type<std::string, DWORD> table;
-};
+class HQConstantTableD3D9;
 #endif
 
 struct HQShaderObjectD3D9
 {
-	HQShaderObjectD3D9()
-	{
-		vshader = NULL;
-		consTable = NULL;
-	}
-	~HQShaderObjectD3D9()
-	{
-		if (consTable)
-			consTable->Release();
-		if (vshader)
-			vshader->Release();
-	}
+	HQShaderObjectD3D9();
+	~HQShaderObjectD3D9();
 
 	union {
 		IDirect3DVertexShader9* vshader;
