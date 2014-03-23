@@ -13,6 +13,14 @@ COPYING.txt included with this distribution for more information.
 #include "../HQShaderManager.h"
 #include "../BaseImpl/HQShaderParameterIndexTable.h"
 #include "../HQLoggableObject.h"
+#if _MSC_VER < 1700
+#include <hash_map>
+#define hash_map_type stdext::hash_map
+#else
+#include <unordered_map>
+#define hash_map_type std::unordered_map
+#endif
+
 #include "Cg/cg.h"
 #include "Cg/cgD3D9.h"
 #include <d3d9.h>
@@ -20,12 +28,28 @@ COPYING.txt included with this distribution for more information.
 #pragma comment( lib, "cg.lib" )		
 #pragma comment( lib, "cgD3D9.lib" )
 
+#define HQ_TRANSLATE_CG_TO_HLSL 0
 
 struct HQParameterD3D9
 {
 	UINT parameterReg[2];//parameter's register index both in vertex shader and pixel shader
 };
 
+#if HQ_TRANSLATE_CG_TO_HLSL
+typedef ID3DXConstantTable HQConstantTableD3D9;
+#else
+class HQConstantTableD3D9  {
+public:
+	HQConstantTableD3D9(const char *cgCompiledCode);
+	void Release() { delete this; }
+	void AddConstant(const std::string & name, DWORD regIndex);
+	DWORD GetConstantRegIndex(const char *name, bool& found);
+protected:
+	~HQConstantTableD3D9() {}
+
+	hash_map_type<std::string, DWORD> table;
+};
+#endif
 
 struct HQShaderObjectD3D9
 {
@@ -46,7 +70,9 @@ struct HQShaderObjectD3D9
 		IDirect3DVertexShader9* vshader;
 		IDirect3DPixelShader9* pshader;
 	};
-	ID3DXConstantTable * consTable;
+
+	HQConstantTableD3D9 *consTable;
+
 	HQShaderType type;
 };
 
@@ -243,7 +269,7 @@ private:
 	//fixed function controlling values
 	D3DTEXTUREOP firstStageOp[2];//color & alpha op
 
-	char ** GetPredefineMacroArguments(const HQShaderMacro * pDefines);//convert HQShaderMacro array to Cg compiler command arguments
+	char ** GetCompileArguments(const HQShaderMacro * pDefines, bool debug);//convert HQShaderMacro array to Cg compiler command arguments
 	void DeAlloc(char **ppC);//delete arguments array
 
 	HQReturnVal CreateShaderFromStreamEx(HQShaderType type,
@@ -294,7 +320,7 @@ private:
 													 hq_uint32 numElements);
 
 
-	hquint32 GetD3DConstantStartRegister(ID3DXConstantTable* table, const char* name);
+	hquint32 GetD3DConstantStartRegister(HQConstantTableD3D9* table, const char* name);
 };
 
 #endif
