@@ -327,7 +327,8 @@ private:
 
 	void LinkShaderWithConstBufferSlots(HQShaderObjectD3D9 *shader);
 	void UnlinkShaderFromConstBufferSlots(HQShaderObjectD3D9 *shader);
-	void MarkBufferSlotDirty(hquint32 index);
+	void MarkBufferSlotDirty(hquint32 index);//mark the buffer slot dirty for all dependent shaders
+	void MarkAllBufferSlotsDirtyForShader(HQShaderObjectD3D9* shader);//mark all buffer slots associated with specified shader dirty
 };
 
 #endif

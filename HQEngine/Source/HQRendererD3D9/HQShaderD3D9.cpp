@@ -870,6 +870,7 @@ HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
 			{
 				activeVShader=pProgram->vertexShader;
 				pD3DDevice->SetVertexShader(activeVShader->vshader);
+				this->MarkAllBufferSlotsDirtyForShader(activeVShader.GetRawPointer());
 			}
 		}
 		if(activePShader!=pProgram->pixelShader)//pixel shader object đang active khác pixel shader object trong program
@@ -883,6 +884,7 @@ HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
 			{
 				activePShader=pProgram->pixelShader;
 				pD3DDevice->SetPixelShader(activePShader->pshader);
+				this->MarkAllBufferSlotsDirtyForShader(activePShader.GetRawPointer());
 			}
 		}
 		activeProgram=pProgram;
@@ -2244,6 +2246,17 @@ void HQShaderManagerD3D9::MarkBufferSlotDirty(hquint32 index)
 		break;
 	}
 
+}
+
+void HQShaderManagerD3D9::MarkAllBufferSlotsDirtyForShader(HQShaderObjectD3D9* shader)
+{
+	HQConstantTableD3D9 * constTable = shader->consTable;
+	//mark every associated buffer slots as dirty for this shader
+	HQConstantTableD3D9::BufferSlotList::Iterator slot_ite;
+	for (constTable->constBufferSlotList.GetIterator(slot_ite); !slot_ite.IsAtEnd(); ++slot_ite)
+	{
+		slot_ite->pDirtyFlagNode->m_element = 1;
+	}
 }
 
 void HQShaderManagerD3D9::Commit()
