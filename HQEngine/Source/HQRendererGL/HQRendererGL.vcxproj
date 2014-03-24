@@ -332,9 +332,10 @@
     </ClCompile>
     <ClCompile Include="HQRenderTargetFBO.cpp" />
     <ClCompile Include="HQShaderGL.cpp" />
-    <ClCompile Include="HQShaderGL_CgController.cpp" />
-    <ClCompile Include="HQShaderGL_CombineController.cpp" />
     <ClCompile Include="HQShaderGL_Common.cpp" />
+    <ClCompile Include="HQShaderGL_FakeUBO.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="HQShaderGL_GLSL_VarParser.cpp">
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">All</AssemblerOutput>
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='DebugLayer|Win32'">All</AssemblerOutput>
@@ -469,10 +470,8 @@
     </CustomBuild>
     <ClInclude Include="HQRenderTargetGL.h" />
     <ClInclude Include="HQShaderGL.h" />
-    <ClInclude Include="HQShaderGL_CgController.h" />
-    <ClInclude Include="HQShaderGL_CgController_inline.h" />
-    <ClInclude Include="HQShaderGL_CombineController.h" />
     <ClInclude Include="HQShaderGL_Common.h" />
+    <ClInclude Include="HQShaderGL_FakeUBO.h" />
     <ClInclude Include="HQShaderGL_GLSL_VarParser.h" />
     <ClInclude Include="HQShaderGL_GLSLController.h" />
     <ClInclude Include="HQShaderGL_GLSLController_inline.h" />

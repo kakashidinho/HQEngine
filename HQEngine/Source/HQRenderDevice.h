@@ -151,9 +151,6 @@ public:
 	///{settingFileDir} - đường dẫn đến file setting cơ bản lưu các thông số độ phân giải , refresh rate .v..v.v có thể NULL => tùy chọn mặc định
 	///{additionalSettings} - tùy chọn thêm , các tùy chọn cách nhau bằng khoảng cách.
 	///	Ví dụ : "Core-GL4.2" - Khởi tạo OpenGL device dùng version 4.2 (trở lên) core profile nếu có thể. Version có thể là bất kỳ lớn hơn 3.0.  
-	///			"GLSL-only" - openGL device shader manager sẽ chỉ dùng GLSL shader. 
-	///			"CG-only" - openGL device shader manager sẽ chỉ dùng CG shader.
-	///			nếu cả GLSL-only & CG-only đều trong chuỗi option , option xuất hiện sau trong chuỗi sẽ được chọn.
 	///
 	virtual HQReturnVal Init(HQRenderDeviceInitInput input,const char* settingFileDir, HQLogStream* logStream , const char *additionalSettings = NULL)=0;
 	

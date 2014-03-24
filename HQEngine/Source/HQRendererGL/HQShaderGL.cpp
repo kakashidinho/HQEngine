@@ -9,7 +9,6 @@ COPYING.txt included with this distribution for more information.
 */
 
 #include "HQDeviceGLPCH.h"
-#include "HQShaderGL_CgController_inline.h"
 #include "HQShaderGL_GLSLController_inline.h"
 #include "HQFixedFunctionShaderManagerGL.h"
 #include "HQDeviceGL.h"
@@ -21,11 +20,7 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 	/*---------create shader manager object based on capabilities and option---------*/
 	typedef HQShaderManagerGL<HQGLSLShaderController , HQBaseCommonShaderManagerGL> GLSLShaderManager;
 #ifndef HQ_OPENGLES
-	typedef HQShaderManagerGL<HQCombineShaderController , HQBaseCommonShaderManagerGL> CombineShaderManager;
-	typedef HQShaderManagerGL<HQCombineShaderController , HQBaseShaderManagerGL_UBO> CombineShaderManagerUBO;
 	typedef HQShaderManagerGL<HQGLSLShaderController , HQBaseShaderManagerGL_UBO> GLSLShaderManagerUBO;
-	typedef HQShaderManagerGL<HQCgShaderController , HQBaseCommonShaderManagerGL> CgShaderManager;
-	typedef HQShaderManagerGL<HQCgShaderController , HQBaseShaderManagerGL_UBO> CgShaderManagerUBO;
 
 	bool uniformBufferSupported = GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object;
 #endif
@@ -33,21 +28,9 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 #ifndef HQ_OPENGLES
 	switch (shaderManagerType)
 	{
-	case COMBINE_SHADER_MANAGER:
-		if (uniformBufferSupported)
-			shaderMan = new CombineShaderManagerUBO(logFileStream , "GL Shader Manager :" , flushLog);
-		else
-			shaderMan = new CombineShaderManager(logFileStream , "GL Shader Manager :" , flushLog);
-		break;
-	case CG_SHADER_MANAGER:
-		if (uniformBufferSupported)
-			shaderMan = new CgShaderManagerUBO(logFileStream , "GL Shader Manager - Cg only :" , flushLog);
-		else
-			shaderMan = new CgShaderManager(logFileStream , "GL Shader Manager - Cg only:" , flushLog);
-		break;
 	case GLSL_SHADER_MANAGER:
 		if (uniformBufferSupported)
-			shaderMan = new GLSLShaderManagerUBO(logFileStream , "GL Shader Manager - GLSL only:" , flushLog);
+			shaderMan = new GLSLShaderManagerUBO(logFileStream , "GL Shader Manager (UBO supported):" , flushLog);
 		else
 #endif
 		{
@@ -56,7 +39,7 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 				shaderMan = new HQFixedFunctionShaderManagerGL(logFileStream, flushLog);
 			else
 #endif
-				shaderMan = new GLSLShaderManager(logFileStream , "GL Shader Manager - GLSL only:" , flushLog);
+				shaderMan = new GLSLShaderManager(logFileStream , "GL Shader Manager:" , flushLog);
 		}
 		
 #ifndef HQ_OPENGLES		

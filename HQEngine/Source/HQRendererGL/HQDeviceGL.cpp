@@ -276,7 +276,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	this->SetLogStream(logFileStream);
 
 	//scan addtional options
-	int shaderManagerType = COMBINE_SHADER_MANAGER;
+	int shaderManagerType = GLSL_SHADER_MANAGER;
 	std::string core_profile = "";
 	
 	if (additionalSettings != NULL)
@@ -291,11 +291,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 		token = strtok(options , " ");
 		while (token != NULL)
 		{
-			if (!strcmp(token , "GLSL-only"))
-				shaderManagerType = GLSL_SHADER_MANAGER;
-			else if (!strcmp(token , "CG-only"))
-				shaderManagerType = CG_SHADER_MANAGER;
-			else if (!strncmp(token, "Core-GL", 7))
+			if (!strncmp(token, "Core-GL", 7))
 				core_profile = token + 7;
 			token = strtok(NULL , " ");
 		}
@@ -1338,7 +1334,7 @@ HQReturnVal HQDeviceGL::Draw(hq_uint32 vertexCount , hq_uint32 firstVertex)
 {
 	if ((this->flags & RENDER_BEGUN)== 0)
 		return HQ_FAILED_RENDER_NOT_BEGUN;
-	static_cast<HQBaseShaderManagerGL*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+	static_cast<HQBaseShaderManagerGL*> (shaderMan)->Commit();//tell shader manager that we are about to draw
 	glDrawArrays(this->primitiveMode , firstVertex , vertexCount);
 	return HQ_OK;
 }
@@ -1367,7 +1363,7 @@ HQReturnVal HQDeviceGL::DrawPrimitive(hq_uint32 primitiveCount , hq_uint32 first
 	default:
 		vertexCount = 0;
 	}
-	static_cast<HQBaseShaderManagerGL*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+	static_cast<HQBaseShaderManagerGL*> (shaderMan)->Commit();//tell shader manager that we are about to draw
 	glDrawArrays(this->primitiveMode , firstVertex , vertexCount);
 	return HQ_OK;
 }
@@ -1378,7 +1374,7 @@ HQReturnVal HQDeviceGL::DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCount
 
 	hq_uint32 offset = (firstIndex << static_cast<HQVertexStreamManagerGL*> (this->vStreamMan)->GetIndexShiftFactor());//should be 2 if data type is unsigned int and 1 if unsigned short
 	
-	static_cast<HQBaseShaderManagerGL*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+	static_cast<HQBaseShaderManagerGL*> (shaderMan)->Commit();//tell shader manager that we are about to draw
 
 	glDrawElements(this->primitiveMode , 
 					indexCount , 
@@ -1417,7 +1413,7 @@ HQReturnVal HQDeviceGL::DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 p
 
 	hq_uint32 offset = (firstIndex << static_cast<HQVertexStreamManagerGL*> (this->vStreamMan)->GetIndexShiftFactor());//should be 2 if data type is unsigned int and 1 if unsigned short
 
-	static_cast<HQBaseShaderManagerGL*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+	static_cast<HQBaseShaderManagerGL*> (shaderMan)->Commit();//tell shader manager that we are about to draw
 
 	glDrawElements(this->primitiveMode , 
 					indexCount , 

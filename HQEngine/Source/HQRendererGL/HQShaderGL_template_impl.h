@@ -56,6 +56,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Active
 		this->DeActiveFFEmu();
 
 		re = this->shaderController.ActiveProgram(pProgram->isGLSL , pProgram);
+		this->OnProgramActivated();//tell parent class
 		this->activeProgram = programID;
 
 		return re;
@@ -750,12 +751,14 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 
 
 template <class ShaderController , class BaseShaderManagerClass>
-void HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::NotifyFFRenderIfNeeded()
+void HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Commit()
 {
 	if (this->IsFFEmuActive())
 	{
 		this->NotifyFFRender();
 	}
+	else
+		BaseShaderManagerClass::Commit();
 }
 
 template <class ShaderController , class BaseShaderManagerClass>

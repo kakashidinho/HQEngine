@@ -13,14 +13,10 @@ COPYING.txt included with this distribution for more information.
 #include "../HQRenderDevice.h"
 #include "HQShaderGL_Common.h"
 #include "HQShaderGL_UBO.h"
-#include "HQShaderGL_CgController.h"
 #include "HQShaderGL_GLSLController.h"
-#include "HQShaderGL_CombineController.h"
 
 
-#define COMBINE_SHADER_MANAGER 0
 #define GLSL_SHADER_MANAGER 1
-#define CG_SHADER_MANAGER 2
 
 struct HQFixedFunctionShaderGL;
 
@@ -189,8 +185,7 @@ public:
 								   hq_uint32 numMatrices=1);
 
 
-	//for fixed funtion emulator
-	void NotifyFFRenderIfNeeded();
+	void Commit();
 
 	//device lost handling methods
 	void OnLost() ;

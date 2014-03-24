@@ -33,20 +33,6 @@ struct HQUniformBufferGL
 //for openGL 3.1 and later or ARB_uniform_buffer_object extension
 class HQBaseShaderManagerGL_UBO : public HQBaseCommonShaderManagerGL
 {
-protected:
-	HQItemManager<HQUniformBufferGL> uniformBuffers;
-
-	GLuint currentBoundUBuffer;
-	HQSharedPtr<HQUniformBufferGL> uBufferSlots[MAX_UNIFORM_BUFFER_SLOTS];
-
-	inline void BindUniformBuffer(GLuint buffer)
-	{
-		if (currentBoundUBuffer != buffer)
-		{
-			glBindBuffer(GL_UNIFORM_BUFFER , buffer);
-			currentBoundUBuffer = buffer;
-		}
-	}
 
 public:
 	HQBaseShaderManagerGL_UBO(HQLogStream* logFileStream , const char * logPrefix , bool flushLog);
@@ -61,6 +47,24 @@ public:
 	HQReturnVal MapUniformBuffer(hq_uint32 bufferID , void **ppData);
 	HQReturnVal UnmapUniformBuffer(hq_uint32 bufferID);
 	HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData);
+
+protected:
+	//implement HQBaseCommonShaderManagerGL
+	virtual void OnProgramActivated() {}//do nothing
+
+	HQItemManager<HQUniformBufferGL> uniformBuffers;
+
+	GLuint currentBoundUBuffer;
+	HQSharedPtr<HQUniformBufferGL> uBufferSlots[MAX_UNIFORM_BUFFER_SLOTS];
+
+	inline void BindUniformBuffer(GLuint buffer)
+	{
+		if (currentBoundUBuffer != buffer)
+		{
+			glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+			currentBoundUBuffer = buffer;
+		}
+	}
 };
 
 

@@ -57,12 +57,6 @@
     <ClCompile Include="HQShaderGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HQShaderGL_CgController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HQShaderGL_CombineController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HQShaderGL_Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -111,6 +105,9 @@
     <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_preprocessor.cpp">
       <Filter>Source Files\mojoshader</Filter>
     </ClCompile>
+    <ClCompile Include="HQShaderGL_FakeUBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HQRendererGLDef.def">
@@ -144,15 +141,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HQShaderGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HQShaderGL_CgController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HQShaderGL_CgController_inline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HQShaderGL_CombineController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HQShaderGL_Common.h">
@@ -199,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_internal.h">
       <Filter>Source Files\mojoshader</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_FakeUBO.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

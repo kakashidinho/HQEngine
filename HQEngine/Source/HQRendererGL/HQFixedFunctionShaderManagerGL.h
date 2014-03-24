@@ -182,7 +182,6 @@ public:
 		return HQ_FAILED;
 	}
 private:
-
 	void SetLightPosition(unsigned int light);//set light position in world space
 	void SetLight(unsigned int light , HQFFLight* lightInfo);
 	void SetMaterial(HQFFMaterial *material);

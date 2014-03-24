@@ -20,71 +20,6 @@ COPYING.txt included with this distribution for more information.
 #include <string>
 
 #include "glHeaders.h"
-#ifndef HQ_OPENGLES
-
-/*---------------------Cg API--------------------*/
-//#define CG_IMPLICIT_LINK
-
-#ifdef CG_IMPLICIT_LINK
-
-#include "Cg/cg.h"
-#include "Cg/cgGL.h"
-
-#ifdef WIN32
-#	pragma comment( lib, "cg.lib" )
-#	pragma comment( lib, "cgGL.lib" )
-#endif
-
-#else
-
-#include "cgFunctionPointers.h"
-
-
-
-#define HQ_DECL_CG_FUNC_PTR(name) pf##name name
-
-extern HQ_DECL_CG_FUNC_PTR( cgGetError ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgSetErrorCallback );
-extern HQ_DECL_CG_FUNC_PTR( cgGetErrorString ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGetNamedParameter ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGetParameterType ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgCreateContext ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgDestroyContext ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgCreateProgramFromFile ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgCreateProgram ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgCombinePrograms2 ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgCombinePrograms3 ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgDestroyProgram ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameterValueir ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameterValuefr ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGLGetLatestProfile ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGLIsProfileSupported ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGLSetOptimalOptions ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGLSetDebugMode ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGLLoadProgram ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGLUnbindProgram ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGLDisableProfile ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGLBindProgram ) ;
-extern HQ_DECL_CG_FUNC_PTR( cgGetArrayTotalSize);
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameter1iv );
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameter2iv );
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameter3iv );
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameter4iv );
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameter1fv );
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameter2fv );
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameter3fv );
-extern HQ_DECL_CG_FUNC_PTR( cgSetParameter4fv );
-extern HQ_DECL_CG_FUNC_PTR( cgGLEnableProgramProfiles );
-extern HQ_DECL_CG_FUNC_PTR( cgGetString );
-extern HQ_DECL_CG_FUNC_PTR( cgGLSetContextGLSLVersion );
-extern HQ_DECL_CG_FUNC_PTR( cgGLGetGLSLVersion );
-extern HQ_DECL_CG_FUNC_PTR( cgGLGetContextGLSLVersion );
-
-/*-----------end CG API function pointers definition------------*/
-
-#endif//ifdef CG_IMPLICIT_LINK
-
-#endif
 
 
 #define useV USEVSHADER
@@ -100,20 +35,8 @@ extern HQ_DECL_CG_FUNC_PTR( cgGLGetContextGLSLVersion );
 /*--------------HQShaderParameterGL-------------------*/
 struct HQShaderParameterGL
 {
-	union{
-#ifndef HQ_OPENGLES
-		struct//for shader created from cg language
-		{
-			CGparameter parameter;
-			CGtype type;
-		};
-#endif
-        struct
-        {
-            GLint location;//for shader created from glsl
-            GLint texUnit;//for sampler type parameter
-        };
-	};
+	GLint location;//for shader created from glsl
+    GLint texUnit;//for sampler type parameter
 };
 
 /*----------HQShaderObjectGL----------------------*/
@@ -122,13 +45,7 @@ struct HQShaderObjectGL
 	HQShaderObjectGL();
 	~HQShaderObjectGL();
 
-	union
-	{
-#ifndef HQ_OPENGLES
-		CGprogram program;//for shader created from cg language
-#endif
-		GLuint shader;//for shader created from glsl
-	};
+	GLuint shader;//for shader created from glsl
 	HQShaderType type;
 	HQLinkedList<HQUniformBlockInfoGL>* pUniformBlocks;//for extended version of GLSL
 	HQLinkedList<HQShaderAttrib> * pAttribList;//for HQEngine extended GLSL
@@ -156,12 +73,7 @@ struct HQBaseShaderProgramGL
 	hq_uint32 GetParameterIndex(const char *parameterName);
 
 	/*----------attributes-----------------*/
-	union{
-#ifndef HQ_OPENGLES
-		CGprogram program;//for program created from cg language
-#endif
-		GLuint programGLHandle;//for program created from glsl
-	};
+	GLuint programGLHandle;//for program created from glsl
 
 
 	HQShaderParamIndexTable parameterIndexes;
@@ -208,7 +120,7 @@ class HQBaseShaderManagerGL : public HQShaderManager, public HQResetable
 public:
 	~HQBaseShaderManagerGL() {}
 
-	virtual void NotifyFFRenderIfNeeded() {}
+	virtual void Commit() {}//this is called before drawing
 	virtual void OnLost() {}
 	virtual void OnReset() {}
 
@@ -232,6 +144,7 @@ public:
 	{
 		return HQ_FAILED;
 	}
+protected:
 };
 
 /*-------------HQBaseCommonShaderManagerGL----------------*/
@@ -240,11 +153,6 @@ class HQBaseCommonShaderManagerGL:
 	public HQItemManager<HQBaseShaderProgramGL> ,
 	public HQLoggableObject
 {
-protected:
-	hq_uint32 activeProgram;
-	HQItemManager<HQShaderObjectGL> shaderObjects;//danh sách shader object
-
-	HQSharedPtr<HQShaderParameterGL> GetParameterInline(HQBaseShaderProgramGL* pProgramRawPtr ,const char *parameterName);
 public:
 
 	HQBaseCommonShaderManagerGL(HQLogStream* logFileStream , const char * logPrefix , bool flushLog);
@@ -276,6 +184,13 @@ public:
 	HQReturnVal UnmapUniformBuffer(hq_uint32 bufferID);
 	HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData);
 #endif
+protected:
+	virtual void OnProgramActivated() {};//a handler method to notify the parent class that a program has been activated
+
+	hq_uint32 activeProgram;
+	HQItemManager<HQShaderObjectGL> shaderObjects;//danh sách shader object
+
+	HQSharedPtr<HQShaderParameterGL> GetParameterInline(HQBaseShaderProgramGL* pProgramRawPtr, const char *parameterName);
 };
 
 extern HQBaseCommonShaderManagerGL* g_pShaderMan;

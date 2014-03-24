@@ -21,11 +21,7 @@ HQBaseCommonShaderManagerGL* g_pShaderMan = NULL;
 HQShaderObjectGL::HQShaderObjectGL()
 {
 	this->isGLSL = false;
-#ifndef HQ_OPENGLES
-	this->program = NULL;
-#else
 	this->shader = 0;
-#endif
 	this->pUniformBlocks = NULL;
 	this->pAttribList = NULL;
 	this->pUniformSamplerList = NULL;
@@ -45,10 +41,7 @@ HQShaderObjectGL::~HQShaderObjectGL()
 		SafeDelete(this->pAttribList);
 		SafeDelete(this->pUniformSamplerList);
 	}
-#ifndef HQ_OPENGLES
-	else if (this->program)
-		cgDestroyProgram(this->program);
-#endif
+
 }
 
 
@@ -56,18 +49,12 @@ HQShaderObjectGL::~HQShaderObjectGL()
 /*---------HQBaseShaderProgramGL--------------*/
 HQBaseShaderProgramGL::HQBaseShaderProgramGL() 
 {
-#ifndef HQ_OPENGLES
-	program = NULL;
-#endif
 }
 HQBaseShaderProgramGL::~HQBaseShaderProgramGL()
 {
 	if(!isGLSL)
 	{
-#ifndef HQ_OPENGLES
-		if(program != NULL)
-			cgDestroyProgram(program);
-#endif
+		//legacy code was here. we used Cg before.
 	}
 	else
 	{	
