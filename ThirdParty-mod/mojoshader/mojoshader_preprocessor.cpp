@@ -2136,7 +2136,23 @@ static inline const char *_preprocessor_nexttoken(Preprocessor *_ctx,
 
         if (token == TOKEN_IDENTIFIER)
         {
-            if (handle_pp_identifier(ctx))
+			bool directive = false;
+			if (state->token != NULL)
+			{
+				//treat GLSL extension directive as pragma
+				if (strncmp(state->token, "extension", 9) == 0 && (state->token[9] == ' ' || state->token[9] == '\t' || state->token[9] == '\r'))
+				{
+					directive = true;
+				}
+				//treat GLSL version directive as pragma
+				else if (strncmp(state->token, "version", 7) == 0 && (state->token[7] == ' ' || state->token[7] == '\t' || state->token[7] == '\r'))
+				{
+					directive = true;
+				}
+			}
+			if (directive)
+				ctx->parsing_pragma = 1;//treat GLSL version directive as pragma
+            else if (handle_pp_identifier(ctx))
                 continue;  // pushed the include_stack.
         } // else if
 

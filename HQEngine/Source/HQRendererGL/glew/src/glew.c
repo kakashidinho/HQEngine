@@ -9507,7 +9507,14 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
     minor = 0;
   if (major<0 || major>9)
     return GLEW_ERROR_NO_GL_VERSION;
-  
+
+#if defined GLEW_FORCE_VERSION_MAJOR 
+  major = GLEW_FORCE_VERSION_MAJOR;
+#endif
+
+#if defined GLEW_FORCE_VERSION_MINOR 
+  minor = GLEW_FORCE_VERSION_MINOR;
+#endif
 
   if (major == 1 && minor == 0)
   {
@@ -10224,7 +10231,7 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
   CONST_CAST(GLEW_ARB_transpose_matrix) = _glewSearchExtension("GL_ARB_transpose_matrix", extStart, extEnd);
   if (glewExperimental || GLEW_ARB_transpose_matrix) CONST_CAST(GLEW_ARB_transpose_matrix) = !_glewInit_GL_ARB_transpose_matrix(GLEW_CONTEXT_ARG_VAR_INIT);
 #endif /* GL_ARB_transpose_matrix */
-#ifdef GL_ARB_uniform_buffer_object
+#if defined GL_ARB_uniform_buffer_object && !defined GLEW_FORCE_NO_uniform_buffer_object
   CONST_CAST(GLEW_ARB_uniform_buffer_object) = _glewSearchExtension("GL_ARB_uniform_buffer_object", extStart, extEnd);
   if (glewExperimental || GLEW_ARB_uniform_buffer_object) CONST_CAST(GLEW_ARB_uniform_buffer_object) = !_glewInit_GL_ARB_uniform_buffer_object(GLEW_CONTEXT_ARG_VAR_INIT);
 #endif /* GL_ARB_uniform_buffer_object */

@@ -130,6 +130,7 @@ struct HQShaderObjectGL
 		GLuint shader;//for shader created from glsl
 	};
 	HQShaderType type;
+	HQLinkedList<HQUniformBlockInfoGL>* pUniformBlocks;//for extended version of GLSL
 	HQLinkedList<HQShaderAttrib> * pAttribList;//for HQEngine extended GLSL
 	HQLinkedList<HQUniformSamplerGL> * pUniformSamplerList;//for HQEngine extended GLSL
 

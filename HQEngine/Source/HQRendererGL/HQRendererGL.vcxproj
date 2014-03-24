@@ -129,7 +129,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>glew\include;..;..\..\..\ThirdParty-mod\;..\..\..\ThirdParty-mod\glsl_optimizer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -154,7 +154,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>glew\include;..;..\..\..\ThirdParty-mod\;..\..\..\ThirdParty-mod\glsl_optimizer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -180,7 +180,7 @@
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>glew\include;..;..\..\..\ThirdParty-mod\;..\..\..\ThirdParty-mod\glsl_optimizer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -206,7 +206,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>glew\include;..;..\..\..\ThirdParty-mod\;..\..\..\ThirdParty-mod\glsl_optimizer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_DEBUG_LAYER;GLEW_STATIC;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_DEBUG_LAYER;GLEW_STATIC;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -231,7 +231,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>glew\include;..;..\..\..\ThirdParty-mod\;..\..\..\ThirdParty-mod\glsl_optimizer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;_STATIC_CRT;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;_STATIC_CRT;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -256,7 +256,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>glew\include;..;..\..\..\ThirdParty-mod\;..\..\..\ThirdParty-mod\glsl_optimizer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;_STATIC_CRT;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERGL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;GLEW_STATIC;_STATIC_CRT;GLEW_NO_GLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -277,6 +277,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugLayer|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_common.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugLayer|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_lexer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugLayer|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_preprocessor.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugLayer|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="HQDeviceEnumGL.cpp" />
     <ClCompile Include="HQDeviceGL.cpp" />
@@ -418,6 +450,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuild>
+    <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader.h" />
+    <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_internal.h" />
     <ClInclude Include="cgFunctionPointers.h" />
     <ClInclude Include="glHeaders.h" />
     <ClInclude Include="HQCommonVertexStreamManGL.h" />

@@ -181,13 +181,19 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	HQShaderObjectGL *sobject= new HQShaderObjectGL();
 	sobject->isGLSL = true;
 	bool parseSuccess ;
+	std::string processed_src;
+
+	HQLinkedList<HQUniformBlockInfoGL>** ppUBlocksInfo = NULL;
+	if (!GLEW_VERSION_3_1 && !GLEW_ARB_uniform_buffer_object)//not support native uniform buffers, so use fake uniform buffers instead
+		ppUBlocksInfo = &sobject->pUniformBlocks;
+
 	if(type==HQ_VERTEX_SHADER)
 	{
-		parseSuccess  = pVParser->Parse(source , &sobject->pAttribList , &sobject->pUniformSamplerList);
+		parseSuccess = pVParser->Parse(source, pDefines, processed_src, ppUBlocksInfo, &sobject->pAttribList, &sobject->pUniformSamplerList);
 	}
 	else
 	{
-		parseSuccess = pVParser->Parse(source , NULL , &sobject->pUniformSamplerList);
+		parseSuccess = pVParser->Parse(source, pDefines, processed_src, ppUBlocksInfo, NULL, &sobject->pUniformSamplerList);
 	}
 
 	if (!parseSuccess)
@@ -198,7 +204,6 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 
 	sobject->shader = glCreateShader(shaderType);
 
-	std::string processed_src = source;
 	std::string version_string = "";
 	/*------ Remove #version---------*/ 
 	{

@@ -19,6 +19,12 @@ COPYING.txt included with this distribution for more information.
 #define SAMPLER_TYPE 77
 #define INTEGER_ATTR 150
 #define SAMPLER_BUFFER 500
+#define MATRIX_START 10000
+#define ZERO_NUMBER_START 20000
+#define DEC_NUMBER_START 30000
+
+#define MOJOSHADER_NO_VERSION_INCLUDE
+#include "../../../ThirdParty-mod/mojoshader/mojoshader.h" //for preprocessor
 
 #include "HQShaderGL_GLSL_VarParser.h"
 
@@ -27,14 +33,32 @@ HQVarParserGL::HQVarParserGL(HQLoggableObject *manager )
 	this->manager = manager;
 }
 
-char HQVarParserGL::nextChar()
+HQVarParserGL::~HQVarParserGL()
 {
-	return source[currentChar++];
+
 }
 
-void HQVarParserGL::Token(HQVarParserTokenKindGL kind)
+char HQVarParserGL::nextChar()
+{
+	hquint32 readCharPos = currentChar++;
+	return source[readCharPos];
+}
+
+void HQVarParserGL::Token(HQVarParserTokenKindGL kind, size_t src_start_pos , size_t src_end_pos )
 {
 	token.kind = kind;
+	
+	//default source location is [currentChar - length(lexeme)	---> currentChar ]
+	if (src_end_pos == -1)
+		token.src_end_pos = currentChar;
+	else 
+		token.src_end_pos = src_end_pos;
+
+	if (src_start_pos == -1)
+		token.src_start_pos = token.src_end_pos - token.lexeme.size();
+	else
+		token.src_start_pos = src_start_pos;
+
 	breakLoop = true;
 }
 
@@ -55,6 +79,11 @@ bool HQVarParserGL::IsWhiteSpace()
 bool HQVarParserGL::IsDigit()
 {
 	return (inputChar >= '0' && inputChar <= '9');
+}
+
+bool HQVarParserGL::IsDigitNonZero()
+{
+	return (inputChar >= '1' && inputChar <= '9');
 }
 
 bool HQVarParserGL::IsNonDigit()
@@ -85,10 +114,25 @@ void HQVarParserGL::nextToken()
 				switch (inputChar)
 				{
 					case '\0':
-						Token(VTK_NULL);
+						Token(VTK_NULL, currentChar - 1);
+						break;
+					case '{':
+						Token(VTK_LBRACE, currentChar - 1);
+						break;
+					case '}':
+						Token(VTK_RBRACE, currentChar - 1);
+						break;
+					case '[':
+						Token(VTK_LBRACKET, currentChar - 1);
+						break;
+					case ']':
+						Token(VTK_RBRACKET, currentChar - 1);
+						break;
+					case ';':
+						Token(VTK_SEMI_COLON, currentChar - 1);
 						break;
 					case 'm':
-						ChangeState(1);//mediump
+						ChangeState(1);//mediump or mat
 						break;
 					case 'h':
 						ChangeState(8);//highp
@@ -97,7 +141,7 @@ void HQVarParserGL::nextToken()
 						ChangeState(13);//lowp
 						break;
 					case 'f':
-						ChangeState(18);//hq_float32
+						ChangeState(18);//float
 						break;
 					case 'i'://ivec / int /in /isampler*
 						ChangeState(INTEGER_ATTR);
@@ -133,10 +177,33 @@ void HQVarParserGL::nextToken()
 							ChangeState(17);
 							break;
 						}
+						else if (IsDigitNonZero())
+						{
+							ChangeState(DEC_NUMBER_START);
+							break;
+						}
+						else if (inputChar == '0')
+						{
+							ChangeState(ZERO_NUMBER_START);
+							break;
+						}
 						else if (IsWhiteSpaceNotNewLine())
 							break;
 						token.lexeme = inputChar;
-						Token(VTK_UNKNOWN);
+						Token(VTK_UNKNOWN, currentChar - 1);
+				}
+				break;
+			case ZERO_NUMBER_START:
+				currentChar --;
+				Token(VTK_INTEGER);
+				break;
+			case DEC_NUMBER_START:
+				if (IsDigit())
+					ChangeState(DEC_NUMBER_START);
+				else
+				{
+					currentChar --;
+					Token(VTK_INTEGER);
 				}
 				break;
 			case VERTEX_SEMANTIC_START:
@@ -162,9 +229,11 @@ void HQVarParserGL::nextToken()
 						state = 17;
 				}
 				break;
-			case 1://maybe mediump
+			case 1://maybe mediump or mat
 				if (inputChar == 'e')
 					ChangeState(2);
+				else if (inputChar == 'a')
+					ChangeState(MATRIX_START);
 				else {//id
 					currentChar--;
 					state = 17;
@@ -215,6 +284,43 @@ void HQVarParserGL::nextToken()
 					state = 17;
 				}
 
+				break;
+			case MATRIX_START: //maybe mat
+				if (inputChar == 't')
+					ChangeState(MATRIX_START + 1);
+				else {//id
+					currentChar--;
+					state = 17;
+				}
+				break;
+			case MATRIX_START + 1: //maybe mat
+				if (inputChar == '2' || inputChar == '3' || inputChar == '4')
+					ChangeState(MATRIX_START + 2);
+				else {//id
+					currentChar--;
+					state = 17;
+				}
+				break;
+			case MATRIX_START + 2://maybe mat_x*
+				if (inputChar == 'x')
+					ChangeState(MATRIX_START + 3);
+				else if (IsWhiteSpace())
+				{
+					currentChar--;
+					state = DATA_TYPE;
+				}
+				else {//id
+					currentChar--;
+					state = 17;
+				}
+				break;
+			case MATRIX_START + 3://maybe mat_x_
+				if (inputChar == '2' || inputChar == '3' || inputChar == '4')
+					ChangeState(DATA_TYPE);
+				else {//id
+					currentChar--;
+					state = 17;
+				}
 				break;
 			case PRECISION://maybe precision keyword
 				if (IsNonDigit() || IsDigit())//id
@@ -346,7 +452,7 @@ void HQVarParserGL::nextToken()
 
 				break;
 			
-			case 18://maybe hq_float32
+			case 18://maybe float
 				if (inputChar == 'l')
 					ChangeState(19);
 				else {//id
@@ -355,7 +461,7 @@ void HQVarParserGL::nextToken()
 				}
 
 				break;
-			case 19://maybe hq_float32
+			case 19://maybe float
 				if (inputChar == 'o')
 					ChangeState(20);
 				else {//id
@@ -364,7 +470,7 @@ void HQVarParserGL::nextToken()
 				}
 
 				break;
-			case 20://maybe hq_float32
+			case 20://maybe float
 				if (inputChar == 'a')
 					ChangeState(21);
 				else {//id
@@ -373,7 +479,7 @@ void HQVarParserGL::nextToken()
 				}
 
 				break;
-			case 21://maybe hq_float32
+			case 21://maybe float
 				if (inputChar == 't')
 					ChangeState(DATA_TYPE);
 				else {//id
@@ -1368,16 +1474,61 @@ void HQVarParserGL::nextToken()
 	}
 }
 
-bool HQVarParserGL::Parse(const char* source , 
+bool HQVarParserGL::Parse(const char* ori_source , 
+				const HQShaderMacro * pDefines,
+			   std::string& processed_source_out,
+			   HQLinkedList<HQUniformBlockInfoGL>**ppUniformBlocks,
 			   HQLinkedList<HQShaderAttrib>** ppAttribList ,
 			   HQLinkedList<HQUniformSamplerGL>** ppUniformSamplerList
 			   )
 {
+#ifdef HQ_OPENGLES
+	processed_source_out	= "#define HQEXT_GLSL_ES\n";
+#else
+	processed_source_out	= "#define HQEXT_GLSL\n";
+#endif
+	processed_source_out += ori_source;
+
+	int numDefines = 0;
+	const HQShaderMacro *pD = pDefines;
+
+	//calculate number of macros
+	while (pD->name != NULL && pD->definition != NULL)
+	{
+		numDefines++;
+		pD++;
+	}
+	//preprocess source first
+	const MOJOSHADER_preprocessData * preprocessedData = MOJOSHADER_preprocess("source",
+												processed_source_out.c_str(),
+												processed_source_out.size(),
+												(const MOJOSHADER_preprocessorDefine*)pDefines,
+												numDefines,
+												NULL,
+												NULL,
+												NULL,
+												NULL,
+												NULL);
+
+	if (preprocessedData->output != NULL)
+	{
+		processed_source_out = preprocessedData->output;
+	}
+	else
+		processed_source_out = source;//fallback to original source
+
+	MOJOSHADER_freePreprocessData(preprocessedData);
+
+	//create info lists
+	if (ppUniformBlocks != NULL)
+		this->pUniformBlocks = *ppUniformBlocks = HQ_NEW HQLinkedList<HQUniformBlockInfoGL>();
 	if (ppAttribList != NULL)
-		this->pAttribList = *ppAttribList = new HQLinkedList<HQShaderAttrib>();
+		this->pAttribList = *ppAttribList = HQ_NEW HQLinkedList<HQShaderAttrib>();
 	if (ppUniformSamplerList != NULL)
-		this->pUniformSamplerList = *ppUniformSamplerList = new HQLinkedList<HQUniformSamplerGL>();
-	this->source = (char*)source;
+		this->pUniformSamplerList = *ppUniformSamplerList = HQ_NEW HQLinkedList<HQUniformSamplerGL>();
+
+	this->source = processed_source_out.c_str();
+	this->pPreprocessing_src = &processed_source_out;
 	this->currentChar = 0;
 	this->currentLine = 1;
 
@@ -1397,15 +1548,23 @@ bool HQVarParserGL::Parse(const char* source ,
 			manager->Log("(%u) error : '%s' is texture sampler unit binding keyword" ,currentLine , token.lexeme.c_str());
 			noError = false;
 		}
-		else if (ppUniformSamplerList != NULL && token.kind == VTK_UNIFORM)
+		else if (token.kind == VTK_UNIFORM)
 		{
-			noError = ParseSamplerBinding() && noError;
+			size_t src_start_pos = token.src_start_pos;
+			nextToken();
+			if(ppUniformSamplerList != NULL && Match(VTK_SAMPLER))
+				noError = ParseSamplerBinding() && noError;
+			else if (ppUniformBlocks != NULL && token.kind == (VTK_ID))
+				noError = ParseUniformBlock(src_start_pos) && noError;
 		}
 		else if(ppAttribList != NULL && token.kind == VTK_ATTRIBUTE)
 		{
 			noError = ParseSematicBinding() && noError;
 		}
 	}
+
+	if (ppUniformBlocks != NULL)
+		this->TransformUniformBlockDecls();
 
 	return noError;
 }
@@ -1493,41 +1652,244 @@ bool HQVarParserGL::ParseSematicBinding()
 	return true;
 }
 
+
 bool HQVarParserGL::ParseSamplerBinding()
 {
-	nextToken();
 	HQUniformSamplerGL sampler;
-	if(Match(VTK_SAMPLER))
+	if(token.kind != VTK_ID)
 	{
-		if(token.kind != VTK_ID)
-		{
-			manager->Log("(%u) sampler unit binding syntax error : unexpected token '%s'" , currentLine, token.lexeme.c_str());
-			return false;
-		}
-		sampler.name = token.lexeme;
-		nextToken();
+		manager->Log("(%u) sampler unit binding syntax error : unexpected token '%s'" , currentLine, token.lexeme.c_str());
+		return false;
+	}
+	sampler.name = token.lexeme;
+	nextToken();
 
-		if(token.kind != VTK_TEXUNIT)
-		{
-			manager->Log("(%u) sampler unit binding syntax error : unexpected token '%s'" , currentLine, token.lexeme.c_str());
-			return false;
-		}
-		
-		int samplerUnit;
-		sscanf(token.lexeme.c_str() , "TEXUNIT%d" , &samplerUnit);
-
-		if (samplerUnit > 31)
-		{
-			manager->Log("(%u) sampler unit binding error : i in TEXUNITi is too large (i = %d).Max supported i is 31" , currentLine, samplerUnit);
-			return false;
-		}
-
-		sampler.samplerUnit = samplerUnit;
+	if(token.kind != VTK_TEXUNIT)
+	{
+		manager->Log("(%u) sampler unit binding syntax error : unexpected token '%s'" , currentLine, token.lexeme.c_str());
+		return false;
 	}
 	
-	else{//not uniform sampler2D declaration.It's OK
-		return true;
+	int samplerUnit;
+	sscanf(token.lexeme.c_str() , "TEXUNIT%d" , &samplerUnit);
+
+	if (samplerUnit > 31)
+	{
+		manager->Log("(%u) sampler unit binding error : i in TEXUNITi is too large (i = %d).Max supported i is 31" , currentLine, samplerUnit);
+		return false;
 	}
+
+	sampler.samplerUnit = samplerUnit;
+	
+	
 	pUniformSamplerList->PushBack(sampler);
 	return true;
+}
+
+bool HQVarParserGL::ParseTypeInfo(HQUniformBlkElemInfoGL& blockElemInfo)
+{
+	bool stop = false;
+	if (strncmp(token.lexeme.c_str(), "vec", 3) == 0)
+	{
+		blockElemInfo.integer = false;
+		blockElemInfo.row = 1;
+		if (sscanf(token.lexeme.c_str(), "vec%d", &blockElemInfo.col) != 1)
+			stop = true;
+	}
+	else if (strncmp(token.lexeme.c_str(), "bvec", 4) == 0
+			|| strncmp(token.lexeme.c_str(), "ivec", 4) == 0)
+	{
+		blockElemInfo.integer = true;
+		blockElemInfo.row = 1;
+		if (sscanf(token.lexeme.c_str() + 1, "vec%d", &blockElemInfo.col) != 1)
+			stop = true;
+	}
+	else if (strncmp(token.lexeme.c_str(), "mat", 3) == 0)
+	{
+		blockElemInfo.integer = false;
+		if (sscanf(token.lexeme.c_str(), "mat%d", &blockElemInfo.row) != 1)
+			stop = true;
+		else if (sscanf(token.lexeme.c_str() + 4, "x%d", &blockElemInfo.col) != 1)
+			blockElemInfo.col = blockElemInfo.row;
+	}
+	else 
+		stop = true;
+
+	return !stop;
+}
+
+bool HQVarParserGL::ParseUniformBlock(size_t src_start_pos)
+{
+	enum UniformBlockElemDeclState {
+		UDECL_START,
+		UDECL_PRECISION,
+		UDECL_TYPE,
+		UDECL_NAME,
+		UDECL_ARRAY_SIZE_BEGIN,
+		UDECL_ARRAY_SIZE,
+		UDECL_ARRAY_SIZE_END,
+		UBLOCK_END
+	};
+
+	HQVarParserTokenGL *ptoken = &this->token;
+	size_t uniform_decl_start_pos = src_start_pos;
+	int bufferIndex;
+	if (sscanf(ptoken->lexeme.c_str(), "ubuffer%d", &bufferIndex) != 1)
+		return true;//failed
+
+	nextToken();
+	if (ptoken->kind == VTK_LBRACE)
+	{
+		bool stop = false;
+		bool succeeded = false;
+		UniformBlockElemDeclState state = UDECL_START;
+		HQUniformBlkElemInfoGL blockElemInfo;
+		HQUniformBlockInfoGL uniformBlock;
+		blockElemInfo.blockIndex = bufferIndex;
+		uniformBlock.blockPrologue_start_pos = uniform_decl_start_pos;
+		uniformBlock.blockPrologue_end_pos = ptoken->src_end_pos;
+
+		while (ptoken->kind != VTK_NULL && !stop)
+		{
+			nextToken();
+			int kind = ptoken->kind;
+			switch (state)
+			{
+			case UDECL_START:
+				if (kind == VTK_RBRACE)
+				{
+					uniformBlock.blockEpilogue_start_pos = ptoken->src_start_pos;
+					state = UBLOCK_END;
+				}
+				else if (kind == VTK_PRECISION)
+				{
+					state = UDECL_PRECISION;
+					blockElemInfo.src_start_pos = ptoken->src_start_pos;
+				}
+				else if (kind == VTK_TYPE)
+				{
+					state = UDECL_TYPE;
+					blockElemInfo.src_start_pos = ptoken->src_start_pos;
+					stop = !ParseTypeInfo(blockElemInfo);
+				}
+				else
+					stop = true;
+				break;
+			case UDECL_PRECISION:
+				if (kind == VTK_TYPE)
+				{
+					state = UDECL_TYPE;
+					stop = !ParseTypeInfo(blockElemInfo);
+				}
+				else
+					stop = true;
+				break;
+			case UDECL_TYPE:
+				if (kind == VTK_ID)
+				{
+					state = UDECL_NAME;
+					blockElemInfo.name = ptoken->lexeme;
+				}
+				else
+					stop = true;
+				break;
+			case UDECL_NAME:
+				if (kind == VTK_LBRACKET)
+				{
+					state = UDECL_ARRAY_SIZE_BEGIN;
+				}
+				else if (kind == VTK_SEMI_COLON)
+				{
+					blockElemInfo.arraySize = 1;
+					uniformBlock.blockElems.PushBack(blockElemInfo);
+					state = UDECL_START;
+				}
+				else 
+					stop = true;
+				break;
+			case UDECL_ARRAY_SIZE_BEGIN:
+				if (kind == VTK_INTEGER)
+				{
+					blockElemInfo.arraySize = (int)atol(ptoken->lexeme.c_str());
+					state = UDECL_ARRAY_SIZE;
+				}
+				else
+					stop = true;
+				break;
+			case UDECL_ARRAY_SIZE:
+				if (kind == VTK_RBRACKET)
+					state = UDECL_ARRAY_SIZE_END;
+				else
+					stop = true;
+				break;
+			case UDECL_ARRAY_SIZE_END:
+				if (kind == VTK_SEMI_COLON)
+				{
+					uniformBlock.blockElems.PushBack(blockElemInfo);
+					state = UDECL_START;
+				}
+				else
+					stop = true;
+				break;
+			case UBLOCK_END:
+				if (kind == VTK_SEMI_COLON)
+				{
+					succeeded = true;
+					uniformBlock.blockEpilogue_end_pos = ptoken->src_end_pos;
+				}
+				stop = true;
+				break;
+			}//switch (state)
+
+		}//while (ptoken->kind != VTK_NULL && !stop)
+
+		if (succeeded)
+		{
+			//add the uniform block info to the list
+			uniformBlock.index = bufferIndex;
+			this->pUniformBlocks->PushBack(uniformBlock);
+
+		}
+	}//if (kind == LBRACE)
+
+	return true;
+}
+
+void HQVarParserGL::TransformUniformBlockDecls()
+{
+	//Note: if we are doing these things here, that means the system doesn't support native uniform buffer object
+	std::string & preprocessed_src = *this->pPreprocessing_src;
+	HQLinkedList<HQUniformBlockInfoGL> ::Iterator block_ite;
+	//first compute transformed string size and remove uniform block starting and ending declaration
+	size_t newSize = preprocessed_src.size();
+	for (this->pUniformBlocks->GetIterator(block_ite); !block_ite.IsAtEnd(); ++block_ite)
+	{
+		HQLinkedList<HQUniformBlkElemInfoGL>::Iterator blockElemIte;
+		for (block_ite->blockElems.GetIterator(blockElemIte); !blockElemIte.IsAtEnd(); ++blockElemIte)
+		{
+			newSize += 8;//length of additional "uniform "
+			
+			//now remove the block prologue and epilogue because compiler doesn't support it
+			for (size_t i = block_ite->blockPrologue_start_pos; i < block_ite->blockPrologue_end_pos; ++i)
+				preprocessed_src[i] = ' ';
+			for (size_t i = block_ite->blockEpilogue_start_pos; i < block_ite->blockEpilogue_end_pos; ++i)
+				preprocessed_src[i] = ' ';
+		}
+	}
+
+	preprocessed_src.reserve(newSize);
+
+	//now append "uniform" keyword to each uniform block's element
+	size_t offset = 0;
+	for (this->pUniformBlocks->GetIterator(block_ite); !block_ite.IsAtEnd(); ++block_ite)
+	{
+
+		//append "uniform" keyword to each uniform block's element
+		HQLinkedList<HQUniformBlkElemInfoGL>::Iterator blockElemIte;
+		for (block_ite->blockElems.GetIterator(blockElemIte); !blockElemIte.IsAtEnd(); ++blockElemIte)
+		{
+			preprocessed_src.insert(blockElemIte->src_start_pos + offset, "uniform ");
+			offset += 8;//the next starting postion is shifted by length of "uniform "
+		}
+	}
 }

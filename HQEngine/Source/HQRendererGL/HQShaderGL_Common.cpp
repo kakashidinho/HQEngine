@@ -26,6 +26,7 @@ HQShaderObjectGL::HQShaderObjectGL()
 #else
 	this->shader = 0;
 #endif
+	this->pUniformBlocks = NULL;
 	this->pAttribList = NULL;
 	this->pUniformSamplerList = NULL;
 }
@@ -40,6 +41,7 @@ HQShaderObjectGL::~HQShaderObjectGL()
 #endif
 				glDeleteShader(this->shader);
 		}
+		SafeDelete(this->pUniformBlocks);
 		SafeDelete(this->pAttribList);
 		SafeDelete(this->pUniformSamplerList);
 	}

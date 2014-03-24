@@ -103,13 +103,13 @@ struct HQShaderVarParserInfoD3D9 {
 	~HQShaderVarParserInfoD3D9();
 	HQLinkedList<UniformBlock> uniformBlocks;//list of declared uniform blocks
 
-	const char* GetPreprocessedSrc() const {return m_preprocessedSrc;};
+	const char* GetPreprocessedSrc() const {return m_preprocessedSrc.c_str();};
 private:
 	void ParseUniform();
 	void ParseDirective();
 
 	bool m_isColMajor;
-	char * m_preprocessedSrc;
+	std::string m_preprocessedSrc;
 };
 
 HQShaderVarParserInfoD3D9::HQShaderVarParserInfoD3D9(const char *src, const HQShaderMacro* pDefines)
@@ -146,10 +146,9 @@ HQShaderVarParserInfoD3D9::HQShaderVarParserInfoD3D9(const char *src, const HQSh
 		YYLVALTYPE token;
 		pyylval = &token;
 
-		hqengine_shader_d3d9_lexer_start(preprocessedData->output);
+		m_preprocessedSrc = preprocessedData->output;
 
-		m_preprocessedSrc = HQ_NEW char [preprocessedData->output_len + 1];
-		strcpy(m_preprocessedSrc, preprocessedData->output);//copy the preprocessed source
+		hqengine_shader_d3d9_lexer_start(m_preprocessedSrc.c_str());
 
 		while ((lex_return = yylex()) > 0)
 		{
@@ -175,8 +174,6 @@ HQShaderVarParserInfoD3D9::HQShaderVarParserInfoD3D9(const char *src, const HQSh
 
 HQShaderVarParserInfoD3D9::~HQShaderVarParserInfoD3D9()
 {
-	if (m_preprocessedSrc)
-		delete [] m_preprocessedSrc;
 }
 
 void HQShaderVarParserInfoD3D9::ParseDirective()
@@ -226,7 +223,7 @@ void HQShaderVarParserInfoD3D9::ParseUniform()
 			uniformBlock.blockPrologue_start_pos = uniform_decl_start_pos;
 			uniformBlock.blockPrologue_end_pos = ptoken->src_end_pos;
 
-			while ((kind = (TokenKind)yylex()) > 0 && !stop)
+			while (!stop && (kind = (TokenKind)yylex()) > 0)
 			{
 				switch (state)
 				{

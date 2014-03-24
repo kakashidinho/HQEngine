@@ -8,7 +8,7 @@ resources{
 		define TEXTURE_COLOR = 0
 		define version = 120
 		define NOT_ORIGIN
-		define NUNIFORM_BUFFER
+		define UNIFORM_BUFFER
 	}
 	
 	shader ps-mesh
@@ -18,6 +18,6 @@ resources{
 		src="ps-mesh.txt"
 		define TEXTURE_COLOR = 0
 		define NOT_ORIGIN
-		define NUNIFORM_BUFFER
+		define UNIFORM_BUFFER
 	}
 }

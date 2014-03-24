@@ -25,6 +25,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Source Files\mojoshader">
+      <UniqueIdentifier>{226904ca-9816-4492-894e-9a126284a405}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -95,6 +98,18 @@
     </ClCompile>
     <ClCompile Include="AndroidGLES.cpp">
       <Filter>Source Files\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader.cpp">
+      <Filter>Source Files\mojoshader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_common.cpp">
+      <Filter>Source Files\mojoshader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_lexer.cpp">
+      <Filter>Source Files\mojoshader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_preprocessor.cpp">
+      <Filter>Source Files\mojoshader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +193,12 @@
     </ClInclude>
     <ClInclude Include="glew\include\GL\glew.h">
       <Filter>Header Files\glew</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader.h">
+      <Filter>Source Files\mojoshader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_internal.h">
+      <Filter>Source Files\mojoshader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
