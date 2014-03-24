@@ -67,19 +67,13 @@ void cgErrorCallBack(void)
 /*--------------------HQShaderManagerD3D9::BufferSlotInfo---------------------*/
 
 struct HQShaderManagerD3D9::BufferSlotInfo{
-	void NotifyAllShaders();//notify all dependent shaders to let them know they need to update their constants
+	BufferSlotInfo() : dirtyFlags(1) {}
 
-	HQLinkedList<hquint32> dependentShaderDirtyFlags;//list of dirty flags of shaders that consume data from this buffer slot
+	hquint32 dirtyFlags;//dirty flags
 	HQSharedPtr<HQShaderConstBufferD3D9> buffer;
 	HQShaderConstBufferD3D9::BufferSlotList::LinkedListNodeType* bufferLink;//this link can be used for fast removing the slot from buffer's bound slots
 };
 
-void HQShaderManagerD3D9::BufferSlotInfo::NotifyAllShaders()
-{
-	HQLinkedList<hquint32>::Iterator ite;
-	for (dependentShaderDirtyFlags.GetIterator(ite); !ite.IsAtEnd(); ++ite)
-		*ite = 1;
-}
 
 /*----------------------ShaderVarParserInfo-----------------------*/	
 struct UniformBlkElemInfo {
@@ -393,7 +387,6 @@ public:
 	};
 	struct BufferSlotInfo{
 		hquint32 index;
-		HQLinkedListNode<hquint32>* pDirtyFlagNode;
 		HQLinkedList<ConstInfo> constants;//list of constants that consume datat from this buffer slot
 	};
 
@@ -868,7 +861,7 @@ HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
 			{
 				activeVShader=pProgram->vertexShader;
 				pD3DDevice->SetVertexShader(activeVShader->vshader);
-				this->MarkAllBufferSlotsDirtyForShader(activeVShader.GetRawPointer());
+				this->MarkAllBufferSlotsDirtyForVShader(activeVShader.GetRawPointer());
 			}
 		}
 		if(activePShader!=pProgram->pixelShader)//pixel shader object đang active khác pixel shader object trong program
@@ -882,7 +875,7 @@ HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
 			{
 				activePShader=pProgram->pixelShader;
 				pD3DDevice->SetPixelShader(activePShader->pshader);
-				this->MarkAllBufferSlotsDirtyForShader(activePShader.GetRawPointer());
+				this->MarkAllBufferSlotsDirtyForPShader(activePShader.GetRawPointer());
 			}
 		}
 		activeProgram=pProgram;
@@ -922,22 +915,11 @@ void HQShaderManagerD3D9::DestroyAllResource()
 
 
 HQReturnVal HQShaderManagerD3D9::DestroyShader(hq_uint32 shaderID)
-{
-	HQShaderObjectD3D9 *shader = this->shaderObjects.GetItemRawPointer(shaderID);
-	if (shader != NULL)
-		this->UnlinkShaderFromConstBufferSlots(shader);
-	return (HQReturnVal)this->shaderObjects.Remove(shaderID);
+{return (HQReturnVal)this->shaderObjects.Remove(shaderID);
 }
 
 void HQShaderManagerD3D9::DestroyAllShader()
 {
-	HQItemManager<HQShaderObjectD3D9>::Iterator ite;
-	this->shaderObjects.GetIterator(ite);
-	for (; !ite.IsAtEnd(); ++ite)
-	{
-		this->UnlinkShaderFromConstBufferSlots(ite.GetItemPointer().GetRawPointer());
-	}
-
 	this->shaderObjects.RemoveAll();
 }
 /*--------------------------*/
@@ -1178,7 +1160,6 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 	D3DXGetShaderConstantTableEx((DWORD*)byteCode->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &sobject->consTable);
 #else
 	sobject->consTable = HQ_NEW HQConstantTableD3D9(compiled_src, preprocessedConstInfo);
-	this->LinkShaderWithConstBufferSlots(sobject);
 #endif
 	SafeRelease(byteCode);
 	SafeRelease(errorMsg);
@@ -1299,7 +1280,6 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 	D3DXGetShaderConstantTableEx((DWORD*)byteCode->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &sobject->consTable);
 #else
 	sobject->consTable = HQ_NEW HQConstantTableD3D9(compiled_src, preprocessedConstInfo);
-	this->LinkShaderWithConstBufferSlots(sobject);
 #endif
 	SafeRelease(byteCode);
 	SafeRelease(errorMsg);
@@ -2236,26 +2216,42 @@ void HQShaderManagerD3D9::MarkBufferSlotDirty(hquint32 index)
 	{
 	case HQ_VERTEX_SHADER:
 		pBufferSlot = this->vshaderConstSlots + slot;
-		pBufferSlot->NotifyAllShaders();//notify all shaders
+		pBufferSlot->dirtyFlags = 1;//notify all shaders
 		break;
 	case HQ_PIXEL_SHADER:
 		pBufferSlot = this->vshaderConstSlots + slot;
-		pBufferSlot->NotifyAllShaders();//notify all shaders
+		pBufferSlot->dirtyFlags = 1;//notify all shaders
 		break;
 	}
 
 }
 
-void HQShaderManagerD3D9::MarkAllBufferSlotsDirtyForShader(HQShaderObjectD3D9* shader)
+void HQShaderManagerD3D9::MarkAllBufferSlotsDirtyForVShader(HQShaderObjectD3D9* shader)
 {
 	HQConstantTableD3D9 * constTable = shader->consTable;
+	BufferSlotInfo *pBaseBufferSlot = this->vshaderConstSlots;
+
 	//mark every associated buffer slots as dirty for this shader
 	HQConstantTableD3D9::BufferSlotList::Iterator slot_ite;
 	for (constTable->constBufferSlotList.GetIterator(slot_ite); !slot_ite.IsAtEnd(); ++slot_ite)
 	{
-		slot_ite->pDirtyFlagNode->m_element = 1;
+		pBaseBufferSlot[slot_ite->index].dirtyFlags = 1;
 	}
 }
+
+void HQShaderManagerD3D9::MarkAllBufferSlotsDirtyForPShader(HQShaderObjectD3D9* shader)
+{
+	HQConstantTableD3D9 * constTable = shader->consTable;
+	BufferSlotInfo *pBaseBufferSlot = this->pshaderConstSlots;
+
+	//mark every associated buffer slots as dirty for this shader
+	HQConstantTableD3D9::BufferSlotList::Iterator slot_ite;
+	for (constTable->constBufferSlotList.GetIterator(slot_ite); !slot_ite.IsAtEnd(); ++slot_ite)
+	{
+		pBaseBufferSlot[slot_ite->index].dirtyFlags = 1;
+	}
+}
+
 
 void HQShaderManagerD3D9::Commit()
 {
@@ -2271,7 +2267,7 @@ void HQShaderManagerD3D9::Commit()
 			BufferSlotInfo &bufferSlot = this->vshaderConstSlots[slot_ite->index];
 			HQShaderConstBufferD3D9 *constBuffer = bufferSlot.buffer.GetRawPointer();
 
-			if (slot_ite->pDirtyFlagNode->m_element == 1 && constBuffer != NULL)
+			if (bufferSlot.dirtyFlags == 1 && constBuffer != NULL)
 			{
 				//this slot is dirty. need to update constant data
 				hqubyte8 * pData = (hqubyte8*)constBuffer->pRawBuffer;
@@ -2291,9 +2287,9 @@ void HQShaderManagerD3D9::Commit()
 					offset += 4 * sizeof(hqfloat32)* const_ite->numVectors;
 				}
 
-				slot_ite->pDirtyFlagNode->m_element = 0;//mark as not dirty
+				bufferSlot.dirtyFlags = 0;//mark as not dirty
 
-			}//if (slot_ite->pDirtyFlagNode->m_element == 1 && constBuffer != NULL)
+			}//if (bufferSlot.dirtyFlags == 1 && constBuffer != NULL)
 		}//for (constTable->constBufferSlotList.GetIterator(slot_ite); !slot_ite.IsAtEnd(); ++slot_ite)
 	}//if (this->activeVShader != NULL)
 
@@ -2308,7 +2304,7 @@ void HQShaderManagerD3D9::Commit()
 			BufferSlotInfo &bufferSlot = this->pshaderConstSlots[slot_ite->index];
 			HQShaderConstBufferD3D9 *constBuffer = bufferSlot.buffer.GetRawPointer();
 
-			if (slot_ite->pDirtyFlagNode->m_element == 1 && constBuffer != NULL)
+			if (bufferSlot.dirtyFlags == 1 && constBuffer != NULL)
 			{
 				//this slot is dirty. need to update constant data
 				hqubyte8 * pData = (hqubyte8*)constBuffer->pRawBuffer;
@@ -2328,64 +2324,13 @@ void HQShaderManagerD3D9::Commit()
 					offset += 4 * sizeof(hqfloat32)* const_ite->numVectors;
 				}
 
-				slot_ite->pDirtyFlagNode->m_element = 0;//mark as not dirty
+				bufferSlot.dirtyFlags = 0;//mark as not dirty
 
-			}//if (slot_ite->pDirtyFlagNode->m_element == 1 && constBuffer != NULL)
+			}//if (bufferSlot.dirtyFlags == 1 && constBuffer != NULL)
 		}//for (constTable->constBufferSlotList.GetIterator(slot_ite); !slot_ite.IsAtEnd(); ++slot_ite)
 	}//if (this->activePShader != NULL)
 }
 
-void HQShaderManagerD3D9::LinkShaderWithConstBufferSlots(HQShaderObjectD3D9 *shader)
-{
-	HQShaderType type = shader->type;
-	HQConstantTableD3D9 *table = shader->consTable;
-	HQConstantTableD3D9::BufferSlotList::Iterator ite;
-	for (table->constBufferSlotList.GetIterator(ite); !ite.IsAtEnd(); ++ite)
-	{
-		//link shader with buffer slot
-		switch (type)
-		{
-		case HQ_VERTEX_SHADER:
-			{
-				BufferSlotInfo & slot = this->vshaderConstSlots[ite->index];
-				ite->pDirtyFlagNode = slot.dependentShaderDirtyFlags.PushBack(1);
-			}
-			break;
-		case HQ_PIXEL_SHADER:
-			{
-				BufferSlotInfo & slot = this->pshaderConstSlots[ite->index];
-				ite->pDirtyFlagNode = slot.dependentShaderDirtyFlags.PushBack(1);
-			}
-			break;
-		}
-	}
-}
-
-void HQShaderManagerD3D9::UnlinkShaderFromConstBufferSlots(HQShaderObjectD3D9 *shader)
-{
-	HQShaderType type = shader->type;
-	HQConstantTableD3D9 *table = shader->consTable;
-	HQConstantTableD3D9::BufferSlotList::Iterator ite;
-	for (table->constBufferSlotList.GetIterator(ite); !ite.IsAtEnd(); ++ite)
-	{
-		//unlink shader from buffer slot
-		switch (type)
-		{
-		case HQ_VERTEX_SHADER:
-			{
-				BufferSlotInfo & slot = this->vshaderConstSlots[ite->index];
-				slot.dependentShaderDirtyFlags.RemoveAt(ite->pDirtyFlagNode);
-			}
-			break;
-		case HQ_PIXEL_SHADER:
-			{
-				BufferSlotInfo & slot = this->pshaderConstSlots[ite->index];
-				slot.dependentShaderDirtyFlags.RemoveAt(ite->pDirtyFlagNode);
-			}
-			break;
-		}
-	}
-}
 
 HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 bufferID )
 {
@@ -2411,7 +2356,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 b
 			pBufferSlot->buffer = pBuffer;
 			pBufferSlot->bufferLink = pBuffer->boundSlots.PushBack(index);
 
-			pBufferSlot->NotifyAllShaders();//notify all dependent shaders
+			pBufferSlot->dirtyFlags = 1;//notify all dependent shaders
 		}
 		break;
 	case HQ_PIXEL_SHADER:
@@ -2425,7 +2370,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 b
 			pBufferSlot->buffer = pBuffer;
 			pBufferSlot->bufferLink = pBuffer->boundSlots.PushBack(index);
 
-			pBufferSlot->NotifyAllShaders();//notify all dependent shaders
+			pBufferSlot->dirtyFlags = 1;//notify all dependent shaders
 		}
 		break;
 	default:
