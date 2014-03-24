@@ -683,6 +683,7 @@ HQReturnVal HQDeviceD3D9::Draw(hq_uint32 vertexCount , hq_uint32 firstVertex)
 		primitiveCount = 0;
 	}
 
+	static_cast<HQShaderManagerD3D9*>(this-> shaderMan)->Commit();
 	pDevice->DrawPrimitive(this->primitiveMode , firstVertex , primitiveCount);
 	return HQ_OK;
 }
@@ -694,7 +695,7 @@ HQReturnVal HQDeviceD3D9::DrawPrimitive(hq_uint32 primitiveCount , hq_uint32 fir
 	if (this->flags & DEVICE_LOST)
 		return HQ_FAILED_DEVICE_LOST;
 	
-
+	static_cast<HQShaderManagerD3D9*>(this->shaderMan)->Commit();
 	pDevice->DrawPrimitive(this->primitiveMode , firstVertex , primitiveCount);
 	return HQ_OK;
 }
@@ -737,6 +738,7 @@ HQReturnVal HQDeviceD3D9::DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCou
 		primitiveCount = 0;
 	}
 
+	static_cast<HQShaderManagerD3D9*>(this->shaderMan)->Commit();
 	pDevice->DrawIndexedPrimitive(this->primitiveMode , 0 , 0 , numVertices , firstIndex , primitiveCount);
 	return HQ_OK;
 }
@@ -748,6 +750,7 @@ HQReturnVal HQDeviceD3D9::DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32
 	if (this->flags & DEVICE_LOST)
 		return HQ_FAILED_DEVICE_LOST;
 
+	static_cast<HQShaderManagerD3D9*>(this->shaderMan)->Commit();
 	pDevice->DrawIndexedPrimitive(this->primitiveMode , 0 , 0 , numVertices , firstIndex , primitiveCount);
 	return HQ_OK;
 }

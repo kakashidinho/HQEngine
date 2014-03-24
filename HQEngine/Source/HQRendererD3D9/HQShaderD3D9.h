@@ -41,7 +41,7 @@ struct HQParameterD3D9
 #if HQ_TRANSLATE_CG_TO_HLSL
 typedef ID3DXConstantTable HQConstantTableD3D9;
 #else
-class HQConstantTableD3D9;
+struct HQConstantTableD3D9;
 #endif
 
 struct HQShaderObjectD3D9
@@ -72,6 +72,17 @@ struct HQShaderProgramD3D9
 	HQItemManager<HQParameterD3D9> parameters;
 };
 
+struct HQShaderConstBufferD3D9
+{
+	HQShaderConstBufferD3D9(bool isDynamic, hq_uint32 size);
+	~HQShaderConstBufferD3D9();
+
+	void *pRawBuffer;
+	bool isDynamic;
+	hq_uint32 size;
+	hquint32 boundIndex;
+};
+
 class HQShaderManagerD3D9:public HQShaderManager,private HQItemManager<HQShaderProgramD3D9> , public HQLoggableObject
 {
 public:
@@ -84,6 +95,7 @@ public:
 	bool IsUsingShader() {return this->activeProgram != NULL;}
 
 	HQReturnVal ActiveProgram(hq_uint32 programID);
+	void Commit();//this method should be called before draw any thing
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,
@@ -236,6 +248,7 @@ public:
 
 	void OnResetDevice();
 private:
+	struct BufferSlotInfo;
 
 	HQSharedPtr<HQShaderProgramD3D9> activeProgram; 
 #if defined _DEBUG || defined DEBUG
@@ -248,6 +261,11 @@ private:
 
 	LPDIRECT3DDEVICE9 pD3DDevice;
 	HQItemManager<HQShaderObjectD3D9> shaderObjects;//danh sách shader object
+
+	HQItemManager<HQShaderConstBufferD3D9> shaderConstBuffers;//const buffer list
+
+	BufferSlotInfo* vshaderConstSlots;
+	BufferSlotInfo* pshaderConstSlots;
 	
 	//fixed function controlling values
 	D3DTEXTUREOP firstStageOp[2];//color & alpha op
@@ -306,6 +324,10 @@ private:
 
 
 	hquint32 GetD3DConstantStartRegister(HQConstantTableD3D9* table, const char* name);
+
+	void LinkShaderWithConstBufferSlots(HQShaderObjectD3D9 *shader);
+	void UnlinkShaderFromConstBufferSlots(HQShaderObjectD3D9 *shader);
+	void MarkBufferSlotDirty(hquint32 index);
 };
 
 #endif

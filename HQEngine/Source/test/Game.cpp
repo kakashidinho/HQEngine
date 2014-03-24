@@ -212,7 +212,7 @@ Game::Game()
 		pDevice->GetShaderManager()->SetUniformBuffer(11 , this->uniformBuffer[0]);
 		pDevice->GetShaderManager()->SetUniformBuffer(10 , this->uniformBuffer[1]);
 	}
-	else if (API == D3D10_RENDERER || API == D3D11_RENDERER)
+	else if (API == D3D9_RENDERER || API == D3D11_RENDERER)
 	{
 		pDevice->GetShaderManager()->CreateUniformBuffer(sizeof(BUFFER2) , NULL , true , &this->uniformBuffer[1]);
 		pDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 11 , this->uniformBuffer[0]);
@@ -395,15 +395,8 @@ void Game::Render(HQTime dt)
 	}
 	
 #ifdef WIN32
-	else if (API == D3D9_RENDERER)
-	{
-		pDevice->GetShaderManager()->SetUniformMatrix("viewProj" , *viewProj);
-		pDevice->GetShaderManager()->SetUniformMatrix("rotation" , &scale , 1);
-		pDevice->GetShaderManager()->SetUniformMatrix("boneMatrices" , mesh->GetBoneTransformMatrices() , mesh->GetNumBones());
-		
-	}
 
-	else if (API == D3D10_RENDERER || API == D3D11_RENDERER)
+	else if (API == D3D9_RENDERER || API == D3D11_RENDERER)
 	{
 		BUFFER2 * pTBuffer0 = NULL;
 #if TEXTURE_BUFFER
