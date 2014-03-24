@@ -30,6 +30,9 @@ COPYING.txt included with this distribution for more information.
 
 #define HQ_TRANSLATE_CG_TO_HLSL 0
 
+
+struct HQShaderVarParserInfoD3D9;
+
 struct HQParameterD3D9
 {
 	UINT parameterReg[2];//parameter's register index both in vertex shader and pixel shader
@@ -256,6 +259,7 @@ private:
 									 HQDataReaderStream* dataStream,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
+									 const HQShaderMacro *pDefines,
 									 const char **args,
 									 bool debugMode,
 									 hq_uint32 *pID
@@ -264,6 +268,7 @@ private:
 									 const char* pSourceData,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
+									 const HQShaderMacro *pDefines,
 									 const char **args,
 									 bool debugMode,
 									 hq_uint32 *pID);

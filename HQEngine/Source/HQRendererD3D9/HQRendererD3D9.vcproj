@@ -491,10 +491,48 @@
 				RelativePath=".\HQShaderD3D9.cpp"
 				>
 				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/mojoshader;../../../ThirdParty-mod/GnuWin32/include"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/mojoshader;../../../ThirdParty-mod/GnuWin32/include"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release noptimize|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/mojoshader;../../../ThirdParty-mod/GnuWin32/include"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release static CRT|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/mojoshader;../../../ThirdParty-mod/GnuWin32/include"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug static CRT|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/mojoshader;../../../ThirdParty-mod/GnuWin32/include"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
 						AssemblerOutput="4"
 					/>
 				</FileConfiguration>
@@ -502,6 +540,109 @@
 			<File
 				RelativePath=".\HQShaderD3D9_FF.cpp"
 				>
+			</File>
+			<File
+				RelativePath=".\HQShaderD3D9_Lexer.l"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="flex $(InputPath)"
+						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(InputName)_Gen.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="flex $(InputPath)"
+						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(InputName)_Gen.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release noptimize|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="flex $(InputPath)"
+						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(InputName)_Gen.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release static CRT|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="flex $(InputPath)"
+						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(InputName)_Gen.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug static CRT|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="flex $(InputPath)"
+						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(InputName)_Gen.cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\HQShaderD3D9_Lexer_Gen.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release noptimize|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release static CRT|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug static CRT|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="../../../ThirdParty-mod/GnuWin32/include"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\HQStateManagerD3D9.cpp"
@@ -580,6 +721,214 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="mojoshader"
+				>
+				<File
+					RelativePath="..\..\..\ThirdParty-mod\mojoshader\mojoshader.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\ThirdParty-mod\mojoshader\mojoshader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\ThirdParty-mod\mojoshader\mojoshader_common.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\ThirdParty-mod\mojoshader\mojoshader_internal.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\ThirdParty-mod\mojoshader\mojoshader_lexer.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\ThirdParty-mod\mojoshader\mojoshader_preprocessor.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug static CRT|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -604,6 +953,10 @@
 			</File>
 			<File
 				RelativePath=".\HQShaderD3D9.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HQShaderD3D9_Lexer.h"
 				>
 			</File>
 			<File

@@ -11,11 +11,17 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceD3D9PCH.h"
 #include "HQShaderD3D9.h"
 
+#include "HQShaderD3D9_Lexer.h"
+
+#include "mojoshader.h" //for preprocessor
+
 #include <string.h>
 #include <sstream>
 
+#define NUM_PREDEFINED_ARGS 16
 
-char *semantics[17]= {
+
+static char *semantics[17]= {
 	"-DVPOSITION=POSITION",
 	"-DVCOLOR=COLOR",
 	"-DVNORMAL=NORMAL",
@@ -35,9 +41,19 @@ char *semantics[17]= {
 	NULL
 };
 
+#define PREPROCESS_BY_CG 0
+#if PREPROCESS_BY_CG
+static const char g_preprocessOption[] = "-E";
+static const char g_compileOption[] = "-d3d";
+#endif
+
+static bool g_disableErrorCallback = false;
+
 HQShaderManagerD3D9* pShaderMan=NULL;
 void cgErrorCallBack(void)
 {
+	if (g_disableErrorCallback)
+		return;
 	CGerror err=cgGetError();
 	if(err == cgD3D9Failed)
 	{
@@ -48,13 +64,311 @@ void cgErrorCallBack(void)
 		pShaderMan->Log("%s",cgGetErrorString(err));
 }
 
+
+/*----------------------ShaderVarParserInfo-----------------------*/	
+struct UniformBlkElemInfo {
+	std::string name;
+	int row;
+	int col;
+	int arraySize;
+	int blockIndex;
+};
+
+struct UniformBlock{
+	int index;
+	HQClosedStringHashTable<UniformBlkElemInfo> blockElems;
+
+	size_t blockPrologue_start_pos, blockPrologue_end_pos;
+	size_t blockEpilogue_start_pos, blockEpilogue_end_pos;
+};
+
+struct HQShaderVarParserInfoD3D9 {
+	HQShaderVarParserInfoD3D9(const char * src, const HQShaderMacro* pDefines);
+	~HQShaderVarParserInfoD3D9();
+	HQLinkedList<UniformBlock> uniformBlocks;//list of declared uniform blocks
+	HQClosedStringHashTable<UniformBlock *> uniformToBlkMap;//map from uniform name to uniform block containing it
+
+	const char* GetPreprocessedSrc() const {return m_preprocessedSrc;};
+private:
+	void ParseUniform();
+	void ParseDirective();
+
+	bool m_isColMajor;
+	char * m_preprocessedSrc;
+};
+
+HQShaderVarParserInfoD3D9::HQShaderVarParserInfoD3D9(const char *src, const HQShaderMacro* pDefines)
+: m_isColMajor (false), m_preprocessedSrc(NULL)
+{
+	int numDefines = 0;
+	const HQShaderMacro *pD = pDefines;
+	
+	//calculate number of macros
+	while (pD->name != NULL && pD->definition != NULL)
+	{
+		numDefines++;
+		pD++;
+	}
+
+	//preprocess source first
+	const MOJOSHADER_preprocessData * preprocessedData = MOJOSHADER_preprocess("source",
+												src,
+												strlen(src),
+												(const MOJOSHADER_preprocessorDefine*)pDefines,
+												numDefines,
+												NULL,
+												NULL,
+												NULL,
+												NULL,
+												NULL);
+
+	if (preprocessedData->output != NULL)
+	{
+
+		//prepare lexer
+		int lex_return;
+		TokenKind kind;
+		YYLVALTYPE token;
+		pyylval = &token;
+
+		hqengine_shader_d3d9_lexer_start(preprocessedData->output);
+
+		m_preprocessedSrc = HQ_NEW char [preprocessedData->output_len + 1];
+		strcpy(m_preprocessedSrc, preprocessedData->output);//copy the preprocessed source
+
+		while ((lex_return = yylex()) > 0)
+		{
+			kind = (TokenKind)lex_return;
+
+			if (kind == UNIFORM)
+			{
+				ParseUniform();
+			}
+			else if (kind == HASH_SIGN)
+			{
+				ParseDirective();
+			}
+
+		}//while ((lex_return = yylex()) > 0)
+
+		hqengine_shader_d3d9_lexer_clean_up();
+	}//if (preprocessedData->output != NULL)
+
+	MOJOSHADER_freePreprocessData(preprocessedData);
+
+}
+
+HQShaderVarParserInfoD3D9::~HQShaderVarParserInfoD3D9()
+{
+	if (m_preprocessedSrc)
+		delete [] m_preprocessedSrc;
+}
+
+void HQShaderVarParserInfoD3D9::ParseDirective()
+{
+	if (yylex() == PRAGMA 
+		&& yylex() == PACK_MATRIX
+		&& yylex() == LPAREN
+		&& yylex() == COL_MAJOR
+		&& yylex() == RPAREN)
+	{
+		m_isColMajor = true;	
+	}
+}
+
+void HQShaderVarParserInfoD3D9::ParseUniform()
+{
+	enum UniformBlockElemDeclState {
+		UDECL_START,
+		UDECL_TYPE,
+		UDECL_NAME,
+		UDECL_ARRAY_SIZE_BEGIN,
+		UDECL_ARRAY_SIZE,
+		UDECL_ARRAY_SIZE_END,
+		UBLOCK_END,
+		UBLOCK_SEMANTIC,
+		UBLOCK_SEMANTIC_NAME_ARRAY_STYLE,
+		UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX_START,
+		UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX,
+		UBLOCK_SEMANTIC_END
+	};
+
+	YYLVALTYPE *ptoken = pyylval;
+
+	size_t uniform_decl_start_pos = ptoken->src_start_pos;
+	TokenKind kind = (TokenKind)yylex();
+
+	if (kind == IDENTIFIER)//may be uniform block
+	{
+		kind = (TokenKind)yylex();
+		if (kind == LBRACE)
+		{
+			bool stop = false;
+			UniformBlockElemDeclState state = UDECL_START;
+			int blockIndex = -1;
+			UniformBlkElemInfo blockElemInfo;
+			UniformBlock uniformBlock;
+			uniformBlock.blockPrologue_start_pos = uniform_decl_start_pos;
+			uniformBlock.blockPrologue_end_pos = ptoken->src_end_pos;
+
+			while ((kind = (TokenKind)yylex()) > 0 && !stop)
+			{
+				switch (state)
+				{
+				case UDECL_START:
+					if (kind == RBRACE)
+					{
+						uniformBlock.blockEpilogue_start_pos = ptoken->src_start_pos;
+						state = UBLOCK_END;
+					}
+					else if (kind == SCALAR || kind == VECTOR || kind == MAT)
+					{
+						state = UDECL_TYPE;
+						blockElemInfo.row = ptoken->row;
+						blockElemInfo.col = ptoken->col;
+					}
+					else
+						stop = true;
+					break;
+				case UDECL_TYPE:
+					if (kind == IDENTIFIER)
+					{
+						state = UDECL_NAME;
+						blockElemInfo.name = ptoken->lexeme;
+					}
+					else
+						stop = true;
+					break;
+				case UDECL_NAME:
+					if (kind == LBRACKET)
+					{
+						state = UDECL_ARRAY_SIZE_BEGIN;
+					}
+					else if (kind == SEMI_COLON)
+					{
+						blockElemInfo.arraySize = 1;
+						uniformBlock.blockElems.Add(blockElemInfo.name, blockElemInfo);
+						state = UDECL_START;
+					}
+					else 
+						stop = true;
+					break;
+				case UDECL_ARRAY_SIZE_BEGIN:
+					if (kind == INTCONSTANT)
+					{
+						blockElemInfo.arraySize = (int)atol(ptoken->lexeme.c_str());
+						state = UDECL_ARRAY_SIZE;
+					}
+					else
+						stop = true;
+					break;
+				case UDECL_ARRAY_SIZE:
+					if (kind == RBRACKET)
+						state = UDECL_ARRAY_SIZE_END;
+					else
+						stop = true;
+					break;
+				case UDECL_ARRAY_SIZE_END:
+					if (kind == SEMI_COLON)
+					{
+						uniformBlock.blockElems.Add(blockElemInfo.name, blockElemInfo);
+						state = UDECL_START;
+					}
+					else
+						stop = true;
+					break;
+				case UBLOCK_END:
+					if (kind == SEMI_COLON)
+					{
+						stop = true;
+						blockIndex = 0;
+					}
+					else if (kind == COLON)
+						state = UBLOCK_SEMANTIC;
+					break;
+				case UBLOCK_SEMANTIC:
+					if (kind == IDENTIFIER)
+					{
+						if (strcmp(ptoken->lexeme.c_str(), "BUFFER") == 0)
+							state = UBLOCK_SEMANTIC_NAME_ARRAY_STYLE;
+						else
+						{
+							sscanf(ptoken->lexeme.c_str(), "BUFFER%d", &blockIndex);
+							state = UBLOCK_SEMANTIC_END;
+						}
+					}
+					break;
+				case UBLOCK_SEMANTIC_NAME_ARRAY_STYLE:
+					if (kind == LBRACKET)
+					{
+						state = UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX_START;
+					}
+					else 
+						stop = true;
+					break;
+				case UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX_START:
+					if (kind == INTCONSTANT)
+					{
+						blockIndex = (int)atol(ptoken->lexeme.c_str());
+						state = UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX;
+					}
+					else 
+						stop = true;
+					break;
+				case UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX:
+					if (kind == RBRACKET)
+					{
+						state = UBLOCK_SEMANTIC_END;
+					}
+					else 
+						stop = true;
+					break;
+				case UBLOCK_SEMANTIC_END:
+					if (kind == SEMI_COLON)
+					{
+						stop = true;
+						uniformBlock.blockEpilogue_end_pos = ptoken->src_end_pos;
+					}
+					else
+						blockIndex = -1;//invalid uniform block
+					break;
+				}//switch (state)
+			}//while ((kind = (TokenKind)yylex()) > 0 && !stop)
+
+			if (blockIndex >= 0)
+			{
+				//add the uniform block info to the list
+				uniformBlock.index = blockIndex;
+				UniformBlock* pAddedBlock = &this->uniformBlocks.PushBack(uniformBlock)->m_element;
+
+				HQClosedStringHashTable<UniformBlkElemInfo>::Iterator ite;
+				for (pAddedBlock->blockElems.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+				{
+					this->uniformToBlkMap.Add(ite->name, pAddedBlock);
+
+					ite->blockIndex = blockIndex;
+					if (ite->row > 1 && m_isColMajor)//flip row and column in column major mode
+					{
+						int temp = ite->row;
+						ite->row = ite->col;
+						ite->col = temp;
+					}
+				}
+				//now remove the block prologue and epilogue because cg compiler doesn't support it
+				for (size_t i = uniformBlock.blockPrologue_start_pos; i < uniformBlock.blockPrologue_end_pos; ++i)
+					m_preprocessedSrc[i] = ' ';
+				for (size_t i = uniformBlock.blockEpilogue_start_pos; i < uniformBlock.blockEpilogue_end_pos; ++i)
+					m_preprocessedSrc[i] = ' ';
+			}//if (blockIndex >= 0)
+		}//if (kind == LBRACE)
+	}//if (kind == IDENTIFIER)
+}
+
 #if !HQ_TRANSLATE_CG_TO_HLSL
-
-
 /*--------------class HQConstantTableD3D9 -------*/
 class HQConstantTableD3D9  {
 public:
-	HQConstantTableD3D9(const char *cgCompiledCode);
+	HQConstantTableD3D9(const char *cgCompiledCode, const HQShaderVarParserInfoD3D9 &preprocessedInfo);
 	void Release() { delete this; }
 	void AddConstant(const std::string & name, DWORD regIndex);
 	DWORD GetConstantRegIndex(const char *name, bool& found);
@@ -64,12 +378,12 @@ protected:
 	hash_map_type<std::string, DWORD> table;
 };
 
-HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
+HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode, const HQShaderVarParserInfoD3D9& preproccessedConstInfo) {
 	/*example of constant in compiled code
 	* //var float3x4 rotation :  : c[0], 3 : 1 : 1
 	*/
 	enum State{
-		BEGIN,
+		BEGIN_STATE,
 		FIRST_SLASH,
 		COMMENT,
 		VAR1,
@@ -95,7 +409,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 
 #define WHITE_SPACE(character) (character == ' ' || character == '\t' || character == '\r')
 
-	State state = BEGIN;
+	State state = BEGIN_STATE;
 	std::stringstream tokenStr;
 	std::string name;
 	DWORD regIndex = 0xffffffff;
@@ -105,13 +419,13 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 	{
 		switch (state)
 		{
-		case BEGIN:
+		case BEGIN_STATE:
 			if (c == '/')
 				state = FIRST_SLASH;
 			break;
 		case EAT_INPUT:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			break;
 		case FIRST_SLASH:
 			if (c == '/')
@@ -121,7 +435,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			break;
 		case COMMENT:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (c == 'v')
 				state = VAR1;
 			break;
@@ -145,7 +459,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			break;
 		case VAR:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (!WHITE_SPACE(c))
 			{
 				tokenStr.str("");
@@ -155,7 +469,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			break;
 		case TYPE1:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (!WHITE_SPACE(c))
 				state = TYPE;
 			break;
@@ -163,11 +477,11 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			if (WHITE_SPACE(c))
 				state = TYPE_END;
 			else if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			break;
 		case TYPE_END:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (!WHITE_SPACE(c))
 			{
 				state = NAME;
@@ -177,7 +491,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			break;
 		case NAME:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (!WHITE_SPACE(c))
 			{
 				tokenStr << c;
@@ -191,14 +505,14 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			break;
 		case NAME_END:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (c == ':')
 				state = COLON1;
 
 			break;
 		case COLON1:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (c == ':')
 			{
 				tokenStr.str("");//clear token string
@@ -219,11 +533,11 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 				tokenStr << c;
 			}
 			else if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			break;
 		case COLON2_1_TOKEN:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (c == ':')
 				state = COLON2_1_TOKEN_END_WITH_COLON;
 			else if (c == ',')
@@ -235,6 +549,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			break;
 		case COLON2_1_COMMA: case COLON2_1_TOKEN_END_WITH_COLON:
 			{
+				--i;//re-read this input character again
 				std::string token = tokenStr.str();
 				if (sscanf(token.c_str(), "c[%d]", &regIndex) == 1)
 				{
@@ -251,7 +566,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 			if (c == ':')
 				state = COLON3;
 			else if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			break;
 		case COLON3:
 			if (c == ':')
@@ -260,11 +575,11 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 				tokenStr.str("");//clear token
 			}
 			else if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			break;
 		case COLON4:
 			if (c == '\n')
-				state = BEGIN;
+				state = BEGIN_STATE;
 			else if (!WHITE_SPACE(c))
 			{
 				state = COLON4_TOKEN;
@@ -280,7 +595,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode) {
 					if (regIndex != 0xfffffff)
 						AddConstant(name, regIndex);
 				}
-				state = BEGIN;
+				state = BEGIN_STATE;
 				tokenStr.str("");//clear token
 			}
 			else
@@ -541,24 +856,30 @@ char ** HQShaderManagerD3D9::GetCompileArguments(const HQShaderMacro * pDefines,
 	if(numDefines == 0)
 		return semantics;
 	/*------create arguments---------*/
-	char ** args = new char *[numDefines + 19];
-	for (int i = 0 ; i < 16 ; ++i)
+	//first argument is reserved for preprocess option
+	char ** args = new char *[numDefines + NUM_PREDEFINED_ARGS + 3];
+	for (int i = 0 ; i < NUM_PREDEFINED_ARGS ; ++i)
 		args[i] = semantics[i];
 
-	//optimize option
-	args[numDefines + 16] = HQ_NEW char[4];
+	//optimization's option
+	args[numDefines + NUM_PREDEFINED_ARGS] = HQ_NEW char[4];
 	if (debug)
 	{
-		strcpy(args[numDefines + 16], "-O0");
-		args[numDefines + 17] = HQ_NEW char[7];
-		strcpy(args[numDefines + 17], "-debug");
+#if 1
+		strcpy(args[numDefines + NUM_PREDEFINED_ARGS], "-O0");
+		args[numDefines + NUM_PREDEFINED_ARGS + 1] = HQ_NEW char[7];
+		strcpy(args[numDefines + NUM_PREDEFINED_ARGS + 1], "-debug");
+#else
+		args[numDefines + NUM_PREDEFINED_ARGS] = NULL;
+		args[numDefines + NUM_PREDEFINED_ARGS + 1] = NULL;
+#endif
 	}
 	else
 	{
-		strcpy(args[numDefines + 16], "-O3");
-		args[numDefines + 17] = NULL;
+		strcpy(args[numDefines + NUM_PREDEFINED_ARGS], "-O3");
+		args[numDefines + NUM_PREDEFINED_ARGS + 1] = NULL;
 	}
-	args[numDefines + 18] = NULL;
+	args[numDefines + NUM_PREDEFINED_ARGS + 2] = NULL;//last element must be null
 
 	pD = pDefines;
 	
@@ -571,13 +892,13 @@ char ** HQShaderManagerD3D9::GetCompileArguments(const HQShaderMacro * pDefines,
 	
 		if (definitionLen != 0)
 		{
-			args[16 + i] = new char[nameLen + definitionLen + 4];
-			sprintf(args[16 + i] , "-D%s=%s" , pD->name , pD->definition);
+			args[NUM_PREDEFINED_ARGS + i] = new char[nameLen + definitionLen + 4];
+			sprintf(args[NUM_PREDEFINED_ARGS + i] , "-D%s=%s" , pD->name , pD->definition);
 		}
 		else
 		{
-			args[16 + i] = new char[nameLen + 4];
-			sprintf(args[16 + i] , "-D%s" , pD->name);
+			args[NUM_PREDEFINED_ARGS + i] = new char[nameLen + 4];
+			sprintf(args[NUM_PREDEFINED_ARGS + i] , "-D%s" , pD->name);
 		}
 		pD++;
 		i++;
@@ -590,7 +911,7 @@ void HQShaderManagerD3D9::DeAlloc(char **ppC)
 {
 	if(ppC == NULL || ppC == semantics)
 		return;
-	char ** ppD = ppC + 16;
+	char ** ppD = ppC + NUM_PREDEFINED_ARGS;
 	while(*ppD != NULL)
 	{
 		SafeDeleteArray(*ppD);
@@ -599,12 +920,13 @@ void HQShaderManagerD3D9::DeAlloc(char **ppC)
 
 	SafeDeleteArray(ppC);
 }
-
+/*---------------------------*/
 
 HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 									 HQDataReaderStream* dataStream,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
+									 const HQShaderMacro *pDefines,
 									 const char **args,
 									 bool debugMode , 
 									 hq_uint32 *pID)
@@ -634,74 +956,61 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 	dataStream->ReadBytes(streamContent, dataStream->TotalSize(), 1);
 	streamContent[dataStream->TotalSize()] = '\0';
 
-	HQShaderObjectD3D9 *sobject= new HQShaderObjectD3D9();
-	//translate cg to hlsl
-	CGprogram cgprogram=cgCreateProgram(this->cgContext, CG_SOURCE, streamContent, profile, entryFunctionName,args);
+	//obtain variables' infos from source
+	HQShaderVarParserInfoD3D9 preprocessedConstInfo(streamContent, pDefines);
+	
+	const char *actualSource = preprocessedConstInfo.GetPreprocessedSrc();
+	if (actualSource == NULL)
+		actualSource = streamContent;
+
+	//now compile
+	CGprogram cgprogram = cgCreateProgram(this->cgContext, CG_SOURCE, actualSource, profile, entryFunctionName,args);
 	
 	delete[] streamContent;
-	
-	if(cgprogram==NULL)
+
+	if (cgprogram == NULL )
 	{
-		delete sobject;
+		this->Log("Shader compile from stream %s error !",streamName);
 		return HQ_FAILED;
 	}
-	sobject->type=type;
 	
-	//now compile hlsl code
+	//now compile d3d code
 
-	{
-		HRESULT hr;
-		//check for errors
-		ID3DXBuffer* byteCode = NULL;
-		ID3DXBuffer* errorMsg = NULL;
-		DWORD compileFlags = debugMode ? (D3DXSHADER_DEBUG) : 0;
+	
+	HRESULT hr;
+	//check for errors
+	ID3DXBuffer* byteCode = NULL;
+	ID3DXBuffer* errorMsg = NULL;
+	DWORD compileFlags = debugMode ? (D3DXSHADER_DEBUG) : 0;
 #if HQ_TRANSLATE_CG_TO_HLSL
-		compileFlags |= debugMode? (D3DXSHADER_SKIPOPTIMIZATION): 0;
-		compileFlags |= D3DXSHADER_ENABLE_BACKWARDS_COMPATIBILITY;
+	compileFlags |= debugMode? (D3DXSHADER_SKIPOPTIMIZATION): 0;
+	compileFlags |= D3DXSHADER_ENABLE_BACKWARDS_COMPATIBILITY;
 #endif
-		const char * d3dprofile = type == HQ_VERTEX_SHADER? D3DXGetVertexShaderProfile(pD3DDevice): D3DXGetPixelShaderProfile(pD3DDevice);
+	const char * d3dprofile = type == HQ_VERTEX_SHADER? D3DXGetVertexShaderProfile(pD3DDevice): D3DXGetPixelShaderProfile(pD3DDevice);
 
-		//get output from cg
-		const char * compiled_src = cgGetProgramString(cgprogram, CG_COMPILED_PROGRAM);
-		bool writeToTemp = false;
+	//get output from cg
+	const char * compiled_src = cgGetProgramString(cgprogram, CG_COMPILED_PROGRAM);
+	bool writeToTemp = false;
 #if HQ_TRANSLATE_CG_TO_HLSL
-		if (debugMode && dataStream->GetName() != NULL)
+	if (debugMode && dataStream->GetName() != NULL)
+	{
+		//write translated code to temp file
+		std::string tempFileName =  dataStream->GetName() ;
+		tempFileName += ".";
+		tempFileName += d3dprofile;
+		tempFileName += ".temp";
+		FILE* tempf = fopen(tempFileName.c_str(), "wb");
+		if (tempf == NULL)
+			writeToTemp = false;
+		else
 		{
-			//write translated code to temp file
-			std::string tempFileName =  dataStream->GetName() ;
-			tempFileName += ".";
-			tempFileName += d3dprofile;
-			tempFileName += ".temp";
-			FILE* tempf = fopen(tempFileName.c_str(), "wb");
-			if (tempf == NULL)
-				writeToTemp = false;
-			else
-			{
-				writeToTemp = true;
-				fwrite(compiled_src, strlen(compiled_src), 1, tempf);//write translated code to temp file
-				fclose(tempf);
+			writeToTemp = true;
+			fwrite(compiled_src, strlen(compiled_src), 1, tempf);//write translated code to temp file
+			fclose(tempf);
 
-				//compile by d3dx
-				hr = D3DXCompileShaderFromFileA(
-						tempFileName.c_str(),
-						NULL,
-						NULL,
-						"main",
-						d3dprofile,
-						compileFlags,
-						&byteCode,
-						&errorMsg,
-						NULL
-						);
-			}
-		}
-
-		if (!writeToTemp)
-		{
 			//compile by d3dx
-			hr = D3DXCompileShader(
-					compiled_src,
-					strlen(compiled_src),
+			hr = D3DXCompileShaderFromFileA(
+					tempFileName.c_str(),
 					NULL,
 					NULL,
 					"main",
@@ -712,45 +1021,65 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 					NULL
 					);
 		}
-#else //#if HQ_TRANSLATE_CG_TO_HLSL
-		hr = D3DXAssembleShader(compiled_src,
-			strlen(compiled_src),
-			NULL,
-			NULL,
-			compileFlags,
-			&byteCode,
-			&errorMsg
-			);
-#endif
-
-		if (FAILED(hr))
-		{
-			if (errorMsg)
-				this->Log("Shader compile from stream %s error ! Error message \"%s\"",streamName, errorMsg->GetBufferPointer());
-			else
-				this->Log("Shader compile from stream %s error !", streamName);
-
-			delete sobject;
-			SafeRelease(byteCode);
-			SafeRelease(errorMsg); 
-			cgDestroyProgram(cgprogram);//no thing more to do with cg program
-			return HQ_FAILED;
-		}
-		//succeeded
-		if (type == HQ_VERTEX_SHADER)
-			pD3DDevice->CreateVertexShader((DWORD*) byteCode->GetBufferPointer(), &sobject->vshader);
-		else
-			pD3DDevice->CreatePixelShader((DWORD*) byteCode->GetBufferPointer(), &sobject->pshader);
-#if HQ_TRANSLATE_CG_TO_HLSL
-		D3DXGetShaderConstantTableEx((DWORD*)byteCode->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &sobject->consTable);
-#else
-		sobject->consTable = HQ_NEW HQConstantTableD3D9(compiled_src);
-#endif
-		SafeRelease(byteCode);
-		SafeRelease(errorMsg);
-		cgDestroyProgram(cgprogram);//no thing more to do with cg program
-
 	}
+
+	if (!writeToTemp)
+	{
+		//compile by d3dx
+		hr = D3DXCompileShader(
+				compiled_src,
+				strlen(compiled_src),
+				NULL,
+				NULL,
+				"main",
+				d3dprofile,
+				compileFlags,
+				&byteCode,
+				&errorMsg,
+				NULL
+				);
+	}
+#else //#if HQ_TRANSLATE_CG_TO_HLSL
+	hr = D3DXAssembleShader(compiled_src,
+		strlen(compiled_src),
+		NULL,
+		NULL,
+		compileFlags,
+		&byteCode,
+		&errorMsg
+		);
+#endif
+
+	if (FAILED(hr))
+	{
+		if (errorMsg)
+			this->Log("Shader compile from stream %s error ! Error message \"%s\"",streamName, errorMsg->GetBufferPointer());
+		else
+			this->Log("Shader compile from stream %s error !", streamName);
+
+		SafeRelease(byteCode);
+		SafeRelease(errorMsg); 
+		cgDestroyProgram(cgprogram);//no thing more to do with cg program
+		return HQ_FAILED;
+	}
+	//succeeded
+	HQShaderObjectD3D9 *sobject= new HQShaderObjectD3D9();
+	sobject->type=type;
+
+	if (type == HQ_VERTEX_SHADER)
+		pD3DDevice->CreateVertexShader((DWORD*) byteCode->GetBufferPointer(), &sobject->vshader);
+	else
+		pD3DDevice->CreatePixelShader((DWORD*) byteCode->GetBufferPointer(), &sobject->pshader);
+#if HQ_TRANSLATE_CG_TO_HLSL
+	D3DXGetShaderConstantTableEx((DWORD*)byteCode->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &sobject->consTable);
+#else
+	sobject->consTable = HQ_NEW HQConstantTableD3D9(compiled_src, preprocessedConstInfo);
+#endif
+	SafeRelease(byteCode);
+	SafeRelease(errorMsg);
+	cgDestroyProgram(cgprogram);//no thing more to do with cg program
+
+	
 
 	if (!this->shaderObjects.AddItem(sobject , pID))
 	{
@@ -765,6 +1094,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 									 const char* pSourceData,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
+									 const HQShaderMacro *pDefines,
 									 const char **args,
 									 bool debugMode,
 									 hq_uint32 *pID)
@@ -787,86 +1117,87 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 		return HQ_FAILED;
 	}
 
+	//obtain variables' infos from source
+	HQShaderVarParserInfoD3D9 preprocessedConstInfo(pSourceData, pDefines);
 
-	HQShaderObjectD3D9 *sobject= new HQShaderObjectD3D9();
-	//translate cg to hlsl
-	CGprogram cgprogram=cgCreateProgram(this->cgContext, CG_SOURCE,
-												 pSourceData, profile, entryFunctionName,args);
+	const char *actualSource = preprocessedConstInfo.GetPreprocessedSrc();
+	if (actualSource == NULL)
+		actualSource = pSourceData;
 	
-	
-	if(cgprogram==NULL)
+	//now compile
+	CGprogram cgprogram = cgCreateProgram(this->cgContext, CG_SOURCE, actualSource, profile, entryFunctionName,args);
+
+	if (cgprogram == NULL )
 	{
-		delete sobject;
+		this->Log("Shader compile from memory error !");
 		return HQ_FAILED;
 	}
-	sobject->type=type;
 	
-	//now compile hlsl code
+	//now compile d3d code
 
-	{
-		HRESULT hr;
-		//check for errors
-		ID3DXBuffer* byteCode = NULL;
-		ID3DXBuffer* errorMsg = NULL;
-		DWORD compileFlags = debugMode? (D3DXSHADER_DEBUG): 0;
-		const char * d3dprofile = type == HQ_VERTEX_SHADER? D3DXGetVertexShaderProfile(pD3DDevice): D3DXGetPixelShaderProfile(pD3DDevice);
+	HRESULT hr;
+	//check for errors
+	ID3DXBuffer* byteCode = NULL;
+	ID3DXBuffer* errorMsg = NULL;
+	DWORD compileFlags = debugMode? (D3DXSHADER_DEBUG): 0;
+	const char * d3dprofile = type == HQ_VERTEX_SHADER? D3DXGetVertexShaderProfile(pD3DDevice): D3DXGetPixelShaderProfile(pD3DDevice);
 
-		//get output from cg
-		const char * compiled_src = cgGetProgramString(cgprogram, CG_COMPILED_PROGRAM);
+	//get output from cg
+	const char * compiled_src = cgGetProgramString(cgprogram, CG_COMPILED_PROGRAM);
 #if HQ_TRANSLATE_CG_TO_HLSL
-		//compile by d3dx
-		hr = D3DXCompileShader(
-				compiled_src,
-				strlen(compiled_src),
-				NULL,
-				NULL,
-				"main",
-				d3dprofile,
-				compileFlags,
-				&byteCode,
-				&errorMsg,
-				NULL
-				);
-#else
-		hr = D3DXAssembleShader(compiled_src,
+	//compile by d3dx
+	hr = D3DXCompileShader(
+			compiled_src,
 			strlen(compiled_src),
 			NULL,
 			NULL,
+			"main",
+			d3dprofile,
 			compileFlags,
 			&byteCode,
-			&errorMsg
+			&errorMsg,
+			NULL
 			);
-#endif
-
-		if (FAILED(hr))
-		{
-			if (errorMsg)
-				this->Log("Shader compile from memory error ! Error message \"%s\"",errorMsg->GetBufferPointer());
-			else
-				this->Log("Shader compile from memory error !");
-
-			delete sobject;
-			SafeRelease(byteCode);
-			SafeRelease(errorMsg);
-			cgDestroyProgram(cgprogram);//no more thing to do with cg program
-			return HQ_FAILED;
-		}
-		//succeeded
-		if (type == HQ_VERTEX_SHADER)
-			pD3DDevice->CreateVertexShader((DWORD*) byteCode->GetBufferPointer(), &sobject->vshader);
-		else
-			pD3DDevice->CreatePixelShader((DWORD*) byteCode->GetBufferPointer(), &sobject->pshader);
-
-#if HQ_TRANSLATE_CG_TO_HLSL
-		D3DXGetShaderConstantTableEx((DWORD*)byteCode->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &sobject->consTable);
 #else
-		sobject->consTable = HQ_NEW HQConstantTableD3D9(compiled_src);
+	hr = D3DXAssembleShader(compiled_src,
+		strlen(compiled_src),
+		NULL,
+		NULL,
+		compileFlags,
+		&byteCode,
+		&errorMsg
+		);
 #endif
+
+	if (FAILED(hr))
+	{
+		if (errorMsg)
+			this->Log("Shader compile from memory error ! Error message \"%s\"",errorMsg->GetBufferPointer());
+		else
+			this->Log("Shader compile from memory error !");
+
 		SafeRelease(byteCode);
 		SafeRelease(errorMsg);
 		cgDestroyProgram(cgprogram);//no more thing to do with cg program
-
+		return HQ_FAILED;
 	}
+	//succeeded
+	HQShaderObjectD3D9 *sobject= new HQShaderObjectD3D9();
+	sobject->type=type;
+
+	if (type == HQ_VERTEX_SHADER)
+		pD3DDevice->CreateVertexShader((DWORD*) byteCode->GetBufferPointer(), &sobject->vshader);
+	else
+		pD3DDevice->CreatePixelShader((DWORD*) byteCode->GetBufferPointer(), &sobject->pshader);
+
+#if HQ_TRANSLATE_CG_TO_HLSL
+	D3DXGetShaderConstantTableEx((DWORD*)byteCode->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &sobject->consTable);
+#else
+	sobject->consTable = HQ_NEW HQConstantTableD3D9(compiled_src, preprocessedConstInfo);
+#endif
+	SafeRelease(byteCode);
+	SafeRelease(errorMsg);
+	cgDestroyProgram(cgprogram);//no more thing to do with cg program
 
 	if (!this->shaderObjects.AddItem(sobject , pID))
 	{
@@ -884,7 +1215,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStream(HQShaderType type,
 										hq_uint32 *pID)
 {
 	char ** args = this->GetCompileArguments(pDefines, false);
-	HQReturnVal re = this->CreateShaderFromStreamEx(type,dataStream,isPreCompiled , entryFunctionName ,(const char**)args ,false , pID);
+	HQReturnVal re = this->CreateShaderFromStreamEx(type,dataStream,isPreCompiled , entryFunctionName , pDefines, (const char**)args ,false , pID);
 	this->DeAlloc(args);
 	return re;
 }
@@ -897,7 +1228,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemory(HQShaderType type,
 										  hq_uint32 *pID)
 {
 	char ** args = this->GetCompileArguments(pDefines, false);
-	HQReturnVal re =  this->CreateShaderFromMemoryEx(type , pSourceData,isPreCompiled,entryFunctionName,(const char**)args , false, pID);
+	HQReturnVal re =  this->CreateShaderFromMemoryEx(type , pSourceData,isPreCompiled,entryFunctionName, pDefines, (const char**)args , false, pID);
 	this->DeAlloc(args);
 	return re;
 }
@@ -915,11 +1246,11 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStream(HQShaderType type,
 	{
 	case HQ_SCM_CG:
 		args = this->GetCompileArguments(pDefines, false);
-		re = this->CreateShaderFromStreamEx(type , dataStream,false , entryFunctionName, (const char**)args , false,pID);
+		re = this->CreateShaderFromStreamEx(type , dataStream,false , entryFunctionName, pDefines, (const char**)args , false,pID);
 		break;
 	case HQ_SCM_CG_DEBUG:
 		args = this->GetCompileArguments(pDefines, true);
-		re = this->CreateShaderFromStreamEx(type , dataStream,false , entryFunctionName, (const char**)args , true,pID);
+		re = this->CreateShaderFromStreamEx(type , dataStream,false , entryFunctionName, pDefines, (const char**)args , true,pID);
 		break;
 	default:
 		re = HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;
@@ -941,10 +1272,10 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemory(HQShaderType type,
 	{
 	case HQ_SCM_CG:
 		args = this->GetCompileArguments(pDefines, false);
-		re = this->CreateShaderFromMemoryEx(type , pSourceData,false , entryFunctionName, (const char**)args ,false,pID);
+		re = this->CreateShaderFromMemoryEx(type , pSourceData,false , entryFunctionName, pDefines, (const char**)args ,false,pID);
 	case HQ_SCM_CG_DEBUG:
 		args = this->GetCompileArguments(pDefines, true);
-		re = this->CreateShaderFromMemoryEx(type , pSourceData,false , entryFunctionName, (const char**)args , true,pID);
+		re = this->CreateShaderFromMemoryEx(type , pSourceData,false , entryFunctionName, pDefines, (const char**)args , true,pID);
 	default:
 		re = HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;
 	}

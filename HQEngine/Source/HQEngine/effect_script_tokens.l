@@ -52,7 +52,7 @@ I           [uUlL]
      
 %%
 
-[ \t\n]              {   ;}
+[ \t\n\r]              {   ;}
 
 ";"					  {return SEMI_COLON; }
 

@@ -111,7 +111,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;../../../ThirdParty-mod/GnuWin32/include;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -135,7 +135,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;../../../ThirdParty-mod/GnuWin32/include;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -161,7 +161,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;../../../ThirdParty-mod/GnuWin32/include;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -188,7 +188,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;../../../ThirdParty-mod/GnuWin32/include;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -213,7 +213,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;../../../ThirdParty-mod/GnuWin32/include;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -234,6 +234,54 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_common.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_lexer.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_preprocessor.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="HQDeviceD3D9.cpp" />
     <ClCompile Include="HQDeviceD3D9_caps.cpp" />
     <ClCompile Include="HQDeviceD3D9PCH.cpp">
@@ -247,8 +295,21 @@
     <ClCompile Include="HQRenderTargetD3D9.cpp" />
     <ClCompile Include="HQShaderD3D9.cpp">
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">AssemblyAndSourceCode</AssemblerOutput>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">MOJOSHADER_NO_VERSION_INCLUDE;WIN32;_DEBUG;_WINDOWS;_USRDLL;HQRENDERERD3D9_EXPORTS;_CRT_SECURE_NO_WARNINGS;_STATICLINK;_STATIC_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..;../../../ThirdParty-mod/mojoshader;../../../ThirdParty-mod/GnuWin32/include;..\..\..\ThirdParty-mod\D3DX_for_winsdk\include;..\..\..\ThirdParty-mod\;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="HQShaderD3D9_FF.cpp" />
+    <ClCompile Include="HQShaderD3D9_Lexer_Gen.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="HQStateManagerD3D9.cpp" />
     <ClCompile Include="..\BaseImpl\HQTextureManagerBaseImpl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">
@@ -280,13 +341,34 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="HQRendererD3D9Def.def" />
+    <CustomBuild Include="HQShaderD3D9_Lexer.l">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(Filename)_Gen.cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(Filename)_Gen.cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)_Gen.cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename)_Gen.cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">%(Filename)_Gen.cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(Command)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(Command)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Command)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Command)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">%(Command)</Message>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader.h" />
+    <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_internal.h" />
     <ClInclude Include="HQDeviceD3D9.h" />
     <ClInclude Include="HQDeviceD3D9PCH.h" />
     <ClInclude Include="HQDeviceEnumD3D9.h" />
     <ClInclude Include="HQRenderTargetD3D9.h" />
     <ClInclude Include="HQShaderD3D9.h" />
+    <ClInclude Include="HQShaderD3D9_Lexer.h" />
     <ClInclude Include="HQStateManagerD3D9.h" />
     <ClInclude Include="HQTextureManagerD3D9.h" />
     <ClInclude Include="HQVertexStreamManagerD3D9.h" />

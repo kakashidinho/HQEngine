@@ -1,5 +1,5 @@
 
-
+//#pragma pack_matrix(row_major)
 
 struct vOut
 {
@@ -34,13 +34,21 @@ float3 mulMatrix3x4(float3x4 mat, float4 v)
 	
 	return re;
 }
+
+
+#if 1
 uniform cbuffer {
-float4x4 viewProj;
-float3x4 boneMatrices[36];
-};
+	 float3x4 rotation;
+	float4x4 viewProj;
+	float3x4 boneMatrices[36];
+} : BUFFER10;
+#else
+	 float3x4 rotation;
+	float4x4 viewProj;
+	float3x4 boneMatrices[36];
+#endif
 
 vOut VS(uniform sampler2D texture0 : TEXUNIT3,
-	uniform float3x4 rotation,
 	in vIn input)
 {
 	vOut output;
