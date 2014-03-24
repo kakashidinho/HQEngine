@@ -80,7 +80,8 @@ struct HQShaderConstBufferD3D9
 	void *pRawBuffer;
 	bool isDynamic;
 	hq_uint32 size;
-	hquint32 boundIndex;
+	typedef HQLinkedList<hquint32, HQPoolMemoryManager> BufferSlotList;
+	BufferSlotList boundSlots;//list of slots that this buffer bound to
 };
 
 class HQShaderManagerD3D9:public HQShaderManager,private HQItemManager<HQShaderProgramD3D9> , public HQLoggableObject

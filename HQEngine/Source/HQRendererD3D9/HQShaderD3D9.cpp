@@ -71,6 +71,7 @@ struct HQShaderManagerD3D9::BufferSlotInfo{
 
 	HQLinkedList<hquint32> dependentShaderDirtyFlags;//list of dirty flags of shaders that consume data from this buffer slot
 	HQSharedPtr<HQShaderConstBufferD3D9> buffer;
+	HQShaderConstBufferD3D9::BufferSlotList::LinkedListNodeType* bufferLink;//this link can be used for fast removing the slot from buffer's bound slots
 };
 
 void HQShaderManagerD3D9::BufferSlotInfo::NotifyAllShaders()
@@ -103,7 +104,7 @@ struct HQShaderVarParserInfoD3D9 {
 	~HQShaderVarParserInfoD3D9();
 	HQLinkedList<UniformBlock> uniformBlocks;//list of declared uniform blocks
 
-	const char* GetPreprocessedSrc() const {return m_preprocessedSrc.c_str();};
+	const char* GetPreprocessedSrc() const { return m_preprocessedSrc.size() == 0 ? NULL :  m_preprocessedSrc.c_str(); };
 private:
 	void ParseUniform();
 	void ParseDirective();
@@ -113,7 +114,7 @@ private:
 };
 
 HQShaderVarParserInfoD3D9::HQShaderVarParserInfoD3D9(const char *src, const HQShaderMacro* pDefines)
-: m_isColMajor (false), m_preprocessedSrc(NULL)
+: m_isColMajor (false)
 {
 	int numDefines = 0;
 	const HQShaderMacro *pD = pDefines;
@@ -729,7 +730,7 @@ HQShaderObjectD3D9::~HQShaderObjectD3D9()
 
 /*----------HQShaderConstBufferD3D9-----------*/
 HQShaderConstBufferD3D9::HQShaderConstBufferD3D9(bool isDynamic, hq_uint32 size)
-: boundIndex(0xffffffff)
+: boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(BufferSlotList::LinkedListNodeType), 32))
 {
 	this->pRawBuffer = HQ_NEW hqubyte8[size];
 	this->size = size;
@@ -2404,9 +2405,11 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 b
 		if (pBufferSlot->buffer != pBuffer)
 		{
 			if (pBufferSlot->buffer != NULL)
-				pBufferSlot->buffer->boundIndex = 0xffffffff;
+			{
+				pBufferSlot->buffer->boundSlots.RemoveAt(pBufferSlot->bufferLink);//remove the link with the old buffer
+			}
 			pBufferSlot->buffer = pBuffer;
-			pBuffer->boundIndex = index;
+			pBufferSlot->bufferLink = pBuffer->boundSlots.PushBack(index);
 
 			pBufferSlot->NotifyAllShaders();//notify all dependent shaders
 		}
@@ -2416,9 +2419,11 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 b
 		if (pBufferSlot->buffer != pBuffer)
 		{
 			if (pBufferSlot->buffer != NULL)
-				pBufferSlot->buffer->boundIndex = 0xffffffff;
+			{
+				pBufferSlot->buffer->boundSlots.RemoveAt(pBufferSlot->bufferLink);//remove the link with the old buffer
+			}
 			pBufferSlot->buffer = pBuffer;
-			pBuffer->boundIndex = index;
+			pBufferSlot->bufferLink = pBuffer->boundSlots.PushBack(index);
 
 			pBufferSlot->NotifyAllShaders();//notify all dependent shaders
 		}
@@ -2455,8 +2460,9 @@ HQReturnVal HQShaderManagerD3D9::UnmapUniformBuffer(hq_uint32 bufferID)
 		return HQ_FAILED;
 #endif
 
-	if (pBuffer->boundIndex != 0xffffffff)
-		this->MarkBufferSlotDirty(pBuffer->boundIndex);
+	HQShaderConstBufferD3D9::BufferSlotList::Iterator ite;
+	for (pBuffer->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+		this->MarkBufferSlotDirty(*ite);
 
 	return HQ_OK;
 }
@@ -2476,8 +2482,9 @@ HQReturnVal HQShaderManagerD3D9::UpdateUniformBuffer(hq_uint32 bufferID, const v
 
 	memcpy(pBuffer->pRawBuffer, pData, pBuffer->size);
 
-	if (pBuffer->boundIndex != 0xffffffff)
-		this->MarkBufferSlotDirty(pBuffer->boundIndex);
+	HQShaderConstBufferD3D9::BufferSlotList::Iterator ite;
+	for (pBuffer->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+		this->MarkBufferSlotDirty(*ite);
 
 	return HQ_OK;
 }
