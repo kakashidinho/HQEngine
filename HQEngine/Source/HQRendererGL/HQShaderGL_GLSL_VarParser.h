@@ -101,6 +101,7 @@ public:
 	bool Parse(const char* source , 
 			   const HQShaderMacro * pDefines,
 			   std::string& processed_source_out,
+			   bool native_UBO_supported,//is uniform buffer object supported natively
 			   HQLinkedList<HQUniformBlockInfoGL>**ppUniformBlocks,//if not NULL, the returned pointer must be freed. Note: only pass non NULL value when native UBO is not supported
 			   HQLinkedList<HQShaderAttrib>** ppAttribList ,//if <ppAttribList> not NULL , after this method returns , pointer that <ppAttribList> points to must be freed manually
 			   HQLinkedList<HQUniformSamplerGL>** ppUniformSamplerList//if <ppUniformSamplerList> not NULL , after this method returns , pointer that <ppUniformSamplerList> points to must be freed manually

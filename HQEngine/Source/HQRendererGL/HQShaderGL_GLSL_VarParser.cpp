@@ -1477,6 +1477,7 @@ void HQVarParserGL::nextToken()
 bool HQVarParserGL::Parse(const char* ori_source , 
 				const HQShaderMacro * pDefines,
 			   std::string& processed_source_out,
+			   bool native_UBO_supported,
 			   HQLinkedList<HQUniformBlockInfoGL>**ppUniformBlocks,
 			   HQLinkedList<HQShaderAttrib>** ppAttribList ,
 			   HQLinkedList<HQUniformSamplerGL>** ppUniformSamplerList
@@ -1610,7 +1611,7 @@ bool HQVarParserGL::Parse(const char* ori_source ,
 		}
 	}
 
-	if (ppUniformBlocks != NULL)
+	if (ppUniformBlocks != NULL && !native_UBO_supported)
 		this->TransformUniformBlockDecls();
 
 	return noError;

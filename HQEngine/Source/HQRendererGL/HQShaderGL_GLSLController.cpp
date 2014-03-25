@@ -168,16 +168,16 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	std::string processed_src;
 
 	HQLinkedList<HQUniformBlockInfoGL>** ppUBlocksInfo = NULL;
-	if (!GLEW_VERSION_3_1 && !GLEW_ARB_uniform_buffer_object)//not support native uniform buffers, so use fake uniform buffers instead
-		ppUBlocksInfo = &sobject->pUniformBlocks;
+	ppUBlocksInfo = &sobject->pUniformBlocks;
+	bool native_UBO_supported = GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object;
 
 	if(type==HQ_VERTEX_SHADER)
 	{
-		parseSuccess = pVParser->Parse(source, pDefines, processed_src, ppUBlocksInfo, &sobject->pAttribList, &sobject->pUniformSamplerList);
+		parseSuccess = pVParser->Parse(source, pDefines, processed_src, native_UBO_supported, ppUBlocksInfo, &sobject->pAttribList, &sobject->pUniformSamplerList);
 	}
 	else
 	{
-		parseSuccess = pVParser->Parse(source, pDefines, processed_src, ppUBlocksInfo, NULL, &sobject->pUniformSamplerList);
+		parseSuccess = pVParser->Parse(source, pDefines, processed_src, native_UBO_supported, ppUBlocksInfo, NULL, &sobject->pUniformSamplerList);
 	}
 
 	if (!parseSuccess)
@@ -231,20 +231,31 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	int version_number = 0;
 	if (sscanf(version_string.c_str(), "#version %d", &version_number) != 1)
 		sscanf(version_string.c_str(), "# version %d", &version_number);//try one more time
-	std::string uniform_buffer_extension_line = "";
+	std::string uniform_buffer_layout_line = "";
 #ifdef HQ_OPENGLES
 	const char prefDefExtVersion[]	= "#define HQEXT_GLSL_ES\n";
+	if (native_UBO_supported)
+	{
+		if (version_number < 300 && sobject->pUniformBlocks != NULL && sobject->pUniformBlocks->GetSize() > 0)
+		{
+			version_string = "#version 300 es\n";//300 is minimum version for uniform buffer objects
+			uniform_buffer_layout_line = "layout(std140) uniform;\n";
+		}
+	}
 #else
 	const char prefDefExtVersion[] = "#define HQEXT_GLSL\n";
-	if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
+	if (native_UBO_supported)
 	{
-		if (version_number < 140)
-			uniform_buffer_extension_line = "#extension GL_ARB_uniform_buffer_object : enable\nlayout(std140) uniform;\n";
+		if (version_number < 140 && sobject->pUniformBlocks != NULL && sobject->pUniformBlocks->GetSize() > 0)
+		{
+			version_string = "#version 140\n";//140 is minimum version for uniform buffer objects
+			uniform_buffer_layout_line = "layout(std140) uniform;\n";
+		}
 	}
 #endif
 	const GLchar* sourceArray[] = {
 		version_string.c_str(),
-		uniform_buffer_extension_line.c_str(),
+		uniform_buffer_layout_line.c_str(),
 		semanticKeywords,
 		samplerKeywords,
 		prefDefExtVersion,
