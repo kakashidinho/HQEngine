@@ -31,22 +31,21 @@ COPYING.txt included with this distribution for more information.
 using namespace pvrtexlib;
 #endif //#if HQ_USE_PVR_TEX_LIB
 
-struct HQTextureD3D11:public HQTexture
+HQTextureD3D11::HQTextureD3D11(HQTextureType type)
+:HQTexture(),
+boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(SlotList::LinkedListNodeType), g_pD3DDev->GetCaps().maxTotalBoundTextures))
 {
-	HQTextureD3D11(HQTextureType type = HQ_TEXTURE_2D):HQTexture()
+	this->type = type;
+	pData = HQ_NEW HQTextureResourceD3D11();
+}
+HQTextureD3D11::~HQTextureD3D11()
+{
+	if(pData)
 	{
-		this->type = type;
-		pData = HQ_NEW HQTextureResourceD3D11();
+		HQTextureResourceD3D11* pTex = (HQTextureResourceD3D11 *)pData;
+		HQ_DELETE (pTex);
 	}
-	~HQTextureD3D11()
-	{
-		if(pData)
-		{
-			HQTextureResourceD3D11* pTex = (HQTextureResourceD3D11 *)pData;
-			HQ_DELETE (pTex);
-		}
-	}
-};
+}
 
 //************************************************************
 //định dạng của texture tương ứng với định dạng của pixel ảnh
@@ -202,7 +201,9 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 
 	hq_uint32 shaderStage = slot & 0xf0000000;
 	
-	HQSharedPtr<HQTexture> *ppCurrentTexture;
+	TextureSlot *pTextureSlot;
+	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
+	HQTextureD3D11* pCurrentTextureD3D11;
 
 	switch (shaderStage)
 	{
@@ -214,12 +215,27 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 			return HQ_FAILED;
 		}
 #endif
-		ppCurrentTexture = this->textureSlots[0] + resourceSlot;
-		if (pTexture != *ppCurrentTexture)
+		pTextureSlot = this->textureSlots[0] + resourceSlot;
+		pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureSlot->pTexture.GetRawPointer();
+		if (pTextureD3D11 != pCurrentTextureD3D11)
 		{
-			ID3D11ShaderResourceView *pSRV = (pTexture == NULL)? NULL : ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
+			if (pCurrentTextureD3D11 != NULL)
+			{
+				//unlink old texture from texture slot
+				pCurrentTextureD3D11->boundSlots.RemoveAt(pTextureSlot->textureLink);
+			}
+
+			ID3D11ShaderResourceView *pSRV;
+			if (pTextureD3D11 != NULL)
+			{
+				pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
+				//link the texture with this slot
+				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(slot);
+			}
+			else
+				pSRV = NULL  ;
 			pD3DContext->VSSetShaderResources(resourceSlot , 1 , &pSRV);
-			*ppCurrentTexture = pTexture;
+			pTextureSlot->pTexture = pTexture;
 		}
 		break;
 	case HQ_GEOMETRY_SHADER:
@@ -230,12 +246,27 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 			return HQ_FAILED;
 		}
 #endif
-		ppCurrentTexture = this->textureSlots[1] + resourceSlot;
-		if (pTexture != *ppCurrentTexture)
+		pTextureSlot = this->textureSlots[1] + resourceSlot;
+		pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureSlot->pTexture.GetRawPointer();
+		if (pTextureD3D11 != pCurrentTextureD3D11)
 		{
-			ID3D11ShaderResourceView *pSRV = (pTexture == NULL)? NULL : ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
-			pD3DContext->GSSetShaderResources(resourceSlot , 1 , &pSRV);
-			*ppCurrentTexture = pTexture;
+			if (pCurrentTextureD3D11 != NULL)
+			{
+				//unlink old texture from texture slot
+				pCurrentTextureD3D11->boundSlots.RemoveAt(pTextureSlot->textureLink);
+			}
+
+			ID3D11ShaderResourceView *pSRV;
+			if (pTextureD3D11 != NULL)
+			{
+				pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
+				//link the texture with this slot
+				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(slot);
+			}
+			else
+				pSRV = NULL;
+			pD3DContext->GSSetShaderResources(resourceSlot, 1, &pSRV);
+			pTextureSlot->pTexture = pTexture;
 		}
 		break;
 	case HQ_PIXEL_SHADER:
@@ -246,12 +277,27 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 			return HQ_FAILED;
 		}
 #endif
-		ppCurrentTexture = this->textureSlots[2] + resourceSlot;
-		if (pTexture != *ppCurrentTexture)
+		pTextureSlot = this->textureSlots[2] + resourceSlot;
+		pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureSlot->pTexture.GetRawPointer();
+		if (pTextureD3D11 != pCurrentTextureD3D11)
 		{
-			ID3D11ShaderResourceView *pSRV = (pTexture == NULL)? NULL : ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
-			pD3DContext->PSSetShaderResources(resourceSlot , 1 , &pSRV);
-			*ppCurrentTexture = pTexture;
+			if (pCurrentTextureD3D11 != NULL)
+			{
+				//unlink old texture from texture slot
+				pCurrentTextureD3D11->boundSlots.RemoveAt(pTextureSlot->textureLink);
+			}
+
+			ID3D11ShaderResourceView *pSRV;
+			if (pTextureD3D11 != NULL)
+			{
+				pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
+				//link the texture with this slot
+				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(slot);
+			}
+			else
+				pSRV = NULL;
+			pD3DContext->PSSetShaderResources(resourceSlot, 1, &pSRV);
+			pTextureSlot->pTexture = pTexture;
 		}
 		break;
 	default:
@@ -265,31 +311,87 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 slot , hq_uint32 textureID)
+
+HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSlot , hq_uint32 textureID)
 {
 	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
 
 #if defined _DEBUG || defined DEBUG
-	if (slot >= g_pD3DDev->GetCaps().maxPixelTextures)
+	if (resourceSlot >= g_pD3DDev->GetCaps().maxPixelTextures)
 	{
-		Log("SetTextureForPixelShader() Error : texture slot=%u is out of range!", slot);
+		Log("SetTextureForPixelShader() Error : texture slot=%u is out of range!", resourceSlot);
 		return HQ_FAILED;
 	}
 #endif
 
 	
-	HQSharedPtr<HQTexture> *ppCurrentTexture;
+	TextureSlot *pTextureSlot;
+	HQTextureD3D11 * pCurrentTextureD3D11;
 
-	ppCurrentTexture = this->textureSlots[2] + slot;
-	if (pTexture != *ppCurrentTexture)
+	pTextureSlot = this->textureSlots[2] + resourceSlot;
+	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
+	pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureSlot->pTexture.GetRawPointer();
+
+	if (pTextureD3D11 != pCurrentTextureD3D11)
 	{
-		ID3D11ShaderResourceView *pSRV = (pTexture == NULL)? NULL : ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
-		pD3DContext->PSSetShaderResources(slot , 1 , &pSRV);
-		*ppCurrentTexture = pTexture;
+		if (pCurrentTextureD3D11 != NULL)
+		{
+			//unlink old texture from texture slot
+			pCurrentTextureD3D11->boundSlots.RemoveAt(pTextureSlot->textureLink);
+		}
+
+		ID3D11ShaderResourceView *pSRV;
+		if (pTextureD3D11 != NULL)
+		{
+			pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
+			//link the texture with this slot
+			pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(HQ_PIXEL_SHADER | resourceSlot);
+		}
+		else
+			pSRV = NULL;
+		pD3DContext->PSSetShaderResources(resourceSlot, 1, &pSRV);
+		pTextureSlot->pTexture = pTexture;
 	}
 	
 
 	return HQ_OK;
+}
+
+void HQTextureManagerD3D11::UnbindTextureFromAllSlots(const HQSharedPtr<HQTexture> &pTexture)
+{
+	HQTextureD3D11 *pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
+
+	ID3D11ShaderResourceView *nullView = NULL;
+
+	HQTextureD3D11::SlotList::Iterator ite;
+	for (pTextureD3D11->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+	{
+		hquint32 slot = *ite;
+		hq_uint32 resourceSlot = slot & 0x0fffffff;
+		hq_uint32 shaderStage = slot & 0xf0000000;
+
+		TextureSlot *pTextureSlot;
+
+		switch (shaderStage)
+		{
+		case HQ_VERTEX_SHADER:
+			pTextureSlot = this->textureSlots[0] + resourceSlot;
+			pD3DContext->VSSetShaderResources(resourceSlot, 1, &nullView);
+			break;
+		case HQ_GEOMETRY_SHADER:
+			pTextureSlot = this->textureSlots[1] + resourceSlot;
+			pD3DContext->GSSetShaderResources(resourceSlot, 1, &nullView);
+			break;
+		case HQ_PIXEL_SHADER:
+			pTextureSlot = this->textureSlots[2] + resourceSlot;
+			pD3DContext->PSSetShaderResources(resourceSlot, 1, &nullView);
+			break;
+		}//switch (shaderStage)
+
+		//unlink this texture from the slot
+		pTextureD3D11->boundSlots.RemoveAt(pTextureSlot->textureLink);
+		pTextureSlot->pTexture = HQSharedPtr<HQTexture>::null;
+	}//for (pTextureD3D11->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 }
 
 /*

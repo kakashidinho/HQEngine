@@ -514,6 +514,7 @@ void HQEngineRenderPassImpl::AddTextureUnit(const HQEngineTextureUnit& texunit)
 
 HQReturnVal HQEngineRenderPassImpl::Apply()
 {
+
 	//apply states, controlled texture units and more
 	this->m_renderDevice->GetStateManager()->SetFaceCulling(this->faceCullingMode);
 
@@ -522,7 +523,8 @@ HQReturnVal HQEngineRenderPassImpl::Apply()
 	this->dsState->Active();
 	this->blendState->Active();
 
-	this->ApplyTextureStates();
+	this->ApplyTextureStates();//apply textures' states
+
 
 	return HQ_OK;
 }

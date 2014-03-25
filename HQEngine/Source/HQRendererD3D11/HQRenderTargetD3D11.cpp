@@ -614,6 +614,13 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargetsImpl(HQSharedPtr<HQBa
 		return HQ_OK;
 	}//if (group == NULL)
 	
+	//must unbind every bound textures before activate these render targets
+	for (hq_uint32 i = 0; i < group->numRenderTargets; ++i)
+	{
+		if (group->renderTargetViews[i] != NULL)
+			static_cast<HQTextureManagerD3D11*> (this->pTextureManager)->UnbindTextureFromAllSlots(group->renderTargets[i].pRenderTarget->GetTexture());
+	}
+
 	this->renderTargetWidth = group->commonWidth;
 	this->renderTargetHeight = group->commonHeight;
 
@@ -667,9 +674,6 @@ HQReturnVal HQRenderTargetManagerD3D11::GenerateMipmaps(hq_uint32 renderTargetTe
 
 void HQRenderTargetManagerD3D11::SetDefaultRenderTargetView(ID3D11RenderTargetView *_pD3DBackBuffer)
 {
-	if (this->IsUsingDefaultFrameBuffer())
-		this->renderTargetViews[0] = _pD3DBackBuffer;
-	
 	this->pD3DBackBuffer = _pD3DBackBuffer;
 }
 void HQRenderTargetManagerD3D11::SetDefaultDepthStencilView(ID3D11DepthStencilView *_pD3DDSBuffer)

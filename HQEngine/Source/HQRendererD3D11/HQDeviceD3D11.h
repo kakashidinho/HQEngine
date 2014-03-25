@@ -74,6 +74,7 @@ struct HQD3DFEATURE_CAPS
 	UINT maxGeometryTextures;
 	UINT maxPixelSamplers;
 	UINT maxPixelTextures;
+	UINT maxTotalBoundTextures;//maximum number of textures that can be bound
 	UINT shaderModel;
 	UINT shaderModelMinor;
 	bool colorWriteMask;

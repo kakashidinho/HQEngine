@@ -94,6 +94,9 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.condNpot = true;
 		break;
 	}
+
+	//TO DO: add more shader stages
+	featureCaps.maxTotalBoundTextures = featureCaps.maxVertexTextures + featureCaps.maxGeometryTextures + featureCaps.maxPixelTextures;
 }
 
 /*---------------------------*/
