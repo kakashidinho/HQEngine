@@ -27,9 +27,15 @@ COPYING.txt included with this distribution for more information.
 HQFakeUniformBufferGL::HQFakeUniformBufferGL(hq_uint32 size, bool isDynamic)
 : boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(BufferSlotList::LinkedListNodeType), MAX_UNIFORM_BUFFER_SLOTS))
 {
+	//must allocate a buffer with size is multiple of 16 byte
+	size_t realSize = size;
+	size_t remain = size % 16;
+	if (remain > 0)
+		realSize += (16 - remain);
+	this->pRawBuffer = HQ_NEW hqubyte8[realSize]; 
+
 	this->size = size;
 	this->isDynamic = isDynamic;
-	this->pRawBuffer = HQ_NEW hqubyte8[size];
 }
 HQFakeUniformBufferGL::~HQFakeUniformBufferGL()
 {
@@ -569,7 +575,7 @@ void HQBaseShaderManagerGL_FakeUBO::Commit()
 				//for each constant
 				HQLinkedList<HQSharedPtr<HQFakeUniformBlkElem> >::Iterator const_ite;
 				for (slot_ite->constants.GetIterator(const_ite);
-					!const_ite.IsAtEnd(), offset < constBuffer->size;
+					!const_ite.IsAtEnd() && offset < constBuffer->size;
 					++const_ite)
 				{
 					offset += (*const_ite)->ConsumeData(pData + offset, constBuffer->size - offset);

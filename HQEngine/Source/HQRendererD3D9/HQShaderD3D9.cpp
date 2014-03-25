@@ -426,7 +426,12 @@ HQShaderObjectD3D9::~HQShaderObjectD3D9()
 HQShaderConstBufferD3D9::HQShaderConstBufferD3D9(bool isDynamic, hq_uint32 size)
 : boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(BufferSlotList::LinkedListNodeType), 32))
 {
-	this->pRawBuffer = HQ_NEW hqubyte8[size];
+	//must allocate a buffer with size is multiple of 16 byte
+	size_t realSize = size;
+	size_t remain = size % 16;
+	if (remain > 0)
+		realSize += (16 - remain);
+	this->pRawBuffer = HQ_NEW hqubyte8[realSize]; 
 	this->size = size;
 	this->isDynamic = isDynamic;
 }
@@ -1976,7 +1981,7 @@ void HQShaderManagerD3D9::Commit()
 				//for each constant
 				HQLinkedList<HQConstantTableD3D9::ConstInfo>::Iterator const_ite;
 				for (slot_ite->constants.GetIterator(const_ite); 
-					!const_ite.IsAtEnd(), offset < constBuffer->size;
+					!const_ite.IsAtEnd() && offset < constBuffer->size;
 					++const_ite)
 				{
 					//for now, each element consumes one vector
@@ -2042,7 +2047,6 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 b
 	
 #if defined _DEBUG || defined DEBUG
 	if (slot >= 16)
-		return HQ_FAILED;
 	{
 		Log("SetUniformBuffer() Error : buffer slot=%u is out of range!", slot);
 		return HQ_FAILED;
