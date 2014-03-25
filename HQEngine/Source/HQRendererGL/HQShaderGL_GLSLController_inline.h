@@ -107,14 +107,10 @@ inline HQReturnVal HQBaseGLSLShaderController::SetUniformMatrixGLSL(GLint param 
 inline HQReturnVal HQBaseGLSLShaderController::SetUniformMatrixGLSL(GLint param , const HQBaseMatrix3x4* pMatrices,
 										hq_uint32 numMatrices)
 {
-#ifdef HQ_OPENGLES
-	return HQ_FAILED;
-#else
 	if(GLEW_VERSION_2_1)
 		glUniformMatrix3x4fv(	param, (int)numMatrices, GL_FALSE , pMatrices->m);
 	else
 		return HQ_FAILED;
-#endif
 
 	return HQ_OK;
 }

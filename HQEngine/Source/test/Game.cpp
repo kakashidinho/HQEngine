@@ -204,7 +204,6 @@ Game::Game()
 	HQMatrix4Multiply(view, proj, this->viewProj);
 	
 
-#ifndef HQ_OPENGLES
 
 	if (API == OGL_RENDERER)
 	{
@@ -218,7 +217,6 @@ Game::Game()
 		pDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 11 , this->uniformBuffer[0]);
 		pDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 10 , this->uniformBuffer[1]);
 	}
-#endif
 	/*------------check capabilities----*/
 	bool support = pDevice->IsBlendStateExSupported();
 	support = pDevice->IsIndexDataTypeSupported(HQ_IDT_UINT);
@@ -377,9 +375,7 @@ void Game::Render(HQTime dt)
 
 
 	if (API == OGL_RENDERER)
-	{
-		
-#ifndef HQ_OPENGLES		
+	{	
 		
 		BUFFER2 * pTBuffer0 = NULL;
 		pDevice->GetShaderManager()->MapUniformBuffer(this->uniformBuffer[1] , (void**)&pTBuffer0);
@@ -395,13 +391,6 @@ void Game::Render(HQTime dt)
 		}
 		pDevice->GetShaderManager()->UnmapUniformBuffer(this->uniformBuffer[1]);
 
-#else
-		pDevice->GetShaderManager()->SetUniformMatrix("viewProj" , *viewProj);
-
-		pDevice->GetShaderManager()->SetUniform4Float("rotation" , scale , 3);
-
-		pDevice->GetShaderManager()->SetUniform4Float("boneMatrices" , (float*)mesh->GetBoneTransformMatrices() , mesh->GetNumBones() * 3);
-#endif
 
 
 	}

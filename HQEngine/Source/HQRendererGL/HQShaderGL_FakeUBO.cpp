@@ -9,7 +9,6 @@ COPYING.txt included with this distribution for more information.
 */
 
 #include "HQDeviceGLPCH.h"
-#ifndef HQ_OPENGLES
 
 #include "../HQLinkedList.h"
 #include "../HQClosedStringHashTable.h"
@@ -34,7 +33,7 @@ HQFakeUniformBufferGL::HQFakeUniformBufferGL(hq_uint32 size, bool isDynamic)
 }
 HQFakeUniformBufferGL::~HQFakeUniformBufferGL()
 {
-	delete[] pRawBuffer;
+	delete[] (hqubyte8*)pRawBuffer;
 }
 
 /*----------------------HQFakeUniformBlkElem----------------------*/
@@ -681,5 +680,3 @@ HQReturnVal HQBaseShaderManagerGL_FakeUBO::UpdateUniformBuffer(hq_uint32 bufferI
 
 	return HQ_OK;
 }
-
-#endif//ifndef HQ_OPENGLES

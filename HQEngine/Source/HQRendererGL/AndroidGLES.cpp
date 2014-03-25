@@ -82,6 +82,15 @@ GLboolean gluCheckExtension(const GLubyte* ext , const GLubyte *strExt)
 	return true;
 }
 
+//this function does nothing
+void nullGlUniformMatrixNonSquare( 	
+	GLint location,
+  	GLsizei count,
+  	GLboolean transpose,
+  	const GLfloat *value)
+{
+}
+
 int glewInit()
 {
 	const GLubyte * strversion = glGetString(GL_VERSION);

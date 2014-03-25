@@ -181,6 +181,35 @@ public:
 	{
 		return HQ_FAILED;
 	}
+
+
+	virtual HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut)
+	{
+		return HQ_FAILED;
+	}
+	virtual HQReturnVal DestroyUniformBuffer(hq_uint32 bufferID)
+	{
+		return HQ_FAILED;
+	}
+	virtual void DestroyAllUniformBuffers()  {
+	}
+	
+	virtual HQReturnVal SetUniformBuffer(hq_uint32 slot ,  hq_uint32 bufferID ) 
+	{
+		return HQ_FAILED;
+	}
+	virtual HQReturnVal MapUniformBuffer(hq_uint32 bufferID , void **ppData) 
+	{
+		return HQ_FAILED;
+	}
+	virtual HQReturnVal UnmapUniformBuffer(hq_uint32 bufferID) 
+	{
+		return HQ_FAILED;
+	}
+	virtual HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData)
+	{
+		return HQ_FAILED;
+	}
 private:
 	void SetLightPosition(unsigned int light);//set light position in world space
 	void SetLight(unsigned int light , HQFFLight* lightInfo);

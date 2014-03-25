@@ -8067,8 +8067,7 @@ static void parse_constant_table(Context *ctx, const uint32 *tokens,
         return;
     memset(ctab->symbols, '\0', sizeof (MOJOSHADER_symbol) * constants);
 
-    uint32 i = 0;
-    for (i = 0; i < constants; i++)
+	for (uint32 i = 0; i < constants; i++)
     {
         const uint8 *ptr = start + constantinfo + (i * CINFO_SIZE);
         const uint32 name = SWAP32(*((uint32 *) (ptr + 0)));

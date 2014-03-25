@@ -310,7 +310,7 @@ public:
 		return SetUniformMatrix(parameterIndex,&matrix,1);
 	};
 	
-#ifndef HQ_OPENGLES
+#if 1
 #	define HQ_RENDER_UNIFORM_BUFFER_SUPPORT 1
 	///
 	///Dynamic buffer can be updated by calling Map and Unmap methods

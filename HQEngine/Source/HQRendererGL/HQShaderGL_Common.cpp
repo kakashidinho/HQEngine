@@ -238,34 +238,3 @@ hq_uint32 HQBaseCommonShaderManagerGL::GetParameterIndex(hq_uint32 programID ,
 	return pProgram->GetParameterIndex(parameterName);
 }
 /*--------------------------------------*/
-
-#ifndef HQ_OPENGLES
-
-HQReturnVal HQBaseCommonShaderManagerGL::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut)
-{
-	return HQ_FAILED;
-}
-HQReturnVal HQBaseCommonShaderManagerGL::DestroyUniformBuffer(hq_uint32 bufferID)
-{
-	return HQ_FAILED;
-}
-void HQBaseCommonShaderManagerGL::DestroyAllUniformBuffers()
-{
-}
-HQReturnVal HQBaseCommonShaderManagerGL::SetUniformBuffer(hq_uint32 slot ,  hq_uint32 bufferID )
-{
-	return HQ_FAILED;
-}
-HQReturnVal HQBaseCommonShaderManagerGL::MapUniformBuffer(hq_uint32 bufferID , void **ppData)
-{
-	return HQ_FAILED;
-}
-HQReturnVal HQBaseCommonShaderManagerGL::UnmapUniformBuffer(hq_uint32 bufferID)
-{
-	return HQ_FAILED;
-}
-HQReturnVal HQBaseCommonShaderManagerGL::UpdateUniformBuffer(hq_uint32 bufferID, const void * pData)
-{
-	return HQ_FAILED;
-}
-#endif

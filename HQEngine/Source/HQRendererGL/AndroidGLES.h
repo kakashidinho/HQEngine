@@ -190,7 +190,20 @@ extern PFNGLFRAMEBUFFERTEXTURE2DOESPROC android_glFramebufferTexture2D;
 
 
 
+
 int glewInit();
+void nullGlUniformMatrixNonSquare( 	
+	GLint location,
+  	GLsizei count,
+  	GLboolean transpose,
+  	const GLfloat *value);
+
+#define glUniformMatrix2x3fv nullGlUniformMatrixNonSquare
+#define glUniformMatrix2x4fv nullGlUniformMatrixNonSquare
+#define glUniformMatrix3x2fv nullGlUniformMatrixNonSquare
+#define glUniformMatrix3x4fv nullGlUniformMatrixNonSquare
+#define glUniformMatrix4x2fv nullGlUniformMatrixNonSquare
+#define glUniformMatrix4x3fv nullGlUniformMatrixNonSquare
 
 
 #endif

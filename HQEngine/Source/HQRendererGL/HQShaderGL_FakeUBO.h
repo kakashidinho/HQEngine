@@ -13,8 +13,6 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQShaderGL_Common.h"
 
-#ifndef HQ_OPENGLES
-
 
 struct HQFakeUniformBufferGL
 {
@@ -59,7 +57,5 @@ protected:
 	BufferSlotInfo* uBufferSlots;
 };
 
-
-#endif
 
 #endif

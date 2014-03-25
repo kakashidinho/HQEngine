@@ -175,15 +175,6 @@ public:
 
 	hq_uint32 GetParameterIndex(hq_uint32 programID ,const char *parameterName);
 
-#ifndef HQ_OPENGLES
-	HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut);
-	HQReturnVal DestroyUniformBuffer(hq_uint32 bufferID);
-	void DestroyAllUniformBuffers();
-	HQReturnVal SetUniformBuffer(hq_uint32 slot ,  hq_uint32 bufferID );
-	HQReturnVal MapUniformBuffer(hq_uint32 bufferID , void **ppData);
-	HQReturnVal UnmapUniformBuffer(hq_uint32 bufferID);
-	HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData);
-#endif
 protected:
 	virtual HQBaseShaderProgramGL * CreateNewProgramObject() = 0;
 	virtual void OnProgramCreated(HQBaseShaderProgramGL *program) = 0;

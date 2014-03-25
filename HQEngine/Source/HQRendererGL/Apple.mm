@@ -75,6 +75,16 @@ GLboolean gluCheckExtension(const GLubyte* ext , const GLubyte *strExt)
 		return false;
 	return true;
 }
+
+//this function does nothing
+void nullGlUniformMatrixNonSquare( 	
+	GLint location,
+  	GLsizei count,
+  	GLboolean transpose,
+  	const GLfloat *value)
+{
+}
+
 #endif
 
 void * gl_GetProcAddress (const char *procName)
