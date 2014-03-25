@@ -59,6 +59,11 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 		this->m_renderAPI_type = HQ_RA_OGL;
 		strcpy(apiResNamXML, "rsm_resourcesGL.script");
 	}
+	else if (strcmp(m_renderAPI_name, "D3D11") == 0)
+	{
+		this->m_renderAPI_type = HQ_RA_D3D;
+		strcpy(apiResNamXML, "rsm_resourcesD3D11.script");
+	}
 	else
 	{
 		this->m_renderAPI_type = HQ_RA_D3D;
