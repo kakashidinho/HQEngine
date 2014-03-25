@@ -18,7 +18,7 @@ asdgdg
 
 
 #	ifdef HQEXT_GLSL_ES
-uniform ubuffer11
+uniform ubuffer10
 {
 	vec4 rotation[3];
 	mat4 viewProj;
@@ -32,7 +32,7 @@ uniform ubuffer11
 
 layout(std140) uniform;
 
-uniform ubuffer11
+uniform ubuffer10
 {
 	mat3x4 rotation;
 	mat4 viewProj;

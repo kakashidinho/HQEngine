@@ -60,7 +60,7 @@ struct HQBaseShaderProgramGL
 	HQBaseShaderProgramGL();
 	virtual ~HQBaseShaderProgramGL();
 
-	virtual HQShaderParameterGL* TryCreateParameterObject(const char *parameterName) = 0;//just create paremeter object (if it exists in shader), doesn't add to paremeter list
+	HQShaderParameterGL* TryCreateParameterObject(const char *parameterName);//just create paremeter object (if it exists in shader), doesn't add to paremeter list
 	hq_uint32 TryCreateParamObjAndAddToParamsList(const char *parameterName);//create paremeter object (if it exists in shader), return parameter index
 	//get pointer to parameter object , if it doesn't exist in parameter list ,
 	//this method will try to create parameter object(if it exists in shader)
@@ -185,7 +185,9 @@ public:
 	HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData);
 #endif
 protected:
-	virtual void OnProgramActivated() {};//a handler method to notify the parent class that a program has been activated
+	virtual HQBaseShaderProgramGL * CreateNewProgramObject() = 0;
+	virtual void OnProgramCreated(HQBaseShaderProgramGL *program) = 0;
+	virtual void OnProgramActivated(HQBaseShaderProgramGL* program) = 0;//a handler method to notify the parent class that a program has been activated
 
 	hq_uint32 activeProgram;
 	HQItemManager<HQShaderObjectGL> shaderObjects;//danh sách shader object

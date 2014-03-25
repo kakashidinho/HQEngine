@@ -208,7 +208,7 @@ Game::Game()
 
 	if (API == OGL_RENDERER)
 	{
-		pDevice->GetShaderManager()->CreateUniformBuffer(sizeof(HQColor) , NULL , true , &this->uniformBuffer[1]);
+		pDevice->GetShaderManager()->CreateUniformBuffer(sizeof(BUFFER2) , NULL , true , &this->uniformBuffer[1]);
 		pDevice->GetShaderManager()->SetUniformBuffer(11 , this->uniformBuffer[0]);
 		pDevice->GetShaderManager()->SetUniformBuffer(10 , this->uniformBuffer[1]);
 	}
@@ -381,15 +381,27 @@ void Game::Render(HQTime dt)
 		
 #ifndef HQ_OPENGLES		
 		
-		pDevice->GetShaderManager()->SetUniformMatrix("rotation" , &scale , 1);
+		BUFFER2 * pTBuffer0 = NULL;
+		pDevice->GetShaderManager()->MapUniformBuffer(this->uniformBuffer[1] , (void**)&pTBuffer0);
 
-		pDevice->GetShaderManager()->SetUniformMatrix("boneMatrices" , mesh->GetBoneTransformMatrices() , mesh->GetNumBones());
+		if(pTBuffer0)
+		{
+			const HQMatrix3x4 *boneMatrices = mesh->GetBoneTransformMatrices();
+			hquint32 numBones = mesh->GetNumBones();
+
+			memcpy(&pTBuffer0->rotation, &scale, sizeof(HQMatrix3x4));
+			memcpy(&pTBuffer0->bones, boneMatrices, numBones * sizeof(HQMatrix3x4));
+			memcpy(&pTBuffer0->viewProj, viewProj, sizeof(HQMatrix4));
+		}
+		pDevice->GetShaderManager()->UnmapUniformBuffer(this->uniformBuffer[1]);
+
 #else
+		pDevice->GetShaderManager()->SetUniformMatrix("viewProj" , *viewProj);
+
 		pDevice->GetShaderManager()->SetUniform4Float("rotation" , scale , 3);
 
 		pDevice->GetShaderManager()->SetUniform4Float("boneMatrices" , (float*)mesh->GetBoneTransformMatrices() , mesh->GetNumBones() * 3);
 #endif
-		pDevice->GetShaderManager()->SetUniformMatrix("viewProj" , *viewProj);
 
 
 	}

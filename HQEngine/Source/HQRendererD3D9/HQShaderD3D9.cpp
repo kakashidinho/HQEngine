@@ -64,18 +64,7 @@ void cgErrorCallBack(void)
 		pShaderMan->Log("%s",cgGetErrorString(err));
 }
 
-/*--------------------HQShaderManagerD3D9::BufferSlotInfo---------------------*/
-
-struct HQShaderManagerD3D9::BufferSlotInfo{
-	BufferSlotInfo() : dirtyFlags(1) {}
-
-	hquint32 dirtyFlags;//dirty flags
-	HQSharedPtr<HQShaderConstBufferD3D9> buffer;
-	HQShaderConstBufferD3D9::BufferSlotList::LinkedListNodeType* bufferLink;//this link can be used for fast removing the slot from buffer's bound slots
-};
-
-
-/*----------------------ShaderVarParserInfo-----------------------*/	
+/*----------------------ShaderVarParserInfo-----------------------*/
 struct UniformBlkElemInfo {
 	std::string name;
 	int row;
@@ -98,7 +87,7 @@ struct HQShaderVarParserInfoD3D9 {
 	~HQShaderVarParserInfoD3D9();
 	HQLinkedList<UniformBlock> uniformBlocks;//list of declared uniform blocks
 
-	const char* GetPreprocessedSrc() const { return m_preprocessedSrc.size() == 0 ? NULL :  m_preprocessedSrc.c_str(); };
+	const char* GetPreprocessedSrc() const { return m_preprocessedSrc.size() == 0 ? NULL : m_preprocessedSrc.c_str(); };
 private:
 	void ParseUniform();
 	void ParseDirective();
@@ -106,6 +95,51 @@ private:
 	bool m_isColMajor;
 	std::string m_preprocessedSrc;
 };
+
+#if !HQ_TRANSLATE_CG_TO_HLSL
+/*--------------class HQConstantTableD3D9 -------*/
+struct HQConstantTableD3D9  {
+public:
+	struct ConstInfo {
+		DWORD regIndex;
+		hquint32 numVectors;
+		bool isInteger;
+	};
+	struct BufferSlotInfo{
+		hquint32 index;
+		HQLinkedList<ConstInfo> constants;//list of constants that consume datat from this buffer slot
+	};
+
+	typedef HQLinkedList<BufferSlotInfo > BufferSlotList;
+
+	HQConstantTableD3D9(const char *cgCompiledCode, HQShaderVarParserInfoD3D9 &preprocessedInfo);
+
+	void Release() { delete this; }//identical method with D3D interfaces
+
+	void AddConstant(const std::string & name, DWORD regIndex);
+	DWORD GetConstantRegIndex(const char *name, bool& found);
+
+	BufferSlotList constBufferSlotList;//list of constant buffer slots associated with this shader
+protected:
+	~HQConstantTableD3D9() {}
+
+	void InitConstBufferSlotList(HQShaderVarParserInfoD3D9 &preprocessedInfo);
+
+	hash_map_type<std::string, DWORD> table;
+};
+#endif
+
+/*--------------------HQShaderManagerD3D9::BufferSlotInfo---------------------*/
+
+struct HQShaderManagerD3D9::BufferSlotInfo{
+	BufferSlotInfo() : dirtyFlags(1) {}
+
+	hquint32 dirtyFlags;//dirty flags
+	HQSharedPtr<HQShaderConstBufferD3D9> buffer;
+	HQShaderConstBufferD3D9::BufferSlotList::LinkedListNodeType* bufferLink;//this link can be used for fast removing the slot from buffer's bound slots
+};
+
+/*----------------------ShaderVarParserInfo implementation -----------------------*/
 
 HQShaderVarParserInfoD3D9::HQShaderVarParserInfoD3D9(const char *src, const HQShaderMacro* pDefines)
 : m_isColMajor (false)
@@ -377,37 +411,7 @@ void HQShaderVarParserInfoD3D9::ParseUniform()
 }
 
 #if !HQ_TRANSLATE_CG_TO_HLSL
-/*--------------class HQConstantTableD3D9 -------*/
-struct HQConstantTableD3D9  {
-public:
-	struct ConstInfo {
-		DWORD regIndex;
-		hquint32 numVectors;
-		bool isInteger;
-	};
-	struct BufferSlotInfo{
-		hquint32 index;
-		HQLinkedList<ConstInfo> constants;//list of constants that consume datat from this buffer slot
-	};
-
-	typedef HQLinkedList<BufferSlotInfo > BufferSlotList;
-
-	HQConstantTableD3D9(const char *cgCompiledCode, HQShaderVarParserInfoD3D9 &preprocessedInfo);
-
-	void Release() { delete this; }//identical method with D3D interfaces
-
-	void AddConstant(const std::string & name, DWORD regIndex);
-	DWORD GetConstantRegIndex(const char *name, bool& found);
-
-	BufferSlotList constBufferSlotList;//list of constants that consume data from each constant buffer slot
-protected:
-	~HQConstantTableD3D9() {}
-
-	void InitConstBufferSlotList(HQShaderVarParserInfoD3D9 &preprocessedInfo);
-
-	hash_map_type<std::string, DWORD> table;
-};
-
+/*--------------class HQConstantTableD3D9 implementation -------*/
 HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode, HQShaderVarParserInfoD3D9& preproccessedConstInfo) {
 	/*example of constant in compiled code
 	* //var float3x4 rotation :  : c[0], 3 : 1 : 1
@@ -2398,8 +2402,8 @@ HQReturnVal HQShaderManagerD3D9::MapUniformBuffer(hq_uint32 bufferID , void **pp
 }
 HQReturnVal HQShaderManagerD3D9::UnmapUniformBuffer(hq_uint32 bufferID)
 {
-#if defined _DEBUG || defined DEBUG	
 	HQShaderConstBufferD3D9* pBuffer = shaderConstBuffers.GetItemRawPointer(bufferID);
+#if defined _DEBUG || defined DEBUG	
 
 	if(pBuffer == NULL)
 		return HQ_FAILED;

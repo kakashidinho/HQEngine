@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define _SHADER_H_
 #include "../HQRenderDevice.h"
 #include "HQShaderGL_Common.h"
+#include "HQShaderGL_FakeUBO.h"
 #include "HQShaderGL_UBO.h"
 #include "HQShaderGL_GLSLController.h"
 
@@ -43,6 +44,10 @@ protected:
 };
 
 /*-----------------template class Shader manager---------------*/
+///
+///Note: due to historical reason, I used Cg before, hence I used controller class to 
+///separate between 2 controller type, one for Cg shader and one for GLSL shader
+///
 template <class ShaderController , class BaseShaderManagerClass>
 class HQShaderManagerGL: public BaseShaderManagerClass, public HQFFShaderControllerGL
 {

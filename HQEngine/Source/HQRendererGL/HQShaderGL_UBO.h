@@ -50,7 +50,9 @@ public:
 
 protected:
 	//implement HQBaseCommonShaderManagerGL
-	virtual void OnProgramActivated() {}//do nothing
+	virtual HQBaseShaderProgramGL * CreateNewProgramObject() { return HQ_NEW HQBaseShaderProgramGL(); }
+	virtual void OnProgramCreated(HQBaseShaderProgramGL *program) {}//do nothing
+	virtual void OnProgramActivated(HQBaseShaderProgramGL* program) {}//do nothing
 
 	HQItemManager<HQUniformBufferGL> uniformBuffers;
 

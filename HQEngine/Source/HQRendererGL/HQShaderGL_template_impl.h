@@ -56,7 +56,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Active
 		this->DeActiveFFEmu();
 
 		re = this->shaderController.ActiveProgram(pProgram->isGLSL , pProgram);
-		this->OnProgramActivated();//tell parent class
+		this->OnProgramActivated(pProgram.GetRawPointer());//tell parent class
 		this->activeProgram = programID;
 
 		return re;
@@ -207,28 +207,39 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 	else
 		vertexShaderID = HQ_NOT_USE_VSHADER;
 
-	if(!GLSL && pFShader != NULL)
+	if(pFShader != NULL)
 	{
 		if(pFShader->isGLSL == true)
 			GLSL = true;
 	}
 	else
-		geometryShaderID = HQ_NOT_USE_GSHADER;
+		pixelShaderID = HQ_NOT_USE_PSHADER;
 
-	if(!GLSL && pGShader != NULL)
+	if(pGShader != NULL)
 	{
 		if(pGShader->isGLSL == true)
 			GLSL = true;
 	}
 	else
-		pixelShaderID = HQ_NOT_USE_PSHADER;
+		geometryShaderID = HQ_NOT_USE_GSHADER;
 
-	return this->shaderController.CreateProgram(
-		GLSL,
+	HQBaseShaderProgramGL * pNewProgram = this->CreateNewProgramObject();
+	pNewProgram->isGLSL = GLSL;
+
+	HQReturnVal re = this->shaderController.CreateProgram(
+		pNewProgram,
 		vertexShaderID, geometryShaderID, pixelShaderID,
 		pVShader , pGShader ,pFShader ,
 		uniformParameterNames ,
 		pID);
+
+	if (HQFailed(re))
+		delete pNewProgram;
+	else
+		this->OnProgramCreated(pNewProgram);
+
+	return re;
+
 }
 
 /*-----------------------*/

@@ -334,7 +334,7 @@
     <ClCompile Include="HQShaderGL.cpp" />
     <ClCompile Include="HQShaderGL_Common.cpp" />
     <ClCompile Include="HQShaderGL_FakeUBO.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="HQShaderGL_GLSL_VarParser.cpp">
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">All</AssemblerOutput>

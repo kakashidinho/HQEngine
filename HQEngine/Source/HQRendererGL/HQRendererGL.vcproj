@@ -497,7 +497,7 @@
 		<Configuration
 			Name="Debug_GL_version|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\VS_int_files\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			CharacterSet="1"
 			>
@@ -735,6 +735,10 @@
 			</File>
 			<File
 				RelativePath=".\HQShaderGL_Common.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HQShaderGL_FakeUBO.cpp"
 				>
 			</File>
 			<File
@@ -1808,6 +1812,10 @@
 			</File>
 			<File
 				RelativePath=".\HQShaderGL_Common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HQShaderGL_FakeUBO.h"
 				>
 			</File>
 			<File

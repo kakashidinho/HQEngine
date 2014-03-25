@@ -14,12 +14,6 @@ COPYING.txt included with this distribution for more information.
 #include "HQShaderGL_Common.h"
 #include <string>
 
-
-struct HQShaderProgramGL_GLSL : public HQBaseShaderProgramGL
-{
-	HQShaderParameterGL* TryCreateParameterObject(const char *parameterName);//implements base class virtual method
-};
-
 /*---------------------------*/
 
 class HQBaseGLSLShaderController
@@ -49,7 +43,9 @@ protected:
 									 const char* pSourceData,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 HQShaderObjectGL **ppShaderObjectOut);
-	HQReturnVal CreateProgramGLSL(HQSharedPtr<HQShaderObjectGL>& pVShader,
+	HQReturnVal CreateProgramGLSL(
+								HQBaseShaderProgramGL *pNewProgramObj,
+							  HQSharedPtr<HQShaderObjectGL>& pVShader,
 							  HQSharedPtr<HQShaderObjectGL>& pGShader,
 							  HQSharedPtr<HQShaderObjectGL>& pFShader,
 							  const char** uniformParameterNames,
@@ -135,10 +131,10 @@ public:
 									 const char* entryFunctionName,
 									 HQShaderObjectGL **ppShaderObjectOut);
 
-	HQReturnVal CreateProgram(	bool isGLSL ,
+	HQReturnVal CreateProgram(  HQBaseShaderProgramGL *pNewProgramObj,
 								hq_uint32 vertexShaderID,
-								hq_uint32 pixelShaderID,
 								hq_uint32 geometryShaderID,
+								hq_uint32 pixelShaderID,
 								HQSharedPtr<HQShaderObjectGL>& pVShader,
 								HQSharedPtr<HQShaderObjectGL>& pGShader,
 								HQSharedPtr<HQShaderObjectGL>& pFShader,

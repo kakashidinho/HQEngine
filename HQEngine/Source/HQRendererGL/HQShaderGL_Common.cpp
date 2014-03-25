@@ -68,6 +68,27 @@ HQBaseShaderProgramGL::~HQBaseShaderProgramGL()
 	}
 }
 
+HQShaderParameterGL* HQBaseShaderProgramGL::TryCreateParameterObject(const char *parameterName)
+{
+	if (isGLSL)
+	{
+		GLint paramGLLoc = glGetUniformLocation(this->programGLHandle, parameterName);//get parameter handle
+
+		if (paramGLLoc == -1)//không tìm thấy
+		{
+			return  NULL;
+		}
+		HQShaderParameterGL* pNewParameter = new HQShaderParameterGL();
+		pNewParameter->texUnit = -1;
+		pNewParameter->location = paramGLLoc;
+
+
+		return pNewParameter;
+	}
+	else
+		return NULL;
+}
+
 hq_uint32 HQBaseShaderProgramGL::TryCreateParamObjAndAddToParamsList(const char *parameterName)
 {
 	HQShaderParameterGL* pNewParameter = this->TryCreateParameterObject(parameterName);

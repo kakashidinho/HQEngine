@@ -18,7 +18,7 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 {
 	HQBaseShaderManagerGL * shaderMan = NULL;
 	/*---------create shader manager object based on capabilities and option---------*/
-	typedef HQShaderManagerGL<HQGLSLShaderController , HQBaseCommonShaderManagerGL> GLSLShaderManager;
+	typedef HQShaderManagerGL<HQGLSLShaderController, HQBaseShaderManagerGL_FakeUBO> GLSLShaderManager;
 #ifndef HQ_OPENGLES
 	typedef HQShaderManagerGL<HQGLSLShaderController , HQBaseShaderManagerGL_UBO> GLSLShaderManagerUBO;
 

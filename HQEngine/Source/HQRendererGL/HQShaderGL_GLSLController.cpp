@@ -72,25 +72,6 @@ const char samplerKeywords[] =
 #define TEXUNIT31\n";
 
 
-/*------------HQShaderProgramGL_GLSL---------------------*/
-
-HQShaderParameterGL* HQShaderProgramGL_GLSL::TryCreateParameterObject(const char *parameterName)
-{
-	GLint paramGLLoc =glGetUniformLocation(this->programGLHandle,parameterName);//get parameter handle
-
-	if(paramGLLoc==-1)//không tìm thấy
-	{
-		return  NULL;
-	}
-	HQShaderParameterGL* pNewParameter = new HQShaderParameterGL();
-	pNewParameter->texUnit=-1;
-	pNewParameter->location = paramGLLoc;
-
-	
-	return pNewParameter;
-}
-
-
 /*-----------HQBaseGLSLShaderController----------------------*/
 
 HQBaseGLSLShaderController::HQBaseGLSLShaderController()
@@ -311,6 +292,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 }
 
 HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
+							HQBaseShaderProgramGL *pNewProgramObj,
 							  HQSharedPtr<HQShaderObjectGL>& pVShader,
 							  HQSharedPtr<HQShaderObjectGL>& pGShader,
 							  HQSharedPtr<HQShaderObjectGL>& pFShader,
@@ -345,53 +327,44 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 	if(flags != useVF && flags != useVGF)//need both valid vertex & pixel shader
 		return HQ_FAILED;
 
-	HQBaseShaderProgramGL *pProgram=new HQShaderProgramGL_GLSL();
+	pNewProgramObj->programGLHandle = glCreateProgram();
 
-	pProgram->programGLHandle = glCreateProgram();
-
-	if(pProgram->programGLHandle==0)
+	if (pNewProgramObj->programGLHandle == 0)
 	{
-		SafeDelete(pProgram);
 		return HQ_FAILED;
 	}
 
 	if(flags & useV)
-		glAttachShader(pProgram->programGLHandle, pVShader->shader);
+		glAttachShader(pNewProgramObj->programGLHandle, pVShader->shader);
 	if(flags & useG)
-		glAttachShader(pProgram->programGLHandle, pGShader->shader);
+		glAttachShader(pNewProgramObj->programGLHandle, pGShader->shader);
 	if(flags & useF)
-		glAttachShader(pProgram->programGLHandle, pFShader->shader);
+		glAttachShader(pNewProgramObj->programGLHandle, pFShader->shader);
 
-	glLinkProgram(pProgram->programGLHandle);
+	glLinkProgram(pNewProgramObj->programGLHandle);
 
-	this->BindAttributeLocationGLSL(pProgram->programGLHandle , *pVShader->pAttribList);
+	this->BindAttributeLocationGLSL(pNewProgramObj->programGLHandle, *pVShader->pAttribList);
 
-	glLinkProgram(pProgram->programGLHandle);
+	glLinkProgram(pNewProgramObj->programGLHandle);
 
 	GLint OK;
-	glGetProgramiv(pProgram->programGLHandle , GL_LINK_STATUS , &OK);
+	glGetProgramiv(pNewProgramObj->programGLHandle, GL_LINK_STATUS, &OK);
 
 	if(OK == GL_FALSE)
 	{
 		int infologLength = 0;
 	    int charsWritten  = 0;
 	    char *infoLog;
-	    glGetProgramiv(pProgram->programGLHandle, GL_INFO_LOG_LENGTH,&infologLength);
+		glGetProgramiv(pNewProgramObj->programGLHandle, GL_INFO_LOG_LENGTH, &infologLength);
 	    if (infologLength > 0)
 	    {
 	        infoLog = (char *)malloc(infologLength);
-	        glGetProgramInfoLog(pProgram->programGLHandle, infologLength, &charsWritten, infoLog);
+			glGetProgramInfoLog(pNewProgramObj->programGLHandle, infologLength, &charsWritten, infoLog);
 			g_pShaderMan->Log("GLSL program link error: %s", infoLog);
 	        free(infoLog);
 	    }
-		SafeDelete(pProgram);
 		return HQ_FAILED;
 	}
-
-
-
-
-	pProgram->isGLSL = true;
 
 	//create paramters list
 	if(uniformParameterNames!=NULL)
@@ -399,59 +372,60 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 		int i=0;
 		while(uniformParameterNames[i]!=NULL)
 		{
-			pProgram->GetParameter(uniformParameterNames[i]);
+			pNewProgramObj->GetParameter(uniformParameterNames[i]);
 
 			i++;
 		}
 	}
 
-	hq_uint32 newProgramID;
-	if(!g_pShaderMan->AddItem(pProgram,&newProgramID))
-	{
-		delete pProgram;
-		return HQ_FAILED_MEM_ALLOC;
-	}
-	if (pID != NULL)
-		*pID = newProgramID;
 
 	//bind sampler unit
-	hq_uint32 currentActiveProgram = g_pShaderMan->GetActiveProgram();
-	g_pShaderMan->ActiveProgram(newProgramID);
+	GLuint currentActiveProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)&currentActiveProgram);
+	glUseProgram(pNewProgramObj->programGLHandle);
 
 	if(flags & useV)
-		this->BindSamplerUnitGLSL(pProgram ,
+		this->BindSamplerUnitGLSL(pNewProgramObj,
 								  *pVShader->pUniformSamplerList);
 	if(flags & useG)
-		this->BindSamplerUnitGLSL(pProgram ,
+		this->BindSamplerUnitGLSL(pNewProgramObj,
 								  *pGShader->pUniformSamplerList);
 	if(flags & useF)
-		this->BindSamplerUnitGLSL(pProgram ,
+		this->BindSamplerUnitGLSL(pNewProgramObj,
 								  *pFShader->pUniformSamplerList);
 	//bind uniform block
-	this->BindUniformBlockGLSL(pProgram->programGLHandle);
+	this->BindUniformBlockGLSL(pNewProgramObj->programGLHandle);
 
-	g_pShaderMan->ActiveProgram(currentActiveProgram);
+	//back to current program
+	glUseProgram(currentActiveProgram);
 
 	//check if this program is valid
-	glValidateProgram(pProgram->programGLHandle);
-	glGetProgramiv(pProgram->programGLHandle, GL_VALIDATE_STATUS, &OK);
+	glValidateProgram(pNewProgramObj->programGLHandle);
+	glGetProgramiv(pNewProgramObj->programGLHandle, GL_VALIDATE_STATUS, &OK);
 	if(OK == GL_FALSE)
 	{
 		int infologLength = 0;
 		int charsWritten  = 0;
 		char *infoLog;
-		glGetProgramiv(pProgram->programGLHandle, GL_INFO_LOG_LENGTH,&infologLength);
+		glGetProgramiv(pNewProgramObj->programGLHandle, GL_INFO_LOG_LENGTH, &infologLength);
 		if (infologLength > 0)
 		{
 			infoLog = (char *)malloc(infologLength);
-			glGetProgramInfoLog(pProgram->programGLHandle, infologLength, &charsWritten, infoLog);
+			glGetProgramInfoLog(pNewProgramObj->programGLHandle, infologLength, &charsWritten, infoLog);
 			g_pShaderMan->Log("GLSL program validate error: %s", infoLog);
 			free(infoLog);
 		}
-
-		g_pShaderMan->Remove(newProgramID);
 		return HQ_FAILED;
 	}
+
+	hq_uint32 newProgramID;
+	if (!g_pShaderMan->AddItem(pNewProgramObj, &newProgramID))
+	{
+		return HQ_FAILED_MEM_ALLOC;
+	}
+	if (pID != NULL)
+		*pID = newProgramID;
+
 	return HQ_OK;
 }
 /*-------------------------*/
@@ -552,18 +526,21 @@ HQReturnVal HQGLSLShaderController::CreateShaderFromMemory(HQShaderType type,
 
 }
 
-HQReturnVal HQGLSLShaderController::CreateProgram(	bool isGLSL ,
+HQReturnVal HQGLSLShaderController::CreateProgram(
+							    HQBaseShaderProgramGL *pNewProgramObj,
 								hq_uint32 vertexShaderID,
-								hq_uint32 pixelShaderID,
 								hq_uint32 geometryShaderID,
+								hq_uint32 pixelShaderID,
 								HQSharedPtr<HQShaderObjectGL>& pVShader,
 								HQSharedPtr<HQShaderObjectGL>& pGShader,
 								HQSharedPtr<HQShaderObjectGL>& pFShader,
 								const char** uniformParameterNames,
 								hq_uint32 *pID)
 {
+	if (pNewProgramObj->isGLSL == false)
+		return HQ_FAILED;
 	hquint32 programID;
-	HQReturnVal re = this->CreateProgramGLSL(pVShader , pGShader , pFShader , uniformParameterNames , &programID);
+	HQReturnVal re = this->CreateProgramGLSL(pNewProgramObj, pVShader, pGShader, pFShader, uniformParameterNames, &programID);
 	
 	if (pID != NULL)
 		*pID = programID;
