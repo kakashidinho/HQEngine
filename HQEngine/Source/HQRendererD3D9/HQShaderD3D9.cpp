@@ -2038,11 +2038,17 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 b
 	HQSharedPtr<HQShaderConstBufferD3D9> pBuffer = shaderConstBuffers.GetItemPointer(bufferID);
 	
 	hq_uint32 slot = index & 0x0fffffff;
-	
-	if (slot >= 14)
-		return HQ_FAILED;
-
 	hq_uint32 shaderStage = index & 0xf0000000;
+	
+#if defined _DEBUG || defined DEBUG
+	if (slot >= 16)
+		return HQ_FAILED;
+	{
+		Log("SetUniformBuffer() Error : buffer slot=%u is out of range!", slot);
+		return HQ_FAILED;
+	}
+#endif
+	
 	BufferSlotInfo *pBufferSlot;
 	switch(shaderStage)
 	{
@@ -2075,7 +2081,8 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 b
 		}
 		break;
 	default:
-		break;
+		Log("Error : {index} parameter passing to SetUniformBuffer() method didn't bitwise OR with HQ_VERTEX_SHADER/HQ_PIXEL_SHADER!");
+		return HQ_FAILED;
 	}
 
 	return HQ_OK;
