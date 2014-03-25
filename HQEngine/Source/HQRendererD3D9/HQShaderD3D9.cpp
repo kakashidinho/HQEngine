@@ -1925,7 +1925,7 @@ void HQShaderManagerD3D9::MarkBufferSlotDirty(hquint32 index)
 		pBufferSlot->dirtyFlags = 1;//notify all shaders
 		break;
 	case HQ_PIXEL_SHADER:
-		pBufferSlot = this->vshaderConstSlots + slot;
+		pBufferSlot = this->pshaderConstSlots + slot;
 		pBufferSlot->dirtyFlags = 1;//notify all shaders
 		break;
 	}
