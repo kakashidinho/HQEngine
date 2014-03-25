@@ -536,7 +536,7 @@ int HQShaderManagerD3D11::GetNumMacros(const HQShaderMacro * pDefines)
 	const HQShaderMacro *pD = pDefines;
 	
 	//calculate number of macros
-	while (pD->name != NULL && pD->definition != NULL)
+	while (pD != NULL && pD->name != NULL && pD->definition != NULL)
 	{
 		numDefines++;
 		pD++;

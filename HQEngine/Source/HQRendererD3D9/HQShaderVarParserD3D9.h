@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define HQ_SHADER_VAR_PARSER_D3D9_H
 
 #include "../HQLinkedList.h"
+#include "../HQRendererCoreType.h"
 #include <string>
 
 /*----------------------ShaderVarParserInfo-----------------------*/

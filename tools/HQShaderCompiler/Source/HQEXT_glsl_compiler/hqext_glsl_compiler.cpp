@@ -302,17 +302,27 @@ JNIEXPORT jstring JNICALL Java_hqengineshadercompiler_HQEngineShaderCompilerView
 			}//if (pos2 != std::string::npos)
 		}//if (pos1 != std::string::npos)
 	}
+	
+	int version_number = 0;
+	if (versionDeclare != NULL)
+		sscanf(versionDeclare, "#version %d", &version_number);
+	else
+		sscanf(version_string_in_src.c_str(), "#version %d", &version_number);
+	std::string uniform_buffer_extension_line = "";
+	const char prefDefExtVersion[] = "#define HQEXT_GLSL\n";
+	if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
+	{
+		if (version_number < 140)
+			uniform_buffer_extension_line = "#extension GL_ARB_uniform_buffer_object : enable\nlayout(std140) uniform;\n";
+	}
 
 	const GLchar* sourceArray[] = {
 		version_string_in_src.c_str(),
 		cMacros,
-#ifdef GLES
-		"#define HQEXT_GLSL_ES\n",
-#else
-		"#define HQEXT_GLSL\n",
-#endif
+		prefDefExtVersion,
 		semanticKeywords,
 		samplerKeywords,
+		uniform_buffer_extension_line.c_str(),
 		"#line 0 0\n",
 		processed_src.c_str()
 	};
@@ -323,7 +333,7 @@ JNIEXPORT jstring JNICALL Java_hqengineshadercompiler_HQEngineShaderCompilerView
 
 	jstring result;
 
-	glShaderSource(shader, 7, (const GLchar**)sourceArray, NULL);
+	glShaderSource(shader, 8, (const GLchar**)sourceArray, NULL);
 	glCompileShader(shader);
 
 

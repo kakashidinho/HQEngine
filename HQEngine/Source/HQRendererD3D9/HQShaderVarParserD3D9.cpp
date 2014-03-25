@@ -8,7 +8,6 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#include "HQDeviceD3D9PCH.h"
 #include "HQShaderVarParserD3D9.h"
 #include "HQShaderD3D9_Lexer.h"
 
@@ -27,7 +26,7 @@ HQShaderVarParserD3D9::HQShaderVarParserD3D9(const char *src, const HQShaderMacr
 	const HQShaderMacro *pD = pDefines;
 	
 	//calculate number of macros
-	while (pD->name != NULL && pD->definition != NULL)
+	while (pD != NULL && pD->name != NULL && pD->definition != NULL)
 	{
 		numDefines++;
 		pD++;

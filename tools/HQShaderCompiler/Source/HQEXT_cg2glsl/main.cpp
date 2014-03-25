@@ -18,6 +18,9 @@ COPYING.txt included with this distribution for more information.
 #include "hlsl2glsl.h"
 #include "glsl_optimizer.h"
 
+#include "../../../../HQEngine/Source/HQRendererD3D9/HQShaderVarParserD3D9.h"
+#include "../../../../HQEngine/Source/HQClosedStringHashTable.h"
+
 //TO DO: add ES 3.0
 
 
@@ -41,6 +44,8 @@ const char* gAttriSematics[][2] = {
 	"VTEXCOORD7", "xlat_attrib_VTEXCOORD7",
 	"VPSIZE", "xlat_attrib_VPSIZE",
 };
+
+HQSharedPtr<HQShaderVarParserD3D9> g_preprocessor;
 
 //transform the cg source to HQEngined version of glsl 
 bool compileSrc(const char* src_file, const char *entry, 
@@ -73,6 +78,8 @@ int main (int argc, char** argv){
 	const char *outputFile = NULL;
 	const char *inputFile = argv[argc - 1];
 	const char *entryFunc = NULL;
+	const char *processedCodeOutFile = NULL;
+	std::string preprocessedCode;
 
 	std::stringstream additional_definitions;
 	initPredefinedMacros(additional_definitions);
@@ -93,6 +100,11 @@ int main (int argc, char** argv){
 		{
 			if (i < argc - 1)
 				outputFile = argv[++i];
+		}
+		else if (strcmp(argv[i], "-p") == 0 )//output preprocessed code
+		{
+			if (i < argc - 1)
+				processedCodeOutFile = argv[++i];
 		}
 		else if (strcmp(argv[i], "-profile") == 0 )//output profile
 		{
@@ -136,8 +148,34 @@ int main (int argc, char** argv){
 	{
 		std::string compiled_code;
 		//start compiling
-		bool re = compileSrc(inputFile, entryFunc, version, esVersion, profile, additional_definitions.str(), compiled_code);
+		bool re = compileSrc(inputFile, 
+			entryFunc,
+			version, 
+			esVersion, 
+			profile, 
+			additional_definitions.str(), 
+			compiled_code);
 
+		//output preprocessed code
+		if (processedCodeOutFile != NULL)
+		{
+			
+			FILE *outstream =  fopen(processedCodeOutFile, "wb");
+
+			if (outstream == NULL)
+			{
+				printf("Cannot write to %s\n", processedCodeOutFile);
+			}
+			else
+			{
+				const char *processedCode = g_preprocessor->GetPreprocessedSrc();
+				if (processedCode != NULL)
+					fwrite(processedCode, strlen(processedCode), 1, outstream);
+				fclose(outstream);
+			}
+		}
+
+		//write result
 		if (re)
 		{
 			fprintf(stdout, "Compilation Succeeded!\n");
@@ -178,10 +216,11 @@ void printUsage(FILE* outStream)
 {
 	fprintf(outStream, "Usage:	-entry <entry function> -profile <glslv | glslf> [options] <input file>\n");
 	fprintf(outStream, "		options:\n");
-	fprintf(outStream, "				-glsles				: Produces GLSL ES code\n");
-	fprintf(outStream, "				-o <output file>	: output file\n");
-	fprintf(outStream, "				-version <number>	: GLSL version number. Must be 100, 110, 120\n");
-	fprintf(outStream, "				-Dname[=value]		: Set a preprocessor macro\n");
+	fprintf(outStream, "				-glsles						: Produces GLSL ES code\n");
+	fprintf(outStream, "				-o <output file>			: output file\n");
+	fprintf(outStream, "				-version <number>			: GLSL version number. Must be 100, 110, 120\n");
+	fprintf(outStream, "				-Dname[=value]				: Set a preprocessor macro\n");
+	fprintf(outStream, "				-p	<preprocessed file>		: output a preprocessed code\n");
 }
 
 //initialize predefined macros
@@ -275,6 +314,13 @@ bool compileSrc(const char* src_file, const char *entry,
 
 	filestream.close();
 
+	//preprocess code
+	g_preprocessor = new HQShaderVarParserD3D9(source, NULL);
+
+	const char *codeToCompile = g_preprocessor->GetPreprocessedSrc();
+	if (codeToCompile == NULL)
+		codeToCompile = source;//fallback to original source
+
 	//init hlsl2glsl compiler
 	Hlsl2Glsl_Initialize(NULL, NULL, NULL);
 
@@ -287,7 +333,7 @@ bool compileSrc(const char* src_file, const char *entry,
 	int res = 0;
 	int options = 0;
     // parse the file
-    res = Hlsl2Glsl_Parse (parser, source, profile, etVersion, options);
+	res = Hlsl2Glsl_Parse (parser, codeToCompile, profile, etVersion, options);
 	
 
     // convert from cg to glsl
@@ -401,10 +447,14 @@ bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader
 	}//if (vertexShader)
 
 	//now add semantics to uniforms
+	HQClosedStringHashTable<bool> activeUniforms;//active uniform table
+
 	const ShUniformInfo* uniforms = Hlsl2Glsl_GetUniformInfo(hlsl2glslParser);
 	int numUniforms = Hlsl2Glsl_GetUniformCount(hlsl2glslParser);
 	for (int i = 0; i < numUniforms; ++i)
 	{
+		activeUniforms.Add(uniforms[i].name, true);
+
 		if ((uniforms[i].type == EShTypeSampler2D || uniforms[i].type == EShTypeSamplerCube
 			 || uniforms[i].type == EShTypeSampler3D 
 			  || uniforms[i].type == EShTypeSampler1D) &&
@@ -423,6 +473,55 @@ bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader
 			}
 		}
 	}//for (int i = 0; i < numUniforms; ++i)
+
+	//add uniform blocks
+	char uniformBlockPrologue[] = "uniform ubuffer9999999999\n{\n       ";
+	char uniformBlockEpilogue[] = ";\n};\n";
+	HQLinkedList<UniformBlock>::Iterator ite;
+	size_t search_pos = 0;
+	for (g_preprocessor->uniformBlocks.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+	{
+		sprintf(uniformBlockPrologue, "uniform ubuffer%d\n{\n       ", ite->index);
+		HQLinkedList<UniformBlkElemInfo>::Iterator elemIte;
+		bool firstElem = true;
+		bool validBlock = false;
+		for (ite->blockElems.GetIterator(elemIte); !elemIte.IsAtEnd(); ++elemIte)
+		{
+			//find in the constant table
+			bool found;
+			bool active = activeUniforms.GetItem(elemIte->name, found);
+			if (found)//found
+			{
+				validBlock = true;
+				search_pos = inout.find(elemIte->name, search_pos);
+				if (search_pos == std::string::npos)
+				{
+					fprintf(stderr, "internal error: could not found %s\n", elemIte->name);
+					return false;
+				}
+				size_t uniform_pos = inout.rfind("uniform", search_pos);
+				if (firstElem)
+				{
+					firstElem = false;
+					//write uniform block prologue
+					
+					inout.replace(uniform_pos, 7, uniformBlockPrologue);
+				}//if (firstElem)
+				else
+				{
+					//remove "uniform" keyword
+					for (int i = 0; i < 7; ++i)
+						inout[i + uniform_pos] = ' ';
+				}
+			}//if (found)
+		}//for (ite->blockElems.GetIterator(elemIte); !elemIte.IsAtEnd(); ++elemIte)
+
+		if (validBlock)//write block epilogue
+		{
+			size_t semi_colon_pos = inout.find(";", search_pos);
+			inout.replace(semi_colon_pos, 1, uniformBlockEpilogue);
+		}
+	}//for (g_preprocessor->uniformBlocks.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 
 	return true;
 }

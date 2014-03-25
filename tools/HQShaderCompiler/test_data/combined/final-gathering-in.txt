@@ -1,10 +1,14 @@
 /*---------------vertex shader-------------*/
-uniform float3x4 worldMat;
-uniform float4x4 viewMat;
-uniform float4x4 projMat;
-uniform float4x4 lightViewMat;//light camera's view matrix
-uniform float4x4 lightProjMat;//light camera's projection matrix
+uniform transform {
+	float3x4 worldMat;
+	float4x4 viewMat;
+	float4x4 projMat;
+} : BUFFER0;
 
+uniform light {
+	float4x4 lightViewMat;//light camera's view matrix
+	float4x4 lightProjMat;//light camera's projection matrix
+} : BUFFER2;
 
 struct vIn{
 	float3 iPos: VPOSITION;

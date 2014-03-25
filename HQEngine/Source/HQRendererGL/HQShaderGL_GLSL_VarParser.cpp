@@ -1524,7 +1524,7 @@ bool HQVarParserGL::Parse(const char* ori_source ,
 	//calculate number of macros, and try to find version definition in these macros
 	int numDefines = 0;
 	const HQShaderMacro *pD = pDefines;
-	while (pD->name != NULL && pD->definition != NULL)
+	while (pD != NULL && pD->name != NULL && pD->definition != NULL)
 	{
         if (version_number_found == -1 && strcmp(pD->name, "version") == 0)
         {

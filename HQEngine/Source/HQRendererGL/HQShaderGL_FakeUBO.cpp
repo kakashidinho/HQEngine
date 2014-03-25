@@ -503,6 +503,8 @@ void HQBaseShaderManagerGL_FakeUBO::OnProgramCreated(HQBaseShaderProgramGL *prog
 			
 			for (shaderObs[i]->pUniformBlocks->GetIterator(block_ite); !block_ite.IsAtEnd(); ++block_ite)
 			{
+				if (block_ite->index >= MAX_UNIFORM_BUFFER_SLOTS)
+					continue;
 				HQLinkedList<HQUniformBlkElemInfoGL>::Iterator uniform_ite;
 				HQShaderProgramFakeUBO::BufferSlotInfo newBufferSlotInfo;
 				newBufferSlotInfo.slot = block_ite->index;

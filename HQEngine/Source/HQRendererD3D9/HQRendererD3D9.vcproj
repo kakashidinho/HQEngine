@@ -653,6 +653,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -661,6 +662,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -669,6 +671,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -677,6 +680,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -685,6 +689,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
 			</File>
