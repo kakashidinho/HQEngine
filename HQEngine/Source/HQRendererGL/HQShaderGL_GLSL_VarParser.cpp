@@ -1483,21 +1483,65 @@ bool HQVarParserGL::Parse(const char* ori_source ,
 			   )
 {
 #ifdef HQ_OPENGLES
-	processed_source_out	= "#define HQEXT_GLSL_ES\n";
+    processed_source_out = "#define __VERSION__ 100  \n#define HQEXT_GLSL_ES\n";
 #else
-	processed_source_out	= "#define HQEXT_GLSL\n";
+	processed_source_out = "#define __VERSION__ 110  \n#define HQEXT_GLSL\n";
 #endif
 	processed_source_out += ori_source;
 
+    
+    int version_number_found = -1;
+	/*------ Search for #version---------*/
+	{
+		size_t pos1 = processed_source_out.find("#");
+		if (pos1 != std::string::npos)
+		{
+			size_t pos2 = processed_source_out.find("version", pos1);
+			if (pos2 != std::string::npos)
+			{
+				bool found = true;
+				for (size_t i = pos1 + 1; i < pos2; ++i)//make sure only white spaces are between "#" and "version"
+				{
+					char c = processed_source_out[i];
+					if (c != ' ' && c != '\t' && c != '\r')
+					{
+						found = false;
+						break;
+					}
+				}
+				
+				if (found)
+				{
+					size_t pos3 = processed_source_out.find("\n", pos2 + 7);
+                    sscanf(processed_source_out.c_str() + pos1, "#version %d", &version_number_found);
+					//version_string.assign(source + pos1, pos3 - pos1 + 1);
+				}
+                
+			}//if (pos2 != std::string::npos)
+		}//if (pos1 != std::string::npos)
+	}
+
+	//calculate number of macros, and try to find version definition in these macros
 	int numDefines = 0;
 	const HQShaderMacro *pD = pDefines;
-
-	//calculate number of macros
 	while (pD->name != NULL && pD->definition != NULL)
 	{
+        if (version_number_found == -1 && strcmp(pD->name, "version") == 0)
+        {
+            sscanf(pD->definition, "%d", &version_number_found);
+        }
 		numDefines++;
 		pD++;
 	}
+    
+    if (version_number_found > 100 && version_number_found < 9999)
+    {
+        char version_number_string[5];
+        sprintf(version_number_string, "%d", version_number_found);
+        
+        processed_source_out.replace(20, 4, version_number_string);
+    }
+    
 	//preprocess source first
 	const MOJOSHADER_preprocessData * preprocessedData = MOJOSHADER_preprocess("source",
 												processed_source_out.c_str(),

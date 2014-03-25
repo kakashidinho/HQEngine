@@ -166,8 +166,6 @@
 		D606EECD18C8E832009F9A67 /* HQFFEmuShaderControllerGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD91D18C7A7CE00825C3C /* HQFFEmuShaderControllerGL.cpp */; };
 		D606EECE18C8E832009F9A67 /* HQFixedFunctionShaderManagerGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD91E18C7A7CE00825C3C /* HQFixedFunctionShaderManagerGL.cpp */; };
 		D606EECF18C8E832009F9A67 /* HQRenderTargetFBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD92018C7A7CE00825C3C /* HQRenderTargetFBO.cpp */; };
-		D606EED018C8E832009F9A67 /* HQShaderGL_CgController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD92318C7A7CE00825C3C /* HQShaderGL_CgController.cpp */; };
-		D606EED118C8E832009F9A67 /* HQShaderGL_CombineController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD92518C7A7CE00825C3C /* HQShaderGL_CombineController.cpp */; };
 		D606EED218C8E832009F9A67 /* HQShaderGL_Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD92718C7A7CE00825C3C /* HQShaderGL_Common.cpp */; };
 		D606EED318C8E832009F9A67 /* HQShaderGL_GLSL_VarParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD92918C7A7CE00825C3C /* HQShaderGL_GLSL_VarParser.cpp */; };
 		D606EED418C8E832009F9A67 /* HQShaderGL_GLSLController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD92C18C7A7CE00825C3C /* HQShaderGL_GLSLController.cpp */; };
@@ -177,6 +175,11 @@
 		D606EED818C8E832009F9A67 /* HQTextureManagerGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD93518C7A7CE00825C3C /* HQTextureManagerGL.cpp */; };
 		D606EED918C8E832009F9A67 /* HQVertexStreamManagerGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD93718C7A7CE00825C3C /* HQVertexStreamManagerGL.cpp */; };
 		D606EF2618C8F138009F9A67 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D606EF2418C8F133009F9A67 /* OpenGLES.framework */; };
+		D637714B18E14FB700DBCA7E /* HQShaderGL_FakeUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D637714918E14FB700DBCA7E /* HQShaderGL_FakeUBO.cpp */; };
+		D637715318E1505100DBCA7E /* mojoshader_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D637714D18E1505100DBCA7E /* mojoshader_common.cpp */; };
+		D637715418E1505100DBCA7E /* mojoshader_lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D637714F18E1505100DBCA7E /* mojoshader_lexer.cpp */; };
+		D637715518E1505100DBCA7E /* mojoshader_preprocessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D637715018E1505100DBCA7E /* mojoshader_preprocessor.cpp */; };
+		D637715618E1505100DBCA7E /* mojoshader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D637715118E1505100DBCA7E /* mojoshader.cpp */; };
 		D64836F718C90AB800C0DD3A /* HQVertexStreamManagerPreShaderGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD93918C7A7CE00825C3C /* HQVertexStreamManagerPreShaderGL.cpp */; };
 		D648370118C9141E00C0DD3A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D606EE0E18C8E630009F9A67 /* Foundation.framework */; };
 		D648370318C9141E00C0DD3A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D648370218C9141E00C0DD3A /* CoreGraphics.framework */; };
@@ -248,6 +251,14 @@
 		D606EE3C18C8E728009F9A67 /* HQIOSAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HQIOSAppDelegate.mm; path = ../../../Source/HQEngine/ios/HQIOSAppDelegate.mm; sourceTree = "<group>"; };
 		D606EE3D18C8E728009F9A67 /* HQIOSGameThread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQIOSGameThread.cpp; path = ../../../Source/HQEngine/ios/HQIOSGameThread.cpp; sourceTree = "<group>"; };
 		D606EF2418C8F133009F9A67 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		D637714918E14FB700DBCA7E /* HQShaderGL_FakeUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQShaderGL_FakeUBO.cpp; path = ../../../Source/HQRendererGL/HQShaderGL_FakeUBO.cpp; sourceTree = "<group>"; };
+		D637714A18E14FB700DBCA7E /* HQShaderGL_FakeUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderGL_FakeUBO.h; path = ../../../Source/HQRendererGL/HQShaderGL_FakeUBO.h; sourceTree = "<group>"; };
+		D637714D18E1505100DBCA7E /* mojoshader_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mojoshader_common.cpp; path = "../../../../ThirdParty-mod/mojoshader/mojoshader_common.cpp"; sourceTree = "<group>"; };
+		D637714E18E1505100DBCA7E /* mojoshader_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mojoshader_internal.h; path = "../../../../ThirdParty-mod/mojoshader/mojoshader_internal.h"; sourceTree = "<group>"; };
+		D637714F18E1505100DBCA7E /* mojoshader_lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mojoshader_lexer.cpp; path = "../../../../ThirdParty-mod/mojoshader/mojoshader_lexer.cpp"; sourceTree = "<group>"; };
+		D637715018E1505100DBCA7E /* mojoshader_preprocessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mojoshader_preprocessor.cpp; path = "../../../../ThirdParty-mod/mojoshader/mojoshader_preprocessor.cpp"; sourceTree = "<group>"; };
+		D637715118E1505100DBCA7E /* mojoshader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mojoshader.cpp; path = "../../../../ThirdParty-mod/mojoshader/mojoshader.cpp"; sourceTree = "<group>"; };
+		D637715218E1505100DBCA7E /* mojoshader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mojoshader.h; path = "../../../../ThirdParty-mod/mojoshader/mojoshader.h"; sourceTree = "<group>"; };
 		D64836E218C9028500C0DD3A /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = ../../libs/ReleaseIOS/libogg.a; sourceTree = "<group>"; };
 		D64836E318C9028500C0DD3A /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = ../../libs/ReleaseIOS/libvorbis.a; sourceTree = "<group>"; };
 		D64836E418C9028500C0DD3A /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = ../../libs/ReleaseIOS/libvorbisfile.a; sourceTree = "<group>"; };
@@ -320,11 +331,6 @@
 		D6FDD91F18C7A7CE00825C3C /* HQFixedFunctionShaderManagerGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQFixedFunctionShaderManagerGL.h; path = ../../../Source/HQRendererGL/HQFixedFunctionShaderManagerGL.h; sourceTree = "<group>"; };
 		D6FDD92018C7A7CE00825C3C /* HQRenderTargetFBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQRenderTargetFBO.cpp; path = ../../../Source/HQRendererGL/HQRenderTargetFBO.cpp; sourceTree = "<group>"; };
 		D6FDD92118C7A7CE00825C3C /* HQRenderTargetGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQRenderTargetGL.h; path = ../../../Source/HQRendererGL/HQRenderTargetGL.h; sourceTree = "<group>"; };
-		D6FDD92218C7A7CE00825C3C /* HQShaderGL_CgController_inline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderGL_CgController_inline.h; path = ../../../Source/HQRendererGL/HQShaderGL_CgController_inline.h; sourceTree = "<group>"; };
-		D6FDD92318C7A7CE00825C3C /* HQShaderGL_CgController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQShaderGL_CgController.cpp; path = ../../../Source/HQRendererGL/HQShaderGL_CgController.cpp; sourceTree = "<group>"; };
-		D6FDD92418C7A7CE00825C3C /* HQShaderGL_CgController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderGL_CgController.h; path = ../../../Source/HQRendererGL/HQShaderGL_CgController.h; sourceTree = "<group>"; };
-		D6FDD92518C7A7CE00825C3C /* HQShaderGL_CombineController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQShaderGL_CombineController.cpp; path = ../../../Source/HQRendererGL/HQShaderGL_CombineController.cpp; sourceTree = "<group>"; };
-		D6FDD92618C7A7CE00825C3C /* HQShaderGL_CombineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderGL_CombineController.h; path = ../../../Source/HQRendererGL/HQShaderGL_CombineController.h; sourceTree = "<group>"; };
 		D6FDD92718C7A7CE00825C3C /* HQShaderGL_Common.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQShaderGL_Common.cpp; path = ../../../Source/HQRendererGL/HQShaderGL_Common.cpp; sourceTree = "<group>"; };
 		D6FDD92818C7A7CE00825C3C /* HQShaderGL_Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderGL_Common.h; path = ../../../Source/HQRendererGL/HQShaderGL_Common.h; sourceTree = "<group>"; };
 		D6FDD92918C7A7CE00825C3C /* HQShaderGL_GLSL_VarParser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQShaderGL_GLSL_VarParser.cpp; path = ../../../Source/HQRendererGL/HQShaderGL_GLSL_VarParser.cpp; sourceTree = "<group>"; };
@@ -649,6 +655,19 @@
 			name = ios;
 			sourceTree = "<group>";
 		};
+		D637714C18E1501300DBCA7E /* mojoshader */ = {
+			isa = PBXGroup;
+			children = (
+				D637714D18E1505100DBCA7E /* mojoshader_common.cpp */,
+				D637714E18E1505100DBCA7E /* mojoshader_internal.h */,
+				D637714F18E1505100DBCA7E /* mojoshader_lexer.cpp */,
+				D637715018E1505100DBCA7E /* mojoshader_preprocessor.cpp */,
+				D637715118E1505100DBCA7E /* mojoshader.cpp */,
+				D637715218E1505100DBCA7E /* mojoshader.h */,
+			);
+			name = mojoshader;
+			sourceTree = "<group>";
+		};
 		D64836DD18C9024900C0DD3A /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -780,6 +799,7 @@
 				D6FDD9FE18C7A94C00825C3C /* BaseImpl */,
 				D6FDD9F318C7A90C00825C3C /* HQRendererFactory */,
 				D6FDD90718C7A72E00825C3C /* HQRendererGL */,
+				D637714C18E1501300DBCA7E /* mojoshader */,
 				D6FDD8E318C7A61D00825C3C /* Supporting Files */,
 			);
 			path = HQEngine;
@@ -815,11 +835,6 @@
 				D6FDD91F18C7A7CE00825C3C /* HQFixedFunctionShaderManagerGL.h */,
 				D6FDD92018C7A7CE00825C3C /* HQRenderTargetFBO.cpp */,
 				D6FDD92118C7A7CE00825C3C /* HQRenderTargetGL.h */,
-				D6FDD92218C7A7CE00825C3C /* HQShaderGL_CgController_inline.h */,
-				D6FDD92318C7A7CE00825C3C /* HQShaderGL_CgController.cpp */,
-				D6FDD92418C7A7CE00825C3C /* HQShaderGL_CgController.h */,
-				D6FDD92518C7A7CE00825C3C /* HQShaderGL_CombineController.cpp */,
-				D6FDD92618C7A7CE00825C3C /* HQShaderGL_CombineController.h */,
 				D6FDD92718C7A7CE00825C3C /* HQShaderGL_Common.cpp */,
 				D6FDD92818C7A7CE00825C3C /* HQShaderGL_Common.h */,
 				D6FDD92918C7A7CE00825C3C /* HQShaderGL_GLSL_VarParser.cpp */,
@@ -830,6 +845,8 @@
 				D6FDD92E18C7A7CE00825C3C /* HQShaderGL_template_impl.h */,
 				D6FDD92F18C7A7CE00825C3C /* HQShaderGL_UBO.cpp */,
 				D6FDD93018C7A7CE00825C3C /* HQShaderGL_UBO.h */,
+				D637714918E14FB700DBCA7E /* HQShaderGL_FakeUBO.cpp */,
+				D637714A18E14FB700DBCA7E /* HQShaderGL_FakeUBO.h */,
 				D6FDD93118C7A7CE00825C3C /* HQShaderGL.cpp */,
 				D6FDD93218C7A7CE00825C3C /* HQShaderGL.h */,
 				D6FDD93318C7A7CE00825C3C /* HQStateManagerGL.cpp */,
@@ -1451,7 +1468,9 @@
 				D606EE7818C8E7B3009F9A67 /* jcdctmgr.c in Sources */,
 				D606EED418C8E832009F9A67 /* HQShaderGL_GLSLController.cpp in Sources */,
 				D606EEBF18C8E7FF009F9A67 /* HQPolygon.cpp in Sources */,
+				D637715318E1505100DBCA7E /* mojoshader_common.cpp in Sources */,
 				D606EE8C18C8E7B3009F9A67 /* jdinput.c in Sources */,
+				D637714B18E14FB700DBCA7E /* HQShaderGL_FakeUBO.cpp in Sources */,
 				D606EEB218C8E7DB009F9A67 /* HQAudioStreamBufferAL.cpp in Sources */,
 				D606EE4D18C8E771009F9A67 /* ETC.cpp in Sources */,
 				D606EE8918C8E7B3009F9A67 /* jdcolor.c in Sources */,
@@ -1470,6 +1489,7 @@
 				D606EEB618C8E7ED009F9A67 /* HQThreadPthread.cpp in Sources */,
 				D606EED218C8E832009F9A67 /* HQShaderGL_Common.cpp in Sources */,
 				D606EE9618C8E7B3009F9A67 /* jfdctfst.c in Sources */,
+				D637715618E1505100DBCA7E /* mojoshader.cpp in Sources */,
 				D606EE6918C8E7B3009F9A67 /* pngrio.c in Sources */,
 				D606EECD18C8E832009F9A67 /* HQFFEmuShaderControllerGL.cpp in Sources */,
 				D606EEB418C8E7ED009F9A67 /* HQMutexPthread.cpp in Sources */,
@@ -1529,13 +1549,13 @@
 				D606EED918C8E832009F9A67 /* HQVertexStreamManagerGL.cpp in Sources */,
 				D606EEB918C8E7FF009F9A67 /* HQAABB.cpp in Sources */,
 				D606EE4B18C8E771009F9A67 /* BMP.cpp in Sources */,
-				D606EED118C8E832009F9A67 /* HQShaderGL_CombineController.cpp in Sources */,
 				D606EE7518C8E7B3009F9A67 /* jcarith.c in Sources */,
 				D606EEBC18C8E7FF009F9A67 /* HQMatrix4.cpp in Sources */,
 				D606EE7918C8E7B3009F9A67 /* jchuff.c in Sources */,
 				D606EEC118C8E7FF009F9A67 /* HQQuaternion.cpp in Sources */,
 				D606EE8118C8E7B3009F9A67 /* jcsample.c in Sources */,
 				D606EE5C18C8E7B3009F9A67 /* infback.c in Sources */,
+				D637715418E1505100DBCA7E /* mojoshader_lexer.cpp in Sources */,
 				D606EE6418C8E7B3009F9A67 /* pngerror.c in Sources */,
 				D606EE6718C8E7B3009F9A67 /* pngpread.c in Sources */,
 				D606EE4818C8E743009F9A67 /* HQEngineBaseWindow.cpp in Sources */,
@@ -1553,6 +1573,7 @@
 				D606EEC218C8E7FF009F9A67 /* HQRay.cpp in Sources */,
 				D606EE9A18C8E7B3009F9A67 /* jidctint.c in Sources */,
 				D606EEBE18C8E7FF009F9A67 /* HQPlane.cpp in Sources */,
+				D637715518E1505100DBCA7E /* mojoshader_preprocessor.cpp in Sources */,
 				D606EE7B18C8E7B3009F9A67 /* jcmainct.c in Sources */,
 				D606EE5118C8E771009F9A67 /* PNGImg.cpp in Sources */,
 				D606EE7218C8E7B3009F9A67 /* jaricom.c in Sources */,
@@ -1564,7 +1585,6 @@
 				D606EEAB18C8E7CA009F9A67 /* helperFunctions.cpp in Sources */,
 				D606EED318C8E832009F9A67 /* HQShaderGL_GLSL_VarParser.cpp in Sources */,
 				D606EEAE18C8E7CA009F9A67 /* HQMeshNode.cpp in Sources */,
-				D606EED018C8E832009F9A67 /* HQShaderGL_CgController.cpp in Sources */,
 				D606EE8018C8E7B3009F9A67 /* jcprepct.c in Sources */,
 				D606EE5D18C8E7B3009F9A67 /* inffast.c in Sources */,
 				D606EECE18C8E832009F9A67 /* HQFixedFunctionShaderManagerGL.cpp in Sources */,
@@ -1634,6 +1654,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					MOJOSHADER_NO_VERSION_INCLUDE,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -1656,6 +1677,7 @@
 				DSTROOT = /tmp/HQEngineIOS.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HQEngine/HQEngineIOS-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = MOJOSHADER_NO_VERSION_INCLUDE;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = ../libs/ReleaseIOS;
 				OTHER_LDFLAGS = "-ObjC";
@@ -1885,6 +1907,7 @@
 				D6C6616C18DDA71A00471BD0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D6FDD8D318C7A61D00825C3C /* Build configuration list for PBXProject "HQEngineIOS" */ = {
 			isa = XCConfigurationList;
