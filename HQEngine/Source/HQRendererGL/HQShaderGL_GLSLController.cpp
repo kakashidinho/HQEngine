@@ -225,18 +225,26 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 
 
 	/*--------set shader source---------*/
-
+	int version_number = 0;
+	sscanf(version_string.c_str(), "#version %d", &version_number);
+	std::string uniform_buffer_extension_line = "";
 #ifdef HQ_OPENGLES
 	const char prefDefExtVersion[]	= "#define HQEXT_GLSL_ES\n";
 #else
-	const char prefDefExtVersion[]	= "#define HQEXT_GLSL\n";
+	const char prefDefExtVersion[] = "#define HQEXT_GLSL\n";
+	if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
+	{
+		if (version_number < 140)
+			uniform_buffer_extension_line = "#extension GL_ARB_uniform_buffer_object : enable\nlayout(std140) uniform;\n";
+	}
 #endif
 	const GLchar* sourceArray[] = {
 		version_string.c_str(),
-		prefDefExtVersion,
-		macroDefList.c_str(),
+		uniform_buffer_extension_line.c_str(),
 		semanticKeywords,
 		samplerKeywords,
+		prefDefExtVersion,
+		macroDefList.c_str(),
 		"#line 0 0\n",
 		processed_src.c_str()
 	};
@@ -244,7 +252,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	if (type != HQ_VERTEX_SHADER)
 		sourceArray[2] = "";//only vertex shader need semantic definitions
 
-	glShaderSource(sobject->shader, 7, (const GLchar**)sourceArray, NULL);
+	glShaderSource(sobject->shader, 8, (const GLchar**)sourceArray, NULL);
 	glCompileShader(sobject->shader);
 
 	GLint compileOK;
