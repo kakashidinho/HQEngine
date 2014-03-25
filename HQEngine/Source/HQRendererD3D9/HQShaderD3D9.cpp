@@ -2018,7 +2018,7 @@ void HQShaderManagerD3D9::Commit()
 				//for each constant
 				HQLinkedList<HQConstantTableD3D9::ConstInfo>::Iterator const_ite;
 				for (slot_ite->constants.GetIterator(const_ite);
-					!const_ite.IsAtEnd(), offset < constBuffer->size;
+					!const_ite.IsAtEnd() && offset < constBuffer->size;
 					++const_ite)
 				{
 					//for now, each element consumes one vector
