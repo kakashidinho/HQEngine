@@ -11,9 +11,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceD3D9PCH.h"
 #include "HQShaderD3D9.h"
 
-#include "HQShaderD3D9_Lexer.h"
-
-#include "mojoshader.h" //for preprocessor
+#include "HQShaderVarParserD3D9.h"
 
 #include <string.h>
 #include <sstream>
@@ -64,37 +62,6 @@ void cgErrorCallBack(void)
 		pShaderMan->Log("%s",cgGetErrorString(err));
 }
 
-/*----------------------ShaderVarParserInfo-----------------------*/
-struct UniformBlkElemInfo {
-	std::string name;
-	int row;
-	int col;
-	int arraySize;
-	int blockIndex;
-	bool integer;
-};
-
-struct UniformBlock{
-	int index;
-	HQLinkedList<UniformBlkElemInfo> blockElems;
-
-	size_t blockPrologue_start_pos, blockPrologue_end_pos;
-	size_t blockEpilogue_start_pos, blockEpilogue_end_pos;
-};
-
-struct HQShaderVarParserInfoD3D9 {
-	HQShaderVarParserInfoD3D9(const char * src, const HQShaderMacro* pDefines);
-	~HQShaderVarParserInfoD3D9();
-	HQLinkedList<UniformBlock> uniformBlocks;//list of declared uniform blocks
-
-	const char* GetPreprocessedSrc() const { return m_preprocessedSrc.size() == 0 ? NULL : m_preprocessedSrc.c_str(); };
-private:
-	void ParseUniform();
-	void ParseDirective();
-
-	bool m_isColMajor;
-	std::string m_preprocessedSrc;
-};
 
 #if !HQ_TRANSLATE_CG_TO_HLSL
 /*--------------class HQConstantTableD3D9 -------*/
@@ -112,7 +79,7 @@ public:
 
 	typedef HQLinkedList<BufferSlotInfo > BufferSlotList;
 
-	HQConstantTableD3D9(const char *cgCompiledCode, HQShaderVarParserInfoD3D9 &preprocessedInfo);
+	HQConstantTableD3D9(const char *cgCompiledCode, HQShaderVarParserD3D9 &preprocessedInfo);
 
 	void Release() { delete this; }//identical method with D3D interfaces
 
@@ -123,7 +90,7 @@ public:
 protected:
 	~HQConstantTableD3D9() {}
 
-	void InitConstBufferSlotList(HQShaderVarParserInfoD3D9 &preprocessedInfo);
+	void InitConstBufferSlotList(HQShaderVarParserD3D9 &preprocessedInfo);
 
 	hash_map_type<std::string, DWORD> table;
 };
@@ -139,280 +106,10 @@ struct HQShaderManagerD3D9::BufferSlotInfo{
 	HQShaderConstBufferD3D9::BufferSlotList::LinkedListNodeType* bufferLink;//this link can be used for fast removing the slot from buffer's bound slots
 };
 
-/*----------------------ShaderVarParserInfo implementation -----------------------*/
-
-HQShaderVarParserInfoD3D9::HQShaderVarParserInfoD3D9(const char *src, const HQShaderMacro* pDefines)
-: m_isColMajor (false)
-{
-	int numDefines = 0;
-	const HQShaderMacro *pD = pDefines;
-	
-	//calculate number of macros
-	while (pD->name != NULL && pD->definition != NULL)
-	{
-		numDefines++;
-		pD++;
-	}
-
-	//preprocess source first
-	const MOJOSHADER_preprocessData * preprocessedData = MOJOSHADER_preprocess("source",
-												src,
-												strlen(src),
-												(const MOJOSHADER_preprocessorDefine*)pDefines,
-												numDefines,
-												NULL,
-												NULL,
-												NULL,
-												NULL,
-												NULL);
-
-	if (preprocessedData->output != NULL)
-	{
-
-		//prepare lexer
-		int lex_return;
-		TokenKind kind;
-		YYLVALTYPE token;
-		pyylval = &token;
-
-		m_preprocessedSrc = preprocessedData->output;
-
-		hqengine_shader_d3d9_lexer_start(m_preprocessedSrc.c_str());
-
-		while ((lex_return = yylex()) > 0)
-		{
-			kind = (TokenKind)lex_return;
-
-			if (kind == UNIFORM)
-			{
-				ParseUniform();
-			}
-			else if (kind == HASH_SIGN)
-			{
-				ParseDirective();
-			}
-
-		}//while ((lex_return = yylex()) > 0)
-
-		hqengine_shader_d3d9_lexer_clean_up();
-	}//if (preprocessedData->output != NULL)
-
-	MOJOSHADER_freePreprocessData(preprocessedData);
-
-}
-
-HQShaderVarParserInfoD3D9::~HQShaderVarParserInfoD3D9()
-{
-}
-
-void HQShaderVarParserInfoD3D9::ParseDirective()
-{
-	if (yylex() == PRAGMA 
-		&& yylex() == PACK_MATRIX
-		&& yylex() == LPAREN
-		&& yylex() == COL_MAJOR
-		&& yylex() == RPAREN)
-	{
-		m_isColMajor = true;	
-	}
-}
-
-void HQShaderVarParserInfoD3D9::ParseUniform()
-{
-	enum UniformBlockElemDeclState {
-		UDECL_START,
-		UDECL_TYPE,
-		UDECL_NAME,
-		UDECL_ARRAY_SIZE_BEGIN,
-		UDECL_ARRAY_SIZE,
-		UDECL_ARRAY_SIZE_END,
-		UBLOCK_END,
-		UBLOCK_SEMANTIC,
-		UBLOCK_SEMANTIC_NAME_ARRAY_STYLE,
-		UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX_START,
-		UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX,
-		UBLOCK_SEMANTIC_END
-	};
-
-	YYLVALTYPE *ptoken = pyylval;
-
-	size_t uniform_decl_start_pos = ptoken->src_start_pos;
-	TokenKind kind = (TokenKind)yylex();
-
-	if (kind == IDENTIFIER)//may be uniform block
-	{
-		kind = (TokenKind)yylex();
-		if (kind == LBRACE)
-		{
-			bool stop = false;
-			UniformBlockElemDeclState state = UDECL_START;
-			int blockIndex = -1;
-			UniformBlkElemInfo blockElemInfo;
-			UniformBlock uniformBlock;
-			uniformBlock.blockPrologue_start_pos = uniform_decl_start_pos;
-			uniformBlock.blockPrologue_end_pos = ptoken->src_end_pos;
-
-			while (!stop && (kind = (TokenKind)yylex()) > 0)
-			{
-				switch (state)
-				{
-				case UDECL_START:
-					if (kind == RBRACE)
-					{
-						uniformBlock.blockEpilogue_start_pos = ptoken->src_start_pos;
-						state = UBLOCK_END;
-					}
-					else if (kind == SCALAR || kind == VECTOR || kind == MAT)
-					{
-						state = UDECL_TYPE;
-						blockElemInfo.row = ptoken->row;
-						blockElemInfo.col = ptoken->col;
-						if (strncmp(ptoken->lexeme.c_str(), "int", 3) == 0)
-							blockElemInfo.integer = true;
-						else if (strncmp(ptoken->lexeme.c_str(), "bool", 4) == 0)
-							blockElemInfo.integer = true;
-						else
-							blockElemInfo.integer = false;
-					}
-					else
-						stop = true;
-					break;
-				case UDECL_TYPE:
-					if (kind == IDENTIFIER)
-					{
-						state = UDECL_NAME;
-						blockElemInfo.name = ptoken->lexeme;
-					}
-					else
-						stop = true;
-					break;
-				case UDECL_NAME:
-					if (kind == LBRACKET)
-					{
-						state = UDECL_ARRAY_SIZE_BEGIN;
-					}
-					else if (kind == SEMI_COLON)
-					{
-						blockElemInfo.arraySize = 1;
-						uniformBlock.blockElems.PushBack(blockElemInfo);
-						state = UDECL_START;
-					}
-					else 
-						stop = true;
-					break;
-				case UDECL_ARRAY_SIZE_BEGIN:
-					if (kind == INTCONSTANT)
-					{
-						blockElemInfo.arraySize = (int)atol(ptoken->lexeme.c_str());
-						state = UDECL_ARRAY_SIZE;
-					}
-					else
-						stop = true;
-					break;
-				case UDECL_ARRAY_SIZE:
-					if (kind == RBRACKET)
-						state = UDECL_ARRAY_SIZE_END;
-					else
-						stop = true;
-					break;
-				case UDECL_ARRAY_SIZE_END:
-					if (kind == SEMI_COLON)
-					{
-						uniformBlock.blockElems.PushBack(blockElemInfo);
-						state = UDECL_START;
-					}
-					else
-						stop = true;
-					break;
-				case UBLOCK_END:
-					if (kind == SEMI_COLON)
-					{
-						stop = true;
-						blockIndex = 0;
-					}
-					else if (kind == COLON)
-						state = UBLOCK_SEMANTIC;
-					break;
-				case UBLOCK_SEMANTIC:
-					if (kind == IDENTIFIER)
-					{
-						if (strcmp(ptoken->lexeme.c_str(), "BUFFER") == 0)
-							state = UBLOCK_SEMANTIC_NAME_ARRAY_STYLE;
-						else
-						{
-							sscanf(ptoken->lexeme.c_str(), "BUFFER%d", &blockIndex);
-							state = UBLOCK_SEMANTIC_END;
-						}
-					}
-					break;
-				case UBLOCK_SEMANTIC_NAME_ARRAY_STYLE:
-					if (kind == LBRACKET)
-					{
-						state = UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX_START;
-					}
-					else 
-						stop = true;
-					break;
-				case UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX_START:
-					if (kind == INTCONSTANT)
-					{
-						blockIndex = (int)atol(ptoken->lexeme.c_str());
-						state = UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX;
-					}
-					else 
-						stop = true;
-					break;
-				case UBLOCK_SEMANTIC_NAME_ARRAY_STYLE_INDEX:
-					if (kind == RBRACKET)
-					{
-						state = UBLOCK_SEMANTIC_END;
-					}
-					else 
-						stop = true;
-					break;
-				case UBLOCK_SEMANTIC_END:
-					if (kind == SEMI_COLON)
-					{
-						stop = true;
-						uniformBlock.blockEpilogue_end_pos = ptoken->src_end_pos;
-					}
-					else
-						blockIndex = -1;//invalid uniform block
-					break;
-				}//switch (state)
-			}//while ((kind = (TokenKind)yylex()) > 0 && !stop)
-
-			if (blockIndex >= 0)
-			{
-				//add the uniform block info to the list
-				uniformBlock.index = blockIndex;
-				UniformBlock* pAddedBlock = &this->uniformBlocks.PushBack(uniformBlock)->m_element;
-
-				HQLinkedList<UniformBlkElemInfo>::Iterator ite;
-				for (pAddedBlock->blockElems.GetIterator(ite); !ite.IsAtEnd(); ++ite)
-				{
-
-					ite->blockIndex = blockIndex;
-					if (ite->row > 1 && m_isColMajor)//flip row and column in column major mode
-					{
-						int temp = ite->row;
-						ite->row = ite->col;
-						ite->col = temp;
-					}
-				}
-				//now remove the block prologue and epilogue because cg compiler doesn't support it
-				for (size_t i = uniformBlock.blockPrologue_start_pos; i < uniformBlock.blockPrologue_end_pos; ++i)
-					m_preprocessedSrc[i] = ' ';
-				for (size_t i = uniformBlock.blockEpilogue_start_pos; i < uniformBlock.blockEpilogue_end_pos; ++i)
-					m_preprocessedSrc[i] = ' ';
-			}//if (blockIndex >= 0)
-		}//if (kind == LBRACE)
-	}//if (kind == IDENTIFIER)
-}
 
 #if !HQ_TRANSLATE_CG_TO_HLSL
 /*--------------class HQConstantTableD3D9 implementation -------*/
-HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode, HQShaderVarParserInfoD3D9& preproccessedConstInfo) {
+HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode, HQShaderVarParserD3D9& preproccessedConstInfo) {
 	/*example of constant in compiled code
 	* //var float3x4 rotation :  : c[0], 3 : 1 : 1
 	*/
@@ -643,7 +340,7 @@ HQConstantTableD3D9::HQConstantTableD3D9(const char *compiledCgCode, HQShaderVar
 	this->InitConstBufferSlotList(preproccessedConstInfo);
 }
 
-void HQConstantTableD3D9::InitConstBufferSlotList(HQShaderVarParserInfoD3D9& preprocessedInfo)
+void HQConstantTableD3D9::InitConstBufferSlotList(HQShaderVarParserD3D9& preprocessedInfo)
 {
 	HQLinkedList<UniformBlock>::Iterator ite;
 	for (preprocessedInfo.uniformBlocks.GetIterator(ite); !ite.IsAtEnd(); ++ite)
@@ -1047,7 +744,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 	streamContent[dataStream->TotalSize()] = '\0';
 
 	//obtain variables' infos from source
-	HQShaderVarParserInfoD3D9 preprocessedConstInfo(streamContent, pDefines);
+	HQShaderVarParserD3D9 preprocessedConstInfo(streamContent, pDefines);
 	
 	const char *actualSource = preprocessedConstInfo.GetPreprocessedSrc();
 	if (actualSource == NULL)
@@ -1208,7 +905,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 	}
 
 	//obtain variables' infos from source
-	HQShaderVarParserInfoD3D9 preprocessedConstInfo(pSourceData, pDefines);
+	HQShaderVarParserD3D9 preprocessedConstInfo(pSourceData, pDefines);
 
 	const char *actualSource = preprocessedConstInfo.GetPreprocessedSrc();
 	if (actualSource == NULL)

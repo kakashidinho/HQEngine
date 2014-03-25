@@ -310,6 +310,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="HQShaderVarParserD3D9.cpp" />
     <ClCompile Include="HQStateManagerD3D9.cpp" />
     <ClCompile Include="..\BaseImpl\HQTextureManagerBaseImpl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">
@@ -369,6 +370,7 @@
     <ClInclude Include="HQRenderTargetD3D9.h" />
     <ClInclude Include="HQShaderD3D9.h" />
     <ClInclude Include="HQShaderD3D9_Lexer.h" />
+    <ClInclude Include="HQShaderVarParserD3D9.h" />
     <ClInclude Include="HQStateManagerD3D9.h" />
     <ClInclude Include="HQTextureManagerD3D9.h" />
     <ClInclude Include="HQVertexStreamManagerD3D9.h" />

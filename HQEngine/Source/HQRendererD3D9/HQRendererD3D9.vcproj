@@ -645,6 +645,50 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\HQShaderVarParserD3D9.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release noptimize|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release static CRT|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug static CRT|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\HQStateManagerD3D9.cpp"
 				>
 			</File>
@@ -957,6 +1001,10 @@
 			</File>
 			<File
 				RelativePath=".\HQShaderD3D9_Lexer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HQShaderVarParserD3D9.h"
 				>
 			</File>
 			<File

@@ -66,12 +66,12 @@
     <ClCompile Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_preprocessor.cpp">
       <Filter>Source Files\mojoshader</Filter>
     </ClCompile>
+    <ClCompile Include="HQShaderVarParserD3D9.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HQRendererD3D9Def.def">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="HQShaderD3D9_Lexer.l">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -115,10 +115,16 @@
     <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_internal.h">
       <Filter>Source Files\mojoshader</Filter>
     </ClInclude>
+    <ClInclude Include="HQShaderVarParserD3D9.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HQRendererD3D9.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="HQShaderD3D9_Lexer.l" />
   </ItemGroup>
 </Project>
