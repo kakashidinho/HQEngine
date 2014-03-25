@@ -62,6 +62,30 @@ private:
 };
 
 
+/*-------structures that match those in shader--------*/
+struct Transform {
+	HQBaseMatrix3x4 worldMat;
+	HQBaseMatrix4 viewMat;
+	HQBaseMatrix4 projMat;
+};
+
+struct Material {
+	float materialDiffuse[4];
+};
+
+struct LightProperties {
+	
+	float lightPosition[4];
+	float lightDirection[4];
+	float lightDiffuse[4];
+	float lightFalloff_lightPCosHalfAngle[2];
+};
+
+struct LightView {
+	HQBaseMatrix4 lightViewMat;//light camera's view matrix
+	HQBaseMatrix4 lightProjMat;//light camera's projection matrix
+};
+
 /*-------rendering loop-----------*/
 class RenderLoop: public HQEngineRenderDelegate{
 public:
@@ -77,14 +101,6 @@ private:
 	void LowresPassRender(HQTime dt);
 	void FinalPassRender(HQTime dt);
 
-	//based on API, different method will be used
-	void SetUniformMatrix3x4(const char *uniform_var_name, const HQMatrix3x4& value) {
-		if (this->m_renderAPI_type == HQ_RA_D3D)
-			m_pRDevice->GetShaderManager()->SetUniformMatrix(uniform_var_name, value);
-		else
-			m_pRDevice->GetShaderManager()->SetUniform4Float(uniform_var_name, value, 3);
-	}
-
 	HQMeshNode* m_model;
 	HQRenderDevice *m_pRDevice;
 	HQCamera * m_camera;
@@ -96,6 +112,11 @@ private:
 
 	char m_renderAPI_name[6];//"D3D9" or "GL"
 	HQRenderAPI m_renderAPI_type;
+
+	hquint32 m_uniformTransformBuffer;
+	hquint32 m_uniformLightProtBuffer;
+	hquint32 m_uniformMaterialBuffer;
+	hquint32 m_uniformLightViewBuffer;
 };
 
 #endif

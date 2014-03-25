@@ -10,9 +10,14 @@ COPYING.txt included with this distribution for more information.
 
 #pragma pack_matrix(column_major)
 
-uniform float4x4 viewMat;
-uniform float4x4 projMat;
-uniform float4x3 worldMat;
+uniform transform {
+	float4x3 worldMat;
+}: BUFFER[0];
+
+uniform lightView {
+	float4x4 lightViewMat;//light camera's view matrix
+	float4x4 lightProjMat;//light camera's projection matrix
+}: BUFFER[1];
 
 #define HALF_PIXEL_OFFSET 0.5 / 512
 
@@ -47,10 +52,10 @@ vOut VS(in vIn input){
 	float3 normalW = mul(float4(input.iNormal, 0.0), worldMat );
 	normalW = normalize(normalW);
 	
-	float4 posV = mul(float4(posW, 1.0), viewMat);
+	float4 posV = mul(float4(posW, 1.0), lightViewMat);
 	
 	//projected position
-	output.oPos = mul(posV, projMat);
+	output.oPos = mul(posV, lightProjMat);
 	output.oPos.xy = offsetPostion(output.oPos);//API dependent function
 	
 	//depth
@@ -66,13 +71,17 @@ vOut VS(in vIn input){
 };
 
 
-uniform float3 lightPosition;
-uniform float3 lightDirection;
-uniform float4 lightDiffuse;
-uniform float lightFalloff;
-uniform float lightPCosHalfAngle;
+uniform material {
+	float4 materialDiffuse;
+} : BUFFER[2];
 
-uniform float4 materialDiffuse;
+uniform lightProperties {
+	
+	float3 lightPosition;
+	float3 lightDirection;
+	float4 lightDiffuse;
+	float2 lightFalloff_lightPCosHalfAngle;
+} : BUFFER[3];
 
 struct pOut{
 	float4 depth: COLOR0;//depth
@@ -95,6 +104,7 @@ glslf float getNormDepth(float2 clipDepth){
 
 //pixel shader
 pOut PS(
+	in float4 vPos : POSITION,
 	in float3 posW : TEXCOORD0,//world space position
 	in float2 depth: TEXCOORD1,//depth in clip space
 	in float3 normalW: TEXCOORD2 //world space normal
@@ -112,8 +122,8 @@ pOut PS(
 	//calculate flux
 	float3 lightVec = normalize(posW - lightPosition);
 	float cosLD = dot(lightVec, lightDirection);
-	float spot = pow(max(cosLD, 0), lightFalloff);
-	if (spot < lightPCosHalfAngle)
+	float spot = pow(max(cosLD, 0), lightFalloff_lightPCosHalfAngle.x);
+	if (spot < lightFalloff_lightPCosHalfAngle.y)
 		//out of light cone
 		output.flux = float4(0.0, 0.0, 0.0, 1.0);
 	else

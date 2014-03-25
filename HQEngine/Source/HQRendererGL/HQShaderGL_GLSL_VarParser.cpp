@@ -1487,13 +1487,14 @@ bool HQVarParserGL::Parse(const char* ori_source ,
 #else
 	processed_source_out = "#define __VERSION__ 110  \n#define HQEXT_GLSL\n";
 #endif
+	size_t search_start_pos = processed_source_out.size();
 	processed_source_out += ori_source;
 
     
     int version_number_found = -1;
 	/*------ Search for #version---------*/
 	{
-		size_t pos1 = processed_source_out.find("#");
+		size_t pos1 = processed_source_out.find("#", search_start_pos);
 		if (pos1 != std::string::npos)
 		{
 			size_t pos2 = processed_source_out.find("version", pos1);
@@ -1512,8 +1513,10 @@ bool HQVarParserGL::Parse(const char* ori_source ,
 				
 				if (found)
 				{
-					size_t pos3 = processed_source_out.find("\n", pos2 + 7);
-                    sscanf(processed_source_out.c_str() + pos1, "#version %d", &version_number_found);
+					
+                    if (sscanf(processed_source_out.c_str() + pos1, "#version %d", &version_number_found) != 1)
+						sscanf(processed_source_out.c_str() + pos1, "# version %d", &version_number_found);//try one more time
+					//size_t pos3 = processed_source_out.find("\n", pos2 + 7);
 					//version_string.assign(source + pos1, pos3 - pos1 + 1);
 				}
                 

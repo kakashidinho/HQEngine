@@ -65,6 +65,16 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 		strcpy(apiResNamXML, "rsm_resourcesD3D9.script");
 	}
 
+
+	//init resources
+	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromFile(apiResNamXML);
+	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromFile("rsm_resourcesCommon.script");
+	HQEngineApp::GetInstance()->GetEffectManager()->AddEffectsFromFile("rsm_effects.script");
+
+	//retrieve main effect
+	rsm_effect = HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("rsm");
+
+
 	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
 
 
@@ -105,20 +115,33 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	m_scene->AddChild(m_model);
 	m_scene->AddChild(m_camera);
 
-	//init resources
-	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromFile(apiResNamXML);
-	HQEngineApp::GetInstance()->GetResourceManager()->AddResourcesFromFile("rsm_resourcesCommon.script");
-	HQEngineApp::GetInstance()->GetEffectManager()->AddEffectsFromFile("rsm_effects.script");
-
-	//retrieve main effect
-	rsm_effect = HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("rsm");
-
 	//decode noise map from RGBA image to float texture
 	DecodeNoiseMap();
 
 	//init render device
 	m_pRDevice->SetClearColorf(1, 1, 1, 1);
 	//m_pRDevice->GetStateManager()->SetFillMode(HQ_FILL_WIREFRAME);
+
+	/*---------create and bind uniform buffers--*/
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(Transform), NULL, true, &this->m_uniformTransformBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(Material), NULL, true, &this->m_uniformMaterialBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(LightProperties), NULL, true, &this->m_uniformLightProtBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(LightView), NULL, true, &this->m_uniformLightViewBuffer);
+
+	if (m_renderAPI_type == HQ_RA_OGL)
+	{
+		m_pRDevice->GetShaderManager()->SetUniformBuffer(0, m_uniformTransformBuffer);
+		m_pRDevice->GetShaderManager()->SetUniformBuffer(1, m_uniformLightViewBuffer);
+		m_pRDevice->GetShaderManager()->SetUniformBuffer(2, m_uniformMaterialBuffer);
+		m_pRDevice->GetShaderManager()->SetUniformBuffer(3, m_uniformLightProtBuffer);
+	}
+	else
+	{
+		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 0, m_uniformTransformBuffer);
+		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 1, m_uniformLightViewBuffer);
+		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER | 2, m_uniformMaterialBuffer);
+		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER | 3, m_uniformLightProtBuffer);
+	}
 }
 
 //destructor
@@ -189,6 +212,33 @@ void RenderLoop::Render(HQTime dt){
 	//update scene
 	m_scene->SetUniformScale(0.01f);
 	m_scene->Update(dt);
+
+	//send scene data to shader
+	Transform * transform;
+	LightView * lightView;
+	LightProperties * lightProt;
+	
+	//send transform data
+	m_pRDevice->GetShaderManager()->MapUniformBuffer(m_uniformTransformBuffer, (void**)&transform);
+	transform->worldMat = m_model->GetWorldTransform();
+	transform->viewMat = m_camera->GetViewMatrix();
+	transform->projMat = m_camera->GetProjectionMatrix();
+	m_pRDevice->GetShaderManager()->UnmapUniformBuffer(m_uniformTransformBuffer);
+
+	//send light camera's matrices data
+	m_pRDevice->GetShaderManager()->MapUniformBuffer(m_uniformLightViewBuffer, (void**)&lightView);
+	lightView->lightViewMat = m_light->lightCam().GetViewMatrix();
+	lightView->lightProjMat = m_light->lightCam().GetProjectionMatrix();
+	m_pRDevice->GetShaderManager()->UnmapUniformBuffer(m_uniformLightViewBuffer);
+
+	//send light properties data
+	m_pRDevice->GetShaderManager()->MapUniformBuffer(m_uniformLightProtBuffer, (void**)&lightProt);
+	memcpy(lightProt->lightPosition, &m_light->position(), sizeof(HQVector4));
+	memcpy(lightProt->lightDirection, &m_light->direction(), sizeof(HQVector4));
+	memcpy(lightProt->lightDiffuse, &m_light->diffuseColor, sizeof(HQVector4));
+	lightProt->lightFalloff_lightPCosHalfAngle[0] = m_light->falloff;
+	lightProt->lightFalloff_lightPCosHalfAngle[1] = pow(cosf(m_light->angle * 0.5f), m_light->falloff);
+	m_pRDevice->GetShaderManager()->UnmapUniformBuffer(m_uniformLightProtBuffer);
 	
 	//depth pass rendering
 	DepthPassRender(dt);

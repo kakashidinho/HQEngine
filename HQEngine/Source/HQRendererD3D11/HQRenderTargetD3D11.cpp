@@ -61,6 +61,7 @@ struct HQDepthStencilBufferD3D : public HQBaseCustomRenderBuffer
 		}
 
 		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+		dsvDesc.Flags = 0;
 		dsvDesc.Format = this->format;
 		if(sampleCount > 1)
 			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;

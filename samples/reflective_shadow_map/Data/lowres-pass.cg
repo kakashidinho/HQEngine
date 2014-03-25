@@ -10,12 +10,16 @@ COPYING.txt included with this distribution for more information.
 
 #pragma pack_matrix(column_major)
 /*---------------vertex shader-------------*/
-uniform float4x3 worldMat;
-uniform float4x4 viewMat;
-uniform float4x4 projMat;
-uniform float4x4 lightViewMat;//light camera's view matrix
-uniform float4x4 lightProjMat;//light camera's projection matrix
+uniform transform {
+	float4x3 worldMat;
+	float4x4 viewMat;
+	float4x4 projMat;
+}: BUFFER[0];
 
+uniform lightView {
+	float4x4 lightViewMat;//light camera's view matrix
+	float4x4 lightProjMat;//light camera's projection matrix
+}: BUFFER[1];
 
 struct vIn{
 	float3 iPos: VPOSITION;
@@ -101,6 +105,7 @@ glslf float2 scaleToTexcoord(float2 normalizeCoords){
 
 //pixel shader
 pOut PS(
+	in float4 position: POSITION, //clip space position
 	in float3 posW : TEXCOORD0,//world space position
 	in float3 normalW: TEXCOORD1, //world space normal
 	in float4 posLight: TEXCOORD2 //projected position in light camera's clip space

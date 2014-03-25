@@ -19,26 +19,21 @@ void RenderLoop::DepthPassRender(HQTime dt){
 	const HQViewPort viewport = {0, 0, DEPTH_PASS_RT_WIDTH, DEPTH_PASS_RT_HEIGHT};
 	m_pRDevice->SetViewPort(viewport);
 
-	//set light parameters
-	m_pRDevice->GetShaderManager()->SetUniform3Float("lightPosition", m_light->position(), 1);
-	m_pRDevice->GetShaderManager()->SetUniform3Float("lightDirection", m_light->direction(), 1);
-	m_pRDevice->GetShaderManager()->SetUniformFloat("lightFalloff", m_light->falloff);
-	m_pRDevice->GetShaderManager()->SetUniformFloat("lightPCosHalfAngle", pow(cosf(m_light->angle * 0.5f), m_light->falloff));
-	m_pRDevice->GetShaderManager()->SetUniform4Float("lightDiffuse", m_light->diffuseColor, 1);
-
-	//set light camera's matrices
-	this->SetUniformMatrix3x4("worldMat", m_model->GetWorldTransform());
-	m_pRDevice->GetShaderManager()->SetUniformMatrix("viewMat", m_light->lightCam().GetViewMatrix(), 1);
-	m_pRDevice->GetShaderManager()->SetUniformMatrix("projMat", m_light->lightCam().GetProjectionMatrix(), 1);
-
+	Material * material;
+	
 	m_pRDevice->BeginRender(HQ_TRUE, HQ_TRUE, HQ_FALSE);
 	//render the scene
+	m_model->BeginRender();
 	for (hquint32 i = 0; i < m_model->GetNumSubMeshes(); ++i){
-		m_model->BeginRender();
-		m_pRDevice->GetShaderManager()->SetUniform4Float("materialDiffuse", m_model->GetSubMeshInfo(i).colorMaterial.diffuse, 1);
+		//send material info to shader
+		m_pRDevice->GetShaderManager()->MapUniformBuffer(m_uniformMaterialBuffer, (void**)&material);
+		memcpy(material, &m_model->GetSubMeshInfo(i).colorMaterial.diffuse, sizeof(HQVector4));
+		m_pRDevice->GetShaderManager()->UnmapUniformBuffer(m_uniformMaterialBuffer);
+
 		m_model->DrawSubMesh(i);
-		m_model->EndRender();
 	}
+	m_model->EndRender();
+
 	m_pRDevice->EndRender();
 
 }

@@ -212,6 +212,7 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 	this->Log("Cg library loaded. Version is %s", version);
 
 	cgD3D11SetDevice(this->cgContext , pD3DDevice);
+	cgSetContextBehavior(this->cgContext, CG_BEHAVIOR_3100); 
 	
 	this->featureLevel = featureLevel;
 	switch(featureLevel)

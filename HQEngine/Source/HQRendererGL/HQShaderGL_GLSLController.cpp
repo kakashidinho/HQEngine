@@ -208,7 +208,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 				if (found)
 				{
 					size_t pos3 = processed_src.find("\n", pos2 + 7);
-					version_string.assign(source + pos1, pos3 - pos1 + 1); 
+					version_string.assign(processed_src.c_str() + pos1, pos3 - pos1 + 1); 
 					for (size_t i = pos1; i < pos3; ++i)
 					{
 						processed_src[i] = ' ';//remove from the source
@@ -226,7 +226,8 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 
 	/*--------set shader source---------*/
 	int version_number = 0;
-	sscanf(version_string.c_str(), "#version %d", &version_number);
+	if (sscanf(version_string.c_str(), "#version %d", &version_number) != 1)
+		sscanf(version_string.c_str(), "# version %d", &version_number);//try one more time
 	std::string uniform_buffer_extension_line = "";
 #ifdef HQ_OPENGLES
 	const char prefDefExtVersion[]	= "#define HQEXT_GLSL_ES\n";

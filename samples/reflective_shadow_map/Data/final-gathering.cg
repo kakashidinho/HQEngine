@@ -10,11 +10,16 @@ COPYING.txt included with this distribution for more information.
 
 #pragma pack_matrix(column_major)
 /*---------------vertex shader-------------*/
-uniform float4x3 worldMat;
-uniform float4x4 viewMat;
-uniform float4x4 projMat;
-uniform float4x4 lightViewMat;//light camera's view matrix
-uniform float4x4 lightProjMat;//light camera's projection matrix
+uniform transform {
+	float4x3 worldMat;
+	float4x4 viewMat;
+	float4x4 projMat;
+}: BUFFER[0];
+
+uniform lightView {
+	float4x4 lightViewMat;//light camera's view matrix
+	float4x4 lightProjMat;//light camera's projection matrix
+}: BUFFER[1];
 
 
 struct vIn{
@@ -94,8 +99,14 @@ vOut VS(in vIn input){
 #define SHADOW_MAP_SIZE 512
 #define LOW_RES_SIZE 128
 
-uniform float3 lightPosition;
-uniform float4 materialDiffuse;
+uniform material {
+	float4 materialDiffuse;
+} : BUFFER[2];
+
+uniform lightProperties {
+	
+	float3 lightPosition;
+} : BUFFER[3];
 
 uniform sampler2D depthMap : TEXUNIT0;//depth texture
 uniform sampler2D posMap : TEXUNIT1;//position texture in light view
@@ -108,6 +119,7 @@ uniform sampler2D lowresNormalMap : TEXUNIT7;//normal in camera low res view
 
 
 struct pIn{
+	float4 position: POSITION; //clip space position
 	float3 posW : TEXCOORD0;//world space position
 	float3 normalW: TEXCOORD1; //world space normal
 	float4 posLight: TEXCOORD2; //projected position in light camera's clip space

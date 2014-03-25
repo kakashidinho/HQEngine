@@ -20,8 +20,8 @@ public :
 	HQBaseCamera();
 	virtual ~HQBaseCamera(); 
 
-	const HQMatrix4 * GetViewMatrix() const {return m_viewMatrix;}
-	const HQMatrix4 * GetProjectionMatrix() const {return m_projMatrix;}
+	const HQMatrix4 & GetViewMatrix() const {return *m_viewMatrix;}
+	const HQMatrix4 & GetProjectionMatrix() const {return *m_projMatrix;}
 	virtual const HQMatrix4 * GetViewProjMatrix() const = 0;
 	const HQPlane * GetViewFrustum() {return m_frustumPlanes;}
 
