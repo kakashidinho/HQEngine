@@ -20,7 +20,8 @@ struct HQFakeUniformBufferGL
 	~HQFakeUniformBufferGL();
 
 	void * pRawBuffer;
-	hq_uint32 size;
+	hq_uint32 size;//size requested
+	hquint32 actualSize;//actual size allocated
 	bool isDynamic;
 
 	typedef HQLinkedList<hquint32, HQPoolMemoryManager> BufferSlotList;

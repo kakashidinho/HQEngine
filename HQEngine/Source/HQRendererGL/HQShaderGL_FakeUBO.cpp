@@ -28,11 +28,11 @@ HQFakeUniformBufferGL::HQFakeUniformBufferGL(hq_uint32 size, bool isDynamic)
 : boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(BufferSlotList::LinkedListNodeType), MAX_UNIFORM_BUFFER_SLOTS))
 {
 	//must allocate a buffer with size is multiple of 16 byte
-	size_t realSize = size;
+	this->actualSize = size;
 	size_t remain = size % 16;
 	if (remain > 0)
-		realSize += (16 - remain);
-	this->pRawBuffer = HQ_NEW hqubyte8[realSize]; 
+		this->actualSize += (16 - remain);
+	this->pRawBuffer = HQ_NEW hqubyte8[this->actualSize]; 
 
 	this->size = size;
 	this->isDynamic = isDynamic;
@@ -575,10 +575,10 @@ void HQBaseShaderManagerGL_FakeUBO::Commit()
 				//for each constant
 				HQLinkedList<HQSharedPtr<HQFakeUniformBlkElem> >::Iterator const_ite;
 				for (slot_ite->constants.GetIterator(const_ite);
-					!const_ite.IsAtEnd() && offset < constBuffer->size;
+					!const_ite.IsAtEnd() && offset < constBuffer->actualSize;
 					++const_ite)
 				{
-					offset += (*const_ite)->ConsumeData(pData + offset, constBuffer->size - offset);
+					offset += (*const_ite)->ConsumeData(pData + offset, constBuffer->actualSize - offset);
 				}
 
 				bufferSlot.dirtyFlags = 0;//mark as not dirty
