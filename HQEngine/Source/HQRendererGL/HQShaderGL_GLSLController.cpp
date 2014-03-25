@@ -121,6 +121,9 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromStreamGLSL(HQShaderType 
 	dataStream->ReadBytes(source,size ,1);
 	source[size] = '\0';
 
+	if (dataStream->GetName() != NULL)
+			g_pShaderMan->Log("GLSL shader is beging compiled from stream %s ...", dataStream->GetName());
+
 	HQReturnVal re = this->CreateShaderFromMemoryGLSL(type , source , pDefines, ppShaderObjectOut);
 
 	delete[] source;
@@ -257,14 +260,15 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 
 	GLint compileOK;
 	glGetShaderiv(sobject->shader , GL_COMPILE_STATUS , &compileOK);
-	if(sobject->shader==0 || compileOK == GL_FALSE)
+	
+	bool error = (sobject->shader==0 || compileOK == GL_FALSE);
 	{
 		int infologLength = 0;
-	    int charsWritten  = 0;
-	    char *infoLog;
-	    glGetShaderiv(sobject->shader, GL_INFO_LOG_LENGTH,&infologLength);
-	    if (infologLength > 0)
-	    {
+		int charsWritten  = 0;
+		char *infoLog;
+		glGetShaderiv(sobject->shader, GL_INFO_LOG_LENGTH,&infologLength);
+		if (infologLength > 0)
+		{
 #if LOG_SRC_ERR
 			int src_length;
 			char * glsource;
@@ -272,21 +276,28 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 			glsource = (char*)malloc(src_length);
 			glGetShaderSource(sobject->shader, src_length, NULL, glsource);
 #endif
-	        infoLog = (char *)malloc(infologLength);
-	        glGetShaderInfoLog(sobject->shader, infologLength, &charsWritten, infoLog);
-
+			infoLog = (char *)malloc(infologLength);
+	        	glGetShaderInfoLog(sobject->shader, infologLength, &charsWritten, infoLog);
+			if (error)
 #if LOG_SRC_ERR
-			g_pShaderMan->Log("GLSL shader compile error: %s. Source code=<%s>",infoLog, glsource);
+				g_pShaderMan->Log("GLSL shader compile error: %s. Source code=<%s>",infoLog, glsource);
 #else
-			g_pShaderMan->Log("GLSL shader compile error: %s",infoLog);
+				g_pShaderMan->Log("GLSL shader compile error: %s",infoLog);
 #endif
-	        free(infoLog);
+			else
+				g_pShaderMan->Log("GLSL shader compile info: %s",infoLog);
+
+
+	        	free(infoLog);
 #if LOG_SRC_ERR
 			free(glsource);
 #endif
-	    }
-		delete sobject;
-		return HQ_FAILED;
+	    	}
+		if (error)
+		{
+			delete sobject;
+			return HQ_FAILED;
+		}
 	}
 	sobject->type=type;
 	
