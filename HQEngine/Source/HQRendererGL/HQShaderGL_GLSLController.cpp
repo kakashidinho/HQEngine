@@ -305,7 +305,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 			SafeDelete(sobject->pUniformBlocks);//no need for this information
 			InsertUBO_STD140_LayoutControl(processed_src);//set std140 layout as default
 #ifdef HQ_OPENGLES
-			if (version_number < 300 && )
+			if (version_number < 300)
 			{
 				version_string = "#version 300 es\n";//300 is minimum version for uniform buffer objects
 				g_pShaderMan->Log("GLSL shader compile warning: shader contains uniform buffer blocks but they are not supported. Switching to version 300 es...", version_number); 
@@ -509,6 +509,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 	//back to current program
 	glUseProgram(currentActiveProgram);
 
+#if 0//TO DO: doesn't make sense to validate program here. it should be validated just before drawing
 	//check if this program is valid
 	glValidateProgram(pNewProgramObj->programGLHandle);
 	glGetProgramiv(pNewProgramObj->programGLHandle, GL_VALIDATE_STATUS, &OK);
@@ -527,6 +528,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 		}
 		return HQ_FAILED;
 	}
+#endif
 
 	hq_uint32 newProgramID;
 	if (!g_pShaderMan->AddItem(pNewProgramObj, &newProgramID))

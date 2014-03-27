@@ -16,8 +16,8 @@ COPYING.txt included with this distribution for more information.
 #define max(a,b) ((a>b)?a:b)
 #endif
 
-#ifdef glTexBuffer
-#undef glTexBuffer
+#ifdef glTexBufferWrapper
+#undef glTexBufferWrapper
 #endif
 
 //size of 2d/cube texture
@@ -35,7 +35,7 @@ struct HQTexture2DDesc
 /*---------texture buffer------------------*/
 typedef void (GLAPIENTRY * PFNGLTEXBUFFERPROC) (GLenum target, GLenum internalformat, GLuint buffer);
 void GLAPIENTRY glTexBufferDummy(GLenum target, GLenum internalformat, GLuint buffer){}
-PFNGLTEXBUFFERPROC glTexBuffer ;
+PFNGLTEXBUFFERPROC glTexBufferWrapper ;
 
 HQTextureGL::HQTextureGL(HQTextureType type ):HQTexture()
 {
@@ -407,13 +407,13 @@ HQTextureManagerGL::HQTextureManagerGL(
 	this->currentBoundTBuffer = 0;
 
 	/*------------------*/
-	glTexBuffer = (PFNGLTEXBUFFERPROC )gl_GetProcAddress("glTexBuffer");
-	if (glTexBuffer == NULL)
-		glTexBuffer = (PFNGLTEXBUFFERPROC )gl_GetProcAddress("glTexBufferARB");
-	if (glTexBuffer == NULL)
-		glTexBuffer = (PFNGLTEXBUFFERPROC )gl_GetProcAddress("glTexBufferEXT");
-	if (glTexBuffer == NULL)
-		glTexBuffer = &glTexBufferDummy;
+	glTexBufferWrapper = (PFNGLTEXBUFFERPROC )gl_GetProcAddress("glTexBuffer");
+	if (glTexBufferWrapper == NULL)
+		glTexBufferWrapper = (PFNGLTEXBUFFERPROC )gl_GetProcAddress("glTexBufferARB");
+	if (glTexBufferWrapper == NULL)
+		glTexBufferWrapper = (PFNGLTEXBUFFERPROC )gl_GetProcAddress("glTexBufferEXT");
+	if (glTexBufferWrapper == NULL)
+		glTexBufferWrapper = &glTexBufferDummy;
 #endif
 	Log("Init done!");
 	LogTextureCompressionSupportInfo();
@@ -1310,7 +1310,7 @@ HQReturnVal HQTextureManagerGL::CreateTextureBuffer(HQTexture *pTex ,HQTextureBu
 
 	this->BindTexture(this->activeTexture , GL_TEXTURE_BUFFER , texture);
 
-	glTexBuffer(GL_TEXTURE_BUFFER , glFormat , tbuffer->buffer);
+	glTexBufferWrapper(GL_TEXTURE_BUFFER , glFormat , tbuffer->buffer);
 
 	glBindTexture(GL_TEXTURE_BUFFER , this->texUnits[activeTexture].GetTextureBufferGL()); //re-bind old texture
 

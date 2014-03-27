@@ -24,6 +24,26 @@ inline HQReturnVal HQBaseGLSLShaderController::DeActiveProgramGLSL()
 inline HQReturnVal HQBaseGLSLShaderController::ActiveProgramGLSL(HQSharedPtr<HQBaseShaderProgramGL>& pProgram)
 {
 	glUseProgram(pProgram->programGLHandle);
+#if 0
+    GLint OK;
+    glValidateProgram(pProgram->programGLHandle);
+	glGetProgramiv(pProgram->programGLHandle, GL_VALIDATE_STATUS, &OK);
+	if(OK == GL_FALSE)
+	{
+		int infologLength = 0;
+		int charsWritten  = 0;
+		char *infoLog;
+		glGetProgramiv(pProgram->programGLHandle, GL_INFO_LOG_LENGTH, &infologLength);
+		if (infologLength > 0)
+		{
+			infoLog = (char *)malloc(infologLength);
+			glGetProgramInfoLog(pProgram->programGLHandle, infologLength, &charsWritten, infoLog);
+			g_pShaderMan->Log("GLSL program validate error: %s", infoLog);
+			free(infoLog);
+		}
+		return HQ_FAILED;
+	}
+#endif
 	return HQ_OK;
 }
 

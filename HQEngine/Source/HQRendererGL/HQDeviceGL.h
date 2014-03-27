@@ -79,9 +79,8 @@ class HQDeviceGL:public HQBaseRenderDevice
 {
 protected:
 	~HQDeviceGL();
-#ifndef HQ_IPHONE_PLATFORM
-	int CreateContext(const char* coreProfile);
-#endif
+	int CreateContext(HQRenderDeviceInitInput input, const char* coreProfile);
+
 
 #if defined DEVICE_LOST_POSSIBLE
 	void OnLost();
@@ -106,7 +105,6 @@ protected:
 	CAEAGLLayer *eaglLayer;
 #elif defined HQ_MAC_PLATFORM
 	HQAppleOpenGLContext * glc;
-	NSOpenGLPixelFormat* pixelformat;
 #elif defined HQ_ANDROID_PLATFORM
 	HQAndroidOpenGLContext *glc;
 	jobject jeglConfig;

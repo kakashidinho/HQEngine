@@ -24,8 +24,10 @@ COPYING.txt included with this distribution for more information.
 #	import <OpenGLES/ES1/glext.h>
 #else
 #	import <OpenGL/gl.h>
+#	import <OpenGL/gl3.h>
 #	import <OpenGL/glu.h>
 #	import <OpenGL/glext.h>
+#	import <OpenGL/gl3ext.h>
 #endif
 
 #define GLEW_OK 0
@@ -50,6 +52,7 @@ extern GLboolean GLEW_EXT_texture_filter_anisotropic;
 extern GLboolean GLEW_NV_multisample_filter_hint;
 extern GLboolean GLEW_EXT_texture_compression_s3tc;
 extern GLboolean GLEW_EXT_geometry_shader4;
+extern GLboolean GLEW_ARB_framebuffer_object;
 extern GLboolean GLEW_EXT_framebuffer_object;
 extern GLboolean GLEW_ARB_draw_buffers;
 extern GLboolean GLEW_ARB_texture_float;
@@ -74,6 +77,9 @@ extern GLboolean GLEW_OES_texture_float;
 #define GL_RGBA16F 0x881A
 #define GL_RGBA32F 0x8814
 #define GL_RED_INTEGER 0x8D94
+#ifndef GL_NUM_EXTENSIONS
+#define GL_NUM_EXTENSIONS                 0x821D
+#endif
 
 #	ifndef GL_OES_texture_half_float
 #		define GL_HALF_FLOAT_OES                0x8D61

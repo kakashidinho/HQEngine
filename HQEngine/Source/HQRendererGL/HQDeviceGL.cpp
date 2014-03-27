@@ -23,6 +23,24 @@ Note: Initialization code is a bit ugly since it is written a long time ago
 #include <assert.h>
 #endif
 
+struct CString {
+    CString (const char *source) {
+        raw_string = HQ_NEW char[strlen(source) + 1];
+        strcpy(raw_string, source);
+    }
+    ~CString () {
+        delete[] raw_string;
+    }
+    CString &operator = (const char *source) {
+        delete[] raw_string;
+        raw_string = HQ_NEW char[strlen(source) + 1];
+        strcpy(raw_string, source);
+        return *this;
+    }
+    const char* c_str() const {return raw_string;}
+    char * raw_string;
+};
+
 
 /*----------------------------------*/
 #ifdef WIN32
@@ -139,8 +157,7 @@ HQDeviceGL::HQDeviceGL(bool flushLog)
     	this->pEnum = HQ_NEW HQDeviceEnumGL();
 #elif defined HQ_MAC_PLATFORM
 	this->glc = nil;
-	this->pixelformat = nil;
-    	this->pEnum = HQ_NEW HQDeviceEnumGL();
+    this->pEnum = HQ_NEW HQDeviceEnumGL();
 #elif defined HQ_ANDROID_PLATFORM
 	this->glc = NULL;
 	this->jeglConfig = NULL;
@@ -226,8 +243,7 @@ HQDeviceGL::~HQDeviceGL(){
 			[NSOpenGLContext clearCurrentContext];
 		[glc release];
 	}
-	if (pixelformat != nil)
-		[pixelformat release];
+	
 #elif defined HQ_ANDROID_PLATFORM
 	SafeDelete(glc);
 	
@@ -276,7 +292,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 
 	//scan addtional options
 	int shaderManagerType = GLSL_SHADER_MANAGER;
-	std::string core_profile = "";
+	CString core_profile = "";
 	
 	if (additionalSettings != NULL)
 	{
@@ -349,7 +365,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 #endif
 
 #ifdef HQ_MAC_PLATFORM
-	pEnum->ParseSettingFile(settingFileDir , 
+	this->pEnum->ParseSettingFile(settingFileDir ,
 							[input->nsView frame].size.width , 
 							[input->nsView frame].size.height,
 							input->isWindowed);
@@ -405,9 +421,8 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	}
 #endif
 
-#ifndef HQ_IPHONE_PLATFORM
-	int result = this->CreateContext(core_profile.c_str());
-#endif
+	int result = this->CreateContext(input, core_profile.c_str());
+
 
 #ifdef WIN32
 	if(result!=0)
@@ -473,12 +488,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	input->window=winfo.win;
 
 #elif defined HQ_IPHONE_PLATFORM
-	//create main context
-	glc = [[HQIOSOpenGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 
-									withEAGLLayer: input->eaglLayer 
-								   andColorFormat: pEnum->selectedPixelFormat
-							andDepthStencilFormat: pEnum->selectedDepthStencilFmt];
-	if (glc == nil) {
+	if (result != 0) {
 		Log("Create render context failed!");
 		return HQ_FAILED_INIT_DEVICE;
 	}
@@ -502,17 +512,8 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	{
 		if(result==1)
 			Log("Init pixel format failed!");
-		return HQ_FAILED_INIT_DEVICE;
-	}
-
-	glc = [ [ HQAppleOpenGLContext alloc ]
-				initWithFormat: pixelformat 
-				andView: input->nsView
-				andViewWidthPointer : &this->sWidth
-				andViewHeightPointer : &this->sHeight];
-	if(glc ==nil)
-	{
-		Log("Create render context failed!");
+        else if (result == 2)
+            Log("Create render context failed!");
 		return HQ_FAILED_INIT_DEVICE;
 	}
 
@@ -534,17 +535,10 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	{
 		if(result==1)
 			Log("Init pixel format failed!");
+        else if (result == 2)
+            Log("Create render context failed!");
 		return HQ_FAILED_INIT_DEVICE;
 	}
-	try{
-		//create context
-		this->glc = new HQAndroidOpenGLContext(*input , this->jeglConfig , pEnum->selectedApiLevel);
-	}
-	catch (std::bad_alloc e)
-	{
-		Log("Create render context failed!");
-		return HQ_FAILED_INIT_DEVICE;
-	}	
 
 
 	//get surface size
@@ -946,12 +940,10 @@ void HQDeviceGL::SetClearStencilVal(hq_uint32 val){
 	glClearStencil((GLint)val);
 }
 
-
-#ifndef HQ_IPHONE_PLATFORM
 //********************
 //setup pixel
 //********************
-int HQDeviceGL::CreateContext(const char* coreProfile)
+int HQDeviceGL::CreateContext( HQRenderDeviceInitInput input, const char* coreProfile)
 {
 	int version_major = 1, version_minor = 0;
 	const char* minorStart = strchr(coreProfile, '.');
@@ -1229,13 +1221,14 @@ int HQDeviceGL::CreateContext(const char* coreProfile)
 	helper::FormatInfo(pEnum->selectedDepthStencilFmt,NULL,NULL,
 					   NULL,NULL,NULL,&D,&S);
 
-	GLuint attributes[18] = {
+	GLuint attributes[] = {
 		NSOpenGLPFADoubleBuffer,
 		NSOpenGLPFAColorSize, static_cast<GLuint>(R + G + B),
 		NSOpenGLPFAAlphaSize, A,
 		NSOpenGLPFADepthSize, D,
 		NSOpenGLPFAStencilSize, S,
 		NSOpenGLPFAClosestPolicy,
+        NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersionLegacy,//NSOpenGLProfileVersion3_2Core,
 		NSOpenGLPFAAccelerated,
 		NSOpenGLPFANoRecovery,
 		NSOpenGLPFAMultisample,
@@ -1244,31 +1237,65 @@ int HQDeviceGL::CreateContext(const char* coreProfile)
 		0
 	};
 
-	if(pEnum->selectedMulSampleType==0 || !GLEW_ARB_multisample)
+	if(pEnum->selectedMulSampleType==0)
 	{
-		attributes[12]=0;
-		attributes[13]=0;
 		attributes[14]=0;
 		attributes[15]=0;
 		attributes[16]=0;
+		attributes[17]=0;
+		attributes[18]=0;
 	}
 	if(!pEnum->caps.hardwareAccel)
-		attributes[10] = 0;
+		attributes[12] = 0;
 
-	pixelformat = [ [ NSOpenGLPixelFormat alloc ] initWithAttributes:
+	
+	NSOpenGLPixelFormat* pixelformat = [ [ NSOpenGLPixelFormat alloc ] initWithAttributes:
 										(NSOpenGLPixelFormatAttribute*) attributes ];
 
 	if ( pixelformat == nil )
-		return 1;
+	{
+        //try again with legacy opengl
+        attributes[11] = NSOpenGLProfileVersionLegacy;
+        pixelformat = [ [ NSOpenGLPixelFormat alloc ] initWithAttributes:
+                       (NSOpenGLPixelFormatAttribute*) attributes ];
+        if (pixelformat == nil)
+            return 1;
+    }
+    
+	this->glc = [ [ HQAppleOpenGLContext alloc ]
+           initWithFormat: pixelformat
+           andView: input->nsView
+           andViewWidthPointer : &this->sWidth
+           andViewHeightPointer : &this->sHeight];
+    
+    [pixelformat release];
+    
+    if (this->glc == nil)
+        return 2;
+#elif defined HQ_IPHONE_PLATFORM
+	//create main context
+	this->glc = [[HQIOSOpenGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2
+									withEAGLLayer: input->eaglLayer
+								   andColorFormat: pEnum->selectedPixelFormat
+							andDepthStencilFormat: pEnum->selectedDepthStencilFmt];
+    if (this->glc == nil)
+        return 2;
 #elif defined HQ_ANDROID_PLATFORM
 	this->jeglConfig = pEnum->GetJEGLConfig();
 	if (this->jeglConfig == NULL)
 		return 1;
+    
+	try{
+		//create context
+		this->glc = new HQAndroidOpenGLContext(*input , this->jeglConfig , pEnum->selectedApiLevel);
+	}
+	catch (std::bad_alloc e)
+	{
+		return 2;
+	}
 #endif
 	return 0;
 }
-
-#endif //#ifndef HQ_IPHONE_PLATFORM
 
 
 

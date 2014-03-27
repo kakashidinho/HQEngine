@@ -1,0 +1,17 @@
+
+uniform sampler2D texture1 TEXUNIT0;
+
+#ifdef HQEXT_GLSL_ES
+varying highp vec4 color;
+varying mediump vec2 texcoord;
+#else
+varying vec4 color;
+varying vec2 texcoord;
+#endif
+
+out vec4 colorOut;
+
+void main()
+{
+	colorOut =  color * texture(texture1 , texcoord);
+}

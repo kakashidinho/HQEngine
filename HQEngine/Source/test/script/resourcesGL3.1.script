@@ -17,7 +17,7 @@ resources{
 	{
 		type=pixel
 		src_type=glsl
-		src="ps-mesh.txt"
+		src="ps-mesh-140.txt"
 		define TEXTURE_COLOR = 0
 		define version = 140
 		define NOT_ORIGIN
