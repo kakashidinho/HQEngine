@@ -1,0 +1,25 @@
+* vertex shader input's semantics:
+vertex attribute usage  	|		semantic		|
+________________________________|_______________________________________|
+HQ_VAU_POSITION			|	VPOSITION			|
+HQ_VAU_COLOR			|	VCOLOR				|
+HQ_VAU_NORMAL			|	VNORMAL				|
+HQ_VAU_TEXCOORD0		|	VTEXCOORD0			|
+HQ_VAU_TEXCOORD1		|	VTEXCOORD1			|
+HQ_VAU_TEXCOORD2		|	VTEXCOORD2			|
+HQ_VAU_TEXCOORD3		|	VTEXCOORD3			|
+HQ_VAU_TEXCOORD4		|	VTEXCOORD4			|
+HQ_VAU_TEXCOORD5		|	VTEXCOORD5			|
+HQ_VAU_TEXCOORD6		|	VTEXCOORD6			|
+HQ_VAU_TEXCOORD7		|	VTEXCOORD7			|
+HQ_VAU_TANGENT			|	VTANGENT			|
+HQ_VAU_BINORMAL			|	VBINORMAL			|
+HQ_VAU_BLENDWEIGHT		|	VBLENDWEIGHT			|
+HQ_VAU_BLENDINDICES		|	VBLENDINDICES			|
+HQ_VAU_PSIZE			|	VPSIZE				|
+
+* sampler's sematics:
+TEXUNIT<number> ---> uses texture unit <number>
+
+* GLSL's uniform block name:
+ubuffer<number> ---> uses uniform buffer slot <number>
