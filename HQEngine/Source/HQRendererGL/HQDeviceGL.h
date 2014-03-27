@@ -36,6 +36,8 @@ struct WindowInfo
 struct WindowInfo
 {
     Window win;
+    GLXWindow glxWin;
+    GLXDrawable swapDrawable;
     Window parent;
     int x,y;
     Colormap cmap;
@@ -121,13 +123,11 @@ protected:
 	HQDeviceEnumGL *pEnum;
 public:
 #ifdef WIN32
-	HQDeviceGL(HMODULE _pDll,HQDeviceEnumGL *pEnum , bool flushLog);
+	HQDeviceGL(HMODULE _pDll, bool flushLog);
 #elif defined HQ_LINUX_PLATFORM
-    HQDeviceGL(Display *dpy,HQDeviceEnumGL *pEnum , bool flushLog);
-#elif defined HQ_ANDROID_PLATFORM
-	HQDeviceGL(bool flushLog);
+    HQDeviceGL(Display *dpy, bool flushLog);
 #else
-	HQDeviceGL(HQDeviceEnumGL *pEnum , bool flushLog);
+	HQDeviceGL(bool flushLog);
 #endif
 
 	HQReturnVal Release();

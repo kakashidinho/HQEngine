@@ -19,6 +19,8 @@
 #define D3D10_RENDERER 2
 #define D3D11_RENDERER 3
 
+#define USE_CORE_OPENGL_3_1 0
+
 
 struct BUFFER2
 {
@@ -101,7 +103,9 @@ Game::Game()
 #endif
 	params.logStream = logFile;
 	params.platformSpecific = NULL;
-	params.rendererAdditionalSetting = "GLSL-only";
+#if USE_CORE_OPENGL_3_1
+	params.rendererAdditionalSetting = "Core-GL3.1";
+#endif
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	params.rendererSettingFileDir = "Assets/Setting.txt";
 #else
@@ -146,7 +150,11 @@ Game::Game()
 #if defined HQ_OPENGLES
 		sprintf(apiResFile, "resourcesGLES.script");
 #else
+#	if USE_CORE_OPENGL_3_1
+		sprintf(apiResFile, "resourcesGL3.1.script");
+#	else
 		sprintf(apiResFile, "resourcesGL.script");
+#	endif
 #endif
 
 #endif

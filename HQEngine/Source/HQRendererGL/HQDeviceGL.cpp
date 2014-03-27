@@ -72,29 +72,13 @@ HQReturnVal CreateDevice(LPHQRenderDevice *ppDev,bool flushDebugLog , bool debug
 	if(g_pOGLDev != NULL)
 		return HQ_DEVICE_ALREADY_EXISTS;
 
-	/*------create HQDeviceEnumGL object for enum device capabilities-------*/
-#ifdef WIN32
-	HQDeviceEnumGL *pEnum = new HQDeviceEnumGL(pDll);
-#elif defined HQ_LINUX_PLATFORM
-    HQDeviceEnumGL *pEnum = new HQDeviceEnumGL(display);
-#elif !defined HQ_ANDROID_PLATFORM
-	HQDeviceEnumGL *pEnum = new HQDeviceEnumGL();
-#endif
-
-#ifndef HQ_ANDROID_PLATFORM
-	//currently support only openGL 2.0 and later
-	if(!GLEW_VERSION_2_0)
-		return HQ_FAILED_CREATE_DEVICE;
-#endif
 
 #ifdef WIN32
-	*ppDev=new HQDeviceGL(pDll , pEnum , flushDebugLog);
+	*ppDev=new HQDeviceGL(pDll , flushDebugLog);
 #elif defined HQ_LINUX_PLATFORM
-	*ppDev=new HQDeviceGL(display , pEnum , flushDebugLog);
-#elif defined HQ_ANDROID_PLATFORM
-	*ppDev=new HQDeviceGL(flushDebugLog);
+	*ppDev=new HQDeviceGL(display , flushDebugLog);
 #else
-	*ppDev=new HQDeviceGL(pEnum , flushDebugLog);
+	*ppDev=new HQDeviceGL(flushDebugLog);
 #endif
 	return HQ_OK;
 }
@@ -118,13 +102,11 @@ HQReturnVal ReleaseDevice(LPHQRenderDevice * ppDev)
 HQDeviceGL
 ----------------------*/
 #ifdef WIN32
-HQDeviceGL::HQDeviceGL(HMODULE _pDll, HQDeviceEnumGL *pEnum, bool flushLog )
+HQDeviceGL::HQDeviceGL(HMODULE _pDll, bool flushLog )
 #elif defined HQ_LINUX_PLATFORM
-HQDeviceGL::HQDeviceGL(Display *dpy,HQDeviceEnumGL *pEnum, bool flushLog)
-#elif defined HQ_ANDROID_PLATFORM
-HQDeviceGL::HQDeviceGL(bool flushLog)
+HQDeviceGL::HQDeviceGL(Display *dpy, bool flushLog)
 #else
-HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
+HQDeviceGL::HQDeviceGL(bool flushLog)
 #endif
 #ifdef HQ_OPENGLES
 :HQBaseRenderDevice("OpenGL ES" , "GL Render Device :" , flushLog)
@@ -133,28 +115,31 @@ HQDeviceGL::HQDeviceGL(HQDeviceEnumGL *pEnum, bool flushLog)
 #endif
 {
 
-	sWidth=800;
-	sHeight=600;
-
-	this->pEnum = pEnum;
+	this->sWidth=800;
+	this->sHeight=600;
 
 #ifdef WIN32
-	pDll=_pDll;
+	this->pDll=_pDll;
 
-	hDC=0;
-	hRC=0;
+	this->hDC=0;
+	this->hRC=0;
+
+	this->pEnum = HQ_NEW HQDeviceEnumGL(_pDll);
 #elif defined (HQ_LINUX_PLATFORM)
-    this->dpy = dpy;
+	this->dpy = dpy;
 	this->glc=NULL;
+    	this->pEnum = HQ_NEW HQDeviceEnumGL(dpy);
 #elif defined HQ_IPHONE_PLATFORM
-	glc = nil;
+	this->glc = nil;
+    	this->pEnum = HQ_NEW HQDeviceEnumGL();
 #elif defined HQ_MAC_PLATFORM
-	glc = nil;
-	pixelformat = nil;
+	this->glc = nil;
+	this->pixelformat = nil;
+    	this->pEnum = HQ_NEW HQDeviceEnumGL();
 #elif defined HQ_ANDROID_PLATFORM
-	pEnum = NULL;//it will be ceated in Init();
-	glc = NULL;
-	jeglConfig = NULL;
+	this->glc = NULL;
+	this->jeglConfig = NULL;
+	this->pEnum = NULL;//it will be ceated in Init();
 #endif
 
 	this->primitiveMode = GL_TRIANGLES;
@@ -214,7 +199,12 @@ HQDeviceGL::~HQDeviceGL(){
 #	endif
     }
     if(this->dpy!=NULL)
-        glXMakeCurrent(this->dpy, None, NULL);
+    {
+	if (GLXEW_VERSION_1_3)
+		glXMakeContextCurrent(this->dpy, None, None, NULL);
+	else
+        	glXMakeCurrent(this->dpy, None, NULL);
+    }
     if(glc!=NULL)
         glXDestroyContext(this->dpy, glc);
     int re;
@@ -334,8 +324,8 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 
 #elif defined (HQ_LINUX_PLATFORM)
 	winfo.parent = input->parent;
-    winfo.x = input->x;
-    winfo.y = input->y;
+    	winfo.x = input->x;
+   	winfo.y = input->y;
 
 #elif defined HQ_ANDROID_PLATFORM
 
@@ -346,8 +336,9 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 #endif
 
 #ifndef HQ_OPENGLES
-	pEnum->EnumAllDisplayModes();
+	pEnum->EnumAllDisplayModes();//enumerate every supported display mode and pixel format
 #endif
+
 #ifdef HQ_MAC_PLATFORM
 	pEnum->ParseSettingFile(settingFileDir , 
 							[input->nsView frame].size.width , 
@@ -456,10 +447,14 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 		}
 		return HQ_FAILED_INIT_DEVICE;
 	}
-    //window title
-    XStoreName(this->dpy, winfo.win, input->title);
-
-	if(glXMakeCurrent(this->dpy, winfo.win, glc)==false)
+    	//window title
+    	XStoreName(this->dpy, winfo.win, input->title);
+	bool madeCurrent = false;
+	if (GLXEW_VERSION_1_3)
+		madeCurrent = glXMakeContextCurrent(this->dpy, winfo.glxWin, winfo.glxWin, glc);
+	else
+		madeCurrent = glXMakeCurrent(this->dpy, winfo.win, glc);
+	if(madeCurrent == false)
 	{
 		glXDestroyContext(this->dpy, glc);
 		XDestroyWindow(this->dpy, winfo.win);
@@ -557,9 +552,11 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 
 	this->glc->MakeCurrent();
 
+#endif
+	
 	//check openGL capabilities
 	pEnum->CheckCapabilities();
-#endif
+
 	//save setting
 	pEnum->SaveSettingFile(settingFileDir);
 
@@ -724,7 +721,7 @@ void HQDeviceGL::EnableVSyncNonSave(bool enable)
 		wglSwapIntervalEXT(interval);
 #elif defined HQ_LINUX_PLATFORM
 	if(GLXEW_EXT_swap_control)
-		glXSwapIntervalEXT(this->dpy,winfo.win, interval);
+		glXSwapIntervalEXT(this->dpy, winfo.swapDrawable, interval);
 	else if (GLXEW_MESA_swap_control)
 		glXSwapIntervalMESA(interval);
 #elif defined HQ_MAC_PLATFORM
@@ -856,7 +853,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 #ifdef WIN32
 	SwapBuffers(hDC);
 #elif defined (HQ_LINUX_PLATFORM)
-	glXSwapBuffers(this->dpy, winfo.win);
+	glXSwapBuffers(this->dpy, winfo.swapDrawable);
 #elif defined HQ_IPHONE_PLATFORM
 	[glc presentRenderbuffer];
 #elif defined HQ_MAC_PLATFORM
@@ -955,6 +952,11 @@ void HQDeviceGL::SetClearStencilVal(hq_uint32 val){
 //********************
 int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 {
+	int version_major = 1, version_minor = 0;
+	const char* minorStart = strchr(coreProfile, '.');
+	if(minorStart != NULL)
+		sscanf(minorStart + 1, "%d", &version_minor);
+	sscanf(coreProfile, "%d", &version_major);
 #ifdef WIN32
 	PIXELFORMATDESCRIPTOR pixFmt;
 	int ipixelFormat;
@@ -989,11 +991,6 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 		int msampleEnable=GL_FALSE;
 		if(pEnum->selectedMulSampleType > 0 && WGLEW_ARB_multisample && GLEW_ARB_multisample)
 			msampleEnable=GL_TRUE;
-		int version_major = 1, version_minor = 0;
-		const char* minorStart = strchr(coreProfile, '.');
-		if(minorStart != NULL)
-			sscanf(minorStart + 1, "%d", &version_minor);
-		sscanf(coreProfile, "%d", &version_major);
 
 		int iAttributes[] = { WGL_DRAW_TO_WINDOW_ARB,GL_TRUE,
 						WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
@@ -1014,8 +1011,8 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 						WGL_SWAP_METHOD_ARB,WGL_SWAP_EXCHANGE_ARB,
 						WGL_SAMPLE_BUFFERS_ARB,msampleEnable,
 						WGL_SAMPLES_ARB, (int)pEnum->selectedMulSampleType ,
-						WGL_CONTEXT_MAJOR_VERSION_ARB, version_major,//request core profile 4.2
-						WGL_CONTEXT_MINOR_VERSION_ARB, version_minor,//request core profile 4.2
+						WGL_CONTEXT_MAJOR_VERSION_ARB, version_major,//request core profile version major
+						WGL_CONTEXT_MINOR_VERSION_ARB, version_minor,//request core profile version minor
 						WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 						0, 0 };
 		if(!WGLEW_ARB_multisample)
@@ -1025,7 +1022,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 			iAttributes[28]=0;
 			iAttributes[29]=0;
 		}
-		if (!WGLEW_ARB_create_context_profile || !GLEW_VERSION_4_2 || version_major < 3)
+		if (!WGLEW_ARB_create_context_profile || version_major < 3)
 		{
 			iAttributes[30] = iAttributes[31] = iAttributes[32] = iAttributes[33] = 0;
 			iAttributes[34] = iAttributes[35] = 0;
@@ -1040,12 +1037,13 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 			if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
 				1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
 			{
-				//remove requested version
+				//remove requested version and retry
 				iAttributes[30] = iAttributes[31] = iAttributes[32] = iAttributes[33] = 0;
 				iAttributes[34] = iAttributes[35] = 0;
 
 				if (version_major >= 3)
 					this->Log("Warning : Cannot create device using version %d.%d core profile!", version_major, version_minor);
+				version_major = 1;version_minor = 0;
 
 				if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
 				1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
@@ -1053,18 +1051,19 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 					return -2;//still failed
 				}
 			}
-			else if (version_major >= 3)
-			{
-				this->Log("Using OpenGL version %d.%d core profile!", version_major, version_minor);
-				usingCoreProfile = true;
-			}
+		}
+		if (version_major >= 3)
+		{
+			this->Log("Using OpenGL version %d.%d core profile!", version_major, version_minor);
+			usingCoreProfile = true;
 		}
 	}
 
 	if(SetPixelFormat(hDC,ipixelFormat,&pixFmt)==FALSE)
 		return 1;
 #elif defined (HQ_LINUX_PLATFORM)
-	XVisualInfo *vi=NULL;
+	XVisualInfo *vi = NULL;
+	GLXFBConfig *glxConfigs = NULL;
 	hq_ubyte8 R,G,B,A,D,S;
 	//get color bits
 	helper::FormatInfo(pEnum->selectedBufferSetting->pixelFmt,NULL,&R,
@@ -1074,8 +1073,10 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 	helper::FormatInfo(pEnum->selectedDepthStencilFmt,NULL,NULL,
                            NULL,NULL,NULL,&D,&S);
 
-	GLint iAttributes[] = { GLX_RED_SIZE, R,
-                               GLX_GREEN_SIZE, G,
+	if (!GLXEW_VERSION_1_3)
+	{
+		GLint iAttributes[] = { GLX_RED_SIZE, R,
+                                GLX_GREEN_SIZE, G,
                                 GLX_BLUE_SIZE, B,
                                 GLX_ALPHA_SIZE, A,
                                 GLX_DEPTH_SIZE,D,
@@ -1086,16 +1087,47 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
                                 GLX_SAMPLES_ARB,(int)pEnum->selectedMulSampleType,
                                 None };
 
-        if(pEnum->selectedMulSampleType==0 || !GLXEW_ARB_multisample)
-        {
-                iAttributes[14]=None;
-                iAttributes[15]=None;
-                iAttributes[16]=None;
-                iAttributes[17]=None;
-        }
-        vi=glXChooseVisual(this->dpy,XDefaultScreen(this->dpy),iAttributes);
-	if(vi==NULL)
+		if(pEnum->selectedMulSampleType==0 || !GLXEW_ARB_multisample)
+		{
+		        iAttributes[14]=iAttributes[15]=iAttributes[16]=iAttributes[17]=None;
+		}
+		vi=glXChooseVisual(this->dpy,XDefaultScreen(this->dpy),iAttributes);
+	}//if (!GLXEW_VERSION_1_3)
+	else
+	{
+		hqint32 numReturned = 0;
+		GLint iAttributes[] = { GLX_RED_SIZE, R,
+                                GLX_GREEN_SIZE, G,
+                                GLX_BLUE_SIZE, B,
+                                GLX_ALPHA_SIZE, A,
+                                GLX_DEPTH_SIZE,D,
+                                GLX_STENCIL_SIZE,S,
+                                GLX_DOUBLEBUFFER, True,
+                                GLX_SAMPLE_BUFFERS_ARB,GL_TRUE,
+                                GLX_SAMPLES_ARB,(int)pEnum->selectedMulSampleType,
+                                None };
+
+		if(pEnum->selectedMulSampleType==0 || !GLXEW_ARB_multisample)
+		{
+		        iAttributes[14]=iAttributes[15]=iAttributes[16]=iAttributes[17]=None;
+		}
+
+
+		glxConfigs = glXChooseFBConfig( this->dpy, XDefaultScreen(this->dpy),iAttributes, &numReturned );
+
+		if (glxConfigs == NULL || numReturned == 0)
+			return -2;
+		vi = glXGetVisualFromFBConfig( this->dpy, glxConfigs[0] );
+	}//else of if (!GLXEW_VERSION_1_3)
+
+
+	if(vi == NULL)
+	{
 		return -2;
+	}
+
+
+	//create window
         winfo.cmap=XCreateColormap(this->dpy, DefaultRootWindow(this->dpy),
                     vi->visual, AllocNone);
         XSetWindowAttributes swa;
@@ -1130,10 +1162,43 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
                     vi->visual, wFlags, &swa);
             //XMapWindow(this->dpy, winfo.win);//commented because we don't need to show the window just yet
         }
+	if (!GLXEW_VERSION_1_3)
+	{
+        	glc = glXCreateContext(this->dpy, vi, NULL, GL_TRUE);
+		winfo.swapDrawable = winfo.win;
+	}
+	else
+	{
+		winfo.glxWin = glXCreateWindow( this->dpy, glxConfigs[0], winfo.win, NULL );
+		winfo.swapDrawable = winfo.glxWin;
 
-        glc = glXCreateContext(this->dpy, vi, NULL, GL_TRUE);
+		if (!GLXEW_ARB_create_context_profile || version_major < 3)
+			glc = glXCreateNewContext( this->dpy, glxConfigs[0], GLX_RGBA_TYPE,
+				 NULL, True );
+		else
+		{
+			int ctxAttributes[] = {
+				GLX_CONTEXT_MAJOR_VERSION_ARB, version_major,//request core profile version major
+				GLX_CONTEXT_MINOR_VERSION_ARB, version_minor,//request core profile version minor
+				GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+				0, 0 };
+			glc = glXCreateContextAttribsARB(this->dpy, glxConfigs[0], 
+				 NULL, True,   ctxAttributes);
+			if (glc == NULL)
+			{
+				//try again with no core profile version
+				this->Log("Warning : Cannot create device using version %d.%d core profile!", version_major, version_minor);
+				glc = glXCreateNewContext( this->dpy, glxConfigs[0], GLX_RGBA_TYPE,
+				 	NULL, True );
+			}
+		}
+
+		XFree(glxConfigs);
+
+	}//else of if (!GLXEW_VERSION_1_3)
         if(glc==NULL)
             return -1;
+//#elif defined (HQ_LINUX_PLATFORM)
 	
 #elif defined HQ_MAC_PLATFORM
 	hq_ubyte8 R,G,B,A,D,S;

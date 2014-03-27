@@ -22,6 +22,15 @@ COPYING.txt included with this distribution for more information.
 #include <math.h>
 #include "../HQHashTable.h"
 
+extern "C"
+{
+#if defined(_WIN32)
+extern GLenum GLEWAPIENTRY wglewContextInit (void);
+#elif !defined(__ANDROID__) && !defined(__native_client__) && (!defined(__APPLE__) || defined(GLEW_APPLE_GLX))
+extern GLenum GLEWAPIENTRY glxewContextInit (void);
+#endif /* _WIN32 */
+}
+
 #define REQUIRE_EXACT_RGB 1
 #define REQUIRE_EXACT_DEPTH_STENCIL 0
 #define REFRESHRATEDIFF 0.00001
@@ -365,10 +374,6 @@ HQDeviceEnumGL::HQDeviceEnumGL(){
 	selectedDepthStencilFmt=SFMT_D16;
 	selectedMulSampleType=0;
 	vsync = 0;//default vsync is off
-
-#ifndef HQ_ANDROID_PLATFORM//android will call this method when gl context is created
-	CheckCapabilities();
-#endif
 }
 HQDeviceEnumGL::~HQDeviceEnumGL()
 {
@@ -890,130 +895,9 @@ bool HQDeviceEnumGL::CheckMultisample(BufferInfo &bufInfo)
 }
 #endif
 
-//main function
+//main capabilities
 void HQDeviceEnumGL::CheckCapabilities()
 {
-#ifdef WIN32
-	/*-------------------create dummy window for checking opengl capacities--------------------------*/
-	WNDCLASSEX      wndclass;
-	HWND            hwnd;
-	// initialize the window
-	wndclass.hIconSm       = LoadIcon(NULL,IDI_APPLICATION);
-	wndclass.hIcon         = LoadIcon(NULL,IDI_APPLICATION);
-	wndclass.cbSize        = sizeof(wndclass);
-	wndclass.lpfnWndProc   = helper::DummyProc;
-	wndclass.cbClsExtra    = 0;
-	wndclass.cbWndExtra    = 0;
-	wndclass.hInstance     = (HINSTANCE)pDll;
-	wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW);
-	wndclass.lpszMenuName  = NULL;
-	wndclass.lpszClassName = L"Dummy";
-	wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
-
-	if (RegisterClassEx(&wndclass) == 0)
-		return ;
-	if (!(hwnd = CreateWindowEx( NULL, L"Dummy",
-								L"Dummy WINDOW",
-								WS_OVERLAPPED,
-								CW_USEDEFAULT,
-								CW_USEDEFAULT,
-								640, 480, NULL, NULL, pDll, NULL)))
-		return ;
-
-	this->hDC = GetDC(hwnd);
-
-	PIXELFORMATDESCRIPTOR pixFmt;
-	memset(&pixFmt,0,sizeof(PIXELFORMATDESCRIPTOR));
-	pixFmt.nSize=sizeof(PIXELFORMATDESCRIPTOR);
-	pixFmt.nVersion   = 1;
-    pixFmt.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pixFmt.iPixelType = PFD_TYPE_RGBA;
-	pixFmt.iLayerType = PFD_MAIN_PLANE;
-
-	int ipixelfmt=ChoosePixelFormat(hDC,&pixFmt);
-	SetPixelFormat(hDC,ipixelfmt,&pixFmt);
-
-	HGLRC hRC=wglCreateContext(hDC);
-	if(wglMakeCurrent(hDC,hRC)==FALSE)
-		return;
-
-#elif defined (HQ_LINUX_PLATFORM)
-    if(dpy==NULL)
-        return;
-
-    /*------------create dummy window--------------*/
-    GLint                   att[] = { GLX_RGBA, GLX_DOUBLEBUFFER, None };
-    XVisualInfo             *vi;
-    Colormap                cmap;
-    XSetWindowAttributes    swa;
-    Window                  win;
-    GLXContext              glc;
-    vi = glXChooseVisual(dpy, XDefaultScreen(dpy), att);
-    cmap = XCreateColormap(dpy, DefaultRootWindow(dpy), vi->visual, AllocNone);
-    swa.colormap = cmap;
-    win = XCreateWindow(dpy, DefaultRootWindow(dpy), 0, 0, 640, 480, 0, vi->depth, InputOutput, vi->visual, CWColormap, &swa);
-
-    //XMapWindow(dpy, win);
-    XStoreName(dpy, win, "Dummy Window");
-    glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
-    if(glc==NULL)
-        return;
-    if(glXMakeCurrent(dpy, win, glc)==False)
-        return;
-#elif defined HQ_IPHONE_PLATFORM
-	//create dummy context for checking capabilities
-	EAGLContext* glc = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-	if (glc == nil) {
-		return;
-	}
-
-	if(![EAGLContext setCurrentContext:glc])
-	{
-		[glc release];
-		return;
-	}
-#elif defined (HQ_MAC_PLATFORM)
-	//create dummy context for checking capabilities
-	CGDirectDisplayID display = CGMainDisplayID ();
-	CGOpenGLDisplayMask myDisplayMask = CGDisplayIDToOpenGLDisplayMask (display);
-
-	CGLPixelFormatAttribute attribs[] = {
-		kCGLPFAAccelerated,
-		kCGLPFANoRecovery,
-		kCGLPFADisplayMask,(CGLPixelFormatAttribute) myDisplayMask,
-		(CGLPixelFormatAttribute) 0
-	};
-
-	CGLPixelFormatObj pixelFormat = NULL;
-	GLint numPixelFormats = 0;
-	CGLContextObj myCGLContext = 0;
-	CGLContextObj curr_ctx = CGLGetCurrentContext ();
-
-	caps.hardwareAccel = true;
-	CGLChoosePixelFormat (attribs, &pixelFormat, &numPixelFormats);
-	if (pixelFormat == NULL)
-	{
-		//try with software renderer
-		CGLPixelFormatAttribute attribs[] = {
-			kCGLPFADisplayMask,(CGLPixelFormatAttribute) myDisplayMask,
-			(CGLPixelFormatAttribute) 0
-		};
-
-		caps.hardwareAccel = false;
-
-		CGLChoosePixelFormat (attribs, &pixelFormat, &numPixelFormats);
-		if (pixelFormat == NULL)
-			return;
-	}
-
-	CGLCreateContext (pixelFormat, NULL, &myCGLContext);
-	CGLDestroyPixelFormat (pixelFormat);
-	CGLSetCurrentContext (myCGLContext);
-
-	if (myCGLContext == 0)
-		return;
-#endif
 	if(glewInit()!=GLEW_OK)
 		return;
 
@@ -1106,33 +990,6 @@ void HQDeviceEnumGL::CheckCapabilities()
 	}
 
 	glGetError();//reset error flags
-#ifdef WIN32
-
-	//done!Destroy dummy window
-	wglMakeCurrent(NULL,NULL);
-	wglDeleteContext(hRC);
-	ReleaseDC(hwnd,hDC);
-	DestroyWindow(hwnd);
-	UnregisterClass(L"Dummy",pDll);
-#elif defined (HQ_LINUX_PLATFORM)
-
-	//done!Destroy dummy window
-	glXMakeCurrent(dpy, None, NULL);
-	glXDestroyContext(dpy, glc);
-	XDestroyWindow(dpy, win);
-
-#elif defined HQ_IPHONE_PLATFORM
-
-	//delete dummy context
-	[EAGLContext setCurrentContext:nil];
-	[glc release];
-
-#elif defined HQ_MAC_PLATFORM
-
-	//done! destroy dummy context
-	CGLDestroyContext (myCGLContext);
-	CGLSetCurrentContext (curr_ctx);
-#endif
 }
 
 void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
@@ -1144,7 +1001,7 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 	GLenum status;
 	glGetError();//reset flags;
 #ifndef HQ_OPENGLES
-	if (GLEW_VERSION_3_0) {//core in openGL 3.0
+	if (GLEW_VERSION_3_0 || GLEW_ARB_framebuffer_object) {//core in openGL 3.0
 #elif defined HQ_ANDROID_PLATFORM
 	if (GLEW_VERSION_2_0){//core in openGL es 2.0
 #endif //default ios support fbo
@@ -1282,8 +1139,139 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 }
 
 #ifndef HQ_OPENGLES
+//enumerate every display modes and pixel formats supported
 void HQDeviceEnumGL::EnumAllDisplayModes()
 {
+	
+#ifdef WIN32
+	/*-------------------create dummy window for checking opengl capacities--------------------------*/
+	WNDCLASSEX      wndclass;
+	HWND            hwnd;
+	// initialize the window
+	wndclass.hIconSm       = LoadIcon(NULL,IDI_APPLICATION);
+	wndclass.hIcon         = LoadIcon(NULL,IDI_APPLICATION);
+	wndclass.cbSize        = sizeof(wndclass);
+	wndclass.lpfnWndProc   = helper::DummyProc;
+	wndclass.cbClsExtra    = 0;
+	wndclass.cbWndExtra    = 0;
+	wndclass.hInstance     = (HINSTANCE)pDll;
+	wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
+	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW);
+	wndclass.lpszMenuName  = NULL;
+	wndclass.lpszClassName = L"Dummy";
+	wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
+
+	if (RegisterClassEx(&wndclass) == 0)
+		return ;
+	if (!(hwnd = CreateWindowEx( NULL, L"Dummy",
+								L"Dummy WINDOW",
+								WS_OVERLAPPED,
+								CW_USEDEFAULT,
+								CW_USEDEFAULT,
+								640, 480, NULL, NULL, pDll, NULL)))
+		return ;
+
+	this->hDC = GetDC(hwnd);
+
+	PIXELFORMATDESCRIPTOR pixFmt;
+	memset(&pixFmt,0,sizeof(PIXELFORMATDESCRIPTOR));
+	pixFmt.nSize=sizeof(PIXELFORMATDESCRIPTOR);
+	pixFmt.nVersion   = 1;
+    	pixFmt.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    	pixFmt.iPixelType = PFD_TYPE_RGBA;
+	pixFmt.iLayerType = PFD_MAIN_PLANE;
+
+	int ipixelfmt=ChoosePixelFormat(hDC,&pixFmt);
+	SetPixelFormat(hDC,ipixelfmt,&pixFmt);
+
+	HGLRC hRC=wglCreateContext(hDC);
+	if(wglMakeCurrent(hDC,hRC)==FALSE)
+		return;
+	
+	
+	if(wglewContextInit()!=GLEW_OK)
+		return;
+
+#elif defined (HQ_LINUX_PLATFORM)
+	if(dpy==NULL)
+		return;
+
+	/*------------create dummy window--------------*/
+	GLint                   att[] = { GLX_RGBA, GLX_DOUBLEBUFFER, None };
+	XVisualInfo             *vi;
+	Colormap                cmap;
+	XSetWindowAttributes    swa;
+	Window                  win;
+	GLXContext              glc;
+	vi = glXChooseVisual(dpy, XDefaultScreen(dpy), att);
+	cmap = XCreateColormap(dpy, DefaultRootWindow(dpy), vi->visual, AllocNone);
+	swa.colormap = cmap;
+	win = XCreateWindow(dpy, DefaultRootWindow(dpy), 0, 0, 640, 480, 0, vi->depth, InputOutput, vi->visual, CWColormap, &swa);
+
+	//XMapWindow(dpy, win);
+	XStoreName(dpy, win, "Dummy Window");
+	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
+	if(glc==NULL)
+		return;
+	if(glXMakeCurrent(dpy, win, glc)==False)
+		return;
+
+	if(glxewContextInit()!=GLEW_OK)
+		return;
+#elif defined HQ_IPHONE_PLATFORM
+	//create dummy context for checking capabilities
+	EAGLContext* glc = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+	if (glc == nil) {
+		return;
+	}
+
+	if(![EAGLContext setCurrentContext:glc])
+	{
+		[glc release];
+		return;
+	}
+#elif defined (HQ_MAC_PLATFORM)
+	//create dummy context for checking capabilities
+	CGDirectDisplayID display = CGMainDisplayID ();
+	CGOpenGLDisplayMask myDisplayMask = CGDisplayIDToOpenGLDisplayMask (display);
+
+	CGLPixelFormatAttribute attribs[] = {
+		kCGLPFAAccelerated,
+		kCGLPFANoRecovery,
+		kCGLPFADisplayMask,(CGLPixelFormatAttribute) myDisplayMask,
+		(CGLPixelFormatAttribute) 0
+	};
+
+	CGLPixelFormatObj pixelFormat = NULL;
+	GLint numPixelFormats = 0;
+	CGLContextObj myCGLContext = 0;
+	CGLContextObj curr_ctx = CGLGetCurrentContext ();
+
+	caps.hardwareAccel = true;
+	CGLChoosePixelFormat (attribs, &pixelFormat, &numPixelFormats);
+	if (pixelFormat == NULL)
+	{
+		//try with software renderer
+		CGLPixelFormatAttribute attribs[] = {
+			kCGLPFADisplayMask,(CGLPixelFormatAttribute) myDisplayMask,
+			(CGLPixelFormatAttribute) 0
+		};
+
+		caps.hardwareAccel = false;
+
+		CGLChoosePixelFormat (attribs, &pixelFormat, &numPixelFormats);
+		if (pixelFormat == NULL)
+			return;
+	}
+
+	CGLCreateContext (pixelFormat, NULL, &myCGLContext);
+	CGLDestroyPixelFormat (pixelFormat);
+	CGLSetCurrentContext (myCGLContext);
+
+	if (myCGLContext == 0)
+		return;
+#endif
+
 	/*---------------------------------------------*/
 	Resolution myRes;
 	//screen resolution
@@ -1481,6 +1469,34 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
 	}//for(k)
 
 	this->selectedBufferSetting=&bufferInfoList.GetFront();
+
+#ifdef WIN32
+
+	//done!Destroy dummy window
+	wglMakeCurrent(NULL,NULL);
+	wglDeleteContext(hRC);
+	ReleaseDC(hwnd,hDC);
+	DestroyWindow(hwnd);
+	UnregisterClass(L"Dummy",pDll);
+#elif defined (HQ_LINUX_PLATFORM)
+
+	//done!Destroy dummy window
+	glXMakeCurrent(dpy, None, NULL);
+	glXDestroyContext(dpy, glc);
+	XDestroyWindow(dpy, win);
+
+#elif defined HQ_IPHONE_PLATFORM
+
+	//delete dummy context
+	[EAGLContext setCurrentContext:nil];
+	[glc release];
+
+#elif defined HQ_MAC_PLATFORM
+
+	//done! destroy dummy context
+	CGLDestroyContext (myCGLContext);
+	CGLSetCurrentContext (curr_ctx);
+#endif
 }
 #endif
 //****************************************

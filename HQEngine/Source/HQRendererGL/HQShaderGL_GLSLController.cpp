@@ -308,6 +308,8 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 			if (version_number < 300 && )
 			{
 				version_string = "#version 300 es\n";//300 is minimum version for uniform buffer objects
+				g_pShaderMan->Log("GLSL shader compile warning: shader contains uniform buffer blocks but they are not supported. Switching to version 300 es...", version_number); 
+				
 			}
 #else//#ifdef HQ_OPENGLES
 			if (version_number < 140)
@@ -316,6 +318,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 					UBO_extension_line = "#extension GL_ARB_uniform_buffer_object: enable\n";
 				else { 
 					version_string = "#version 140\n";//140 is minimum version for uniform buffer objects
+					g_pShaderMan->Log("GLSL shader compile warning: shader contains uniform buffer blocks but they are not supported. Switching to version 140...", version_number); 
 				}
 			}
 #endif//#ifdef HQ_OPENGLES
