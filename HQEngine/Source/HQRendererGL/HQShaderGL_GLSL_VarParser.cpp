@@ -1891,13 +1891,11 @@ bool HQVarParserGL::ParseUniformBlock(size_t src_start_pos)
 
 		}//while (ptoken->kind != VTK_NULL && !stop)
 
-		if (succeeded)
-		{
-			//add the uniform block info to the list
-			uniformBlock.index = bufferIndex;
-			this->pUniformBlocks->PushBack(uniformBlock);
+		//TO DO: ignore block if succeeded == false ?
+		//add the uniform block info to the list
+		uniformBlock.index = bufferIndex;
+		this->pUniformBlocks->PushBack(uniformBlock);
 
-		}
 	}//if (kind == LBRACE)
 
 	return true;

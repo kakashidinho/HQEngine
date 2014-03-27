@@ -71,6 +71,70 @@ const char samplerKeywords[] =
 #define TEXUNIT30\n\
 #define TEXUNIT31\n";
 
+#define IS_WHITE_SPACE(c) (c == ' ' || c == '\t' || c == '\r')
+
+static void InsertUBO_STD140_LayoutControl(std::string &inout){
+	enum State {
+		LINE_START,
+		PREPROCESSOR_START,
+		IGNORE_LINE
+	};
+	//insert "layout(std140) uniform;" to the source code, but only after every #extension lines since these lines must appear before any none preprocessor lines
+	size_t line = 1;
+	size_t insert_pos = 0;
+	size_t line_insert = 1;
+	State state = LINE_START;
+	
+	for (size_t i = 0; i < inout.size(); ++i)
+	{
+		char c = inout[i];
+		if (c == '\n')
+		{
+			line ++;
+			state = LINE_START;
+		}
+		else
+		{
+			switch (state)
+			{
+			case LINE_START:
+				if (c == '#')
+					state = PREPROCESSOR_START;
+				else if (!IS_WHITE_SPACE(c))//not white space
+					state = IGNORE_LINE;
+				break;
+			case PREPROCESSOR_START:
+				if (c == 'e')//may be "extension"
+				{
+					if (inout.compare(i, 9, "extension") == 0 && i + 9 < inout.size() && IS_WHITE_SPACE(inout[i + 9]))
+					{
+						//found #extension
+						insert_pos = inout.find("\n", i + 9) + 1;
+						i = insert_pos - 1;
+						line ++;
+						line_insert = line;
+						state = LINE_START;
+					}
+				}
+				else if (!IS_WHITE_SPACE(c))//not white space
+				{
+					state = IGNORE_LINE;
+				}
+				break;
+		
+			}//switch (state)
+		}//else of if (c == '\n')
+			
+	}//for (size_t i = 0; i < inout.size(); ++i)
+
+	if (insert_pos < inout.size())
+	{
+		char statement_to_insert[] = "layout(std140) uniform;\n#line 9999999999\n";
+		sprintf(statement_to_insert, "layout(std140) uniform;\n#line %u\n", (hquint32)line_insert - 1);
+		inout.insert(insert_pos, statement_to_insert);
+	}
+	
+}
 
 /*-----------HQBaseGLSLShaderController----------------------*/
 
@@ -170,6 +234,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	HQLinkedList<HQUniformBlockInfoGL>** ppUBlocksInfo = NULL;
 	ppUBlocksInfo = &sobject->pUniformBlocks;
 	bool native_UBO_supported = GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object;
+	bool only_UBO_extension_supported = !GLEW_VERSION_3_1 && GLEW_ARB_uniform_buffer_object;
 
 	if(type==HQ_VERTEX_SHADER)
 	{
@@ -189,7 +254,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	sobject->shader = glCreateShader(shaderType);
 
 	std::string version_string = "";
-	/*------ Remove #version---------*/ 
+	/*------ Remove #version in the source---------*/ 
 	{
 		size_t pos1 = processed_src.find("#");
 		if (pos1 != std::string::npos)
@@ -226,36 +291,47 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	std::string macroDefList;
 	this->GetPredefineMacroGLSL(macroDefList , pDefines, version_string);
 
+	//get version number
 
-	/*--------set shader source---------*/
 	int version_number = 0;
 	if (sscanf(version_string.c_str(), "#version %d", &version_number) != 1)
 		sscanf(version_string.c_str(), "# version %d", &version_number);//try one more time
-	std::string uniform_buffer_layout_line = "";
+	std::string UBO_extension_line = "";
+	//work around uniform buffer objects
+	if (sobject->pUniformBlocks != NULL && sobject->pUniformBlocks->GetSize() > 0)
+	{
+		if (native_UBO_supported)
+		{
+			SafeDelete(sobject->pUniformBlocks);//no need for this information
+			InsertUBO_STD140_LayoutControl(processed_src);//set std140 layout as default
+#ifdef HQ_OPENGLES
+			if (version_number < 300 && )
+			{
+				version_string = "#version 300 es\n";//300 is minimum version for uniform buffer objects
+			}
+#else//#ifdef HQ_OPENGLES
+			if (version_number < 140)
+			{
+				if (only_UBO_extension_supported)//140 is not supported but GL_ARB_uniform_buffer_object is supported
+					UBO_extension_line = "#extension GL_ARB_uniform_buffer_object: enable\n";
+				else { 
+					version_string = "#version 140\n";//140 is minimum version for uniform buffer objects
+				}
+			}
+#endif//#ifdef HQ_OPENGLES
+		}//if (native_UBO_supported)
+	}//if (sobject->pUniformBlocks != NULL && sobject->pUniformBlocks->GetSize() > 0)
+
 #ifdef HQ_OPENGLES
 	const char prefDefExtVersion[]	= "#define HQEXT_GLSL_ES\n";
-	if (native_UBO_supported)
-	{
-		if (version_number < 300 && sobject->pUniformBlocks != NULL && sobject->pUniformBlocks->GetSize() > 0)
-		{
-			version_string = "#version 300 es\n";//300 is minimum version for uniform buffer objects
-			uniform_buffer_layout_line = "layout(std140) uniform;\n";
-		}
-	}
 #else
 	const char prefDefExtVersion[] = "#define HQEXT_GLSL\n";
-	if (native_UBO_supported)
-	{
-		if (version_number < 140 && sobject->pUniformBlocks != NULL && sobject->pUniformBlocks->GetSize() > 0)
-		{
-			version_string = "#version 140\n";//140 is minimum version for uniform buffer objects
-			uniform_buffer_layout_line = "layout(std140) uniform;\n";
-		}
-	}
 #endif
+
+	/*--------set shader source---------*/
 	const GLchar* sourceArray[] = {
 		version_string.c_str(),
-		uniform_buffer_layout_line.c_str(),
+		UBO_extension_line.c_str(),
 		semanticKeywords,
 		samplerKeywords,
 		prefDefExtVersion,
