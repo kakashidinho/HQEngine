@@ -274,7 +274,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 {
 
 	/*
-	These code are a bit ugly since they are written a long time ago, by an unexperienced student :)
+	These code are a bit ugly since they are written a long time ago, by an inexperienced student :)
 	*/
 
 	if(this->IsRunning())
