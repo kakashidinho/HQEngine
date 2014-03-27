@@ -8,6 +8,11 @@ COPYING.txt included with this distribution for more information.
 
 */
 
+/*
+Note: Initialization code is a bit ugly since it is written a long time ago
+
+*/
+
 #include "HQDeviceGLPCH.h"
 #include "HQDeviceGL.h"
 #include <string.h>
@@ -252,6 +257,10 @@ HQReturnVal HQDeviceGL::Release(){
 HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingFileDir,HQLogStream* logFileStream, const char *additionalSettings)
 {
 
+	/*
+	These code are a bit ugly since they are written a long time ago, by an unexperienced student :)
+	*/
+
 	if(this->IsRunning())
 	{
 		Log("Already init!");
@@ -397,7 +406,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 #endif
 
 #ifndef HQ_IPHONE_PLATFORM
-	int result=this->SetupPixelFormat(core_profile.c_str());
+	int result = this->CreateContext(core_profile.c_str());
 #endif
 
 #ifdef WIN32
@@ -412,19 +421,11 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 			Log("ChoosePixel() failed!");
 		else if(result==-2)
 			Log("wglChoosePixelARB() failed!");
+		else if (result == -3)
+			Log("Create render context failed!");
 		return HQ_FAILED_INIT_DEVICE;
 	}
 
-	//create render context
-	hRC=wglCreateContext(hDC);
-	if(hRC==NULL)
-	{
-		if((flags & WINDOWED)==0)//fullscreen
-			ChangeDisplaySettings(NULL,0);
-		ReleaseDC(winfo.hwind,hDC);
-		Log("Create render context failed!");
-		return HQ_FAILED_INIT_DEVICE;
-	}
 	if(wglMakeCurrent(hDC,hRC)==FALSE)
 	{
 		if((flags & WINDOWED)==0)//fullscreen
@@ -950,7 +951,7 @@ void HQDeviceGL::SetClearStencilVal(hq_uint32 val){
 //********************
 //setup pixel
 //********************
-int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
+int HQDeviceGL::CreateContext(const char* coreProfile)
 {
 	int version_major = 1, version_minor = 0;
 	const char* minorStart = strchr(coreProfile, '.');
@@ -989,7 +990,7 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 		hq_float32 fAttributes[] = {0, 0};
 		UINT  numFormats;
 		int msampleEnable=GL_FALSE;
-		if(pEnum->selectedMulSampleType > 0 && WGLEW_ARB_multisample && GLEW_ARB_multisample)
+		if(pEnum->selectedMulSampleType > 0 && WGLEW_ARB_multisample)
 			msampleEnable=GL_TRUE;
 
 		int iAttributes[] = { WGL_DRAW_TO_WINDOW_ARB,GL_TRUE,
@@ -1011,9 +1012,6 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 						WGL_SWAP_METHOD_ARB,WGL_SWAP_EXCHANGE_ARB,
 						WGL_SAMPLE_BUFFERS_ARB,msampleEnable,
 						WGL_SAMPLES_ARB, (int)pEnum->selectedMulSampleType ,
-						WGL_CONTEXT_MAJOR_VERSION_ARB, version_major,//request core profile version major
-						WGL_CONTEXT_MINOR_VERSION_ARB, version_minor,//request core profile version minor
-						WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 						0, 0 };
 		if(!WGLEW_ARB_multisample)
 		{
@@ -1022,45 +1020,62 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 			iAttributes[28]=0;
 			iAttributes[29]=0;
 		}
-		if (!WGLEW_ARB_create_context_profile || version_major < 3)
-		{
-			iAttributes[30] = iAttributes[31] = iAttributes[32] = iAttributes[33] = 0;
-			iAttributes[34] = iAttributes[35] = 0;
-			version_major = 1;version_minor = 0;
-
-		}
 		if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
 			1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
 		{
-			iAttributes[24] = iAttributes[25]=0;//WGL_PIXEL_TYPE_ARB
+			//remove WGL_SWAP_METHOD_ARB
+			iAttributes[24] = iAttributes[26];
+			iAttributes[25] = iAttributes[27];
+			iAttributes[26] = iAttributes[28];
+			iAttributes[27] = iAttributes[29];
+			iAttributes[28] = iAttributes[29] = 0;
 
 			if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
 				1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
 			{
-				//remove requested version and retry
-				iAttributes[30] = iAttributes[31] = iAttributes[32] = iAttributes[33] = 0;
-				iAttributes[34] = iAttributes[35] = 0;
-
-				if (version_major >= 3)
-					this->Log("Warning : Cannot create device using version %d.%d core profile!", version_major, version_minor);
-				version_major = 1;version_minor = 0;
-
-				if(wglChoosePixelFormatARB(hDC, iAttributes, fAttributes,
-				1, &ipixelFormat, &numFormats)==FALSE || numFormats<1)
-				{
-					return -2;//still failed
-				}
+				return -2;//still failed
 			}
 		}
-		if (version_major >= 3)
-		{
-			this->Log("Using OpenGL version %d.%d core profile!", version_major, version_minor);
-			usingCoreProfile = true;
-		}
-	}
+	}//else of if(!WGLEW_ARB_pixel_format)
 
 	if(SetPixelFormat(hDC,ipixelFormat,&pixFmt)==FALSE)
 		return 1;
+
+	//now crete context
+	if (!WGLEW_ARB_create_context_profile || version_major < 3)
+	{
+		version_major = 1; version_minor = 0;
+		this->hRC = wglCreateContext(this->hDC);
+	}
+	else
+	{
+		int ctxtAttributes[] = {
+			WGL_CONTEXT_MAJOR_VERSION_ARB, version_major,//request core profile version major
+			WGL_CONTEXT_MINOR_VERSION_ARB, version_minor,//request core profile version minor
+			WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+			0, 0,
+		};
+
+		this->hRC = wglCreateContextAttribsARB(this->hDC, NULL, ctxtAttributes);
+		if (this->hRC == NULL)
+		{
+			//retry without core profile
+			this->Log("Warning : Cannot create device using version %d.%d core profile!", version_major, version_minor);
+			version_major = 1; version_minor = 0;
+
+			this->hRC = wglCreateContext(this->hDC);
+		}
+	}
+
+	if (this->hRC == NULL)
+		return - 3;
+
+	if (version_major >= 3)
+	{
+		this->Log("Using OpenGL version %d.%d core profile!", version_major, version_minor);
+		usingCoreProfile = true;
+	}
+
 #elif defined (HQ_LINUX_PLATFORM)
 	XVisualInfo *vi = NULL;
 	GLXFBConfig *glxConfigs = NULL;

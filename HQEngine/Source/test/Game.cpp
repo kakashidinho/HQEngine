@@ -19,7 +19,7 @@
 #define D3D10_RENDERER 2
 #define D3D11_RENDERER 3
 
-#define USE_CORE_OPENGL_3_1 1
+#define USE_CORE_OPENGL_3_1 0
 
 
 struct BUFFER2

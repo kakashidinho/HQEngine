@@ -11,4 +11,4 @@ Device Type=1
 BackBuffer Format=21
 DepthStencil Format=75
 Vertex Processing=80
-Multisample Type=0
+Multisample Type=4
