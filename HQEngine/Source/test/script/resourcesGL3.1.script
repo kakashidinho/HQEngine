@@ -9,6 +9,8 @@ resources{
 		define version = 140
 		define NOT_ORIGIN
 		define UNIFORM_BUFFER
+		define attribute = in
+		define varying = out
 	}
 	
 	shader ps-mesh
@@ -20,5 +22,6 @@ resources{
 		define version = 140
 		define NOT_ORIGIN
 		define UNIFORM_BUFFER
+		define varying = in
 	}
 }

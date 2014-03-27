@@ -1191,6 +1191,10 @@ int HQDeviceGL::SetupPixelFormat(const char* coreProfile)
 				glc = glXCreateNewContext( this->dpy, glxConfigs[0], GLX_RGBA_TYPE,
 				 	NULL, True );
 			}
+			else {
+				this->Log("Using OpenGL version %d.%d core profile!", version_major, version_minor);
+				usingCoreProfile = true;
+			}
 		}
 
 		XFree(glxConfigs);
