@@ -428,7 +428,6 @@
 		D6FDDA0018C7A97000825C3C /* HQFFEmuShaderGL.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HQFFEmuShaderGL.glsl; path = ../../../Source/BaseImpl/HQFFEmuShaderGL.glsl; sourceTree = "<group>"; };
 		D6FDDA0118C7A97000825C3C /* HQRenderDeviceBaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQRenderDeviceBaseImpl.h; path = ../../../Source/BaseImpl/HQRenderDeviceBaseImpl.h; sourceTree = "<group>"; };
 		D6FDDA0218C7A97000825C3C /* HQRenderTargetManagerBaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQRenderTargetManagerBaseImpl.h; path = ../../../Source/BaseImpl/HQRenderTargetManagerBaseImpl.h; sourceTree = "<group>"; };
-		D6FDDA0318C7A97000825C3C /* HQShaderParameterIndexTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderParameterIndexTable.h; path = ../../../Source/BaseImpl/HQShaderParameterIndexTable.h; sourceTree = "<group>"; };
 		D6FDDA0418C7A97000825C3C /* HQTextureManagerBaseImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQTextureManagerBaseImpl.cpp; path = ../../../Source/BaseImpl/HQTextureManagerBaseImpl.cpp; sourceTree = "<group>"; };
 		D6FDDA0518C7A97000825C3C /* HQTextureManagerBaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQTextureManagerBaseImpl.h; path = ../../../Source/BaseImpl/HQTextureManagerBaseImpl.h; sourceTree = "<group>"; };
 		D6FDDA0F18C7A9E800825C3C /* HQNeonMathASM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HQNeonMathASM.cpp; sourceTree = "<group>"; };
@@ -958,7 +957,6 @@
 				D6FDDA0018C7A97000825C3C /* HQFFEmuShaderGL.glsl */,
 				D6FDDA0118C7A97000825C3C /* HQRenderDeviceBaseImpl.h */,
 				D6FDDA0218C7A97000825C3C /* HQRenderTargetManagerBaseImpl.h */,
-				D6FDDA0318C7A97000825C3C /* HQShaderParameterIndexTable.h */,
 				D6FDDA0418C7A97000825C3C /* HQTextureManagerBaseImpl.cpp */,
 				D6FDDA0518C7A97000825C3C /* HQTextureManagerBaseImpl.h */,
 			);

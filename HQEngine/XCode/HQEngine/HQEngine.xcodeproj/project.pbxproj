@@ -29,6 +29,8 @@
 		D637714418E14DE300DBCA7E /* mojoshader.h in Headers */ = {isa = PBXBuildFile; fileRef = D637713E18E14DE300DBCA7E /* mojoshader.h */; };
 		D637714718E14E0A00DBCA7E /* HQShaderGL_FakeUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D637714518E14E0A00DBCA7E /* HQShaderGL_FakeUBO.cpp */; };
 		D637714818E14E0A00DBCA7E /* HQShaderGL_FakeUBO.h in Headers */ = {isa = PBXBuildFile; fileRef = D637714618E14E0A00DBCA7E /* HQShaderGL_FakeUBO.h */; };
+		D652FC6818E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D652FC6618E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.cpp */; };
+		D652FC6918E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.h in Headers */ = {isa = PBXBuildFile; fileRef = D652FC6718E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.h */; };
 		D682AE8618CDC643004E3C6F /* HQAudioInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AE8418CDC643004E3C6F /* HQAudioInternal.cpp */; };
 		D682AE8718CDC643004E3C6F /* HQAudioInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AE8518CDC643004E3C6F /* HQAudioInternal.h */; };
 		D682AE8B18CDC674004E3C6F /* HQEngineEffectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AE8818CDC674004E3C6F /* HQEngineEffectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -163,7 +165,6 @@
 		D6FDDA0618C7A97000825C3C /* HQBaseImplCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD9FF18C7A97000825C3C /* HQBaseImplCommon.h */; };
 		D6FDDA0818C7A97000825C3C /* HQRenderDeviceBaseImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDDA0118C7A97000825C3C /* HQRenderDeviceBaseImpl.h */; };
 		D6FDDA0918C7A97000825C3C /* HQRenderTargetManagerBaseImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDDA0218C7A97000825C3C /* HQRenderTargetManagerBaseImpl.h */; };
-		D6FDDA0A18C7A97000825C3C /* HQShaderParameterIndexTable.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDDA0318C7A97000825C3C /* HQShaderParameterIndexTable.h */; };
 		D6FDDA0B18C7A97000825C3C /* HQTextureManagerBaseImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDDA0418C7A97000825C3C /* HQTextureManagerBaseImpl.cpp */; };
 		D6FDDA0C18C7A97000825C3C /* HQTextureManagerBaseImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDDA0518C7A97000825C3C /* HQTextureManagerBaseImpl.h */; };
 		D6FDDA2A18C7A9E800825C3C /* HQAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDDA1618C7A9E800825C3C /* HQAABB.cpp */; };
@@ -368,6 +369,8 @@
 		D637713E18E14DE300DBCA7E /* mojoshader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mojoshader.h; path = "../../../../ThirdParty-mod/mojoshader/mojoshader.h"; sourceTree = "<group>"; };
 		D637714518E14E0A00DBCA7E /* HQShaderGL_FakeUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQShaderGL_FakeUBO.cpp; path = ../../../Source/HQRendererGL/HQShaderGL_FakeUBO.cpp; sourceTree = "<group>"; };
 		D637714618E14E0A00DBCA7E /* HQShaderGL_FakeUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderGL_FakeUBO.h; path = ../../../Source/HQRendererGL/HQShaderGL_FakeUBO.h; sourceTree = "<group>"; };
+		D652FC6618E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQVertexStreamManagerGL_VAO.cpp; path = ../../../Source/HQRendererGL/HQVertexStreamManagerGL_VAO.cpp; sourceTree = "<group>"; };
+		D652FC6718E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQVertexStreamManagerGL_VAO.h; path = ../../../Source/HQRendererGL/HQVertexStreamManagerGL_VAO.h; sourceTree = "<group>"; };
 		D682AE8418CDC643004E3C6F /* HQAudioInternal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQAudioInternal.cpp; path = ../../../Source/HQAudio/HQAudioInternal.cpp; sourceTree = "<group>"; };
 		D682AE8518CDC643004E3C6F /* HQAudioInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQAudioInternal.h; path = ../../../Source/HQAudio/HQAudioInternal.h; sourceTree = "<group>"; };
 		D682AE8818CDC674004E3C6F /* HQEngineEffectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineEffectManager.h; path = ../../../Source/HQEngineEffectManager.h; sourceTree = "<group>"; };
@@ -521,7 +524,6 @@
 		D6FDDA0018C7A97000825C3C /* HQFFEmuShaderGL.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HQFFEmuShaderGL.glsl; path = ../../../Source/BaseImpl/HQFFEmuShaderGL.glsl; sourceTree = "<group>"; };
 		D6FDDA0118C7A97000825C3C /* HQRenderDeviceBaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQRenderDeviceBaseImpl.h; path = ../../../Source/BaseImpl/HQRenderDeviceBaseImpl.h; sourceTree = "<group>"; };
 		D6FDDA0218C7A97000825C3C /* HQRenderTargetManagerBaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQRenderTargetManagerBaseImpl.h; path = ../../../Source/BaseImpl/HQRenderTargetManagerBaseImpl.h; sourceTree = "<group>"; };
-		D6FDDA0318C7A97000825C3C /* HQShaderParameterIndexTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderParameterIndexTable.h; path = ../../../Source/BaseImpl/HQShaderParameterIndexTable.h; sourceTree = "<group>"; };
 		D6FDDA0418C7A97000825C3C /* HQTextureManagerBaseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HQTextureManagerBaseImpl.cpp; path = ../../../Source/BaseImpl/HQTextureManagerBaseImpl.cpp; sourceTree = "<group>"; };
 		D6FDDA0518C7A97000825C3C /* HQTextureManagerBaseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQTextureManagerBaseImpl.h; path = ../../../Source/BaseImpl/HQTextureManagerBaseImpl.h; sourceTree = "<group>"; };
 		D6FDDA0F18C7A9E800825C3C /* HQNeonMathASM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HQNeonMathASM.cpp; sourceTree = "<group>"; };
@@ -842,6 +844,8 @@
 			isa = PBXGroup;
 			children = (
 				D6FDDB6F18C7BFCD00825C3C /* glew */,
+				D652FC6618E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.cpp */,
+				D652FC6718E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.h */,
 				D6FDD90818C7A7CE00825C3C /* Apple.h */,
 				D6FDD90918C7A7CE00825C3C /* Apple.mm */,
 				D6FDD90A18C7A7CE00825C3C /* cgFunctionPointers.h */,
@@ -982,7 +986,6 @@
 				D6FDDA0018C7A97000825C3C /* HQFFEmuShaderGL.glsl */,
 				D6FDDA0118C7A97000825C3C /* HQRenderDeviceBaseImpl.h */,
 				D6FDDA0218C7A97000825C3C /* HQRenderTargetManagerBaseImpl.h */,
-				D6FDDA0318C7A97000825C3C /* HQShaderParameterIndexTable.h */,
 				D6FDDA0418C7A97000825C3C /* HQTextureManagerBaseImpl.cpp */,
 				D6FDDA0518C7A97000825C3C /* HQTextureManagerBaseImpl.h */,
 			);
@@ -1403,6 +1406,7 @@
 				D6FDD95018C7A7CE00825C3C /* HQRenderTargetGL.h in Headers */,
 				D6FDD9CF18C7A8ED00825C3C /* HQMeshNode.h in Headers */,
 				D6FDD9BB18C7A8ED00825C3C /* HQClosedStringHashTable.h in Headers */,
+				D652FC6918E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.h in Headers */,
 				D6FDD9FB18C7A93E00825C3C /* HQRendererDeviceDebugLayer.h in Headers */,
 				D6FDD9E818C7A8ED00825C3C /* HQStack.h in Headers */,
 				D6FDD9EE18C7A8ED00825C3C /* HQUtilMath.h in Headers */,
@@ -1453,7 +1457,6 @@
 				D6FDD9F018C7A8ED00825C3C /* HQVertexAttribute.h in Headers */,
 				D6FDDB6B18C7B13900825C3C /* zconf.h in Headers */,
 				D6FDDB5C18C7B13900825C3C /* gzguts.h in Headers */,
-				D6FDDA0A18C7A97000825C3C /* HQShaderParameterIndexTable.h in Headers */,
 				D6FDD9B418C7A8ED00825C3C /* HQAtomic.h in Headers */,
 				D6FDDB8C18C7C39900825C3C /* HQEngineWindow.h in Headers */,
 				D6FDDAE218C7AF7D00825C3C /* jconfig.h in Headers */,
@@ -1694,6 +1697,7 @@
 				D6FDDB3718C7B0BC00825C3C /* pngwio.c in Sources */,
 				D6FDDB0A18C7AF7D00825C3C /* jquant2.c in Sources */,
 				D6FDDA9A18C7ACD600825C3C /* PVR.cpp in Sources */,
+				D652FC6818E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.cpp in Sources */,
 				D6FDDA3618C7A9E800825C3C /* HQVector.cpp in Sources */,
 				D6FDDA4818C7AA8000825C3C /* HQSemaphorePthreadApple.cpp in Sources */,
 				D6FDDAF418C7AF7D00825C3C /* jdmaster.c in Sources */,

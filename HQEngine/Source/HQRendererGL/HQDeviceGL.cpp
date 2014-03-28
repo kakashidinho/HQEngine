@@ -1223,7 +1223,7 @@ int HQDeviceGL::CreateContext( HQRenderDeviceInitInput input, const char* corePr
 		NSOpenGLPFADepthSize, D,
 		NSOpenGLPFAStencilSize, S,
 		NSOpenGLPFAClosestPolicy,
-        NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersionLegacy,//NSOpenGLProfileVersion3_2Core,
+        NSOpenGLPFAOpenGLProfile, /*NSOpenGLProfileVersionLegacy,*/ NSOpenGLProfileVersion3_2Core,
 		NSOpenGLPFAAccelerated,
 		NSOpenGLPFANoRecovery,
 		NSOpenGLPFAMultisample,
