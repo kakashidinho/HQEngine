@@ -132,7 +132,7 @@ private:
 	HQA16ByteMatrix4Ptr viewProj;
 	HQLogStream* logFile;
 
-	HQMeshNode * mesh;
+	HQMeshNode * mesh[2];
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	MeshX *meshX;
 #endif

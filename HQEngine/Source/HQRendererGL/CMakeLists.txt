@@ -14,7 +14,7 @@ set (MAIN_SRC_FILES
 	HQShaderGL_GLSLController.cpp 
 	HQShaderGL_GLSL_VarParser.cpp HQShaderGL_UBO.cpp  HQShaderGL_FakeUBO.cpp
 	HQFFEmuShaderControllerGL.cpp 
-	HQStateManagerGL.cpp 	HQVertexStreamManagerGL.cpp
+	HQStateManagerGL.cpp 	HQVertexStreamManagerGL.cpp HQVertexStreamManagerGL_VAO.cpp
 	HQTextureManagerGL.cpp ../BaseImpl/HQTextureManagerBaseImpl.cpp 
 	glew/src/glew.c
 )

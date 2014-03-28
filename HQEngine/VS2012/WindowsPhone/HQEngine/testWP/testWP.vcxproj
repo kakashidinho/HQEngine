@@ -435,6 +435,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Source\test\meshes\Tiny_skin.bmp" />
     <Image Include="Assets\ApplicationIcon.png" />
     <Image Include="Assets\AlignmentGrid.png" />
     <Media Include="Assets\test\meshes\Bat_Albedo.jpg" />
@@ -535,22 +536,22 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\..\..\Source\test\shader\hlsl-mesh_ps.hlsl">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
@@ -601,22 +602,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="..\..\..\..\Source\test\shader\hlsl-mesh_vs.hlsl">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
@@ -675,14 +676,14 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
@@ -741,14 +742,14 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
@@ -1152,6 +1153,30 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">$(OutDir)Assets\test\script\%(Filename).script</Outputs>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</TreatOutputAsContent>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\..\..\..\Source\test\meshes\tiny.hqanimation">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</DeploymentContent>
+    </Media>
+    <Media Include="..\..\..\..\Source\test\meshes\tiny.hqmesh">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</DeploymentContent>
+    </Media>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsPhone\v$(TargetPlatformVersion)\Microsoft.Cpp.WindowsPhone.$(TargetPlatformVersion).targets" />

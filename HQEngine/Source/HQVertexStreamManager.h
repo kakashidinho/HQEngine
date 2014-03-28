@@ -69,23 +69,18 @@ public:
 	virtual HQReturnVal MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) = 0;
 	virtual HQReturnVal UnmapVertexBuffer(hq_uint32 vertexBufferID) = 0;
 	///
-	///ánh xạ địa chỉ của dữ liệu index buffer đang active (qua method SetIndexBuffer()) vào con trỏ {ppData} trỏ đến
+	///ánh xạ địa chỉ của dữ liệu index buffer vào con trỏ {ppData} trỏ đến
 	///
-	virtual HQReturnVal MapIndexBuffer(HQMapType mapType , void **ppData) = 0;
+	virtual HQReturnVal MapIndexBuffer(hq_uint32 indexBufferID, HQMapType mapType, void **ppData) = 0;
 	///
-	///ngừng ánh xạ địa chỉ của dữ liệu index buffer đang active (qua method SetIndexBuffer())
+	///ngừng ánh xạ địa chỉ của dữ liệu index buffer
 	///
-	virtual HQReturnVal UnmapIndexBuffer() = 0;
+	virtual HQReturnVal UnmapIndexBuffer(hq_uint32 indexBufferID) = 0;
 	
 	///
 	///Copy {pData} vào vertex buffer . {offset} & {size} tính theo byte.Nếu {offset} & {size} đều là 0 ,toàn bộ buffer sẽ được update .Lưu ý không nên update trên static buffer
 	///
 	virtual HQReturnVal UpdateVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 offset , hq_uint32 size , const void * pData)= 0;
-	///
-	///Copy {pData} vào index buffer đang active. {offset} & {size} tính theo byte.Nếu {offset} & {size} đều là 0 ,toàn bộ buffer sẽ được update .Lưu ý không nên update trên static buffer
-	///
-	virtual HQReturnVal UpdateIndexBuffer(hq_uint32 offset , hq_uint32 size , const void * pData)= 0;
-
 	///
 	///Copy {pData} vào index buffer. {offset} & {size} tính theo byte.Nếu {offset} & {size} đều là 0 ,toàn bộ buffer sẽ được update .Lưu ý không nên update trên static buffer
 	///

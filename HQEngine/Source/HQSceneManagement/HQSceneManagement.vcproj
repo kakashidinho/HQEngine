@@ -576,6 +576,10 @@
 			>
 		</Filter>
 		<File
+			RelativePath="..\HQRendererGL\ClassDiagram1.cd"
+			>
+		</File>
+		<File
 			RelativePath=".\ReadMe.txt"
 			>
 		</File>

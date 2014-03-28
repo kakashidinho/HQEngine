@@ -95,9 +95,6 @@
     <ClInclude Include="..\BaseImpl\HQRenderTargetManagerBaseImpl.h">
       <Filter>Header Files\BaseImpl</Filter>
     </ClInclude>
-    <ClInclude Include="..\BaseImpl\HQShaderParameterIndexTable.h">
-      <Filter>Header Files\BaseImpl</Filter>
-    </ClInclude>
     <ClInclude Include="..\BaseImpl\HQTextureManagerBaseImpl.h">
       <Filter>Header Files\BaseImpl</Filter>
     </ClInclude>

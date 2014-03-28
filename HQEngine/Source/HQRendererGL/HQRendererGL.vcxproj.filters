@@ -108,6 +108,9 @@
     <ClCompile Include="HQShaderGL_FakeUBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HQVertexStreamManagerGL_VAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HQRendererGLDef.def">
@@ -189,6 +192,9 @@
       <Filter>Source Files\mojoshader</Filter>
     </ClInclude>
     <ClInclude Include="HQShaderGL_FakeUBO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQVertexStreamManagerGL_VAO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

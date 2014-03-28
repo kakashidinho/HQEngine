@@ -42,12 +42,14 @@
   <ItemGroup>
     <None Include="test_TemporaryKey.pfx" />
     <None Include="ClassDiagram.cd" />
-    <None Include="..\..\..\..\Source\test\script\effects.script" />
+    <None Include="..\..\..\..\Source\test\meshes\tiny.hqanimation" />
+    <None Include="..\..\..\..\Source\test\meshes\tiny.hqmesh" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\test\meshes\Bat_Albedo.jpg">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="..\..\..\..\Source\test\meshes\Tiny_skin.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Source\test\shader\hlsl-mesh.txt" />
@@ -70,5 +72,6 @@
     <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D11.script" />
     <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D9.script" />
     <CustomBuild Include="..\..\..\..\Source\test\script\resourcesGL.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\effects.script" />
   </ItemGroup>
 </Project>

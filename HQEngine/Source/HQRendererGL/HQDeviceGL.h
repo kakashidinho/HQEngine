@@ -66,9 +66,6 @@ struct WindowInfo
 #include "HQRenderTargetGL.h"
 #include "HQStateManagerGL.h"
 #include "HQVertexStreamManagerGL.h"
-#ifdef HQ_OPENGLES
-#include "HQVertexStreamManagerPreShaderGL.h"
-#endif
 
 //****************
 //device

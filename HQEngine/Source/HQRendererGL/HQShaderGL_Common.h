@@ -13,7 +13,6 @@ COPYING.txt included with this distribution for more information.
 
 #include "../HQRenderDevice.h"
 #include "../BaseImpl/HQBaseImplCommon.h"
-#include "../BaseImpl/HQShaderParameterIndexTable.h"
 #include "HQShaderGL_GLSL_VarParser.h"
 
 #include "../HQLinkedList.h"
@@ -76,7 +75,7 @@ struct HQBaseShaderProgramGL
 	GLuint programGLHandle;//for program created from glsl
 
 
-	HQShaderParamIndexTable parameterIndexes;
+	HQClosedStringPrimeHashTable<hquint32> parameterIndexes;
 	HQItemManager<HQShaderParameterGL> parameters;
 
 	hquint32 vertexShaderID;

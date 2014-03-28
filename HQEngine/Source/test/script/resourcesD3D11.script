@@ -7,7 +7,7 @@ resources{
 		src="hlsl-mesh.txt"
 		debug=true
 		define TEXTURE_COLOR = 0
-		define BLENDWEIGHT3 = 1
+		//define BLENDWEIGHT3 = 1
 		define TEXTURE_BUFFER= 0
 	}
 	
@@ -19,7 +19,7 @@ resources{
 		debug=true
 		src="hlsl-mesh.txt"
 		define TEXTURE_COLOR = 0
-		define BLENDWEIGHT3 = 1
+		//define BLENDWEIGHT3 = 1
 		define TEXTURE_BUFFER= 0
 	}
 }

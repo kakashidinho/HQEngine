@@ -34,9 +34,9 @@ struct HQBufferGL
 
 struct HQVertexAttribInfoGL
 {
-	hq_uint32 streamIndex;//which stream does this attribute come from
+	hquint32 streamIndex;//which stream does this attribute come from
 	void* offset;
-	GLuint attribIndex;//attribute index 
+	GLuint attribIndex;//GL attribute index 
 	GLint size;//size of attribute ( one of 1 , 2  , 3 , 4)
 	GLenum dataType;
 	GLboolean normalized;

@@ -12,8 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define HQ_ENGINE_COMMON_INTERNAL_H
 
 #include "../HQEngineApp.h"
-#include "../HQClosedHashTable.h"
-#include "../HQPrimeNumber.h"
+#include "../BaseImpl/HQBaseImplCommon.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -66,97 +65,6 @@ public:
 	HQNamedGraphicsRelatedObj(const char* _name) : HQEngineNamedObjImpl(_name) {}
 };
 
-/*----------base hash table using prime number of buckets-----------*/
-template
-<
-class Key ,
-class T ,
-class HashFunction = HQDefaultHashFunc<Key>,
-class ProbingFunction = HQQuadradticProbing ,
-class KeyEqual = HQDefaultKeyEqual<Key>,
-class MemoryManager = HQDefaultMemManager
->
-class HQEnginePrimeHashTable: public HQClosedHashTable<Key, T, HashFunction , ProbingFunction, KeyEqual,  MemoryManager>
-{
-public:
-	typedef HQClosedHashTable<Key, T , HashFunction , ProbingFunction, KeyEqual,  MemoryManager > parentType;
-
-	/*----create hash table with 16 buckets and max load factor 0.75----------*/
-	HQEnginePrimeHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(pMemoryManager) {}
-	/*----create hash table with max load factor 0.75----------*/
-	HQEnginePrimeHashTable(hq_uint32 numBuckets , const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(numBuckets , pMemoryManager) {}
-
-	/*-----------------------*/
-	HQEnginePrimeHashTable(hq_uint32 numBuckets , hq_float32 maxLoadFactor , const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(numBuckets , maxLoadFactor , pMemoryManager) {}
-protected:
-	hq_uint32 GetNewSize()
-	{
-		//resize table size to next prime number
-		hq_uint32 i = this->m_numBuckets + 1;
-		while ( !HQIsPrime(i) || (hq_float32)this->m_numItems / i > 0.5f )
-		{
-			++i;
-		}
-		return i;
-	}
-};
-
-/*----------base hash table using pointer typed key-----------------*/
-
-
-template <class Key>
-//hash function for a pointer typed key
-struct HQEnginePtrKeyHashFunc {
-	hquint32 operator() (const Key& key) const {
-		return key->HashCode();
-	}
-};
-
-template <class Key>
-struct HQEnginePtrKeyEqual {
-	bool operator () (const Key & val1 , const Key &val2)const  
-	{
-		return val1->Equal(val2);
-	}
-};
-
-//hash table for a pointer typed key
-template
-<
-class Key ,
-class T ,
-class ProbingFunction = HQQuadradticProbing ,
-class MemoryManager = HQDefaultMemManager
->
-class HQEnginePtrKeyHashTable: public HQEnginePrimeHashTable<Key, T, HQEnginePtrKeyHashFunc<Key> , ProbingFunction, HQEnginePtrKeyEqual<Key>,  MemoryManager>
-{
-public:
-	typedef HQEnginePrimeHashTable<Key, T , HQEnginePtrKeyHashFunc<Key> , ProbingFunction, HQEnginePtrKeyEqual<Key>,  MemoryManager > parentType;
-
-	/*----create hash table with 16 buckets and max load factor 0.75----------*/
-	HQEnginePtrKeyHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(pMemoryManager) {}
-};
-
-/*------- hash table using string key--------*/
-template <class T>
-class HQEngineStringHashTable : public HQClosedStringHashTable<T>
-{
-public:
-	typedef HQClosedStringHashTable<T> ParentType;
-	HQEngineStringHashTable() : ParentType(3 , 0.5f) {}
-
-protected:
-	hq_uint32 GetNewSize()
-	{
-		//resize table size to next prime number
-		hq_uint32 i = this->m_numBuckets + 1;
-		while ( !HQIsPrime(i) || (hq_float32)this->m_numItems / i > 0.5f )
-		{
-			++i;
-		}
-		return i;
-	}
-};
 
 namespace HQEngineHelper
 {

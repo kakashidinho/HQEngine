@@ -82,11 +82,17 @@ void HQVertexBufferGL::OnCreated(HQVertexStreamManagerGL *manager, const void *i
 //index buffer
 void HQIndexBufferGL::OnCreated(HQVertexStreamManagerGL *manager, const void *initData)
 {
+	GLuint currentIBO;
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, (GLint*)&currentIBO);
+
 	glGenBuffers(1 , &this->bufferName);
+
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , this->bufferName);
 	
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER , this->size , initData, this->usage);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, currentIBO);
 }
 
 
@@ -300,7 +306,7 @@ HQReturnVal HQVertexStreamManagerGL::CreateVertexInputLayout(const HQVertexAttri
 	return HQ_OK;
 }
 
-void HQVertexStreamManagerGL::ConvertToVertexAttribInfo(const HQVertexAttribDesc &vAttribDesc ,HQVertexAttribInfoGL &vAttribInfo)
+void HQVertexStreamManagerGL::ConvertToVertexAttribInfo(const HQVertexAttribDesc &vAttribDesc, HQVertexAttribInfoGL &vAttribInfo)
 {
 	vAttribInfo.streamIndex = vAttribDesc.stream;
 	vAttribInfo.attribIndex = vAttribDesc.usage;
@@ -510,31 +516,49 @@ HQReturnVal HQVertexStreamManagerGL::UnmapVertexBuffer(hq_uint32 vertexBufferID)
 	glUnmapBuffer(GL_ARRAY_BUFFER );
 	return HQ_OK;
 }
-HQReturnVal HQVertexStreamManagerGL::MapIndexBuffer(HQMapType mapType , void **ppData) 
+HQReturnVal HQVertexStreamManagerGL::MapIndexBuffer(hquint32 bufferID, HQMapType mapType , void **ppData) 
 {
+	HQSharedPtr<HQIndexBufferGL> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
 #if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
+	if (pBuffer == NULL)
 		return HQ_FAILED;
 #endif
+	//avoid affecting active index buffer
+	if (pBuffer != this->activeIndexBuffer)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pBuffer->bufferName);
+
 	if (mapType == HQ_MAP_DISCARD)
 	{
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER , this->activeIndexBuffer->size , NULL,  this->activeIndexBuffer->usage);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, pBuffer->size, NULL, pBuffer->usage);
 	}
 #if defined _DEBUG || defined DEBUG
 	if (ppData == NULL)
 		return HQ_FAILED;
 #endif
 	*ppData = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER , GL_WRITE_ONLY);
+
+	//avoid affecting active index buffer
+	if (pBuffer != this->activeIndexBuffer)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->activeIndexBuffer != NULL ? this->activeIndexBuffer->bufferName : 0);
+
 	return HQ_OK;
 }
-HQReturnVal HQVertexStreamManagerGL::UnmapIndexBuffer() 
+HQReturnVal HQVertexStreamManagerGL::UnmapIndexBuffer(hquint32 bufferID)
 {
+	HQSharedPtr<HQIndexBufferGL> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
 #if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
+	if (pBuffer == NULL)
 		return HQ_FAILED;
 #endif
+	//avoid affecting active index buffer
+	if (pBuffer != this->activeIndexBuffer)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pBuffer->bufferName);
 
 	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER );
+
+	//avoid affecting active index buffer
+	if (pBuffer != this->activeIndexBuffer)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->activeIndexBuffer != NULL ? this->activeIndexBuffer->bufferName : 0);
 	return HQ_OK;
 }
 
@@ -554,22 +578,6 @@ HQReturnVal HQVertexStreamManagerGL::UpdateVertexBuffer(hq_uint32 vertexBufferID
 
 	this->BindVertexBuffer(vBuffer->bufferName);
 	glBufferSubData(GL_ARRAY_BUFFER , offset , size , pData); 
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerGL::UpdateIndexBuffer(hq_uint32 offset , hq_uint32 size , const void * pData)
-{
-#if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
-		return HQ_FAILED;
-#endif
-	hq_uint32 i = offset + size;
-	if (i > this->activeIndexBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-	if (i == 0)//update toàn bộ buffer
-		size = this->activeIndexBuffer->size;
-
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER , offset , size , pData); 
-
 	return HQ_OK;
 }
 
@@ -592,7 +600,7 @@ HQReturnVal HQVertexStreamManagerGL::UpdateIndexBuffer(hquint32 bufferID, hq_uin
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER , offset , size , pData); 
 	
 	if (pBuffer != this->activeIndexBuffer)
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->activeIndexBuffer->bufferName);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->activeIndexBuffer != NULL? this->activeIndexBuffer->bufferName : 0);
 
 	return HQ_OK;
 }
@@ -738,12 +746,13 @@ HQReturnVal HQVertexStreamManagerNoMapGL::UnmapVertexBuffer(hq_uint32 vertexBuff
 	glBufferData(GL_ARRAY_BUFFER , vBuffer->size , vBuffer->cacheData, vBuffer->usage);
 	return HQ_OK;
 }
-HQReturnVal HQVertexStreamManagerNoMapGL::MapIndexBuffer(HQMapType mapType , void **ppData) 
+HQReturnVal HQVertexStreamManagerNoMapGL::MapIndexBuffer(hq_uint32 bufferID, HQMapType mapType , void **ppData) 
 {
+	HQSharedPtr<HQIndexBufferGL> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
 #if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
+	if (pBuffer == NULL)
 		return HQ_FAILED;
-	if (this->activeIndexBuffer->usage != GL_DYNAMIC_DRAW)
+	if (pBuffer->usage != GL_DYNAMIC_DRAW)
 	{
 		this->Log("Error : static buffer can't be mapped!");
 		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
@@ -751,24 +760,41 @@ HQReturnVal HQVertexStreamManagerNoMapGL::MapIndexBuffer(HQMapType mapType , voi
 #endif
 	if (mapType == HQ_MAP_DISCARD)
 	{
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER , this->activeIndexBuffer->size , NULL,  this->activeIndexBuffer->usage);
+		//avoid affecting active index buffer
+		if (pBuffer != this->activeIndexBuffer)
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pBuffer->bufferName);
+
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER , pBuffer->size , NULL,  pBuffer->usage);
+
+		//avoid affecting active index buffer
+		if (pBuffer != this->activeIndexBuffer)
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->activeIndexBuffer != NULL ? this->activeIndexBuffer->bufferName : 0);
 	}
 #if defined _DEBUG || defined DEBUG
 	if (ppData == NULL)
 		return HQ_FAILED;
 #endif
-	*ppData = this->activeIndexBuffer->cacheData;
+	*ppData = pBuffer->cacheData;
 	return HQ_OK;
 }
 
-HQReturnVal HQVertexStreamManagerNoMapGL::UnmapIndexBuffer() 
+HQReturnVal HQVertexStreamManagerNoMapGL::UnmapIndexBuffer(hq_uint32 bufferID) 
 {
+	HQSharedPtr<HQIndexBufferGL> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
 #if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
+	if (pBuffer == NULL)
 		return HQ_FAILED;
 #endif
 
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER , this->activeIndexBuffer->size , this->activeIndexBuffer->cacheData,  this->activeIndexBuffer->usage);
+	//avoid affecting active index buffer
+	if (pBuffer != this->activeIndexBuffer)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pBuffer->bufferName);
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER , pBuffer->size , pBuffer->cacheData,  pBuffer->usage);
+
+	//avoid affecting active index buffer
+	if (pBuffer != this->activeIndexBuffer)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->activeIndexBuffer != NULL ? this->activeIndexBuffer->bufferName : 0);
 	return HQ_OK;
 }
 
@@ -794,26 +820,6 @@ HQReturnVal HQVertexStreamManagerNoMapGL::UpdateVertexBuffer(hq_uint32 vertexBuf
 		memcpy((hqubyte*)vBuffer->cacheData + offset , pData , size);//update cache data
 	return HQ_OK;
 }
-HQReturnVal HQVertexStreamManagerNoMapGL::UpdateIndexBuffer(hq_uint32 offset , hq_uint32 size , const void * pData)
-{
-#if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
-		return HQ_FAILED;
-	
-#endif
-	hq_uint32 i = offset + size;
-	if (i > this->activeIndexBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-	if (i == 0)//update toàn bộ buffer
-		size = this->activeIndexBuffer->size;
-
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER , offset , size , pData); 
-	
-	if (this->activeIndexBuffer->usage == GL_DYNAMIC_DRAW)
-		memcpy((hqubyte*)this->activeIndexBuffer->cacheData + offset , pData , size);//update cache data
-
-	return HQ_OK;
-}
 
 HQReturnVal HQVertexStreamManagerNoMapGL::UpdateIndexBuffer(hquint32 bufferID, hq_uint32 offset , hq_uint32 size , const void * pData)
 {
@@ -835,8 +841,9 @@ HQReturnVal HQVertexStreamManagerNoMapGL::UpdateIndexBuffer(hquint32 bufferID, h
 
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER , offset , size , pData); 
 	
+	//avoid affecting active index buffer
 	if (pBuffer != this->activeIndexBuffer)
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->activeIndexBuffer->bufferName);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->activeIndexBuffer != NULL ? this->activeIndexBuffer->bufferName : 0);
 
 	if (pBuffer->usage == GL_DYNAMIC_DRAW)
 		memcpy((hqubyte*)pBuffer->cacheData + offset , pData , size);//update cache data

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
+# Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQEngineRenderer", "..\..\Source\HQEngineRenderer\HQEngineRenderer.vcxproj", "{8032362B-CDAF-4B80-9E29-2C3BB539D417}"
@@ -8,12 +8,20 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQRendererGL", "..\..\Source\HQRendererGL\HQRendererGL.vcxproj", "{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "..\..\Source\test\test.vcxproj", "{316E7693-2565-4F8B-8196-8AB015FDBBA7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2DD0888C-18A2-485A-8528-ADEAE73F1C41} = {2DD0888C-18A2-485A-8528-ADEAE73F1C41}
+		{9BAA75AB-BFC1-4BB1-AC7E-D81805DB7D65} = {9BAA75AB-BFC1-4BB1-AC7E-D81805DB7D65}
+		{8A6976E1-EE62-4BC1-8865-DDA506640A28} = {8A6976E1-EE62-4BC1-8865-DDA506640A28}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQRendererD3D9", "..\..\Source\HQRendererD3D9\HQRendererD3D9.vcxproj", "{2D61BA96-BA18-4B9D-9A7E-E66CDE76A6E5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQRendererD3D11", "..\..\Source\HQRendererD3D11\HQRendererD3D11.vcxproj", "{505F1C9E-6A57-4AA2-BE02-CEC29286F1EF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQSceneManagement", "..\..\Source\HQSceneManagement\HQSceneManagement.vcxproj", "{9BAA75AB-BFC1-4BB1-AC7E-D81805DB7D65}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2DD0888C-18A2-485A-8528-ADEAE73F1C41} = {2DD0888C-18A2-485A-8528-ADEAE73F1C41}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQEngine", "..\..\Source\HQEngine\HQEngine.vcxproj", "{2DD0888C-18A2-485A-8528-ADEAE73F1C41}"
 EndProject
@@ -24,6 +32,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQUtilMath", "..\..\Source\HQUtilMath\HQUtilMath.vcxproj", "{8CE14C97-6121-46CA-862D-130322FB0143}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQAudio", "..\..\Source\HQAudio\HQAudio.vcxproj", "{8A6976E1-EE62-4BC1-8865-DDA506640A28}"
+	ProjectSection(ProjectDependencies) = postProject
+		{05907671-E330-415C-BF60-BAB7B1895E37} = {05907671-E330-415C-BF60-BAB7B1895E37}
+		{2DD0888C-18A2-485A-8528-ADEAE73F1C41} = {2DD0888C-18A2-485A-8528-ADEAE73F1C41}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

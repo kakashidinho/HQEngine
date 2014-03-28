@@ -448,10 +448,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\BaseImpl\HQShaderParameterIndexTable.h"
-					>
-				</File>
-				<File
 					RelativePath="..\BaseImpl\HQTextureManagerBaseImpl.h"
 					>
 				</File>

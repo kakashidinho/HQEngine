@@ -105,6 +105,8 @@ Game::Game()
 	params.platformSpecific = NULL;
 #if USE_CORE_OPENGL_3_1
 	params.rendererAdditionalSetting = "Core-GL3.1";
+#else
+	params.rendererAdditionalSetting = "";// "Core-GL4.2";
 #endif
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	params.rendererSettingFileDir = "Assets/Setting.txt";
@@ -229,9 +231,10 @@ Game::Game()
 	bool support = pDevice->IsBlendStateExSupported();
 	support = pDevice->IsIndexDataTypeSupported(HQ_IDT_UINT);
 
-	/*---------mesh------------*/
+	/*---------meshes------------*/
 
-	mesh = HQ_NEW HQMeshNode("tiny", "bat.hqmesh", pDevice, "vs-mesh", logFile);
+	mesh[0] = HQ_NEW HQMeshNode("bat", "bat.hqmesh", pDevice, "vs-mesh", logFile);
+	mesh[1] = HQ_NEW HQMeshNode("tiny", "tiny.hqmesh", pDevice, "vs-mesh", logFile);
 
 
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
@@ -249,7 +252,8 @@ Game::Game()
 
 Game::~Game()
 {
-	delete mesh;
+	delete mesh[0];
+	delete mesh[1];
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	delete meshX;
 #endif
@@ -277,7 +281,8 @@ void Game::OnResetDevice()
 	if (!pDevice->IsRunning() && API != D3D9_RENDERER)
 		return;
 
-	mesh->OnResetDevice();
+	mesh[0]->OnResetDevice();
+	mesh[1]->OnResetDevice();
 }
 
 void Game::Render(HQTime dt)
@@ -335,12 +340,16 @@ void Game::Render(HQTime dt)
 	audio->GetSourceController(music)->SetPosition(soundPosition);
 #endif
 	
-	//update mesh
-	mesh->SetUniformScale(0.3f);
-	mesh->RotateY(dt * HQPiFamily::PI / 18.f);
-	mesh->AdvanceAnimationTime(dt);
-	mesh->Update(dt);
-	const HQMatrix3x4 * boneMatrices = mesh->GetBoneTransformMatrices();
+	//update meshes
+	mesh[0]->SetUniformScale(0.3f);
+	mesh[0]->RotateY(dt * HQPiFamily::PI / 18.f);
+	mesh[0]->AdvanceAnimationTime(dt);
+	mesh[0]->Update(dt);
+
+	mesh[1]->SetUniformScale(0.003f);
+	mesh[1]->RotateY(dt * HQPiFamily::PI / 18.f);
+	mesh[1]->AdvanceAnimationTime(dt);
+	mesh[1]->Update(dt);
 
 	//TRACE("here %s %d", __FILE__, __LINE__);
 
@@ -379,19 +388,18 @@ void Game::Render(HQTime dt)
 	pDevice->SetPrimitiveMode(HQ_PRI_TRIANGLES);
 	//pDevice->GetStateManager()->SetFillMode(HQ_FILL_WIREFRAME);
 
-	HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("mesh-effect")->GetPassByName("pass-0")->Apply();
 
+	for (int i = 0; i < 2; ++i)
+	{
+		HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("mesh-effect")->GetPass(i)->Apply();
 
-	if (API == OGL_RENDERER)
-	{	
-		
 		BUFFER2 * pTBuffer0 = NULL;
 		pDevice->GetShaderManager()->MapUniformBuffer(this->uniformBuffer[1] , (void**)&pTBuffer0);
 
 		if(pTBuffer0)
 		{
-			const HQMatrix3x4 *boneMatrices = mesh->GetBoneTransformMatrices();
-			hquint32 numBones = mesh->GetNumBones();
+			const HQMatrix3x4 * boneMatrices = mesh[i]->GetBoneTransformMatrices();
+			hquint32 numBones = mesh[i]->GetNumBones();
 
 			memcpy(&pTBuffer0->rotation, &scale, sizeof(HQMatrix3x4));
 			memcpy(&pTBuffer0->bones, boneMatrices, numBones * sizeof(HQMatrix3x4));
@@ -399,41 +407,8 @@ void Game::Render(HQTime dt)
 		}
 		pDevice->GetShaderManager()->UnmapUniformBuffer(this->uniformBuffer[1]);
 
-
-
-	}
-	
-#ifdef WIN32
-
-	else if (API == D3D9_RENDERER || API == D3D11_RENDERER)
-	{
-		BUFFER2 * pTBuffer0 = NULL;
-#if TEXTURE_BUFFER
-#		pragma message ("use TEXTURE_BUFFER")
-		pDevice->GetTextureManager()->MapTextureBuffer(textureBuffer , (void**)&pTBuffer0);
-#else
-		pDevice->GetShaderManager()->MapUniformBuffer(this->uniformBuffer[1] , (void**)&pTBuffer0);
-#endif
-		if(pTBuffer0)
-		{
-			const HQMatrix3x4 *boneMatrices = mesh->GetBoneTransformMatrices();
-			hquint32 numBones = mesh->GetNumBones();
-
-			memcpy(&pTBuffer0->rotation , &scale , sizeof(HQMatrix3x4));
-			memcpy(&pTBuffer0->bones , boneMatrices , numBones * sizeof(HQMatrix3x4));
-			memcpy(&pTBuffer0->viewProj, viewProj , sizeof(HQMatrix4));
-		}
-#if TEXTURE_BUFFER
-		pDevice->GetTextureManager()->UnmapTextureBuffer(textureBuffer );
-#else
-		pDevice->GetShaderManager()->UnmapUniformBuffer(this->uniformBuffer[1] );
-#endif
-
-	}
-	
-#endif //#ifdef WIN32
-
-	mesh->DrawInOneCall();
+		mesh[i]->DrawInOneCall();
+	}//for (int i = 0; i < 2; ++i)
 
 	pDevice->EndRender();
 

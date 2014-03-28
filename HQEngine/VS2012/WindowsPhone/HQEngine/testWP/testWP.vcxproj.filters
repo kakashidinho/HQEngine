@@ -31,6 +31,9 @@
     <Filter Include="Source">
       <UniqueIdentifier>{493d8e81-37db-4364-aea5-ab5824907f87}</UniqueIdentifier>
     </Filter>
+    <Image Include="..\..\..\..\Source\test\meshes\Tiny_skin.bmp">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Source\test\winmain.cpp">
@@ -85,11 +88,15 @@
     <Media Include="Assets\test\meshes\bat.hqmesh" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Source\test\script\effects.script" />
-    <None Include="..\..\..\..\Source\test\script\resourcesCommon.script" />
-    <None Include="..\..\..\..\Source\test\script\resourcesD3D9.script" />
-    <None Include="..\..\..\..\Source\test\script\resourcesD3D11.script" />
-    <None Include="..\..\..\..\Source\test\script\resourcesD3D11-winrt.script" />
-    <None Include="..\..\..\..\Source\test\script\resourcesGL.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\effects.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesCommon.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D11-winrt.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D11.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesD3D9.script" />
+    <CustomBuild Include="..\..\..\..\Source\test\script\resourcesGL.script" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\Source\test\meshes\tiny.hqanimation" />
+    <None Include="..\..\..\..\Source\test\meshes\tiny.hqmesh" />
   </ItemGroup>
 </Project>

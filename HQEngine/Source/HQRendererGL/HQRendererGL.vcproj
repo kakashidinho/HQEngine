@@ -937,6 +937,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HQVertexStreamManagerGL_VAO.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HQVertexStreamManagerPreShaderGL.cpp"
 				>
 				<FileConfiguration
@@ -1851,6 +1855,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HQVertexStreamManagerGL_VAO.h"
+				>
+			</File>
+			<File
 				RelativePath=".\HQVertexStreamManagerPreShaderGL.h"
 				>
 				<FileConfiguration
@@ -1941,10 +1949,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\ClassDiagram1.cd"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

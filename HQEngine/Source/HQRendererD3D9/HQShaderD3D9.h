@@ -11,7 +11,6 @@ COPYING.txt included with this distribution for more information.
 #ifndef _SHADER_H_
 #define _SHADER_H_
 #include "../HQShaderManager.h"
-#include "../BaseImpl/HQShaderParameterIndexTable.h"
 #include "../HQLoggableObject.h"
 #if _MSC_VER < 1700
 #include <hash_map>
@@ -68,7 +67,7 @@ struct HQShaderProgramD3D9
 
 	HQSharedPtr<HQShaderObjectD3D9> vertexShader;
 	HQSharedPtr<HQShaderObjectD3D9> pixelShader;
-	HQShaderParamIndexTable parameterIndexes;
+	HQClosedStringPrimeHashTable<hquint32> parameterIndexes;
 	HQItemManager<HQParameterD3D9> parameters;
 };
 

@@ -70,7 +70,7 @@ private:
 	int m_sourceLine;
 	std::string m_typeName;
 
-	HQEngineStringHashTable<ValueType> m_attributes; 
+	HQClosedStringPrimeHashTable<ValueType> m_attributes; 
 	HQEngineCommonResParserNode* m_nextSibling;
 	HQEngineCommonResParserNode* m_firstChild;
 };

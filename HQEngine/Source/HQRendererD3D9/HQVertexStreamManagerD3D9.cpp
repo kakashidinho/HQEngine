@@ -352,12 +352,13 @@ HQReturnVal HQVertexStreamManagerD3D9::UnmapVertexBuffer(hq_uint32 vertexBufferI
 		return HQ_FAILED;
 	return HQ_OK;
 }
-HQReturnVal HQVertexStreamManagerD3D9::MapIndexBuffer(HQMapType mapType , void **ppData) 
+HQReturnVal HQVertexStreamManagerD3D9::MapIndexBuffer(hquint32 bufferID, HQMapType mapType , void **ppData) 
 {
+	HQSharedPtr<HQIndexBufferD3D9> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
 #if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
+	if (pBuffer == NULL)
 		return HQ_FAILED;
-	if (this->activeIndexBuffer->pD3DBuffer == NULL)
+	if (pBuffer->pD3DBuffer == NULL)
 		return HQ_FAILED;
 #endif
 
@@ -372,21 +373,22 @@ HQReturnVal HQVertexStreamManagerD3D9::MapIndexBuffer(HQMapType mapType , void *
 		break;
 	}
 	
-	if (FAILED(this->activeIndexBuffer->pD3DBuffer->Lock(0 , 0 , ppData , lockFlags)))
+	if (FAILED(pBuffer->pD3DBuffer->Lock(0, 0, ppData, lockFlags)))
 		return HQ_FAILED;
 	return HQ_OK;
 }
-HQReturnVal HQVertexStreamManagerD3D9::UnmapIndexBuffer() 
+HQReturnVal HQVertexStreamManagerD3D9::UnmapIndexBuffer(hquint32 bufferID)
 {
+	HQSharedPtr<HQIndexBufferD3D9> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
 #if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
+	if (pBuffer == NULL)
 		return HQ_FAILED;
 
-	if (this->activeIndexBuffer->pD3DBuffer == NULL)
+	if (pBuffer->pD3DBuffer == NULL)
 		return HQ_FAILED;
 #endif
 
-	if (FAILED(this->activeIndexBuffer->pD3DBuffer->Unlock()))
+	if (FAILED(pBuffer->pD3DBuffer->Unlock()))
 		return HQ_FAILED;
 	return HQ_OK;
 }
@@ -413,30 +415,6 @@ HQReturnVal HQVertexStreamManagerD3D9::UpdateVertexBuffer(hq_uint32 vertexBuffer
 		memcpy(l_pData , pData , size);
 
 	vBuffer->pD3DBuffer->Unlock();
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerD3D9::UpdateIndexBuffer(hq_uint32 offset , hq_uint32 size , const void * pData)
-{
-#if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
-		return HQ_FAILED;
-#endif
-
-	hq_uint32 i = offset + size;
-	if (i > this->activeIndexBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-	
-	void *l_pData;
-	if (FAILED(this->activeIndexBuffer->pD3DBuffer->Lock(offset , size , &l_pData , 0)))
-		return HQ_FAILED;
-
-	if (i == 0)
-		memcpy(l_pData , pData , activeIndexBuffer->size);//update toàn bộ buffer
-	else
-		memcpy(l_pData , pData , size);
-
-	this->activeIndexBuffer->pD3DBuffer->Unlock();
-
 	return HQ_OK;
 }
 

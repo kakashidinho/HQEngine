@@ -571,13 +571,13 @@ HQReturnVal HQEngineRenderPassGL::ApplyTextureStates()
 
 /*-------------rendering effect--------------------*/
 HQEngineRenderEffectImpl::HQEngineRenderEffectImpl(const char* name, 
-												   HQEngineStringHashTable<HQSharedPtr<HQEngineRenderPassImpl> >& passes)
+												   HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderPassImpl> >& passes)
 : HQNamedGraphicsRelatedObj(name), m_passes(NULL), m_numPasses(0)
 {
 	m_numPasses = passes.GetNumItems();
 	m_passes = HQ_NEW HQSharedPtr<HQEngineRenderPassImpl> [m_numPasses];
 
-	HQEngineStringHashTable<HQSharedPtr<HQEngineRenderPassImpl> >::Iterator ite;
+	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderPassImpl> >::Iterator ite;
 	passes.GetIterator(ite);
 	
 	//copy passes' info
@@ -875,7 +875,7 @@ HQReturnVal HQEngineEffectManagerImpl::LoadEffect(const HQEngineEffectParserNode
 		return HQ_FAILED_RESOURCE_EXISTS;
 	}
 
-	HQEngineStringHashTable<HQSharedPtr<HQEngineRenderPassImpl> > passesTable;//rendering pass mapping table. TO DO: find a more efficient way to initialize the effect's passes
+	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderPassImpl> > passesTable;//rendering pass mapping table. TO DO: find a more efficient way to initialize the effect's passes
 
 	const HQEngineEffectParserNode * pass = effectItem->GetFirstChild("pass");
 	for (; pass != NULL; pass = pass->GetNextSibling("pass"))

@@ -224,6 +224,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Source\test\meshes\Tiny_skin.bmp" />
     <Image Include="Assets\Logo.png" />
     <Image Include="Assets\SmallLogo.png" />
     <Image Include="Assets\StoreLogo.png" />
@@ -509,6 +510,18 @@
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
     </CustomBuild>
+    <Media Include="..\..\..\..\Source\test\meshes\tiny.hqanimation">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+    </Media>
+    <Media Include="..\..\..\..\Source\test\meshes\tiny.hqmesh">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+    </Media>
     <None Include="ClassDiagram.cd" />
     <None Include="test_TemporaryKey.pfx" />
   </ItemGroup>
@@ -567,23 +580,23 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TEXTURE_COLOR=0</PreprocessorDefinitions>
     </FxCompile>
     <FxCompile Include="..\..\..\..\Source\test\shader\hlsl-mesh_vs.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">VS</EntryPointName>
@@ -606,31 +619,31 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TEXTURE_BUFFER=0;TEXTURE_COLOR=0</PreprocessorDefinitions>
     </FxCompile>
     <FxCompile Include="..\..\..\..\Source\test\shader\hlsl_ps.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">PS</EntryPointName>
@@ -652,11 +665,11 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">Pixel</ShaderType>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -664,11 +677,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
     </FxCompile>
     <FxCompile Include="..\..\..\..\Source\test\shader\hlsl_vs.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">VS</EntryPointName>
@@ -691,13 +704,13 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Assets\test\shader\%(Filename).cso</ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">4.0</ShaderModel>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
@@ -709,13 +722,13 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">;TEXTURE_COLOR=0;BLENDWEIGHT3=1</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">;TEXTURE_COLOR=0</PreprocessorDefinitions>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

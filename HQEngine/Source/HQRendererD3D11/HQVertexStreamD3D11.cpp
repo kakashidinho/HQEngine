@@ -492,15 +492,15 @@ HQReturnVal HQVertexStreamManagerD3D11::UnmapVertexBuffer(hq_uint32 vertexBuffer
 	pD3DContext->Unmap(vBuffer->pD3DBuffer , 0);
 	return HQ_OK;
 }
-HQReturnVal HQVertexStreamManagerD3D11::MapIndexBuffer(HQMapType mapType , void **ppData) 
+HQReturnVal HQVertexStreamManagerD3D11::MapIndexBuffer(hq_uint32 bufferID, HQMapType mapType, void **ppData)
 {
-
+	HQSharedPtr<HQIndexBufferD3D11> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
 #if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
+	if (pBuffer == NULL)
 		return HQ_FAILED;
-	if (this->activeIndexBuffer->pD3DBuffer == NULL)
+	if (pBuffer->pD3DBuffer == NULL)
 		return HQ_FAILED;
-	if (this->activeIndexBuffer->isDynamic == false)
+	if (pBuffer->isDynamic == false)
 	{
 		this->Log("Error : static buffer can't be mapped!");
 		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
@@ -526,23 +526,24 @@ HQReturnVal HQVertexStreamManagerD3D11::MapIndexBuffer(HQMapType mapType , void 
 #endif
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 
-	if (FAILED(pD3DContext->Map(activeIndexBuffer->pD3DBuffer , 0 , d3dmapType , 0 , &mappedSubResource)))
+	if (FAILED(pD3DContext->Map(pBuffer->pD3DBuffer, 0, d3dmapType, 0, &mappedSubResource)))
 		return HQ_FAILED;
 
 	*ppData = mappedSubResource.pData;
 
 	return HQ_OK;
 }
-HQReturnVal HQVertexStreamManagerD3D11::UnmapIndexBuffer() 
+HQReturnVal HQVertexStreamManagerD3D11::UnmapIndexBuffer(hq_uint32 bufferID)
 {
+	HQSharedPtr<HQIndexBufferD3D11> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
 #if defined _DEBUG || defined DEBUG
-	if (this->activeIndexBuffer == NULL)
+	if (pBuffer == NULL)
 		return HQ_FAILED;
 
-	if (this->activeIndexBuffer->pD3DBuffer == NULL)
+	if (pBuffer->pD3DBuffer == NULL)
 		return HQ_FAILED;
 #endif
-	pD3DContext->Unmap(activeIndexBuffer->pD3DBuffer , 0);
+	pD3DContext->Unmap(pBuffer->pD3DBuffer, 0);
 	return HQ_OK;
 }
 
@@ -580,41 +581,6 @@ HQReturnVal HQVertexStreamManagerD3D11::UpdateVertexBuffer(hq_uint32 vertexBuffe
 		pD3DContext->Unmap(vBuffer->pD3DBuffer , 0);
 	}
 	
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerD3D11::UpdateIndexBuffer(hq_uint32 offset , hq_uint32 size , const void * pData)
-{
-#if defined _DEBUG || defined DEBUG	
-	if (this->activeIndexBuffer == NULL)
-		return HQ_FAILED;
-	if (this->activeIndexBuffer->isDynamic == false)
-	{
-		this->Log("Error : static buffer can't be updated!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-
-	hq_uint32 i = offset + size;
-	if (i > activeIndexBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-	D3D11_MAP mapType = D3D11_MAP_WRITE_NO_OVERWRITE;
-	if (i == 0 )//update toàn bộ buffer
-	{
-		size = activeIndexBuffer->size; 
-		mapType = D3D11_MAP_WRITE_DISCARD;
-	}
-	else if (offset == 0 && size == activeIndexBuffer->size)
-		mapType = D3D11_MAP_WRITE_DISCARD;
-
-	D3D11_MAPPED_SUBRESOURCE mapped;
-
-	if(SUCCEEDED(pD3DContext->Map(activeIndexBuffer->pD3DBuffer , 0 , mapType , 0 , &mapped)))
-	{
-		memcpy((hq_ubyte8*)mapped.pData + offset , pData , size);
-
-		pD3DContext->Unmap(activeIndexBuffer->pD3DBuffer , 0);
-	}
-
 	return HQ_OK;
 }
 

@@ -41,7 +41,7 @@ uniform cbuffer {
 	 float3x4 rotation;
 	float4x4 viewProj;
 	float3x4 boneMatrices[36];
-} : BUFFER10;
+} : BUFFER[10];
 #else
 	 float3x4 rotation;
 	float4x4 viewProj;

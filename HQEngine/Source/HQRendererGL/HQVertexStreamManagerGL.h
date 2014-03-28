@@ -71,6 +71,7 @@ public:
 	HQVertexStreamManagerGL(hq_uint32 maxVertexAttribs , HQLogStream *logFileStream , bool flushLog);
 	~HQVertexStreamManagerGL() ;
 	
+	virtual void Commit() {}//this is called just before drawing
 	
 	GLuint GetCurrentBoundVBuffer() {return this->currentBoundVBuffer;}
 	void InvalidateCurrentBoundVBuffer() {this->currentBoundVBuffer = 0;}
@@ -100,11 +101,10 @@ public:
 	
 	HQReturnVal MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) ;
 	HQReturnVal UnmapVertexBuffer(hq_uint32 vertexBufferID) ;
-	HQReturnVal MapIndexBuffer( HQMapType mapType , void **ppData) ;
-	HQReturnVal UnmapIndexBuffer() ;
+	HQReturnVal MapIndexBuffer(hq_uint32 indexBufferID, HQMapType mapType, void **ppData);
+	HQReturnVal UnmapIndexBuffer(hq_uint32 indexBufferID);
 
 	HQReturnVal UpdateVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 offset , hq_uint32 size , const void * pData);
-	HQReturnVal UpdateIndexBuffer(hq_uint32 offset , hq_uint32 size , const void * pData);
 	HQReturnVal UpdateIndexBuffer(hq_uint32 indexBufferID, hq_uint32 offset , hq_uint32 size , const void * pData);
 
 	HQReturnVal RemoveVertexBuffer(hq_uint32 vertexBufferID) ;
@@ -145,11 +145,10 @@ public:
 
 	HQReturnVal MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) ;
 	HQReturnVal UnmapVertexBuffer(hq_uint32 vertexBufferID) ;
-	HQReturnVal MapIndexBuffer( HQMapType mapType , void **ppData) ;
-	HQReturnVal UnmapIndexBuffer() ;
+	HQReturnVal MapIndexBuffer(hq_uint32 indexBufferID, HQMapType mapType, void **ppData);
+	HQReturnVal UnmapIndexBuffer(hq_uint32 indexBufferID);
 
 	HQReturnVal UpdateVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 offset , hq_uint32 size , const void * pData);
-	HQReturnVal UpdateIndexBuffer(hq_uint32 offset , hq_uint32 size , const void * pData);
 	HQReturnVal UpdateIndexBuffer(hq_uint32 indexBufferID, hq_uint32 offset , hq_uint32 size , const void * pData);
 
 protected:

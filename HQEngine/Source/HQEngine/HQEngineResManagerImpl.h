@@ -140,8 +140,8 @@ private:
 	HQReturnVal LoadShader(const HQEngineResParserNode* shaderItem);
 
 
-	HQEngineStringHashTable<HQSharedPtr<HQEngineTextureResImpl> > m_textures;
-	HQEngineStringHashTable<HQSharedPtr<HQEngineShaderResImpl> > m_shaders;
+	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineTextureResImpl> > m_textures;
+	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineShaderResImpl> > m_shaders;
 };
 
 

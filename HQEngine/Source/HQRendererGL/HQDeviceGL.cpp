@@ -15,6 +15,13 @@ Note: Initialization code is a bit ugly since it is written a long time ago
 
 #include "HQDeviceGLPCH.h"
 #include "HQDeviceGL.h"
+#ifdef HQ_OPENGLES
+#include "HQVertexStreamManagerPreShaderGL.h"
+#else
+//TO DO : add to GLES 3.0 later
+#include "HQVertexStreamManagerGL_VAO.h"
+#endif
+
 #include <string.h>
 #include <string>
 
@@ -22,24 +29,6 @@ Note: Initialization code is a bit ugly since it is written a long time ago
 #if defined _DEBUG || defined DEBUG
 #include <assert.h>
 #endif
-
-struct CString {
-    CString (const char *source) {
-        raw_string = HQ_NEW char[strlen(source) + 1];
-        strcpy(raw_string, source);
-    }
-    ~CString () {
-        delete[] raw_string;
-    }
-    CString &operator = (const char *source) {
-        delete[] raw_string;
-        raw_string = HQ_NEW char[strlen(source) + 1];
-        strcpy(raw_string, source);
-        return *this;
-    }
-    const char* c_str() const {return raw_string;}
-    char * raw_string;
-};
 
 
 /*----------------------------------*/
@@ -292,7 +281,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 
 	//scan addtional options
 	int shaderManagerType = GLSL_SHADER_MANAGER;
-	CString core_profile = "";
+	std::string core_profile = "";
 	
 	if (additionalSettings != NULL)
 	{
@@ -665,8 +654,14 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 		this->vStreamMan = new HQVertexStreamManagerNoMapGL(pEnum->caps.maxVertexAttribs , this->m_pLogStream , this->m_flushLog);
 	else
 #endif
-		this->vStreamMan = new HQVertexStreamManagerGL(pEnum->caps.maxVertexAttribs , this->m_pLogStream , this->m_flushLog);
-
+	{
+#ifndef HQ_OPENGLES //TO DO: add to GLES later
+		if (GLEW_VERSION_3_0)
+			this->vStreamMan = new HQVertexStreamManagerGL_VAO(pEnum->caps.maxVertexAttribs, this->m_pLogStream, this->m_flushLog);
+		else
+#endif
+			this->vStreamMan = new HQVertexStreamManagerGL(pEnum->caps.maxVertexAttribs, this->m_pLogStream, this->m_flushLog);
+	}
 	//create render target manager
 #ifndef HQ_IPHONE_PLATFORM
 	if (GLEW_EXT_framebuffer_object || GLEW_VERSION_3_0)
@@ -1445,7 +1440,9 @@ HQReturnVal HQDeviceGL::Draw(hq_uint32 vertexCount , hq_uint32 firstVertex)
 {
 	if ((this->flags & RENDER_BEGUN)== 0)
 		return HQ_FAILED_RENDER_NOT_BEGUN;
+	static_cast<HQVertexStreamManagerGL*> (vStreamMan) ->Commit();//tell vertex stream manager that we are about to draw
 	static_cast<HQBaseShaderManagerGL*> (shaderMan)->Commit();//tell shader manager that we are about to draw
+	
 	glDrawArrays(this->primitiveMode , firstVertex , vertexCount);
 	return HQ_OK;
 }
@@ -1474,7 +1471,10 @@ HQReturnVal HQDeviceGL::DrawPrimitive(hq_uint32 primitiveCount , hq_uint32 first
 	default:
 		vertexCount = 0;
 	}
+
+	static_cast<HQVertexStreamManagerGL*> (vStreamMan) ->Commit();//tell vertex stream manager that we are about to draw
 	static_cast<HQBaseShaderManagerGL*> (shaderMan)->Commit();//tell shader manager that we are about to draw
+
 	glDrawArrays(this->primitiveMode , firstVertex , vertexCount);
 	return HQ_OK;
 }
@@ -1485,6 +1485,7 @@ HQReturnVal HQDeviceGL::DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCount
 
 	hq_uint32 offset = (firstIndex << static_cast<HQVertexStreamManagerGL*> (this->vStreamMan)->GetIndexShiftFactor());//should be 2 if data type is unsigned int and 1 if unsigned short
 	
+	static_cast<HQVertexStreamManagerGL*> (vStreamMan) ->Commit();//tell vertex stream manager that we are about to draw
 	static_cast<HQBaseShaderManagerGL*> (shaderMan)->Commit();//tell shader manager that we are about to draw
 
 	glDrawElements(this->primitiveMode , 
@@ -1524,6 +1525,7 @@ HQReturnVal HQDeviceGL::DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 p
 
 	hq_uint32 offset = (firstIndex << static_cast<HQVertexStreamManagerGL*> (this->vStreamMan)->GetIndexShiftFactor());//should be 2 if data type is unsigned int and 1 if unsigned short
 
+	static_cast<HQVertexStreamManagerGL*> (vStreamMan) ->Commit();//tell vertex stream manager that we are about to draw
 	static_cast<HQBaseShaderManagerGL*> (shaderMan)->Commit();//tell shader manager that we are about to draw
 
 	glDrawElements(this->primitiveMode , 

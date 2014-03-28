@@ -294,11 +294,12 @@ static GLboolean _glewSearchExtensionList (const char* name, const ExtNode *exte
 {
   const GLubyte* p;
   const ExtNode * extNode = extensions; 
+  GLuint n;
   GLuint len = _glewStrLen((const GLubyte*)name);
   while(extNode)
   {
 	p = extNode->extension;
-	GLuint n = _glewStrCLen(p, ' ');
+	n = _glewStrCLen(p, ' ');
     	if (len == n && _glewStrSame((const GLubyte*)name, p, n)) return GL_TRUE;
 
 	extNode = extNode->nextExt;
@@ -315,11 +316,12 @@ static GLboolean _glewSearchExtensionList (const char* name, const ExtNode *exte
 static GLboolean _glewSearchExtension (const char* name, const GLubyte *start, const GLubyte *end)
 {
   const GLubyte* p;
+  GLuint n;
   GLuint len = _glewStrLen((const GLubyte*)name);
   p = start;
   while (p < end)
   {
-    GLuint n = _glewStrCLen(p, ' ');
+    n = _glewStrCLen(p, ' ');
     if (len == n && _glewStrSame((const GLubyte*)name, p, n)) return GL_TRUE;
     p += n+1;
   }
@@ -9556,7 +9558,6 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
   GLint major, minor;
   ExtNode * extensions;
   GLubyte *copied_extensions_str = NULL;
-  const size_t numExt;
   /* query opengl version */
   s = glGetString(GL_VERSION);
   dot = _glewStrCLen(s, '.');
@@ -9613,7 +9614,7 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
         glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 	glGetStringi = (PFNGLGETSTRINGIPROC)glewGetProcAddress((const GLubyte*)"glGetStringi");
 	for (i = 0; i < numExtensions; ++i)
-     	{
+     {
 		const GLubyte* extension = glGetStringi(GL_EXTENSIONS, i);
 		ExtNode * extNode = _glewNewExtNode(extension);
 		if (last_extension == NULL)//first extension
@@ -9628,12 +9629,14 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
   else
   {
   	const GLubyte* extensions_str = glGetString(GL_EXTENSIONS);
+	ExtNode* last_extension = NULL;
+	GLubyte* extension;
+
 	size_t len = strlen(extensions_str);
 	copied_extensions_str = (GLubyte*)malloc(len + 1);
 	strcpy(copied_extensions_str, extensions_str);
 
-	ExtNode* last_extension = NULL;
-	GLubyte* extension = (GLubyte*)strtok(copied_extensions_str, " \t\r");
+	extension = (GLubyte*)strtok(copied_extensions_str, " \t\r");
 	while (extension != NULL)
 	{
 		ExtNode * extNode = _glewNewExtNode(extension);

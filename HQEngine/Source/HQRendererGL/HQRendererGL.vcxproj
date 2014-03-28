@@ -375,6 +375,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HQDeviceGLPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="HQVertexStreamManagerGL.cpp" />
+    <ClCompile Include="HQVertexStreamManagerGL_VAO.cpp" />
     <ClCompile Include="HQVertexStreamManagerPreShaderGL.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugLayer|Win32'">true</ExcludedFromBuild>
@@ -488,6 +489,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuild>
+    <ClInclude Include="HQVertexStreamManagerGL_VAO.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="targetver.h" />

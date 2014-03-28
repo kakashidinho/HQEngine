@@ -370,7 +370,7 @@ void HQTextureManagerD3D11::UnbindTextureFromAllSlots(const HQSharedPtr<HQTextur
 		hq_uint32 resourceSlot = slot & 0x0fffffff;
 		hq_uint32 shaderStage = slot & 0xf0000000;
 
-		TextureSlot *pTextureSlot;
+		TextureSlot *pTextureSlot = NULL;
 
 		switch (shaderStage)
 		{

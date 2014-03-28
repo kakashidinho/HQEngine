@@ -232,14 +232,14 @@ struct HQEngineRenderPassGL : public HQEngineRenderPassImpl
 class HQEngineRenderEffectImpl: public HQNamedGraphicsRelatedObj, public HQEngineRenderEffect {
 public:
 	HQEngineRenderEffectImpl(const char* name, 
-		HQEngineStringHashTable<HQSharedPtr<HQEngineRenderPassImpl> >& passes);
+		HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderPassImpl> >& passes);
 	virtual ~HQEngineRenderEffectImpl() ;
 	virtual hquint32 GetNumPasses() const {return m_numPasses;}
 	virtual HQEngineRenderPass* GetPassByName(const char* name);
 	virtual hquint32 GetPassIndexByName(const char* name);
 	virtual HQEngineRenderPass* GetPass(hquint32 index) {return m_passes[index].GetRawPointer();}
 private:
-	typedef HQEngineStringHashTable<hquint32> PassIndexMapTable;
+	typedef HQClosedStringPrimeHashTable<hquint32> PassIndexMapTable;
 	PassIndexMapTable m_passIdxMap;//render pass index mapping table
 	HQSharedPtr<HQEngineRenderPassImpl> * m_passes;//render passes
 	hquint32 m_numPasses;
@@ -314,13 +314,13 @@ private:
 	HQSharedPtr<HQEngineDSStateWrapper> CreateOrGetDSState(const HQEngineDSStateWrapper::CreationParams& params);
 	HQSharedPtr<HQEngineSamplerStateWrapper> CreateOrGetSamplerState(const HQEngineSamplerStateWrapper::CreationParams& params);
 
-	typedef HQEnginePtrKeyHashTable<const HQEngineShaderProgramWrapper::CreationParams*, HQSharedPtr<HQEngineShaderProgramWrapper> > ProgramTable;
-	typedef HQEnginePtrKeyHashTable<const HQEngineRTGroupWrapper::CreationParams*, HQSharedPtr<HQEngineRTGroupWrapper> > RTGroupTable;
-	typedef HQEnginePtrKeyHashTable<const HQEngineDSBufferWrapper::CreationParams*, HQSharedPtr<HQEngineDSBufferWrapper> > DSBufferTable;
-	typedef HQEnginePtrKeyHashTable<const HQEngineBlendStateWrapper::CreationParams*, HQSharedPtr<HQEngineBlendStateWrapper> > BlendStateTable;
-	typedef HQEnginePtrKeyHashTable<const HQEngineDSStateWrapper::CreationParams*, HQSharedPtr<HQEngineDSStateWrapper> > DSStateTable;
-	typedef HQEnginePtrKeyHashTable<const HQEngineSamplerStateWrapper::CreationParams*, HQSharedPtr<HQEngineSamplerStateWrapper> > SamplerStateTable;
-	typedef HQEngineStringHashTable<HQSharedPtr<HQEngineRenderEffectImpl> > EffectTable;
+	typedef HQClosedPtrKeyHashTable<const HQEngineShaderProgramWrapper::CreationParams*, HQSharedPtr<HQEngineShaderProgramWrapper> > ProgramTable;
+	typedef HQClosedPtrKeyHashTable<const HQEngineRTGroupWrapper::CreationParams*, HQSharedPtr<HQEngineRTGroupWrapper> > RTGroupTable;
+	typedef HQClosedPtrKeyHashTable<const HQEngineDSBufferWrapper::CreationParams*, HQSharedPtr<HQEngineDSBufferWrapper> > DSBufferTable;
+	typedef HQClosedPtrKeyHashTable<const HQEngineBlendStateWrapper::CreationParams*, HQSharedPtr<HQEngineBlendStateWrapper> > BlendStateTable;
+	typedef HQClosedPtrKeyHashTable<const HQEngineDSStateWrapper::CreationParams*, HQSharedPtr<HQEngineDSStateWrapper> > DSStateTable;
+	typedef HQClosedPtrKeyHashTable<const HQEngineSamplerStateWrapper::CreationParams*, HQSharedPtr<HQEngineSamplerStateWrapper> > SamplerStateTable;
+	typedef HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderEffectImpl> > EffectTable;
 
 	ProgramTable m_shaderPrograms;//shader programs
 	RTGroupTable m_renderTargetGroups;//render targets. 
@@ -331,15 +331,15 @@ private:
 
 	EffectTable m_effects;//rendering effects
 
-	HQEngineStringHashTable<HQCullMode> m_cullModeMap;
-	HQEngineStringHashTable<HQDepthMode> m_depthModeMap;
-	HQEngineStringHashTable<HQStencilOp> m_stencilOpMap;
-	HQEngineStringHashTable<HQStencilFunc> m_stencilFuncMap;
-	HQEngineStringHashTable<HQBlendFactor> m_blendFactorMap;
-	HQEngineStringHashTable<HQBlendOp> m_blendOpMap;
-	HQEngineStringHashTable<HQTexAddressMode> m_taddrModeMap;
-	HQEngineStringHashTable<HQFilterMode> m_filterModeMap;
-	HQEngineStringHashTable<HQDepthStencilFormat> m_dsFmtMap;
+	HQClosedStringPrimeHashTable<HQCullMode> m_cullModeMap;
+	HQClosedStringPrimeHashTable<HQDepthMode> m_depthModeMap;
+	HQClosedStringPrimeHashTable<HQStencilOp> m_stencilOpMap;
+	HQClosedStringPrimeHashTable<HQStencilFunc> m_stencilFuncMap;
+	HQClosedStringPrimeHashTable<HQBlendFactor> m_blendFactorMap;
+	HQClosedStringPrimeHashTable<HQBlendOp> m_blendOpMap;
+	HQClosedStringPrimeHashTable<HQTexAddressMode> m_taddrModeMap;
+	HQClosedStringPrimeHashTable<HQFilterMode> m_filterModeMap;
+	HQClosedStringPrimeHashTable<HQDepthStencilFormat> m_dsFmtMap;
 
 	bool m_isGL;
 };
