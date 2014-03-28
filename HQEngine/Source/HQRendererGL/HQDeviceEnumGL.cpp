@@ -1005,6 +1005,8 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 #elif defined HQ_ANDROID_PLATFORM
 	if (GLEW_VERSION_2_0){//core in openGL es 2.0
 #endif //default ios support fbo
+        GLuint currentActiveFBO;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&currentActiveFBO);
 		glGenFramebuffers(1, &fbo);
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 		/*------------check render target texture format----------*/
@@ -1065,12 +1067,14 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 			caps.dsFormat[i] = true;
 			glDeleteRenderbuffers(2, depthStencilBuffer);
 		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, currentActiveFBO);
 		glDeleteFramebuffers(1, &fbo);
 #ifndef HQ_IPHONE_PLATFORM
 	}
 	else //EXT/OES version
 	{
+        GLuint currentActiveFBO;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&currentActiveFBO);
 		glGenFramebuffersEXT(1, &fbo);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
 		/*------------check render target texture format----------*/
@@ -1132,7 +1136,7 @@ void HQDeviceEnumGL::CheckRenderBufferFormatSupported()
 			caps.dsFormat[i] = true;
 			glDeleteRenderbuffersEXT(2, depthStencilBuffer);
 		}
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, currentActiveFBO);
 		glDeleteFramebuffersEXT(1, &fbo);
 	}
 #endif

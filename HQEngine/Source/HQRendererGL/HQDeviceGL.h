@@ -102,7 +102,6 @@ protected:
 	GLXContext glc;
 #elif defined HQ_IPHONE_PLATFORM
 	HQIOSOpenGLContext *glc;
-	CAEAGLLayer *eaglLayer;
 #elif defined HQ_MAC_PLATFORM
 	HQAppleOpenGLContext * glc;
 #elif defined HQ_ANDROID_PLATFORM

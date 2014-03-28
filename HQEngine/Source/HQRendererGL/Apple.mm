@@ -429,7 +429,7 @@ andDepthStencilFormat: (FORMAT) depthStencilFmt
 }
 
 
-- (oneway void) release
+- (void) dealloc
 {
 	glDeleteFramebuffers(1, &self->frameBuffer);
 	
@@ -438,8 +438,6 @@ andDepthStencilFormat: (FORMAT) depthStencilFmt
 	glDeleteRenderbuffers(NUM_DS_BUFFERS, self->depthStencilRenderBuffer);
 	
 	[EAGLContext setCurrentContext:nil];
-	
-	[super release];
 }
 
 @end
@@ -499,11 +497,12 @@ andDepthStencilFormat: (FORMAT) depthStencilFmt
 }
 */
 
-- (oneway void)release {
+- (void) dealloc
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 										name:NSViewGlobalFrameDidChangeNotification
 										object:self->view]; 
-	[super release];
+	
 }
 
 @end
