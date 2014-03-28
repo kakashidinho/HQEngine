@@ -321,7 +321,7 @@ HQReturnVal HQVertexStreamManagerGL_VAO::UpdateIndexBuffer(hquint32 bufferID, hq
 	return HQ_OK;
 }
 
-HQSharedPtr<HQVertexArrayObjGL> HQVertexStreamManagerGL_VAO::GetOrCreateNewVAO()
+inline HQSharedPtr<HQVertexArrayObjGL> HQVertexStreamManagerGL_VAO::GetOrCreateNewVAO()
 {
 	if (this->m_currentVAOParams.vInputLayout == 0)
 		return HQSharedPtr<HQVertexArrayObjGL>::null;
@@ -347,7 +347,7 @@ void HQVertexStreamManagerGL_VAO::Commit()//tell vertex stream manager that we a
 		m_currentVAOParams.CalculateHashCode();//re-calcualte hash code
 		
 		//retrieve appropriate VAO
-		HQSharedPtr<HQVertexArrayObjGL> &vao = this->GetOrCreateNewVAO();
+		HQSharedPtr<HQVertexArrayObjGL> vao = this->GetOrCreateNewVAO();
 		//activate VAO
 		this->ActiveVAO(vao);
 	}

@@ -39,7 +39,7 @@ struct KeyInfo{
 	KeySym unmodSym;//unmodified keysym
 };
 //for detecting repeated key presses
-static HQEnginePrimeHashTable<KeyCode, KeyInfo> g_keyTable;
+static HQClosedPrimeHashTable<KeyCode, KeyInfo> g_keyTable;
 
 //mouse wheel delta
 static const int g_wheelDelta = 120;
