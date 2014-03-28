@@ -443,21 +443,23 @@ HQReturnVal  HQVertexStreamManagerGL::SetIndexBuffer(hq_uint32 indexBufferID )
 		if (iBuffer == NULL)
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , 0);
 		else
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , iBuffer->bufferName);
-		
-		this->indexDataType = iBuffer->dataType;
-#if 0
-		switch (this->indexDataType)
 		{
-		case GL_UNSIGNED_INT://0x1405
-			this->indexShiftFactor = sizeof(unsigned int) >> 1;//2
-			break;
-		case GL_UNSIGNED_SHORT://0x1403
-			this->indexShiftFactor = sizeof(unsigned short) >> 1;//1
-		}
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuffer->bufferName);
+
+			this->indexDataType = iBuffer->dataType;
+#if 0
+			switch (this->indexDataType)
+			{
+			case GL_UNSIGNED_INT://0x1405
+				this->indexShiftFactor = sizeof(unsigned int) >> 1;//2
+				break;
+			case GL_UNSIGNED_SHORT://0x1403
+				this->indexShiftFactor = sizeof(unsigned short) >> 1;//1
+			}
 #else//optimized version
-		this->indexShiftFactor = (this->indexDataType & 0x0000000f) >> 1;//ex : (GL_UNSIGNED_INT & 0xf) >> 1 = (0x1405 & 0xf) >> 1 = 2  
-#endif
+			this->indexShiftFactor = (this->indexDataType & 0x0000000f) >> 1;//ex : (GL_UNSIGNED_INT & 0xf) >> 1 = (0x1405 & 0xf) >> 1 = 2  
+#endif	
+		}
 
 		this->activeIndexBuffer = iBuffer;
 	}

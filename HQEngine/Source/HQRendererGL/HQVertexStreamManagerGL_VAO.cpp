@@ -227,23 +227,24 @@ HQReturnVal HQVertexStreamManagerGL_VAO::SetIndexBuffer(hq_uint32 indexBufferID)
 		if (iBuffer == NULL)
 			m_currentVAOParams.indexBufferGL = 0;
 		else
-			m_currentVAOParams.indexBufferGL = iBuffer->bufferName;
-		m_currentVAOParamsChanged = true;
-
-		this->indexDataType = iBuffer->dataType;
-#if 0
-		switch (this->indexDataType)
 		{
-		case GL_UNSIGNED_INT://0x1405
-			this->indexShiftFactor = sizeof(unsigned int) >> 1;//2
-			break;
-		case GL_UNSIGNED_SHORT://0x1403
-			this->indexShiftFactor = sizeof(unsigned short) >> 1;//1
-		}
-#else//optimized version
-		this->indexShiftFactor = (this->indexDataType & 0x0000000f) >> 1;//ex : (GL_UNSIGNED_INT & 0xf) >> 1 = (0x1405 & 0xf) >> 1 = 2  
-#endif
+			m_currentVAOParams.indexBufferGL = iBuffer->bufferName;
+			m_currentVAOParamsChanged = true;
 
+			this->indexDataType = iBuffer->dataType;
+#if 0
+			switch (this->indexDataType)
+			{
+			case GL_UNSIGNED_INT://0x1405
+				this->indexShiftFactor = sizeof(unsigned int) >> 1;//2
+				break;
+			case GL_UNSIGNED_SHORT://0x1403
+				this->indexShiftFactor = sizeof(unsigned short) >> 1;//1
+			}
+#else//optimized version
+			this->indexShiftFactor = (this->indexDataType & 0x0000000f) >> 1;//ex : (GL_UNSIGNED_INT & 0xf) >> 1 = (0x1405 & 0xf) >> 1 = 2  
+#endif
+		}
 		this->activeIndexBuffer = iBuffer;
 	}
 
@@ -357,12 +358,23 @@ HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexBuffer(hq_uint32 vertexBuff
 {
 	HQSharedPtr<HQBufferGL> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID);
 
-	HQReturnVal re =(HQReturnVal) HQVertexStreamManagerGL::RemoveVertexBuffer(vertexBufferID);
+	HQReturnVal re = (HQReturnVal)HQVertexStreamManagerGL::RemoveVertexBuffer(vertexBufferID);
 
-	if (vBuffer.GetRefCount() == 1)//we are holding the last reference
+
+	if (vBuffer != NULL)
 	{
-		this->RemoveDependentVAOs(vBuffer);//remove every VAO the uses this buffer
-	}
+		for (hquint32 i = 0; i < this->maxVertexAttribs; ++i)
+		{
+			if (this->streams[i].vertexBuffer == vBuffer)
+				this->SetVertexBuffer(HQ_NULL_ID, i, 0);
+		}
+
+
+		if (vBuffer.GetRefCount() == 1)//we are holding the last reference
+		{
+			this->RemoveDependentVAOs(vBuffer);//remove every VAO the uses this buffer
+		}
+	}//if (vBuffer != NULL)
 
 	return re;
 }
@@ -370,6 +382,8 @@ HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexBuffer(hq_uint32 vertexBuff
 HQReturnVal HQVertexStreamManagerGL_VAO::RemoveIndexBuffer(hq_uint32 indexBufferID)
 {
 	HQSharedPtr<HQIndexBufferGL> iBuffer = this->indexBuffers.GetItemPointer(indexBufferID);
+	if (this->activeIndexBuffer == iBuffer)
+		this->SetIndexBuffer(HQ_NULL_ID);
 
 	HQReturnVal re = (HQReturnVal)HQVertexStreamManagerGL::RemoveIndexBuffer(indexBufferID);
 
@@ -384,6 +398,8 @@ HQReturnVal HQVertexStreamManagerGL_VAO::RemoveIndexBuffer(hq_uint32 indexBuffer
 HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexInputLayout(hq_uint32 inputLayoutID)
 {
 	HQSharedPtr<HQVertexInputLayoutGL> vLayout = this->inputLayouts.GetItemPointer(inputLayoutID);
+	if (this->activeInputLayout == vLayout)
+		this->SetVertexInputLayout(HQ_NULL_ID);
 
 	HQReturnVal re = (HQReturnVal)HQVertexStreamManagerGL::RemoveVertexInputLayout(inputLayoutID);
 
@@ -397,6 +413,11 @@ HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexInputLayout(hq_uint32 input
 
 void HQVertexStreamManagerGL_VAO::RemoveAllVertexBuffer()
 {
+	for (hquint32 i = 0; i < this->maxVertexAttribs; ++i)
+	{
+		this->SetVertexBuffer(HQ_NULL_ID, i, 0);
+	}
+
 	HQItemManager<HQBufferGL>::Iterator ite;
 	for (this->vertexBuffers.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 	{
@@ -412,6 +433,8 @@ void HQVertexStreamManagerGL_VAO::RemoveAllVertexBuffer()
 
 void HQVertexStreamManagerGL_VAO::RemoveAllIndexBuffer()
 {
+	this->SetIndexBuffer(HQ_NULL_ID);
+
 	HQItemManager<HQIndexBufferGL>::Iterator ite;
 	for (this->indexBuffers.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 	{
@@ -428,6 +451,8 @@ void HQVertexStreamManagerGL_VAO::RemoveAllIndexBuffer()
 
 void HQVertexStreamManagerGL_VAO::RemoveAllVertexInputLayout()
 {
+	this->SetVertexInputLayout(HQ_NULL_ID);
+
 	HQItemManager<HQVertexInputLayoutGL>::Iterator ite;
 	for (this->inputLayouts.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 	{
@@ -449,6 +474,8 @@ void HQVertexStreamManagerGL_VAO::RemoveDependentVAOs(const HQSharedPtr<HQBuffer
 	{
 		if ((*ite)->IsBufferUsed(vBuffer))
 		{
+			if ((*ite) == m_currentVAO)
+				m_currentVAO = NULL;
 			m_vertexArrayObjects.Remove(ite.GetKey());
 			//re-search from the start
 			m_vertexArrayObjects.GetIterator(ite);
@@ -464,6 +491,8 @@ void HQVertexStreamManagerGL_VAO::RemoveDependentVAOs(const HQSharedPtr<HQIndexB
 	{
 		if ((*ite)->params.indexBufferGL == iBuffer->bufferName)
 		{
+			if ((*ite) == m_currentVAO)
+				m_currentVAO = NULL;
 			m_vertexArrayObjects.Remove(ite.GetKey());
 			//re-search from the start
 			m_vertexArrayObjects.GetIterator(ite);
@@ -479,6 +508,8 @@ void HQVertexStreamManagerGL_VAO::RemoveDependentVAOs(const HQSharedPtr<HQVertex
 	{
 		if ((*ite)->params.vInputLayout == vLayout.GetRawPointer())
 		{
+			if ((*ite) == m_currentVAO)
+				m_currentVAO = NULL;
 			m_vertexArrayObjects.Remove(ite.GetKey());
 			//re-search from the start
 			m_vertexArrayObjects.GetIterator(ite);

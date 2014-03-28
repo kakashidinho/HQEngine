@@ -29,7 +29,7 @@ int HQEngineMain(int argc, char **argv)
 
 #	endif
 #endif
-
+	
 	const char renderAPI[] = "GL";//"D3D9" or "GL"
 
 	//create log stream
