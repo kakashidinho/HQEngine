@@ -16,6 +16,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQItemManager.h"
 #include "../HQLoggableObject.h"
 #include "../HQDataStream.h"
+#include "../HQUtilMath.h"
 #include <string.h>
 #include <vorbis/vorbisfile.h>
 

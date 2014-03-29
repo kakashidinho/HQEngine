@@ -86,6 +86,17 @@ public:
 								   )= 0;
 
 	///
+	///Create render target group with only one render target. See above method for more details
+	///
+	HQReturnVal CreateRenderTargetGroup(hquint32 renderTargetID , 
+									hq_uint32 depthStencilBufferID ,
+									hq_uint32 *pRenderTargetGroupID_out
+									) {
+		HQRenderTargetDesc desc (renderTargetID);
+		return CreateRenderTargetGroup(&desc, depthStencilBufferID, 1, pRenderTargetGroupID_out);
+	}
+
+	///
 	///Set the render targets in group {renderTargetGroupID} as main render targets	.
 	///Pass HQ_NOT_AVAIL_ID to switch to default render target
 	///

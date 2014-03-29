@@ -62,7 +62,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 40 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 40 "res_script_parser.y"
 
 	struct {
 		int line;
@@ -79,7 +79,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 83 "..\\..\\..\\..\\Source\\HQEngine\\gen_res_script_parser.hpp"
+#line 83 "gen_res_script_parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

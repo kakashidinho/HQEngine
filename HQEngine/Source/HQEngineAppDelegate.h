@@ -12,7 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define HQ_ENGINEAPP_DELEGATE_H
 #include "HQTimer.h"
 #include "HQKeyCode.h"
-#include "HQUtilMath.h"
+#include "HQ2DMath.h"
 ///
 ///application rendering delegate
 ///

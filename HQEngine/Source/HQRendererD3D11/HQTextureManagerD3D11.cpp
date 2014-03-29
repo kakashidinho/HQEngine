@@ -12,7 +12,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQTextureManagerD3D11.h"
 #include "HQDeviceD3D11.h"
 
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM || defined _STATIC_CRT)
 #define HQ_USE_PVR_TEX_LIB 1
 #else
 #define HQ_USE_PVR_TEX_LIB 0

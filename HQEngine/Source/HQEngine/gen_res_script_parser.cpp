@@ -76,7 +76,7 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 11 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 11 "res_script_parser.y"
 
 	#include "HQEngineCommonInternal.h"
 	#include "HQEngineResParserCommon.h"
@@ -105,7 +105,7 @@
 
 
 /* Line 189 of yacc.c  */
-#line 109 "..\\..\\..\\..\\Source\\HQEngine\\gen_res_script_parser.cpp"
+#line 109 "gen_res_script_parser.cpp"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -155,7 +155,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 40 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 40 "res_script_parser.y"
 
 	struct {
 		int line;
@@ -172,7 +172,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 176 "..\\..\\..\\..\\Source\\HQEngine\\gen_res_script_parser.cpp"
+#line 176 "gen_res_script_parser.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -184,7 +184,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 188 "..\\..\\..\\..\\Source\\HQEngine\\gen_res_script_parser.cpp"
+#line 188 "gen_res_script_parser.cpp"
 
 #ifdef short
 # undef short
@@ -1400,14 +1400,14 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 65 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 65 "res_script_parser.y"
     { hqengine_res_parser_root_result = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 69 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 69 "res_script_parser.y"
     { 
 		(yyval.node) = yynew_node("resource_blocks", (yyvsp[(1) - (1)].node)->GetSourceLine());
 		(yyval.node)->AddChild((yyvsp[(1) - (1)].node));
@@ -1417,7 +1417,7 @@ yyreduce:
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 73 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 73 "res_script_parser.y"
     {
 		(yyval.node)->AddChild((yyvsp[(1) - (2)].node));
 	;}
@@ -1426,7 +1426,7 @@ yyreduce:
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 78 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 78 "res_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (2)].node);
 		(yyval.node)->SetType("resources");
@@ -1437,7 +1437,7 @@ yyreduce:
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 85 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 85 "res_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (3)].node);
 	;}
@@ -1446,7 +1446,7 @@ yyreduce:
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 91 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 91 "res_script_parser.y"
     { 
 		(yyval.node) = yynew_node();
 		(yyval.node)->AddChild((yyvsp[(1) - (1)].node));
@@ -1456,7 +1456,7 @@ yyreduce:
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 95 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 95 "res_script_parser.y"
     {
 		(yyval.node)->AddChild((yyvsp[(2) - (2)].node));
 	;}
@@ -1465,7 +1465,7 @@ yyreduce:
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 101 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 101 "res_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (2)].node);
 		(yyval.node)->SetType("texture");
@@ -1476,7 +1476,7 @@ yyreduce:
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 106 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 106 "res_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(3) - (3)].node);
 		(yyval.node)->SetType("texture");
@@ -1488,7 +1488,7 @@ yyreduce:
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 112 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 112 "res_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(3) - (3)].node);
 		(yyval.node)->SetType("render_target");
@@ -1500,7 +1500,7 @@ yyreduce:
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 118 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 118 "res_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (2)].node);
 		(yyval.node)->SetType("shader");
@@ -1511,7 +1511,7 @@ yyreduce:
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 123 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 123 "res_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(3) - (3)].node);
 		(yyval.node)->SetType("shader");
@@ -1523,21 +1523,21 @@ yyreduce:
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 129 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 129 "res_script_parser.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 130 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 130 "res_script_parser.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 134 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 134 "res_script_parser.y"
     {
 		(yyval.node) = yynew_node((yyvsp[(1) - (3)].lex).string, (yyvsp[(1) - (3)].lex).line);
 		(yyval.node)->SetAttribute("value", (yyvsp[(3) - (3)].value));	
@@ -1547,7 +1547,7 @@ yyreduce:
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 141 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 141 "res_script_parser.y"
     {
 		(yyval.node) = yynew_node("definition", (yyvsp[(1) - (2)].lex).line);
 		(yyval.node)->SetAttribute("name", (yyvsp[(2) - (2)].lex).string);	
@@ -1557,7 +1557,7 @@ yyreduce:
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 145 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 145 "res_script_parser.y"
     {
 		(yyval.node) = yynew_node("definition", (yyvsp[(1) - (4)].lex).line);
 		(yyval.node)->SetAttribute("name", (yyvsp[(2) - (4)].lex).string);
@@ -1591,56 +1591,56 @@ yyreduce:
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 176 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 176 "res_script_parser.y"
     {(yyval.value) = (yyvsp[(1) - (1)].value);;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 177 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 177 "res_script_parser.y"
     {(yyval.value).type = HQEngineCommonResParserNode::ValueType::STRING_TYPE;  (yyval.value).string = (yyvsp[(1) - (1)].lex).string;;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 181 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 181 "res_script_parser.y"
     {(yyval.value).type = HQEngineCommonResParserNode::ValueType::STRING_TYPE;  (yyval.value).string = (yyvsp[(1) - (1)].lex).string;;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 182 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 182 "res_script_parser.y"
     {(yyval.value).type = HQEngineCommonResParserNode::ValueType::FLOAT_TYPE;  (yyval.value).fvalue = (yyvsp[(1) - (1)].lex).fconst;;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 183 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 183 "res_script_parser.y"
     {(yyval.value).type = HQEngineCommonResParserNode::ValueType::INTEGER_TYPE;  (yyval.value).ivalue = (yyvsp[(1) - (1)].lex).iconst;;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 187 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 187 "res_script_parser.y"
     {(yyval.lex) = (yyvsp[(1) - (1)].lex);;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 188 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 188 "res_script_parser.y"
     {(yyval.lex) = (yyvsp[(1) - (1)].lex);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1644 "..\\..\\..\\..\\Source\\HQEngine\\gen_res_script_parser.cpp"
+#line 1644 "gen_res_script_parser.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1852,7 +1852,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 191 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 191 "res_script_parser.y"
 
 
 void yyerror(const char *s) 

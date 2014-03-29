@@ -261,6 +261,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -301,6 +302,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -342,6 +344,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -372,6 +375,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -404,6 +408,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -446,6 +451,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -488,6 +494,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -528,6 +535,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -570,6 +578,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -610,6 +619,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -652,6 +662,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -681,6 +692,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -711,6 +723,7 @@
       <XMLDocumentationFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\</XMLDocumentationFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <ResourceCompile>
       <ResourceOutputFileName>$(SolutionDir)\VS_int_files\$(ProjectName)\$(Configuration)\%(Filename).res</ResourceOutputFileName>
@@ -868,6 +881,7 @@
     <ClInclude Include="..\HQ2DMath.h" />
     <ClInclude Include="..\HQ2DMathInline.h" />
     <ClInclude Include="..\HQ3DMath.h" />
+    <ClInclude Include="..\HQ3DMathBasics.h" />
     <ClInclude Include="..\HQ3DMathInline.h" />
     <ClInclude Include="..\HQMiscDataType.h" />
     <ClInclude Include="..\HQPrimeNumber.h" />

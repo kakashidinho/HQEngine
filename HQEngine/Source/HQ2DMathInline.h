@@ -14,9 +14,9 @@ COPYING.txt included with this distribution for more information.
 template <typename T>
 inline bool HQRect<T>::IsPointInside(T _x, T _y) const
 {
-	if(_x < this->x || _x > (this->x + this->w))
+	if(_x < this->x || _x > (this->x + this->width))
 		return false;
-	if(_y < this->y || _y > (this->y + this->h))
+	if(_y < this->y || _y > (this->y + this->height))
 		return false;
 	return true;
 }
@@ -24,9 +24,9 @@ inline bool HQRect<T>::IsPointInside(T _x, T _y) const
 template <typename T>
 inline bool HQRect<T>::IsPointInside(const HQPoint<T> &point) const
 {
-	if(point.x < this->x || point.x > (this->x + this->w))
+	if(point.x < this->x || point.x > (this->x + this->width))
 		return false;
-	if(point.y < this->y || point.y > (this->y + this->h))
+	if(point.y < this->y || point.y > (this->y + this->height))
 		return false;
 	return true;
 }

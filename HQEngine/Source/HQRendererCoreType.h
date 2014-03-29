@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define _HQ_CORE_TYPE_
 
 #include "HQPrimitiveDataType.h"
+#include "HQ2DMath.h"
 
 #ifndef HQ_NOT_AVAIL_ID
 #	define HQ_NOT_AVAIL_ID 0xcdcdcdcd
@@ -54,13 +55,7 @@ typedef enum HQColorLayout
 typedef hq_uint32 HQColorui;//giá trị 32 bit màu biểu thị dưới dạng hq_uint32 data type
 inline HQColorui HQColoruiRGBA(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 B,hq_ubyte8 A,HQColorLayout layout);
 
-typedef struct HQViewPort //khung nhìn
-{
-	hq_uint32 x;//góc trên bên trái
-	hq_uint32 y;//góc trên bên trái
-	hq_uint32 width;
-	hq_uint32 height;
-} _HQViewPort;
+typedef HQRect<hquint32> HQViewPort;//khung nhìn, gốc ở góc trên bên trái
 
 typedef struct HQResolution
 {

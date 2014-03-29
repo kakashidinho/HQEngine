@@ -304,7 +304,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="HQUtilMath.lib &quot;$(SolutionDir)Libs\PVRTexLib/Windows_x86_32/Lib/PVRTexLib.lib&quot;"
+				AdditionalDependencies="HQUtilMath.lib "
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)\Output;..\..\..\ThirdParty-mod\Cg\lib;$(SolutionDir)\Output\StaticRelease static CRT"
@@ -383,7 +383,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="HQUtilMathD.lib &quot;$(SolutionDir)\Libs\PVRTexLib\Windows_x86_32\Lib\PVRTexLib.lib&quot;"
+				AdditionalDependencies="HQUtilMathD.lib "
 				OutputFile="$(SolutionDir)\Output\$(ConfigurationName)\$(ProjectName)_D.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)\Output;..\..\..\ThirdParty-mod\Cg\lib;$(SolutionDir)\Output\StaticDebug static CRT"

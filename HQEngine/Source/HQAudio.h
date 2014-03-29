@@ -11,7 +11,6 @@ COPYING.txt included with this distribution for more information.
 #ifndef HQ_AUDIO_H
 #define HQ_AUDIO_H
 #include "HQReturnVal.h"
-#include "HQUtilMath.h"
 #include "HQPrimitiveDataType.h"
 #include "HQLogStream.h"
 

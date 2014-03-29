@@ -17,6 +17,12 @@ COPYING.txt included with this distribution for more information.
 #include "PVRTexLib.h"
 using namespace pvrtexlib;
 
+#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM || defined _STATIC_CRT)
+#define HQ_USE_PVR_TEX_LIB 1
+#else
+#define HQ_USE_PVR_TEX_LIB 0
+#endif
+
 inline hq_uint32 GetShaderStageIndex(HQShaderType type) 
 {
 #if defined DEBUG || defined _DEBUG
@@ -715,6 +721,7 @@ HQReturnVal  HQTextureManagerD3D9::Create2DTexture(hq_uint32 numMipmaps,HQTextur
 	hq_ubyte8 *pRow;//1 hàng pixel data
 	hq_ubyte8 *pTexelRow;// 1 hàng texel data
 	
+#if HQ_USE_PVR_TEX_LIB
 	// declare an empty texture to decompress pvr texture into 
 	CPVRTexture	sDecompressedTexture;
 	if (bitmap.IsPVRTC())//decompress pvrtc
@@ -772,6 +779,7 @@ HQReturnVal  HQTextureManagerD3D9::Create2DTexture(hq_uint32 numMipmaps,HQTextur
 		}
 	}
 	else
+#endif //#if HQ_USE_PVR_TEX_LIB
 		pRow = bitmap.GetPixelData();
 
 	for(hq_uint32 level=0;level<numMipmaps;++level)
@@ -910,6 +918,7 @@ HQReturnVal  HQTextureManagerD3D9::CreateCubeTexture(hq_uint32 numMipmaps,HQText
 
 	hq_ubyte8 *pRow;//1 hàng pixel data
 	hq_ubyte8 *pTexelRow;// 1 hàng texel data
+#if HQ_USE_PVR_TEX_LIB
 	// declare an empty texture to decompress pvr texture into 
 	CPVRTexture	sDecompressedTexture;
 	if (bitmap.IsPVRTC())//decompress pvrtc
@@ -967,6 +976,7 @@ HQReturnVal  HQTextureManagerD3D9::CreateCubeTexture(hq_uint32 numMipmaps,HQText
 		}
 	}
 	else
+#endif
 		pRow = bitmap.GetPixelData();
 
 	bool loadTextureData;
@@ -1228,10 +1238,12 @@ HQTextureCompressionSupport HQTextureManagerD3D9::IsCompressionSupported(HQTextu
 			return HQ_TCS_SW;
 		}
 	case HQ_TC_ETC1: 
+#if HQ_USE_PVR_TEX_LIB
 	case HQ_TC_PVRTC_RGB_2BPP :
 	case HQ_TC_PVRTC_RGB_4BPP: 
 	case HQ_TC_PVRTC_RGBA_2BPP:
 	case HQ_TC_PVRTC_RGBA_4BPP:
+#endif
 		return HQ_TCS_SW;
 	default:
 		return HQ_TCS_NONE;

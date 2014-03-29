@@ -27,8 +27,8 @@ class HQRect
 public:
 	T x;
 	T y;
-	T w;
-	T h;
+	T width;
+	T height;
 	bool IsPointInside(T x,T y) const;
 	bool IsPointInside(const HQPoint<T> &point) const;
 };

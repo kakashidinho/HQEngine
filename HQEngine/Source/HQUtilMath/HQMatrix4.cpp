@@ -1637,6 +1637,118 @@ các mặt phẳng khác tương tự -w < y < w ; openGL : -w < z < w ; direct3
 	}
 }
 
+void HQMatrix4rGetProjectedPos(const HQMatrix4 &viewProj , const HQVector4& vPos , HQRect<hquint32> viewport, HQPoint<hqint32> &pointOut)
+{
+	hq_float32 X,Y,W_over_2,H_over_2;
+		
+	X=(hq_float32)viewport.x;
+	Y=(hq_float32)viewport.y;
+	W_over_2=viewport.width/2.0f;
+	H_over_2=viewport.height/2.0f;
+	
+	HQ_DECL_STACK_VECTOR4( projVec );//tọa độ điểm sau khi nhân ma trận viewproj
+
+	HQVector4TransformCoord(&vPos,&viewProj,&projVec);
+	
+	hq_float32 invW=1.0f/projVec.w;
+	//chuyển từ hệ tọa độ chuẩn hóa [-1,1] sang hệ tọa độ màn hình
+	pointOut.x=(long)(X + (1.0f + projVec.x * invW)*W_over_2);
+	pointOut.y=(long)(Y + (1.0f - projVec.y * invW)*H_over_2);
+}
+
+
+void HQMatrix4cGetProjectedPos(const HQMatrix4 &_viewProj , const HQVector4& vPos , HQRect<hquint32> viewport, HQPoint<hqint32> &pointOut)
+{
+	hq_float32 X,Y,W_over_2,H_over_2;
+		
+	X=(hq_float32)viewport.x;
+	Y=(hq_float32)viewport.y;
+	W_over_2=viewport.width/2.0f;
+	H_over_2=viewport.height/2.0f;
+
+	HQ_DECL_STACK_MATRIX4_CTOR_PARAMS( transposedVP, (_viewProj));
+	HQ_DECL_STACK_VECTOR4( projVec );//tọa độ điểm sau khi nhân ma trận viewproj
+
+	transposedVP.Transpose();
+	HQVector4TransformCoord(&vPos,&transposedVP,&projVec);
+	
+	hq_float32 invW=1.0f/projVec.w;
+	//chuyển từ hệ tọa độ chuẩn hóa [-1,1] sang hệ tọa độ màn hình
+	pointOut.x=(long)(X + (1.0f + projVec.x * invW)*W_over_2);
+	pointOut.y=(long)(Y + (1.0f - projVec.y * invW)*H_over_2);
+}
+
+
+void HQMatrix4rGetPickingRay(const HQMatrix4 &view ,const HQMatrix4 &proj , 
+							  const HQRect<hquint32>& viewport, 
+							  hq_float32 zNear,
+							  const HQPoint<hqint32>& point, HQRay3D & rayOut)
+{
+	HQ_DECL_STACK_2VAR(HQVector4, projVec, HQMatrix4, invView);
+
+	hq_float32 X,Y,_2_over_W,_2_over_H;
+	
+	projVec.w=zNear;
+
+	X=(hq_float32)viewport.x;
+	Y=(hq_float32)viewport.y;
+	_2_over_W=2.0f / viewport.width;
+	_2_over_H=2.0f / viewport.height;
+
+
+	//từ hệ tọa độ màn hình sang hệ tọa độ chuẩn hóa của device
+	projVec.x=_2_over_W*(point.x - X) - 1;
+	projVec.y=_2_over_H*(Y - point.y) + 1;
+
+	//từ hệ tọa độ chuẩn hóa sang hệ tọa độ nhìn
+	projVec.x*=(projVec.w / proj._11) ;
+	projVec.y*=(projVec.w / proj._22) ;
+	projVec.z=zNear;
+
+	//từ hệ tọa độ nhìn sang hệ tọa độ thế giới
+	HQMatrix4Inverse(&view,&invView);
+
+	HQVector4TransformCoord(&HQVector4::Origin(),&invView,&(rayOut.O));
+	HQVector4TransformNormal(&projVec,&invView,&(rayOut.D));
+}
+
+void HQMatrix4cGetPickingRay(const HQMatrix4 &_view ,const HQMatrix4 &_proj , 
+							  const HQRect<hquint32>& viewport, 
+							  hq_float32 zNear,
+							  const HQPoint<hqint32>& point, HQRay3D & rayOut)
+{
+	HQ_DECL_STACK_2VAR(HQMatrix4, transposedView, HQMatrix4, transposedProj);
+	HQ_DECL_STACK_2VAR(HQVector4, projVec, HQMatrix4, invView);
+
+	HQMatrix4Transpose(&_view, &transposedView);
+	HQMatrix4Transpose(&_proj, &transposedProj);
+
+	hq_float32 X,Y,_2_over_W,_2_over_H;
+	
+	projVec.w=zNear;
+
+	X=(hq_float32)viewport.x;
+	Y=(hq_float32)viewport.y;
+	_2_over_W=2.0f / viewport.width;
+	_2_over_H=2.0f / viewport.height;
+
+
+	//từ hệ tọa độ màn hình sang hệ tọa độ chuẩn hóa của device
+	projVec.x=_2_over_W*(point.x - X) - 1;
+	projVec.y=_2_over_H*(Y - point.y) + 1;
+
+	//từ hệ tọa độ chuẩn hóa sang hệ tọa độ nhìn
+	projVec.x*=(projVec.w / transposedProj._11) ;
+	projVec.y*=(projVec.w / transposedProj._22) ;
+	projVec.z=zNear;
+
+	//từ hệ tọa độ nhìn sang hệ tọa độ thế giới
+	HQMatrix4Inverse(&transposedView,&invView);
+
+	HQVector4TransformCoord(&HQVector4::Origin(),&invView,&(rayOut.O));
+	HQVector4TransformNormal(&projVec,&invView,&(rayOut.D));
+}
+
 /*----------------------------------------
 truy vấn mặt phẳng tạo thành thể tích nhìn
 ----------------------------------------*/

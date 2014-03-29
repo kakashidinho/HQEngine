@@ -12,6 +12,8 @@ COPYING.txt included with this distribution for more information.
 #define _3D_MATH
 
 #include "HQUtilMathCommon.h"
+#include "HQ3DMathBasics.h"
+#include "HQ2DMath.h"
 
 //=======================================================
 //tính nhanh sin và cos cùng 1 lúc
@@ -20,7 +22,13 @@ HQ_FORCE_INLINE void HQSincosf( hq_float32 angle, hq_float32* sinOut, hq_float32
 
 //=======================================================
 
-class HQ_UTIL_MATH_API HQBaseMathClass : public HQA16ByteObject
+
+#if defined WIN32 || defined _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable:4275)
+#endif
+
+class HQBaseMathClass : public HQA16ByteObject
 {
 public:
 	inline HQBaseMathClass() {HQ_ASSERT_ALIGN16(this)}//ensure that address of this object is 16 bytes aligned , it's a must for SSE and NEON.
@@ -47,9 +55,7 @@ public:
 
 //=======================================================
 class HQVector4;
-struct HQBaseMatrix4;
 class HQMatrix4;
-struct HQBaseMatrix3x4;
 class HQMatrix3x4;
 class HQRay3D;
 class HQPlane;
@@ -246,40 +252,10 @@ HQ_UTIL_MATH_API HQVector4* HQVector4MultiTransformNormal(const HQVector4* v, hq
 HQ_UTIL_MATH_API HQVector4* HQVector4MultiTransformCoord(const HQVector4* v, hq_uint32 numVec, const HQMatrix3x4* mat,HQVector4* out);//biến đổi <numVec> vectors dạng (x,y,z,1) bằng 1 ma trận  3x4 (coi như ma trận 4x4 column major với hàng cuối là 0 0 0 1)
 HQ_UTIL_MATH_API void HQPrintVector4(const HQVector4* pV);
 
+
 //=======================================================
 //Matrix 4x4 - default row major
 //=======================================================
-struct HQBaseMatrix4
-{
-	HQBaseMatrix4();//construct an identity matrix
-	explicit HQBaseMatrix4(const void * null) {}//this constructor does nothing
-	HQBaseMatrix4(hq_float32 _11, hq_float32 _12, hq_float32 _13, hq_float32 _14,
-				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
-				hq_float32 _31, hq_float32 _32, hq_float32 _33, hq_float32 _34,
-				hq_float32 _41, hq_float32 _42, hq_float32 _43, hq_float32 _44);
-
-	HQBaseMatrix4(const HQBaseMatrix4 &matrix);
-	HQBaseMatrix4(const HQBaseMatrix3x4 &matrix);//append (0,0,0,1) as last row
-
-	operator hq_float32*() {return m;}//casting operator
-	operator const hq_float32*() const {return m;}//casting operator
-
-	union{
-		struct{
-			hq_float32 _11,_12,_13,_14,
-					  _21,_22,_23,_24,
-					  _31,_32,_33,_34,
-					  _41,_42,_43,_44;
-		};
-		hq_float32 m[16];
-		hq_float32 mt[4][4];
-	};
-};
-
-#ifdef WIN32
-#	pragma warning(push)
-#	pragma warning(disable:4275)
-#endif
 
 class HQ_UTIL_MATH_API HQMatrix4: public HQBaseMatrix4, public HQBaseMathClass{
 public:
@@ -396,10 +372,6 @@ public:
 };
 #endif
 
-#ifdef WIN32
-#	pragma warning(pop) // disable 4275
-#endif
-
 
 
 HQ_UTIL_MATH_API HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix4* pM2,HQMatrix4* pOut);
@@ -437,6 +409,33 @@ truy vấn 6 mặt phẳng tạo thành thể tích nhìn pháp vector của 6 m
 ----------------------------------------------------------------------------------------*/
 HQ_UTIL_MATH_API void HQMatrix4rGetFrustum(const HQMatrix4 * pViewProjMatrix , HQPlane planes[6] , HQRenderAPI API);
 
+///
+///truy vấn tọa độ của 1 điểm trong hệ tọa độ màn hình từ 1 điểm có tọa độ vPos trong hệ tọa độ thế giới. 
+///hệ tọa độ màn hình gốc ở góc trên trái. 
+///ma trận dạng row major. 
+///Lưu ý : -tọa độ màn hình không đồng nghĩa với tọa độ pixel . 
+///		  -Direct3d 9 , tọa độ màn hình = tọa độ pixel. 
+///		  -Direct3d 1x / OpenGL , tọa độ màn hình bằng tọa độ pixel + 0.5 pixel size . 
+///Ví dụ pixel đầu tiên trong màn hình có tọa độ pixel (0,0) thì toạ độ màn hình của nó là (0.5 , 0.5). 
+///<viewProj>: row major
+///
+HQ_UTIL_MATH_API void HQMatrix4rGetProjectedPos(const HQMatrix4 &viewProj , const HQVector4& vPos , const HQRect<hquint32>& viewport, HQPoint<hqint32> &pointOut);
+
+///
+///truy vấn tia trong hệ tọa độ thế giới . 
+///tia đi từ tâm camera và có hướng theo như điểm đặt trong hệ tọa độ màn hình (point),vector hướng của tia chưa chuẩn hóa. 
+///hệ tọa độ màn hình gốc ở góc trên trái. 
+///ma trận dạng row major. 
+///Lưu ý : -tọa độ màn hình không đồng nghĩa với tọa độ pixel . 
+///		  -Direct3d 9 , tọa độ màn hình = tọa độ pixel. 
+///		  -Direct3d 1x / OpenGL , tọa độ màn hình bằng tọa độ pixel + 0.5 pixel size . 
+///Ví dụ pixel đầu tiên trong màn hình có tọa độ pixel (0,0) thì toạ độ màn hình của nó là (0.5 , 0.5). 
+///<view> & <proj>: row major
+///
+HQ_UTIL_MATH_API void HQMatrix4rGetPickingRay(const HQMatrix4 &view ,const HQMatrix4 &proj , 
+											  const HQRect<hquint32>& viewport, 
+											  hq_float32 zNear,
+											  const HQPoint<hqint32>& point, HQRay3D & rayOut);
 
 /*--------------those funcions assume matrices are in column major---------------*/
 HQ_UTIL_MATH_API HQMatrix4* HQMatrix4cTranslate(hq_float32 x,hq_float32 y,hq_float32 z,HQMatrix4* out);
@@ -460,6 +459,33 @@ truy vấn 6 mặt phẳng tạo thành thể tích nhìn pháp vector của 6 m
 ----------------------------------------------------------------------------------------*/
 HQ_UTIL_MATH_API void HQMatrix4cGetFrustum(const HQMatrix4 * pViewProjMatrix , HQPlane planes[6] , HQRenderAPI API);
 
+///
+///truy vấn tọa độ của 1 điểm trong hệ tọa độ màn hình từ 1 điểm có tọa độ vPos trong hệ tọa độ thế giới. 
+///hệ tọa độ màn hình gốc ở góc trên trái. 
+///ma trận dạng row major. 
+///Lưu ý : -tọa độ màn hình không đồng nghĩa với tọa độ pixel . 
+///		  -Direct3d 9 , tọa độ màn hình = tọa độ pixel. 
+///		  -Direct3d 1x / OpenGL , tọa độ màn hình bằng tọa độ pixel + 0.5 pixel size . 
+///Ví dụ pixel đầu tiên trong màn hình có tọa độ pixel (0,0) thì toạ độ màn hình của nó là (0.5 , 0.5). 
+///<viewProj>: column major
+///
+HQ_UTIL_MATH_API void HQMatrix4cGetProjectedPos(const HQMatrix4 &viewProj , const HQVector4& vPos , const HQRect<hquint32>& viewport, HQPoint<hqint32> &pointOut);
+
+///
+///truy vấn tia trong hệ tọa độ thế giới . 
+///tia đi từ tâm camera và có hướng theo như điểm đặt trong hệ tọa độ màn hình (point),vector hướng của tia chưa chuẩn hóa. 
+///hệ tọa độ màn hình gốc ở góc trên trái. 
+///ma trận dạng row major. 
+///Lưu ý : -tọa độ màn hình không đồng nghĩa với tọa độ pixel . 
+///		  -Direct3d 9 , tọa độ màn hình = tọa độ pixel. 
+///		  -Direct3d 1x / OpenGL , tọa độ màn hình bằng tọa độ pixel + 0.5 pixel size . 
+///Ví dụ pixel đầu tiên trong màn hình có tọa độ pixel (0,0) thì toạ độ màn hình của nó là (0.5 , 0.5). 
+///<view> & <proj>: column major
+///
+HQ_UTIL_MATH_API void HQMatrix4cGetPickingRay(const HQMatrix4 &view ,const HQMatrix4 &proj , 
+											  const HQRect<hquint32>& viewport, 
+											  hq_float32 zNear,
+											  const HQPoint<hqint32>& point, HQRay3D & rayOut);
 
 /*-------------------*/
 
@@ -467,36 +493,6 @@ HQ_UTIL_MATH_API void HQMatrix4cGetFrustum(const HQMatrix4 * pViewProjMatrix , H
 //=======================================================
 //Matrix 3x4
 //=======================================================
-struct HQBaseMatrix3x4
-{
-	HQBaseMatrix3x4();//construct an identity matrix
-	explicit HQBaseMatrix3x4(const void * null) {}//this constructor does nothing
-	HQBaseMatrix3x4(hq_float32 _11, hq_float32 _12, hq_float32 _13,hq_float32 _14,
-				hq_float32 _21, hq_float32 _22, hq_float32 _23, hq_float32 _24,
-				hq_float32 _31, hq_float32 _32, hq_float32 _33 ,hq_float32 _34);
-
-	HQBaseMatrix3x4( const HQBaseMatrix3x4& src);
-
-	
-	operator hq_float32*() {return m;}//casting operator
-	operator const hq_float32*() const {return m;}//casting operator
-
-	union{
-		struct{
-			hq_float32 _11,_12,_13,_14,
-					  _21,_22,_23,_24,
-					  _31,_32,_33,_34;
-		};
-		hq_float32 m[12];
-		hq_float32 mt[3][4];
-	};
-};
-
-#ifdef WIN32
-#	pragma warning(push)
-#	pragma warning(disable:4275)
-#endif
-
 class HQ_UTIL_MATH_API HQMatrix3x4: public HQBaseMatrix3x4, public HQBaseMathClass{
 public:
 	static const HQMatrix3x4& IdentityMatrix()//identity matrix
@@ -585,10 +581,6 @@ public:
 }  HQ_ALIGN16 ;
 #else
 };
-#endif
-
-#ifdef WIN32
-#	pragma warning(pop)//disable 4275
 #endif
 
 HQ_UTIL_MATH_API HQMatrix3x4* HQMatrix3x4Multiply(const HQMatrix3x4* pM1,const HQMatrix3x4* pM2,HQMatrix3x4* pOut);//treat matrix3x4 as a matrix4 with last row {0 0 0 1}
@@ -1386,6 +1378,10 @@ public:
 	};
 };
 
+
+#if defined WIN32 || defined _MSC_VER
+#	pragma warning(pop)
+#endif
 
 
 //========================================================

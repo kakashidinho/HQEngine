@@ -76,7 +76,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(SolutionDir)\..\..\..\..\HQEngine\VS\Libs\$(ConfigurationName)\$(ProjectName).lib"
+				OutputFile="$(SolutionDir)\..\..\..\..\HQEngine\VS2008\Libs\$(ConfigurationName)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(SolutionDir)\..\..\..\..\HQEngine\VS\Libs\$(ConfigurationName)\$(ProjectName).lib"
+				OutputFile="$(SolutionDir)\..\..\..\..\HQEngine\VS2008\Libs\$(ConfigurationName)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -202,6 +202,7 @@
 				DebugInformationFormat="4"
 				CallingConvention="0"
 				CompileAs="1"
+				OmitDefaultLibName="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -214,7 +215,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(SolutionDir)\..\..\..\..\HQEngine\VS\Libs\$(ConfigurationName)\$(ProjectName).lib"
+				OutputFile="$(SolutionDir)\..\..\..\..\HQEngine\VS2008\Libs\$(ConfigurationName)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -274,6 +275,7 @@
 				CallingConvention="0"
 				CompileAs="1"
 				DisableSpecificWarnings="4244"
+				OmitDefaultLibName="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -286,7 +288,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(SolutionDir)\..\..\..\..\HQEngine\VS\Libs\$(ConfigurationName)\$(ProjectName).lib"
+				OutputFile="$(SolutionDir)\..\..\..\..\HQEngine\VS2008\Libs\$(ConfigurationName)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

@@ -14,7 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQRendererCoreType.h"
 #include "HQRendererPlatformDef.h"
 #include "HQReturnVal.h"
-#include "HQUtilMath.h"
+#include "HQ3DMathBasics.h"
 
 /*---------------------------------------*/
 /*

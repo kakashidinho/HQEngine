@@ -590,6 +590,9 @@
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineResParserCommon.h">
       <Filter>Source\HQEngine\res_parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQ3DMathBasics.h">
+      <Filter>Source\HQUtilMath</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQAABB.cpp">
@@ -1083,18 +1086,6 @@
     <None Include="..\..\..\..\Source\BaseImpl\HQFFEmuShaderD3D1x.hlsl">
       <Filter>Source\HQRenderer\BaseImplement</Filter>
     </None>
-    <None Include="..\..\..\..\Source\HQEngine\effect_script_parser.y">
-      <Filter>Source\HQEngine\res_parser</Filter>
-    </None>
-    <None Include="..\..\..\..\Source\HQEngine\effect_script_tokens.l">
-      <Filter>Source\HQEngine\res_parser</Filter>
-    </None>
-    <None Include="..\..\..\..\Source\HQEngine\res_script_parser.y">
-      <Filter>Source\HQEngine\res_parser</Filter>
-    </None>
-    <None Include="..\..\..\..\Source\HQEngine\res_script_tokens.l">
-      <Filter>Source\HQEngine\res_parser</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonMatrix.s">
@@ -1106,5 +1097,9 @@
     <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonVector.s">
       <Filter>Source\HQUtilMath\NeonASM</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\..\..\..\Source\HQEngine\res_script_parser.y" />
+    <CustomBuild Include="..\..\..\..\Source\HQEngine\res_script_tokens.l" />
+    <CustomBuild Include="..\..\..\..\Source\HQEngine\effect_script_parser.y" />
+    <CustomBuild Include="..\..\..\..\Source\HQEngine\effect_script_tokens.l" />
   </ItemGroup>
 </Project>
