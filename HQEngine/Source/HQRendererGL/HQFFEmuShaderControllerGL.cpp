@@ -351,10 +351,35 @@ private:
 
 		size_t sourceArrayCount;
 
-		char version_line[] = "#version 110\n#define highp\n#define lowp\n#define mediump\n";
-
+		char version_line[] = "#version 110       \n#define highp\n#define lowp\n#define mediump\n";
+#ifndef HQ_OPENGLES
 		if (GLEW_VERSION_3_0)
-			strncpy(version_line, "#version 130", 12);
+		{
+			if (GLEW_VERSION_4_2)//4.2 is max we should use
+			{
+				strncpy(version_line, "#version 420", 12);
+			}
+			else
+			{
+				//use the latest glsl version
+				const char * glsl_version = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+				int i1 = 9, i2 = 0;
+				char c =  glsl_version[0];
+				int dotCount = 0;
+				while ((c =  glsl_version[i2 ++]) != '\0' && c != ' ' && c != '\t' && c != '\r' && c != '\n'
+					&& i1 < 19 && dotCount < 2)
+				{
+					if (c != '.')
+					{
+						version_line[i1] = c;
+						i1++;
+					}
+					else 
+						dotCount ++;
+				}	
+			}//else of if (GLEW_VERSION_4_2)
+		}
+#endif
 
 		//create vertex shader
 		if (vshader == 0)//only create when it is not created before
@@ -451,6 +476,7 @@ private:
 			glUseProgram(oldProgram);
 		}
 
+#if 0
 		//check if this program is valid
 		glValidateProgram(program);
 		glGetProgramiv(program, GL_VALIDATE_STATUS, &OK);
@@ -469,6 +495,7 @@ private:
 			}
 			return ;
 		}
+#endif
 
 		//everything is ok, now get the uniform locations
 		GetUniformLoc(programIndex);

@@ -159,7 +159,7 @@ public:
 		return clearStencil;
 	}
 
-	bool isUsingCoreProfile() const {
+	bool IsUsingCoreProfile() const {
 		return usingCoreProfile;
 	}
 

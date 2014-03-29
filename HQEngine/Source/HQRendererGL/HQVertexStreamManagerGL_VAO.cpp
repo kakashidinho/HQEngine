@@ -199,7 +199,7 @@ HQReturnVal HQVertexStreamManagerGL_VAO::SetVertexBuffer(hq_uint32 vertexBufferI
 		return HQ_FAILED;
 	HQSharedPtr<HQBufferGL> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID);
 	HQVertexStreamGL &stream = this->streams[streamIndex];
-	if (stream.vertexBuffer != vBuffer && stream.stride != stride)
+	if (stream.vertexBuffer != vBuffer || stream.stride != stride)
 	{
 		/*-----------update VAO params-----------*/
 		if (vBuffer == NULL)

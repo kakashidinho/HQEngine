@@ -34,7 +34,7 @@ HQDataReaderStream * HQDefaultFileManager::OpenFileForRead(const char* name)
 		this->Append((*ite), name, fullPath);
 
 #if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
-		HQDataReaderStream * stream = HQWinStoreFileSystem::OpenExactFileForRead(fullPath.c_str());
+		HQDataReaderStream * stream = HQWinStoreFileSystem::OpenFileForRead(fullPath.c_str());
 #else
 		HQSTDDataReader * stream = HQ_NEW HQSTDDataReader(fullPath.c_str());
 #endif
@@ -59,6 +59,8 @@ void HQDefaultFileManager::AddFirstSearchPath(const char* path)
 	m_searchPaths.PushFront(path);
 }
 
+#define REMOVE_DOUBLE_DOT 0
+
 void HQDefaultFileManager::Append(const std::string & parent, const char * name, std::string &fixedPath)
 {
 	size_t intendedPathPos = 0;
@@ -66,7 +68,9 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 	size_t dotCount = 0;
 	size_t len ;
 	bool needSlash = false;
+#if REMOVE_DOUBLE_DOT
 	HQLinkedList<size_t> slashPositions; //positions of '\\' or '/' characters
+#endif
 #if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 	char slash = '\\';
 #else
@@ -91,9 +95,12 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 	for (size_t i = 0; i < parent.size(); ++i)
 	{
 		fixedPath[i] = parent[i];
+
 		if (parent[i] == '\\' || parent[i] == '/')
 		{
+#if REMOVE_DOUBLE_DOT
 			slashPositions.PushBack(i);
+#endif
 			fixedPath[i] = slash;
 		}
 	}
@@ -101,7 +108,9 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 	if (needSlash)
 	{
 		fixedPath[fixedPathPos] = slash;
+#if REMOVE_DOUBLE_DOT
 		slashPositions.PushBack(fixedPathPos);
+#endif
 		fixedPathPos += 1;
 	}
 
@@ -111,6 +120,7 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 	{
 		if (name[intendedPathPos] == '/' || name[intendedPathPos] == '\\')
 		{
+#if REMOVE_DOUBLE_DOT
 			if (dotCount == 2)//this is "\..\" pop the last folder path
 			{
 				if (slashPositions.GetSize() >= 2)
@@ -127,9 +137,12 @@ void HQDefaultFileManager::Append(const std::string & parent, const char * name,
 				}
 			}
 			else
+#endif//#if REMOVE_DOUBLE_DOT
 			{
 				fixedPath[fixedPathPos] = slash;
+#if REMOVE_DOUBLE_DOT
 				slashPositions.PushBack(fixedPathPos);//push the slash position to positions list
+#endif
 			}
 
 			dotCount = 0;//reset dot count
