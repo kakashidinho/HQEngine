@@ -384,11 +384,26 @@ public:
 protected:
 	virtual ~HQRenderDevice(){};
 	
-	HQTextureManager * textureMan;
-	HQVertexStreamManager *vStreamMan;
-	HQRenderTargetManager *renderTargetMan;
-	HQRendererStateManager * stateMan;
-	HQShaderManager *shaderMan;
+	union {
+		HQTextureManager * textureMan;
+		hquint64 textureManEnsuring64bit;
+	};
+	union {
+		HQVertexStreamManager *vStreamMan;
+		hquint64 vStreamManEnsuring64bit;
+	};
+	union {
+		HQRenderTargetManager *renderTargetMan;
+		hquint64 renderTargetManEnsuring64bit;
+	};
+	union {
+		HQRendererStateManager * stateMan;
+		hquint64 stateManEnsuring64bit;
+	};
+	union {
+		HQShaderManager *shaderMan;
+		hquint64 shaderManEnsuring64bit;
+	};
 };
 
 typedef HQRenderDevice *LPHQRenderDevice;
