@@ -114,7 +114,7 @@ HQFakeUniformBlkElem::HQFakeUniformBlkElem(GLuint program, const HQUniformBlkEle
 
 	this->totalSize = this->arrayElemSize * this->arraySize;
 
-	if (parsed_info.col == 4)
+	if (parsed_info.col == 4 || this->arraySize == 1)
 	{
 		//only first element is enough
 		this->index = HQ_NEW GLint[1];
