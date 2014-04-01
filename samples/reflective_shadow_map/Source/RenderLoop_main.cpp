@@ -52,6 +52,21 @@ SpotLight::~SpotLight()
 //constructor
 RenderLoop::RenderLoop(const char* _renderAPI)
 {
+	//prepare GUI engine
+	m_guiPlatform = new MyGUI::HQEnginePlatform();
+
+	m_guiPlatform->initialise();
+	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../Data", true);
+
+	m_myGUI = new MyGUI::Gui();
+	m_myGUI->initialise();
+
+	MyGUI::LayoutManager::getInstance().loadLayout("sample.layout");
+	MyGUI::PointerManager::getInstance().setVisible(false);
+
+	m_fpsTextBox = m_myGUI->findWidget<MyGUI::TextBox>("FPS-Info");
+
+	/*-------loading resources--------*/
 	strcpy(this->m_renderAPI_name, _renderAPI);
 	char apiResNamXML[256];
 	if (strcmp(m_renderAPI_name, "GL") == 0)
@@ -147,11 +162,17 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER | 2, m_uniformMaterialBuffer);
 		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER | 3, m_uniformLightProtBuffer);
 	}
+
 }
 
 //destructor
 RenderLoop::~RenderLoop()
 {
+	m_myGUI->shutdown();
+	delete m_myGUI;
+	m_guiPlatform->shutdown();
+	delete m_guiPlatform;
+
 	delete m_model;
 	delete m_camera;
 	delete m_light;
@@ -165,7 +186,8 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	hquint32 width, height;//encoded noise map's size
 	//encoded noise map
 	HQEngineTextureResource *encoded_noise_map = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("random_factors_img");
-	hquint32 vBuffer, vInputLayout;//vertex buffer and input layout
+	HQVertexBuffer* vBuffer;
+	HQVertexLayout* vInputLayout;//vertex buffer and input layout
 
 	encoded_noise_map->GetTexture2DSize(width, height);
 
@@ -207,13 +229,18 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	HQEngineApp::GetInstance()->GetEffectManager()->RemoveEffect(effect);	
 
 	//for debugging
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(HQ_NULL_ID);
+	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(NULL);
 	m_pRDevice->DisplayBackBuffer();
 }
 
 //rendering loop
 void RenderLoop::Render(HQTime dt){
-
+	{
+		//update fps
+		char fps_text[256];
+		sprintf(fps_text, "fps:%.3f", HQEngineApp::GetInstance()->GetFPS());
+		m_fpsTextBox->setCaption(fps_text);
+	}
 	//update scene
 	m_scene->SetUniformScale(0.01f);
 	m_scene->Update(dt);
@@ -224,27 +251,30 @@ void RenderLoop::Render(HQTime dt){
 	LightProperties * lightProt;
 	
 	//send transform data
-	m_pRDevice->GetShaderManager()->MapUniformBuffer(m_uniformTransformBuffer, (void**)&transform);
+	m_uniformTransformBuffer->Map(&transform);
 	transform->worldMat = m_model->GetWorldTransform();
 	transform->viewMat = m_camera->GetViewMatrix();
 	transform->projMat = m_camera->GetProjectionMatrix();
-	m_pRDevice->GetShaderManager()->UnmapUniformBuffer(m_uniformTransformBuffer);
+	m_uniformTransformBuffer->Unmap();
 
 	//send light camera's matrices data
-	m_pRDevice->GetShaderManager()->MapUniformBuffer(m_uniformLightViewBuffer, (void**)&lightView);
+	m_uniformLightViewBuffer->Map(&lightView);
 	lightView->lightViewMat = m_light->lightCam().GetViewMatrix();
 	lightView->lightProjMat = m_light->lightCam().GetProjectionMatrix();
-	m_pRDevice->GetShaderManager()->UnmapUniformBuffer(m_uniformLightViewBuffer);
+	m_uniformLightViewBuffer->Unmap();
 
 	//send light properties data
-	m_pRDevice->GetShaderManager()->MapUniformBuffer(m_uniformLightProtBuffer, (void**)&lightProt);
+	m_uniformLightProtBuffer->Map(&lightProt);
 	memcpy(lightProt->lightPosition, &m_light->position(), sizeof(HQVector4));
 	memcpy(lightProt->lightDirection, &m_light->direction(), sizeof(HQVector4));
 	memcpy(lightProt->lightDiffuse, &m_light->diffuseColor, sizeof(HQVector4));
 	lightProt->lightFalloff_lightPCosHalfAngle[0] = m_light->falloff;
 	lightProt->lightFalloff_lightPCosHalfAngle[1] = pow(cosf(m_light->angle * 0.5f), m_light->falloff);
-	m_pRDevice->GetShaderManager()->UnmapUniformBuffer(m_uniformLightProtBuffer);
+	m_uniformLightProtBuffer->Unmap();
 	
+	//start rendering
+	m_pRDevice->BeginRender(HQ_TRUE, HQ_TRUE, HQ_FALSE);
+
 	//depth pass rendering
 	DepthPassRender(dt);
 
@@ -253,4 +283,9 @@ void RenderLoop::Render(HQTime dt){
 
 	//final rendering pass
 	FinalPassRender(dt);
+
+	//draw GUI
+	m_guiPlatform->getRenderManagerPtr()->drawOneFrame();
+
+	m_pRDevice->EndRender();
 }

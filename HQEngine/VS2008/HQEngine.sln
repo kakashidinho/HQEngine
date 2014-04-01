@@ -200,8 +200,8 @@ Global
 		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug static CRT|Win32.Build.0 = Debug static CRT|Win32
 		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug static CRT|x64.ActiveCfg = Debug static CRT|Win32
 		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug|Mixed Platforms.ActiveCfg = Debug_GL_version|Win32
+		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug|Mixed Platforms.Build.0 = Debug_GL_version|Win32
 		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug|Win32.ActiveCfg = Debug|Win32
 		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug|Win32.Build.0 = Debug|Win32
 		{53A6BCB3-DFBD-4E90-A622-A1DCFF223ADE}.Debug|x64.ActiveCfg = Debug|Win32

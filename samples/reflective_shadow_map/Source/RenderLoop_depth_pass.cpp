@@ -21,19 +21,17 @@ void RenderLoop::DepthPassRender(HQTime dt){
 
 	Material * material;
 	
-	m_pRDevice->BeginRender(HQ_TRUE, HQ_TRUE, HQ_FALSE);
+	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE);
 	//render the scene
 	m_model->BeginRender();
 	for (hquint32 i = 0; i < m_model->GetNumSubMeshes(); ++i){
 		//send material info to shader
-		m_pRDevice->GetShaderManager()->MapUniformBuffer(m_uniformMaterialBuffer, (void**)&material);
+		m_uniformMaterialBuffer->Map(&material);
 		memcpy(material, &m_model->GetSubMeshInfo(i).colorMaterial.diffuse, sizeof(HQVector4));
-		m_pRDevice->GetShaderManager()->UnmapUniformBuffer(m_uniformMaterialBuffer);
+		m_uniformMaterialBuffer->Unmap();
 
 		m_model->DrawSubMesh(i);
 	}
 	m_model->EndRender();
-
-	m_pRDevice->EndRender();
 
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<MyGUI type="Layout">
+ 
+	<Widget type="EditBox" skin="EditBoxStretch" position="5 5 100 30" align="Stretch" layer="Main" name="FPS-Info">
+            <Property key="Caption" value="fps:0"/>
+			<Property key="WordWrap" value="true"/>
+            <Property key="Static" value="true"/>
+            <Property key="TextAlign" value="Center"/>
+    </Widget>
+ 
+</MyGUI>

@@ -305,7 +305,7 @@ class HQSysMemBuffer : public virtual HQMappableResource, public  HQSysMemBuffer
 public:
 	typedef HQSysMemBufferListener Listener;
 
-	HQSysMemBuffer() :listener(this) { pRawBuffer = NULL; size = 0; }
+	HQSysMemBuffer() { this->listener = this; pRawBuffer = NULL; size = 0; }
 	HQSysMemBuffer(Listener *_listener):listener(_listener) { pRawBuffer = NULL; size = 0; }
 	virtual ~HQSysMemBuffer() { DeallocRawBuffer(); }
 

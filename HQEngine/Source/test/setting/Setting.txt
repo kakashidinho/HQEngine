@@ -3,7 +3,7 @@ Width=800
 Height=600
 Windowed=1
 RefreshRate=60
-VSync=1
+VSync=0
 
 Advanced Settings
 Adapter=0

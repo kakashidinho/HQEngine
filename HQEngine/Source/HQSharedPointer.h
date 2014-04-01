@@ -260,12 +260,6 @@ public:
 	inline HQSharedPtr(T *rawptr) : ParentType (rawptr) {}
 	inline HQSharedPtr(const HQSharedPtr & sptr2):ParentType(sptr2) {}//copy constructor
 	inline HQSharedPtr(const ParentType & sptr2):ParentType(sptr2) {}//copy constructor
-
-	template <class CompatibleT>
-	HQSharedPtr<CompatibleT> DownCast() { return ParentType::DownCast<CompatibleT>(); }
-
-	template <class CompatibleT>
-	HQSharedPtr<CompatibleT> UpCast() { return ParentType::UpCast<CompatibleT>(); }
 };
 
 

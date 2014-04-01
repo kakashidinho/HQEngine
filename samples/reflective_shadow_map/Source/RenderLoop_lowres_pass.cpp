@@ -10,13 +10,11 @@ void RenderLoop::LowresPassRender(HQTime dt){
 	m_pRDevice->SetViewPort(viewport);
 
 	//start rendering
-	m_pRDevice->BeginRender(HQ_TRUE, HQ_TRUE, HQ_FALSE);
+	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE);
 	//render the scene
 	m_model->BeginRender();
 	for (hquint32 i = 0; i < m_model->GetNumSubMeshes(); ++i){
 		m_model->DrawSubMesh(i);
 	}
 	m_model->EndRender();
-
-	m_pRDevice->EndRender();
 }

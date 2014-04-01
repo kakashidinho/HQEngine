@@ -31,9 +31,8 @@ struct HQBaseCustomRenderBuffer : public HQBaseIDObject
 	}
 	virtual void OnLostDevice() {}
 	virtual void OnResetDevice() {}
-	bool IsTexture() {return this->GetTextureID() != HQ_NOT_AVAIL_ID;}
+	bool IsTexture() {return this->GetTexture() != NULL;}
 	virtual HQSharedPtr<HQBaseTexture> GetTexture() {return HQSharedPtr<HQBaseTexture>::null;};
-	virtual hq_uint32 GetTextureID() {return HQ_NOT_AVAIL_ID;}
 	virtual void *GetData() = 0;
 	
 	HQMultiSampleType multiSampleType;

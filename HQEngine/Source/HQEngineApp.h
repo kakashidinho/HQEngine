@@ -201,6 +201,8 @@ public:
 
 	bool IsRunning() const;
 
+	hqfloat32 GetFPS() const {return m_fps;}
+
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	HQNativeWindow GetNativeWindow();///Don't remove window procedure on Win32 or App delegates will not work. Internal use only
 #endif
@@ -233,6 +235,8 @@ private:
 	void CheckForNewDelegates();
 	///event handling procedure for application's  loop.return false if has no event
 	bool EventHandle();
+
+	void CalcFPS(HQTime dt);
 
 	///platform specific
 	HQReturnVal PlatformEnableMouseCursor(bool enable);
@@ -273,7 +277,9 @@ private:
 	HQEngineOrientationListener *m_orientListener;
 	HQEngineOrientationListener *m_waitOrientListener;
 
-	hq_uint32 m_flags;
+	hquint32 m_flags;
+	
+	hqfloat32 m_fps;
 };
 
 #ifdef WIN32

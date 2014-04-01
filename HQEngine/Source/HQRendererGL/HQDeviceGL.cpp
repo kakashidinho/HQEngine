@@ -640,18 +640,8 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 #ifdef HQ_OPENGLES
 	if (!GLEW_VERSION_2_0)
 	{
-		if (GLEW_VERSION_1_1)
-		{
-			if (GLEW_OES_mapbuffer)
-				this->vStreamMan = new HQVertexStreamManagerNoShaderGL(pEnum->caps.maxVertexAttribs , this->m_pLogStream , this->m_flushLog);
-			else
-				this->vStreamMan = new HQVertexStreamManagerNoShaderNoMapGL(pEnum->caps.maxVertexAttribs , this->m_pLogStream , this->m_flushLog);
-		}
-		else
-			this->vStreamMan = new HQVertexStreamManagerArrayGL(pEnum->caps.maxVertexAttribs , this->m_pLogStream , this->m_flushLog);
+		this->vStreamMan = new HQVertexStreamManagerNoShaderGL(pEnum->caps.maxVertexAttribs , this->m_pLogStream , this->m_flushLog);
 	}
-	else if (!GLEW_OES_mapbuffer)
-		this->vStreamMan = new HQVertexStreamManagerNoMapGL(pEnum->caps.maxVertexAttribs , this->m_pLogStream , this->m_flushLog);
 	else
 #endif
 	{

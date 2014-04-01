@@ -419,7 +419,11 @@ void Game::Render(HQTime dt)
 	pDevice->GetStateManager()->ActiveDepthStencilState(0);
 
 	//HQTimer::Sleep(0.5f);
-
+#if 0
+	char fpsMsg[256];
+	sprintf(fpsMsg, "fps = %.3f\n", HQEngineApp::GetInstance()->GetFPS());
+	OutputDebugStringA(fpsMsg);
+#endif
 }
 
 #if	defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)

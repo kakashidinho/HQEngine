@@ -30,7 +30,7 @@ int HQEngineMain(int argc, char **argv)
 #	endif
 #endif
 	
-	const char renderAPI[] = "GL";//"D3D9" or "GL"
+	const char renderAPI[] = "D3D11";//"D3D9" or "GL"
 
 	//create log stream
 	HQLogStream *logStream = HQCreateFileLogStream("log.txt");
@@ -58,8 +58,10 @@ int HQEngineMain(int argc, char **argv)
 
 	//prepare engine 
 	HQEngineApp::GetInstance()->SetRenderDelegate(*loop);
-
+	
+	//show window
 	HQEngineApp::GetInstance()->ShowWindow();
+
 
 	//start rendering loop
 	HQEngineApp::GetInstance()->Run();

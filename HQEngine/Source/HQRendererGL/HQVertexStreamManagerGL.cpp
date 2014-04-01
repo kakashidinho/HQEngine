@@ -388,7 +388,7 @@ HQVertexStreamManagerGL::HQVertexStreamManagerGL(const char *logPrefix, hq_uint3
 	this->indexStartAddress = NULL;
 
 #if defined HQ_OPENGLES
-	if (!GLEW_OES_mapbuffe)
+	if (!GLEW_OES_mapbuffer)
 		Log("Init done! No buffer mapping supported.");
 	else
 #endif
@@ -413,7 +413,7 @@ HQVertexStreamManagerGL::HQVertexStreamManagerGL(hq_uint32 maxVertexAttribs , HQ
 	this->indexStartAddress = NULL;
 
 #if defined HQ_OPENGLES
-	if (!GLEW_OES_mapbuffe)
+	if (!GLEW_OES_mapbuffer)
 		Log("Init done! No buffer mapping supported.");
 	else
 #endif
@@ -460,10 +460,6 @@ HQReturnVal HQVertexStreamManagerGL::CreateVertexBuffer(const void *initData , h
 	HQVertexBufferGL* newVBuffer;
 	try{
 		newVBuffer = this->CreateNewVertexBufferObj(size, _GL_DRAW_BUFFER_USAGE(dynamic));
-#ifdef HQ_OPENGLES
-		if (!GLEW_OES_mapbuffer &&  initData != NULL && dynamic)//map buffer is not supported
-			memcpy(newVBuffer->cacheData , initData, size);
-#endif
 
 	}
 	catch (std::bad_alloc e)
@@ -493,10 +489,6 @@ HQReturnVal HQVertexStreamManagerGL::CreateIndexBuffer(const void *initData , hq
 	HQIndexBufferGL* newIBuffer;
 	try{
 		newIBuffer = this->CreateNewIndexBufferObj(size , _GL_DRAW_BUFFER_USAGE( dynamic ) , dataType);
-#ifdef HQ_OPENGLES
-		if (!GLEW_OES_mapbuffer &&  initData != NULL && dynamic)//map buffer is not supported
-			memcpy(newIBuffer->cacheData , initData, size);
-#endif
 	}
 	catch (std::bad_alloc e)
 	{
@@ -808,7 +800,7 @@ void HQVertexStreamManagerGL::OnReset()
 
 	while (!itev.IsAtEnd())
 	{
-		itev->OnCreated(this, NULL);
+		itev->OnCreated(NULL);
 		++itev;
 	}
 
@@ -817,7 +809,7 @@ void HQVertexStreamManagerGL::OnReset()
 
 	while (!itei.IsAtEnd())
 	{
-		itei->OnCreated(this, NULL);
+		itei->OnCreated(NULL);
 		++itei;
 	}
 
@@ -852,7 +844,7 @@ void HQVertexStreamManagerGL::OnReset()
 			this->vertexBuffers.GetIterator(itev);
 			while (!itev.IsAtEnd())
 			{
-				if (itev.GetItemPointer() == currentBuffer)
+				if (itev.GetItemPointer().GetRawPointer() == currentBuffer.GetRawPointer())
 				{
 					this->SetVertexBuffer(itev.GetItemPointer().GetRawPointer(), i, this->streams[i].stride);
 					break;

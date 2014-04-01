@@ -855,7 +855,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetGroupImpl(
 		delete newGroup;
 		glBindFramebuffer(GL_FRAMEBUFFER, currentFBO);//restore old FBO
 
-		this->Log("Error : CreateRenderTargetGroupImpl() failed because of imcompatible render targets!");
+		this->Log("Error : CreateRenderTargetGroupImpl() failed because of incompatible render targets!");
 
 		return HQ_FAILED;
 	}

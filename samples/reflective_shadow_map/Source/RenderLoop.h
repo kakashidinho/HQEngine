@@ -15,6 +15,9 @@ COPYING.txt included with this distribution for more information.
 #include "HQMeshNode.h"
 #include "HQCamera.h"
 
+#include "../../../ThirdParty-mod/MyGUI/include/MyGUI.h"
+#include "../../../ThirdParty-mod/MyGUI/include/MyGUI_HQEnginePlatform.h"
+
 #define DEPTH_PASS_RT_WIDTH 512 //offscreen render target size
 #define DEPTH_PASS_RT_HEIGHT 512 //offscreen render target size
 #define LOWRES_RT_WIDTH 128 //offscreen render target size
@@ -113,10 +116,15 @@ private:
 	char m_renderAPI_name[6];//"D3D9" or "GL"
 	HQRenderAPI m_renderAPI_type;
 
-	hquint32 m_uniformTransformBuffer;
-	hquint32 m_uniformLightProtBuffer;
-	hquint32 m_uniformMaterialBuffer;
-	hquint32 m_uniformLightViewBuffer;
+	HQUniformBuffer* m_uniformTransformBuffer;
+	HQUniformBuffer* m_uniformLightProtBuffer;
+	HQUniformBuffer* m_uniformMaterialBuffer;
+	HQUniformBuffer* m_uniformLightViewBuffer;
+
+	//GUI 
+	MyGUI::HQEnginePlatform* m_guiPlatform;
+	MyGUI::Gui *m_myGUI;
+	MyGUI::TextBox* m_fpsTextBox;
 };
 
 #endif

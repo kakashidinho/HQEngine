@@ -414,6 +414,8 @@ HQReturnVal HQEngineApp::Run(hq_uint32 fpsLimit)
 	if (fpsLimit)
 		desiredRenderTime = 1.0f / fpsLimit;
 
+	m_fps = 0.f;
+
 	m_flags |= HQ_APP_START | HQ_APP_RUNNING;
 
 
@@ -472,8 +474,11 @@ HQReturnVal HQEngineApp::Run(hq_uint32 fpsLimit)
 					{
 						/*------game rendering---------------*/
 						m_renderDelegate->Render(diff);
+
+						this->CalcFPS(diff);
 						
 						diff = 0.0f;
+
 					}
 				}
 				else
@@ -481,7 +486,10 @@ HQReturnVal HQEngineApp::Run(hq_uint32 fpsLimit)
 				{
 					m_renderDelegate->Render(dt);
 
+					this->CalcFPS(dt);
+
 				}
+
 			}//if (m_flags & HQ_APP_START)
 
 			if (!skipFrame)
@@ -510,6 +518,13 @@ void HQEngineApp::Stop()
 	hq_engine_eventQueue_internal->Enable(false);
 	hq_engine_eventQueue_internal->Unlock();
 #endif
+}
+
+void HQEngineApp::CalcFPS(HQTime dt)
+{
+	hqfloat32 fpsSample = 1.0f / dt;
+	
+	m_fps = 0.8f * m_fps + 0.2f * fpsSample;
 }
 
 HQDataReaderStream* HQEngineApp::OpenFileForRead(const char *file){
