@@ -180,6 +180,7 @@ in lowp vec4 vColor;\n\
 in mediump	vec2 vTexcoords;\n\
 out lowp vec4 color0;\n\
 #define gl_FragColor color0\n\
+#define texture2D texture\n\
 #else\n\
 varying lowp vec4 vColor;\n\
 varying mediump	vec2 vTexcoords;\n\

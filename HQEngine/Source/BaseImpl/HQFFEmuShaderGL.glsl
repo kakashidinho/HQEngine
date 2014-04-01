@@ -167,6 +167,7 @@ in lowp vec4 vColor;
 in mediump	vec2 vTexcoords;
 out lowp vec4 color0;
 #define gl_FragColor color0
+#define texture2D texture
 #else
 varying lowp vec4 vColor;
 varying mediump	vec2 vTexcoords;

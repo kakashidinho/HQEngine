@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		D636E01F18EB2E2A00AEA92D /* HQ3DMathBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = D636E01E18EB2E2A00AEA92D /* HQ3DMathBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D637713F18E14DE300DBCA7E /* mojoshader_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D637713918E14DE300DBCA7E /* mojoshader_common.cpp */; };
 		D637714018E14DE300DBCA7E /* mojoshader_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = D637713A18E14DE300DBCA7E /* mojoshader_internal.h */; };
 		D637714118E14DE300DBCA7E /* mojoshader_lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D637713B18E14DE300DBCA7E /* mojoshader_lexer.cpp */; };
@@ -61,7 +62,6 @@
 		D6FDD8E718C7A61D00825C3C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D6FDD8E518C7A61D00825C3C /* InfoPlist.strings */; };
 		D6FDD93B18C7A7CE00825C3C /* Apple.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD90818C7A7CE00825C3C /* Apple.h */; };
 		D6FDD93C18C7A7CE00825C3C /* Apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = D6FDD90918C7A7CE00825C3C /* Apple.mm */; };
-		D6FDD93D18C7A7CE00825C3C /* cgFunctionPointers.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD90A18C7A7CE00825C3C /* cgFunctionPointers.h */; };
 		D6FDD94318C7A7CE00825C3C /* glHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD91418C7A7CE00825C3C /* glHeaders.h */; };
 		D6FDD94418C7A7CE00825C3C /* HQCommonVertexStreamManGL_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD91518C7A7CE00825C3C /* HQCommonVertexStreamManGL_inline.h */; };
 		D6FDD94518C7A7CE00825C3C /* HQCommonVertexStreamManGL.h in Headers */ = {isa = PBXBuildFile; fileRef = D6FDD91618C7A7CE00825C3C /* HQCommonVertexStreamManGL.h */; };
@@ -361,6 +361,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D636E01E18EB2E2A00AEA92D /* HQ3DMathBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQ3DMathBasics.h; path = ../../../Source/HQ3DMathBasics.h; sourceTree = "<group>"; };
 		D637713918E14DE300DBCA7E /* mojoshader_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mojoshader_common.cpp; path = "../../../../ThirdParty-mod/mojoshader/mojoshader_common.cpp"; sourceTree = "<group>"; };
 		D637713A18E14DE300DBCA7E /* mojoshader_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mojoshader_internal.h; path = "../../../../ThirdParty-mod/mojoshader/mojoshader_internal.h"; sourceTree = "<group>"; };
 		D637713B18E14DE300DBCA7E /* mojoshader_lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mojoshader_lexer.cpp; path = "../../../../ThirdParty-mod/mojoshader/mojoshader_lexer.cpp"; sourceTree = "<group>"; };
@@ -412,7 +413,6 @@
 		D6FDD8F118C7A61D00825C3C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		D6FDD90818C7A7CE00825C3C /* Apple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Apple.h; path = ../../../Source/HQRendererGL/Apple.h; sourceTree = "<group>"; };
 		D6FDD90918C7A7CE00825C3C /* Apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Apple.mm; path = ../../../Source/HQRendererGL/Apple.mm; sourceTree = "<group>"; };
-		D6FDD90A18C7A7CE00825C3C /* cgFunctionPointers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cgFunctionPointers.h; path = ../../../Source/HQRendererGL/cgFunctionPointers.h; sourceTree = "<group>"; };
 		D6FDD91418C7A7CE00825C3C /* glHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glHeaders.h; path = ../../../Source/HQRendererGL/glHeaders.h; sourceTree = "<group>"; };
 		D6FDD91518C7A7CE00825C3C /* HQCommonVertexStreamManGL_inline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQCommonVertexStreamManGL_inline.h; path = ../../../Source/HQRendererGL/HQCommonVertexStreamManGL_inline.h; sourceTree = "<group>"; };
 		D6FDD91618C7A7CE00825C3C /* HQCommonVertexStreamManGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQCommonVertexStreamManGL.h; path = ../../../Source/HQRendererGL/HQCommonVertexStreamManGL.h; sourceTree = "<group>"; };
@@ -848,7 +848,6 @@
 				D652FC6718E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.h */,
 				D6FDD90818C7A7CE00825C3C /* Apple.h */,
 				D6FDD90918C7A7CE00825C3C /* Apple.mm */,
-				D6FDD90A18C7A7CE00825C3C /* cgFunctionPointers.h */,
 				D6FDD91418C7A7CE00825C3C /* glHeaders.h */,
 				D6FDD91518C7A7CE00825C3C /* HQCommonVertexStreamManGL_inline.h */,
 				D6FDD91618C7A7CE00825C3C /* HQCommonVertexStreamManGL.h */,
@@ -892,6 +891,7 @@
 		D6FDD96A18C7A88E00825C3C /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				D636E01E18EB2E2A00AEA92D /* HQ3DMathBasics.h */,
 				D682AE8818CDC674004E3C6F /* HQEngineEffectManager.h */,
 				D682AE8918CDC674004E3C6F /* HQEngineResManager.h */,
 				D682AE8A18CDC674004E3C6F /* HQFileManager.h */,
@@ -1409,6 +1409,7 @@
 				D652FC6918E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.h in Headers */,
 				D6FDD9FB18C7A93E00825C3C /* HQRendererDeviceDebugLayer.h in Headers */,
 				D6FDD9E818C7A8ED00825C3C /* HQStack.h in Headers */,
+				D636E01F18EB2E2A00AEA92D /* HQ3DMathBasics.h in Headers */,
 				D6FDD9EE18C7A8ED00825C3C /* HQUtilMath.h in Headers */,
 				D6FDD9CE18C7A8ED00825C3C /* HQMemoryManager.h in Headers */,
 				D6FDD9E618C7A8ED00825C3C /* HQShaderManager.h in Headers */,
@@ -1477,7 +1478,6 @@
 				D6FDD9B118C7A8ED00825C3C /* HQ3DMath.h in Headers */,
 				D6FDDA3E18C7AA6600825C3C /* HQUtilPCH.h in Headers */,
 				D6FDD9EB18C7A8ED00825C3C /* HQThread.h in Headers */,
-				D6FDD93D18C7A7CE00825C3C /* cgFunctionPointers.h in Headers */,
 				D6FDDB6218C7B13900825C3C /* inffast.h in Headers */,
 				D6FDD9CA18C7A8ED00825C3C /* HQLinkedList.h in Headers */,
 				D6FDD9E018C7A8ED00825C3C /* HQRendererStateManager.h in Headers */,

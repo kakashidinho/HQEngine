@@ -251,6 +251,7 @@
 		D606EE3C18C8E728009F9A67 /* HQIOSAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HQIOSAppDelegate.mm; path = ../../../Source/HQEngine/ios/HQIOSAppDelegate.mm; sourceTree = "<group>"; };
 		D606EE3D18C8E728009F9A67 /* HQIOSGameThread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQIOSGameThread.cpp; path = ../../../Source/HQEngine/ios/HQIOSGameThread.cpp; sourceTree = "<group>"; };
 		D606EF2418C8F133009F9A67 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		D636E02018EB2E5300AEA92D /* HQ3DMathBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQ3DMathBasics.h; path = ../../../Source/HQ3DMathBasics.h; sourceTree = "<group>"; };
 		D637714918E14FB700DBCA7E /* HQShaderGL_FakeUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQShaderGL_FakeUBO.cpp; path = ../../../Source/HQRendererGL/HQShaderGL_FakeUBO.cpp; sourceTree = "<group>"; };
 		D637714A18E14FB700DBCA7E /* HQShaderGL_FakeUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderGL_FakeUBO.h; path = ../../../Source/HQRendererGL/HQShaderGL_FakeUBO.h; sourceTree = "<group>"; };
 		D637714D18E1505100DBCA7E /* mojoshader_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mojoshader_common.cpp; path = "../../../../ThirdParty-mod/mojoshader/mojoshader_common.cpp"; sourceTree = "<group>"; };
@@ -316,7 +317,6 @@
 		D6FDD8F118C7A61D00825C3C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		D6FDD90818C7A7CE00825C3C /* Apple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Apple.h; path = ../../../Source/HQRendererGL/Apple.h; sourceTree = "<group>"; };
 		D6FDD90918C7A7CE00825C3C /* Apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Apple.mm; path = ../../../Source/HQRendererGL/Apple.mm; sourceTree = "<group>"; };
-		D6FDD90A18C7A7CE00825C3C /* cgFunctionPointers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cgFunctionPointers.h; path = ../../../Source/HQRendererGL/cgFunctionPointers.h; sourceTree = "<group>"; };
 		D6FDD91418C7A7CE00825C3C /* glHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glHeaders.h; path = ../../../Source/HQRendererGL/glHeaders.h; sourceTree = "<group>"; };
 		D6FDD91518C7A7CE00825C3C /* HQCommonVertexStreamManGL_inline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQCommonVertexStreamManGL_inline.h; path = ../../../Source/HQRendererGL/HQCommonVertexStreamManGL_inline.h; sourceTree = "<group>"; };
 		D6FDD91618C7A7CE00825C3C /* HQCommonVertexStreamManGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQCommonVertexStreamManGL.h; path = ../../../Source/HQRendererGL/HQCommonVertexStreamManGL.h; sourceTree = "<group>"; };
@@ -819,7 +819,6 @@
 				D6FDDB6F18C7BFCD00825C3C /* glew */,
 				D6FDD90818C7A7CE00825C3C /* Apple.h */,
 				D6FDD90918C7A7CE00825C3C /* Apple.mm */,
-				D6FDD90A18C7A7CE00825C3C /* cgFunctionPointers.h */,
 				D6FDD91418C7A7CE00825C3C /* glHeaders.h */,
 				D6FDD91518C7A7CE00825C3C /* HQCommonVertexStreamManGL_inline.h */,
 				D6FDD91618C7A7CE00825C3C /* HQCommonVertexStreamManGL.h */,
@@ -863,6 +862,7 @@
 		D6FDD96A18C7A88E00825C3C /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				D636E02018EB2E5300AEA92D /* HQ3DMathBasics.h */,
 				D682AEAB18CDD86A004E3C6F /* HQEngineEffectManager.h */,
 				D682AEAC18CDD86A004E3C6F /* HQEngineResManager.h */,
 				D682AEAD18CDD86A004E3C6F /* HQFileManager.h */,
