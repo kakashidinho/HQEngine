@@ -177,7 +177,7 @@
     <Link>
       <AdditionalDependencies>libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;HQUtilMathD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)\Output\$(Configuration)\$(ProjectName)D.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty-mod\OpenAL\libs\Win32;$(SolutionDir)/Output/StaticDebug;$(SolutionDir)..\..\VS2008\Libs/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty-mod\OpenAL\libs\Win32;$(SolutionDir)/Output/StaticDebug;$(SolutionDir)Libs/Debug static CRT;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -203,7 +203,7 @@
     <Link>
       <AdditionalDependencies>libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;HQUtilMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)\Output\$(Configuration)\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty-mod\OpenAL\libs\Win32;$(SolutionDir)/Output/StaticRelease;$(SolutionDir)..\..\VS2008\Libs/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty-mod\OpenAL\libs\Win32;$(SolutionDir)/Output/StaticRelease;$(SolutionDir)Libs/Release static CRT;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -231,7 +231,7 @@
     <Link>
       <AdditionalDependencies>libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;HQUtilMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)\Output\$(Configuration)\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty-mod\OpenAL\libs\Win32;$(SolutionDir)/Output/StaticRelease;$(SolutionDir)..\..\VS2008\Libs/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty-mod\OpenAL\libs\Win32;$(SolutionDir)/Output/StaticRelease;$(SolutionDir)Libs/Release static CRT;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
