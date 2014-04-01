@@ -60,7 +60,7 @@ public:
 	virtual HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs , 
 												hq_uint32 numAttrib ,
 												HQEngineShaderResource* vertexShader , 
-												hq_uint32 *pInputLayoutID) = 0;
+												HQVertexLayout **pInputLayoutID) = 0;
 
 	///
 	///Direct3d : {slot} = {texture slot} bitwise OR với enum HQShaderType để chỉ  {texture slot} thuộc shader stage nào. 

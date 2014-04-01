@@ -26,12 +26,7 @@ public:
 	
 	virtual bool IsUsingPShader(){return HQ_FAILED;}
 	
-	virtual hq_uint32 GetShader(hq_uint32 programID, HQShaderType shaderType) 
-	{
-		return HQ_NULL_VSHADER;
-	}
-	
-	virtual HQReturnVal ActiveProgram(hq_uint32 programID){return HQ_FAILED;}
+	virtual HQReturnVal ActiveProgram(HQShaderProgram* programID){return HQ_FAILED;}
 	
 	
 	virtual HQReturnVal CreateShaderFromStream(HQShaderType type,
@@ -39,7 +34,7 @@ public:
 									 const HQShaderMacro * pDefines,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID)
+									 HQShaderObject** pID)
 	{return HQ_FAILED;}
 	
 	
@@ -48,7 +43,7 @@ public:
 									 const HQShaderMacro * pDefines,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID)
+									 HQShaderObject** pID)
 	{return HQ_FAILED;}
 
 	
@@ -58,7 +53,7 @@ public:
 									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
-									 hq_uint32 *pID)
+									 HQShaderObject** pID)
 	{return HQ_FAILED;}
 	
 	
@@ -67,24 +62,24 @@ public:
 									 const char* pSourceData,//nul terminated string
 									 const HQShaderMacro * pDefines,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
-									 hq_uint32 *pID)
+									 HQShaderObject** pID)
 	{return HQ_FAILED;}
 	
 
-	virtual HQReturnVal CreateProgram(hq_uint32 vertexShaderID,
-							  hq_uint32 pixelShaderID,
-							  hq_uint32 geometryShaderID,
-							  const char** uniformParameterNames,
-							  hq_uint32 *pID)
+	virtual HQReturnVal CreateProgram(HQShaderObject* vertexShaderID,
+								HQShaderObject* pixelShaderID,
+								HQShaderObject* geometryShaderID,
+								const char** uniformParameterNames,
+								HQShaderProgram **pID)
 	{return HQ_FAILED;}
 
-	virtual HQReturnVal DestroyProgram(hq_uint32 programID){return HQ_FAILED;}
-	virtual HQReturnVal DestroyShader(hq_uint32 shaderID) {return HQ_FAILED;}
+	virtual HQReturnVal DestroyProgram(HQShaderProgram* programID){return HQ_FAILED;}
+	virtual HQReturnVal DestroyShader(HQShaderObject* shaderID) {return HQ_FAILED;}
 	virtual void DestroyAllProgram() {}
 	virtual void DestroyAllShader() {}
 	virtual void DestroyAllResource() {}
 	
-	virtual hq_uint32 GetParameterIndex(hq_uint32 programID , 
+	virtual hq_uint32 GetParameterIndex(HQShaderProgram* programID , 
 											const char *parameterName)
 	{return HQ_NOT_AVAIL_ID;}
 
@@ -183,30 +178,18 @@ public:
 	}
 
 
-	virtual HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut)
+	virtual HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut)
 	{
 		return HQ_FAILED;
 	}
-	virtual HQReturnVal DestroyUniformBuffer(hq_uint32 bufferID)
+	virtual HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID)
 	{
 		return HQ_FAILED;
 	}
 	virtual void DestroyAllUniformBuffers()  {
 	}
 	
-	virtual HQReturnVal SetUniformBuffer(hq_uint32 slot ,  hq_uint32 bufferID ) 
-	{
-		return HQ_FAILED;
-	}
-	virtual HQReturnVal MapUniformBuffer(hq_uint32 bufferID , void **ppData) 
-	{
-		return HQ_FAILED;
-	}
-	virtual HQReturnVal UnmapUniformBuffer(hq_uint32 bufferID) 
-	{
-		return HQ_FAILED;
-	}
-	virtual HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData)
+	virtual HQReturnVal SetUniformBuffer(hq_uint32 slot ,  HQUniformBuffer* bufferID ) 
 	{
 		return HQ_FAILED;
 	}

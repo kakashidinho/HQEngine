@@ -30,37 +30,36 @@ HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::~HQShaderManagerGL
 }
 
 template <class ShaderController , class BaseShaderManagerClass>
-HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::ActiveProgram(hq_uint32 programID)
+HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::ActiveProgram(HQShaderProgram* program)
 {
-	if( programID == this->activeProgram)
+	if( program == this->activeProgram.GetRawPointer())
 		return HQ_OK;
-	HQSharedPtr<HQBaseShaderProgramGL> pProgram ;
+	HQSharedPtr<HQBaseShaderProgramGL> pProgramSharedPtr ;
 	HQReturnVal re;
-	switch(programID)
+	if (program == NULL)
 	{
-	case HQ_NOT_USE_SHADER:
-		pProgram = this->GetItemPointerNonCheck(this->activeProgram);
-		re = this->shaderController.DeActiveProgram(pProgram->isGLSL , pProgram);
+		re = this->shaderController.DeActiveProgram(this->activeProgram->isGLSL, this->activeProgram);
 
-		this->activeProgram = HQ_NOT_USE_SHADER;
+		this->activeProgram = HQSharedPtr<HQBaseShaderProgramGL>::null;
 
 		this->ActiveFFEmu();
+	}
 
-		return re;
-	default:
-		pProgram = this->GetItemPointer(programID);
+	else {
+		pProgramSharedPtr = this->GetItemPointer(program);
 #if defined _DEBUG || defined DEBUG
-		if(pProgram==NULL)
+		if (pProgramSharedPtr == NULL)
 			return HQ_FAILED;
 #endif
 		this->DeActiveFFEmu();
 
-		re = this->shaderController.ActiveProgram(pProgram->isGLSL , pProgram);
-		this->OnProgramActivated(pProgram.GetRawPointer());//tell parent class
-		this->activeProgram = programID;
+		re = this->shaderController.ActiveProgram(pProgramSharedPtr->isGLSL, pProgramSharedPtr);
+		this->OnProgramActivated(pProgramSharedPtr.GetRawPointer());//tell parent class
+		this->activeProgram = pProgramSharedPtr;
 
-		return re;
 	}
+
+	return re;
 }
 
 /*--------------------------*/
@@ -70,7 +69,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
-										hq_uint32 *pID)
+										HQShaderObject** pID)
 {
 	HQShaderObjectGL *pNewShader;
 	HQReturnVal re = this->shaderController.CreateShaderFromStream(
@@ -99,7 +98,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 										  const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										  bool isPreCompiled,
 										  const char* entryFunctionName,
-										  hq_uint32 *pID)
+										  HQShaderObject**pID)
 {
 	HQShaderObjectGL *pNewShader;
 	HQReturnVal re = this->shaderController.CreateShaderFromMemory(
@@ -128,7 +127,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
-								 hq_uint32 *pID)
+								 HQShaderObject**pID)
 {
 	HQShaderObjectGL *pNewShader;
 	HQReturnVal re = this->shaderController.CreateShaderFromStream(
@@ -157,7 +156,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 								 const char* pSourceData,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
-								 hq_uint32 *pID)
+								 HQShaderObject**pID)
 {
 	HQShaderObjectGL *pNewShader;
 	HQReturnVal re = this->shaderController.CreateShaderFromMemory(
@@ -182,20 +181,20 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 
 /*-----------------------*/
 template <class ShaderController , class BaseShaderManagerClass>
-HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::CreateProgram(hq_uint32 vertexShaderID,
-							  hq_uint32 pixelShaderID,
-							  hq_uint32 geometryShaderID,
-							  const char** uniformParameterNames,
-							  hq_uint32 *pID)
+HQReturnVal HQShaderManagerGL<ShaderController, BaseShaderManagerClass>::CreateProgram(HQShaderObject* vertexShaderID,
+								HQShaderObject* pixelShaderID,
+								HQShaderObject* geometryShaderID,
+								const char** uniformParameterNames,
+								HQShaderProgram **pID)
 {
 	HQSharedPtr<HQShaderObjectGL> pVShader = HQSharedPtr<HQShaderObjectGL> :: null;
 	HQSharedPtr<HQShaderObjectGL> pFShader = HQSharedPtr<HQShaderObjectGL> :: null;
 	HQSharedPtr<HQShaderObjectGL> pGShader = HQSharedPtr<HQShaderObjectGL> :: null;
-	if (vertexShaderID != HQ_NOT_USE_VSHADER)
+	if (vertexShaderID != NULL)
 		pVShader = this->shaderObjects.GetItemPointer(vertexShaderID);
-	if (pixelShaderID != HQ_NOT_USE_PSHADER)
+	if (pixelShaderID != NULL)
 		pFShader = this->shaderObjects.GetItemPointer(pixelShaderID);
-	if (geometryShaderID != HQ_NOT_USE_GSHADER)
+	if (geometryShaderID != NULL)
 		pGShader = this->shaderObjects.GetItemPointer(geometryShaderID);
 
 	bool GLSL = false;
@@ -205,7 +204,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 			GLSL = true;
 	}
 	else
-		vertexShaderID = HQ_NOT_USE_VSHADER;
+		vertexShaderID = NULL;
 
 	if(pFShader != NULL)
 	{
@@ -213,7 +212,7 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 			GLSL = true;
 	}
 	else
-		pixelShaderID = HQ_NOT_USE_PSHADER;
+		pixelShaderID = NULL;
 
 	if(pGShader != NULL)
 	{
@@ -221,22 +220,25 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Create
 			GLSL = true;
 	}
 	else
-		geometryShaderID = HQ_NOT_USE_GSHADER;
+		geometryShaderID = NULL;
 
 	HQBaseShaderProgramGL * pNewProgram = this->CreateNewProgramObject();
 	pNewProgram->isGLSL = GLSL;
 
 	HQReturnVal re = this->shaderController.CreateProgram(
 		pNewProgram,
-		vertexShaderID, geometryShaderID, pixelShaderID,
 		pVShader , pGShader ,pFShader ,
-		uniformParameterNames ,
-		pID);
+		uniformParameterNames);
 
 	if (HQFailed(re))
 		delete pNewProgram;
 	else
+	{
 		this->OnProgramCreated(pNewProgram);
+
+		if (pID != NULL)
+			*pID = pNewProgram;
+	}
 
 	return re;
 
@@ -250,15 +252,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -271,15 +273,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -297,15 +299,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -323,15 +325,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -349,15 +351,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -375,15 +377,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -401,15 +403,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -427,15 +429,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -453,15 +455,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numMatrices)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -479,15 +481,15 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numMatrices)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	const HQShaderParameterGL* param = pProgram->GetParameter( parameterName);
 #if defined _DEBUG || defined DEBUG	
 	if (param == NULL)
 	{
-		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram);
+		this->Log("error :parameter \"%s\" not found from program (%u)!",parameterName,this->activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -511,14 +513,14 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 const hq_int32* pValues,
 					 hq_uint32 numElements)
 {
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 	{
 		if (this->IsFFEmuActive())
 			return this->SetFFRenderState((HQFFRenderState) parameterIndex, pValues);
 		return HQ_FAILED;
 	}
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -539,11 +541,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -564,11 +566,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -589,11 +591,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -614,11 +616,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -639,11 +641,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -664,11 +666,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -689,11 +691,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numElements)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -713,14 +715,14 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 const HQBaseMatrix4* pMatrices,
 					 hq_uint32 numMatrices)
 {
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 	{
 		if (this->IsFFEmuActive())
 			return this->SetFFTransform((HQFFTransformMatrix) parameterIndex, pMatrices);
 		return HQ_FAILED;
 	}
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	
@@ -741,11 +743,11 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 					 hq_uint32 numMatrices)
 {
 #if defined _DEBUG || defined DEBUG
-	if(this->activeProgram==HQ_NOT_USE_SHADER)
+	if(this->activeProgram==NULL)
 		return HQ_FAILED;
 #endif
 	
-	HQBaseShaderProgramGL* pProgram = this->GetItemRawPointerNonCheck(this->activeProgram);
+	HQBaseShaderProgramGL* pProgram = this->activeProgram.GetRawPointer();
 	HQShaderParameterGL* param = GETPARAM(pProgram , parameterIndex);
 
 #if defined _DEBUG || defined DEBUG	

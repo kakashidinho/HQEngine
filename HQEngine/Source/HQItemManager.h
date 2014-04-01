@@ -211,7 +211,9 @@ bool HQItemManager<T>::AddItem(T* pItem,hq_uint32 *itemID)
 	if (pfreeSlot == NULL)
 		return false;
 
-	pfreeSlot->sharedPtr = HQSharedPtr<T>(pItem);
+	HQSharedPtr<T> wrapper = pItem;
+
+	pfreeSlot->sharedPtr = wrapper;
 	
 	m_numItems ++;
 

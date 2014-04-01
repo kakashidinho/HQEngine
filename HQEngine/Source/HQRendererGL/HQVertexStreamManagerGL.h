@@ -12,18 +12,64 @@ COPYING.txt included with this distribution for more information.
 #define _VERTEX_STREAM_MAN_GL_
 
 #include "glHeaders.h"
+#include "../BaseImpl/HQBaseImplCommon.h"
 #include "../HQVertexStreamManager.h"
 #include "../HQLoggableObject.h"
 #include "../HQItemManager.h"
 #include "HQCommonVertexStreamManGL.h"
 
+#ifdef WIN32
+#	pragma warning( push )
+#	pragma warning( disable : 4250 )//dominance inheritance of HQBufferGL
+#endif
 
-
-struct HQIndexBufferGL :public HQBufferGL
+//vertex buffer
+struct HQVertexBufferGL : public HQBufferGL, public HQVertexBuffer, public HQBaseIDObject
 {
-	HQIndexBufferGL(hq_uint32 size , GLenum usage , HQIndexDataType dataType)
+	HQVertexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage)
+	: HQBufferGL(size, usage)
+	{
+		this->manager = manager;
+	}
+	~HQVertexBufferGL();
+
+	void OnCreated(const void *initData);
+
+	HQVertexStreamManagerGL *manager;
+};
+
+//mappable vertex buffer
+struct HQMappableVertexBufferGL : public HQVertexBufferGL {
+	HQMappableVertexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage)
+	: HQVertexBufferGL(manager, size, usage) {}
+
+	virtual hquint32 GetSize() const { return size; }///mappable size
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+};
+
+
+//unmappable vertex buffer
+struct HQUnmappableVertexBufferGL : public HQVertexBufferGL, public HQSysMemBuffer{
+	HQUnmappableVertexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage);
+
+	void OnCreated(const void *initData);
+
+	//implement HQSysMemBuffer
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+};
+
+//index buffer
+struct HQIndexBufferGL :public HQBufferGL, public HQIndexBuffer, public HQBaseIDObject
+{
+	HQIndexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage, HQIndexDataType dataType)
 		: HQBufferGL(size , usage )
 	{
+		this->manager = manager;
+
 		switch (dataType)
 		{
 		case HQ_IDT_UINT:
@@ -34,38 +80,48 @@ struct HQIndexBufferGL :public HQBufferGL
 		}
 	}
 
-	void OnCreated(HQVertexStreamManagerGL *manager, const void *initData);
+	void OnCreated(const void *initData);
 
 	GLenum dataType;
+
+	HQVertexStreamManagerGL *manager;
 };
+
+
+//mappable index buffer
+struct HQMappableIndexBufferGL : public HQIndexBufferGL {
+	HQMappableIndexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage, HQIndexDataType dataType)
+	: HQIndexBufferGL(manager, size, usage, dataType) {}
+
+	virtual hquint32 GetSize() const { return size; }///mappable size
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+};
+
+//unmappable index buffer
+struct HQUnmappableIndexBufferGL : public HQIndexBufferGL, public HQSysMemBuffer{
+	HQUnmappableIndexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage, HQIndexDataType dataType);
+
+	void OnCreated(const void *initData);
+
+	//implement HQSysMemBuffer
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+};
+
+#ifdef WIN32
+#	pragma warning( pop )
+#endif
+
 
 /*--------
 fully capable vertex manager
-shader + vbo + oes map buffer
+shader + vbo
 --------*/
 class HQVertexStreamManagerGL: public HQVertexStreamManager , public HQLoggableObject
 {
-protected:
-	HQItemManager<HQBufferGL> vertexBuffers;
-	HQItemManager<HQIndexBufferGL> indexBuffers;
-	HQItemManager<HQVertexInputLayoutGL> inputLayouts;
-	HQVertexStreamGL *streams;
-
-	GLuint currentBoundVBuffer;
-	HQSharedPtr<HQIndexBufferGL> activeIndexBuffer;
-	GLenum indexDataType;
-	hq_uint32 indexShiftFactor;
-	void *indexStartAddress;//for compatibility with vertex array
-	HQSharedPtr<HQVertexInputLayoutGL> activeInputLayout;
-	
-	hq_uint32 maxVertexAttribs;
-	HQVertexAttribInfoNodeGL *vAttribInfoNodeCache;
-
-	void ConvertToVertexAttribInfo(const HQVertexAttribDesc &vAttribDesc ,HQVertexAttribInfoGL &vAttribInfo);
-	virtual bool IsVertexAttribValid(const HQVertexAttribDesc &vAttribDesc) {return true;}////check if vertex attribute' desc is valid
-	
-	
-	HQVertexStreamManagerGL(const char *logPrefix, hq_uint32 maxVertexAttribs , HQLogStream *logFileStream , bool flushLog);
 
 public:
 	HQVertexStreamManagerGL(hq_uint32 maxVertexAttribs , HQLogStream *logFileStream , bool flushLog);
@@ -73,6 +129,7 @@ public:
 	
 	virtual void Commit() {}//this is called just before drawing
 	
+	HQSharedPtr<HQIndexBufferGL> GetActiveIndexBuffer() { return activeIndexBuffer; }
 	GLuint GetCurrentBoundVBuffer() {return this->currentBoundVBuffer;}
 	void InvalidateCurrentBoundVBuffer() {this->currentBoundVBuffer = 0;}
 	inline GLenum GetIndexDataType() {return this->indexDataType;}
@@ -82,34 +139,26 @@ public:
 
 	HQReturnVal CreateVertexBuffer(const void *initData , hq_uint32 size , 
 									bool dynamic , bool isForPointSprites,
-									hq_uint32 *pVertexBufferID);
+									HQVertexBuffer **pVertexBufferID);
 	HQReturnVal CreateIndexBuffer(const void *initData , 
 								  hq_uint32 size , bool dynamic  ,
 								  HQIndexDataType indexDataType  , 
-								  hq_uint32 *pIndexBufferID);
+								  HQIndexBuffer **pIndexBufferID);
 
 	HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDesc , 
 												hq_uint32 numAttrib ,
-												hq_uint32 vertexShaderID , 
-												hq_uint32 *pInputLayoutID);
+												HQShaderObject* vertexShaderID , 
+												HQVertexLayout **pInputLayoutID);
 
-	HQReturnVal SetVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 streamIndex , hq_uint32 stride ) ;
+	HQReturnVal SetVertexBuffer(HQVertexBuffer* vertexBufferID, hq_uint32 streamIndex, hq_uint32 stride);
 
-	HQReturnVal SetIndexBuffer(hq_uint32 indexBufferID );
+	HQReturnVal SetIndexBuffer(HQIndexBuffer* indexBufferID );
 
-	HQReturnVal SetVertexInputLayout(hq_uint32 inputLayoutID) ;
-	
-	HQReturnVal MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) ;
-	HQReturnVal UnmapVertexBuffer(hq_uint32 vertexBufferID) ;
-	HQReturnVal MapIndexBuffer(hq_uint32 indexBufferID, HQMapType mapType, void **ppData);
-	HQReturnVal UnmapIndexBuffer(hq_uint32 indexBufferID);
+	HQReturnVal SetVertexInputLayout(HQVertexLayout* inputLayoutID) ;
 
-	HQReturnVal UpdateVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 offset , hq_uint32 size , const void * pData);
-	HQReturnVal UpdateIndexBuffer(hq_uint32 indexBufferID, hq_uint32 offset , hq_uint32 size , const void * pData);
-
-	HQReturnVal RemoveVertexBuffer(hq_uint32 vertexBufferID) ;
-	HQReturnVal RemoveIndexBuffer(hq_uint32 indexBufferID) ;
-	HQReturnVal RemoveVertexInputLayout(hq_uint32 inputLayoutID) ;
+	HQReturnVal RemoveVertexBuffer(HQVertexBuffer* vertexBufferID);
+	HQReturnVal RemoveIndexBuffer(HQIndexBuffer* indexBufferID);
+	HQReturnVal RemoveVertexInputLayout(HQVertexLayout* inputLayoutID);
 	void RemoveAllVertexBuffer() ;
 	void RemoveAllIndexBuffer() ;
 	void RemoveAllVertexInputLayout() ;
@@ -130,33 +179,32 @@ public:
 	}
 	inline static void EnableVertexAttribArray(GLuint index);
 	inline static void DisableVertexAttribArray(GLuint index);
-	inline static void SetVertexAttribPointer(const HQVertexAttribInfoGL &vAttribInfo , hq_uint32 stride, const HQBufferGL *vbuffer);
-};
-
-#ifdef HQ_OPENGLES
-/*-------shader + vbo but no map buffer supported------*/
-class HQVertexStreamManagerNoMapGL : public HQVertexStreamManagerGL
-{
-public:
-	HQVertexStreamManagerNoMapGL(hq_uint32 maxVertexAttribs , HQLogStream *logFileStream , bool flushLog)
-		:HQVertexStreamManagerGL("GL Vertex Stream Manager (no buffer mapping) :", maxVertexAttribs , logFileStream , flushLog)
-	{
-	}
-
-	HQReturnVal MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) ;
-	HQReturnVal UnmapVertexBuffer(hq_uint32 vertexBufferID) ;
-	HQReturnVal MapIndexBuffer(hq_uint32 indexBufferID, HQMapType mapType, void **ppData);
-	HQReturnVal UnmapIndexBuffer(hq_uint32 indexBufferID);
-
-	HQReturnVal UpdateVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 offset , hq_uint32 size , const void * pData);
-	HQReturnVal UpdateIndexBuffer(hq_uint32 indexBufferID, hq_uint32 offset , hq_uint32 size , const void * pData);
-
+	inline static void SetVertexAttribPointer(const HQVertexAttribInfoGL &vAttribInfo, hq_uint32 stride, const HQBufferGL *vbuffer);
 protected:
-	HQVertexStreamManagerNoMapGL(const char *logPrefix, hq_uint32 maxVertexAttribs , HQLogStream *logFileStream , bool flushLog)
-		:HQVertexStreamManagerGL(logPrefix, maxVertexAttribs , logFileStream , flushLog)
-	{
-	}
+	HQVertexStreamManagerGL(const char *logPrefix, hq_uint32 maxVertexAttribs, HQLogStream *logFileStream, bool flushLog);
+
+	void ConvertToVertexAttribInfo(const HQVertexAttribDesc &vAttribDesc, HQVertexAttribInfoGL &vAttribInfo);
+	virtual bool IsVertexAttribValid(const HQVertexAttribDesc &vAttribDesc) { return true; }////check if vertex attribute' desc is valid
+
+	virtual HQVertexBufferGL * CreateNewVertexBufferObj(hq_uint32 size, GLenum usage);
+	virtual HQIndexBufferGL * CreateNewIndexBufferObj(hq_uint32 size, GLenum usage, HQIndexDataType dataType);
+
+	HQIDItemManager<HQVertexBufferGL> vertexBuffers;
+	HQIDItemManager<HQIndexBufferGL> indexBuffers;
+	HQIDItemManager<HQVertexInputLayoutGL> inputLayouts;
+	HQVertexStreamGL *streams;
+
+	GLuint currentBoundVBuffer;
+	HQSharedPtr<HQIndexBufferGL> activeIndexBuffer;
+	GLenum indexDataType;
+	hq_uint32 indexShiftFactor;
+	void *indexStartAddress;//for compatibility with vertex array
+	HQSharedPtr<HQVertexInputLayoutGL> activeInputLayout;
+
+	hq_uint32 maxVertexAttribs;
+	HQVertexAttribInfoNodeGL *vAttribInfoNodeCache;
+
+
 };
-#endif
 
 #endif

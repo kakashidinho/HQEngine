@@ -12,9 +12,6 @@ COPYING.txt included with this distribution for more information.
 #define _HQ_RENDER_TARGET_MANAGER_H_
 
 #include "HQRendererCoreType.h"
-#include "HQReferenceCountObj.h"
-
-typedef HQReferenceCountObj HQSavedActiveRenderTargets;
 
 /*-------------------------------------------------------
 Important : 
@@ -36,7 +33,7 @@ public:
 	///this operation may do nothing if mipmaps generation for render target texture is not supported
 	///this method must not be called when render target is active , or it can make application crash
 	///
-	virtual HQReturnVal GenerateMipmaps(hq_uint32 renderTargetTextureID) = 0;
+	virtual HQReturnVal GenerateMipmaps(HQRenderTargetView* renderTargetTextureID) = 0;
 
 	///
 	///create render target texture. 
@@ -54,8 +51,8 @@ public:
 								  HQRenderTargetFormat format , 
 								  HQMultiSampleType multisampleType,
 								  HQTextureType textureType,
-								  hq_uint32 *pRenderTargetID_Out,
-								  hq_uint32 *pTextureID_Out) = 0;
+								  HQRenderTargetView** pRenderTargetID_Out,
+								  HQTexture **pTextureID_Out) = 0;
 	///
 	///create custom depth stencil buffer. 
 	///return HQ_FAILED_FORMAT_NOT_SUPPORT if {format} is not supported. 
@@ -64,7 +61,7 @@ public:
 	virtual HQReturnVal CreateDepthStencilBuffer(hq_uint32 width , hq_uint32 height,
 										HQDepthStencilFormat format,
 										HQMultiSampleType multisampleType,
-										hq_uint32 *pDepthStencilBufferID_Out) = 0;
+										HQDepthStencilBufferView **pDepthStencilBufferID_Out) = 0;
 	
 	
 	///
@@ -80,17 +77,17 @@ public:
 	///return HQ_FAILED if [numRenderTargets} is larger than value retrieved by method GetMaxActiveRenderTargets()
 	///
 	virtual HQReturnVal CreateRenderTargetGroup(const HQRenderTargetDesc *renderTargetDescs , 
-									hq_uint32 depthStencilBufferID ,
+									HQDepthStencilBufferView* depthStencilBufferID,
 									hq_uint32 numRenderTargets,//number of render targers
-									hq_uint32 *pRenderTargetGroupID_out
+									HQRenderTargetGroup **pRenderTargetGroupID_out
 								   )= 0;
 
 	///
 	///Create render target group with only one render target. See above method for more details
 	///
-	HQReturnVal CreateRenderTargetGroup(hquint32 renderTargetID , 
-									hq_uint32 depthStencilBufferID ,
-									hq_uint32 *pRenderTargetGroupID_out
+	HQReturnVal CreateRenderTargetGroup(HQRenderTargetView* renderTargetID,
+									HQDepthStencilBufferView* depthStencilBufferID,
+									HQRenderTargetGroup **pRenderTargetGroupID_out
 									) {
 		HQRenderTargetDesc desc (renderTargetID);
 		return CreateRenderTargetGroup(&desc, depthStencilBufferID, 1, pRenderTargetGroupID_out);
@@ -100,24 +97,24 @@ public:
 	///Set the render targets in group {renderTargetGroupID} as main render targets	.
 	///Pass HQ_NOT_AVAIL_ID to switch to default render target
 	///
-	virtual HQReturnVal ActiveRenderTargets(hquint32 renderTargetGroupID) = 0;
+	virtual HQReturnVal ActiveRenderTargets(HQRenderTargetGroup* renderTargetGroupID) = 0;
 
 	///
 	///Get current render targets group
 	///
-	virtual hquint32 GetActiveRenderTargets() = 0;
+	virtual HQRenderTargetGroup* GetActiveRenderTargets() = 0;
 
 	///
 	///If render target is texture , it also will be removed from texture manager.
 	///If there is currently a render target group containing this render target, this render target will not be immediately destroyed
 	///
-	virtual HQReturnVal RemoveRenderTarget(hq_uint32 renderTargetID) =0;
+	virtual HQReturnVal RemoveRenderTarget(HQRenderTargetView* renderTargetID) =0;
 	virtual void RemoveAllRenderTarget() = 0;
 	
-	virtual HQReturnVal RemoveDepthStencilBuffer(hq_uint32 depthStencilBufferID) = 0;
+	virtual HQReturnVal RemoveDepthStencilBuffer(HQDepthStencilBufferView* depthStencilBufferID) = 0;
 	virtual void RemoveAllDepthStencilBuffer() = 0;
 
-	virtual HQReturnVal RemoveRenderTargetGroup(hq_uint32 groupID) = 0;
+	virtual HQReturnVal RemoveRenderTargetGroup(HQRenderTargetGroup* groupID) = 0;
 	virtual void RemoveAllRenderTargetGroup() = 0;
 };
 #endif

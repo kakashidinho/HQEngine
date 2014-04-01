@@ -31,8 +31,10 @@ COPYING.txt included with this distribution for more information.
 using namespace pvrtexlib;
 #endif //#if HQ_USE_PVR_TEX_LIB
 
+/*---------HQTextureD3D11-----------------*/
+
 HQTextureD3D11::HQTextureD3D11(HQTextureType type)
-:HQTexture(),
+:HQBaseTexture(),
 boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(SlotList::LinkedListNodeType), g_pD3DDev->GetCaps().maxTotalBoundTextures))
 {
 	this->type = type;
@@ -45,6 +47,124 @@ HQTextureD3D11::~HQTextureD3D11()
 		HQTextureResourceD3D11* pTex = (HQTextureResourceD3D11 *)pData;
 		HQ_DELETE (pTex);
 	}
+}
+
+hquint32 HQTextureD3D11::GetWidth() const
+{
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D:
+	case HQ_TEXTURE_CUBE:
+		{
+			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *)((HQTextureResourceD3D11*)this->pData)->pTexture;
+			D3D11_TEXTURE2D_DESC desc;
+			textureD3D->GetDesc(&desc);
+			return desc.Width;
+		}
+		break;
+	default:
+		return 0;
+	}
+}
+hquint32 HQTextureD3D11::GetHeight() const
+{
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D:
+	case HQ_TEXTURE_CUBE:
+		{
+			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *)((HQTextureResourceD3D11*)this->pData)->pTexture;
+			D3D11_TEXTURE2D_DESC desc;
+			textureD3D->GetDesc(&desc);
+			return desc.Height;
+		}
+		break;
+	default:
+		return 0;
+	}
+}
+
+
+
+/*---------HQTextureBufferD3D11-----------------*/
+struct HQTextureBufferD3D11 : public HQTextureD3D11{
+	HQTextureBufferD3D11() : HQTextureD3D11(HQ_TEXTURE_BUFFER)
+	{
+	}
+
+	virtual hquint32 GetWidth() const { return size; }
+
+	virtual hquint32 GetHeight() const { return 1; }
+
+	virtual hquint32 GetSize() const { return size; }
+
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+
+	ID3D11DeviceContext *pD3DContext;
+	HQLoggableObject *pLog;
+	hquint32 size;
+	bool isDynamic;
+};
+
+HQReturnVal HQTextureBufferD3D11::Unmap()
+{
+	ID3D11Resource * pD3DBuffer = ((HQTextureResourceD3D11*)this->pData)->pTexture;
+	pD3DContext->Unmap(pD3DBuffer, 0);
+	return HQ_OK;
+}
+
+HQReturnVal HQTextureBufferD3D11::Update(hq_uint32 offset, hq_uint32 size, const void * pData)
+{
+	ID3D11Resource * pD3DBuffer = ((HQTextureResourceD3D11*)this->pData)->pTexture;
+#if defined _DEBUG || defined DEBUG	
+	if (offset != 0 || size != this->size)
+	{
+		pLog->Log("Error : texture buffer can't be updated partially!");
+		return HQ_FAILED;
+	}
+#endif
+
+	if (this->isDynamic == true)
+	{
+		//update entire buffer
+		D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+		if (SUCCEEDED(pD3DContext->Map(pD3DBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
+		{
+			//copy
+			memcpy(mappedSubResource.pData, pData, this->size);
+
+			pD3DContext->Unmap(pD3DBuffer, 0);
+		}
+	}
+	else
+	{
+		//update entire buffer
+		pD3DContext->UpdateSubresource(pD3DBuffer, 0, NULL, pData, 0, 0);
+	}
+
+	return HQ_OK;
+}
+HQReturnVal HQTextureBufferD3D11::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
+{
+	ID3D11Resource * pD3DBuffer = ((HQTextureResourceD3D11*)this->pData)->pTexture;
+#if defined DEBUG || defined _DEBUG
+	if (!ppData)
+		return HQ_FAILED;
+	if (mapType != HQ_MAP_DISCARD)
+		this->pLog->Log("Warning : texture buffer can only be mapped discard");
+	if (offset != 0 || (size != this->size && size != 0))
+	{
+		pLog->Log("Error : texture buffer can't be updated partially!");
+		return HQ_FAILED;
+	}
+#endif
+	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+	pD3DContext->Map(pD3DBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+	*ppData = mappedSubResource.pData;
+
+	return HQ_OK;
 }
 
 //************************************************************
@@ -188,14 +308,16 @@ HQTextureManagerD3D11::~HQTextureManagerD3D11()
 }
 
 /*-------create new texture object---------*/
-HQTexture * HQTextureManagerD3D11::CreateNewTextureObject(HQTextureType type)
+HQBaseTexture * HQTextureManagerD3D11::CreateNewTextureObject(HQTextureType type)
 {
-	return new HQTextureD3D11(type);
+	if (type == HQ_TEXTURE_BUFFER)
+		return HQ_NEW HQTextureBufferD3D11();
+	return HQ_NEW HQTextureD3D11(type);
 }
 /*-------set texture ---------------------*/
-HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 textureID)
+HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textureID)
 {
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 
 	hq_uint32 resourceSlot = slot & 0x0fffffff;
 
@@ -312,9 +434,9 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , hq_uint32 texture
 }
 
 
-HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSlot , hq_uint32 textureID)
+HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSlot, HQTexture* textureID)
 {
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 
 #if defined _DEBUG || defined DEBUG
 	if (resourceSlot >= g_pD3DDev->GetCaps().maxPixelTextures)
@@ -357,7 +479,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSl
 	return HQ_OK;
 }
 
-void HQTextureManagerD3D11::UnbindTextureFromAllSlots(const HQSharedPtr<HQTexture> &pTexture)
+void HQTextureManagerD3D11::UnbindTextureFromAllSlots(const HQSharedPtr<HQBaseTexture> &pTexture)
 {
 	HQTextureD3D11 *pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
 
@@ -390,14 +512,14 @@ void HQTextureManagerD3D11::UnbindTextureFromAllSlots(const HQSharedPtr<HQTextur
 
 		//unlink this texture from the slot
 		pTextureD3D11->boundSlots.RemoveAt(pTextureSlot->textureLink);
-		pTextureSlot->pTexture = HQSharedPtr<HQTexture>::null;
+		pTextureSlot->pTexture = HQSharedPtr<HQBaseTexture>::null;
 	}//for (pTextureD3D11->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 }
 
 /*
 Load texture from file
 */
-HQReturnVal HQTextureManagerD3D11::LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex)
 {
 	if(!pD3DDevice)
 		return HQ_FAILED;
@@ -505,7 +627,7 @@ HQReturnVal HQTextureManagerD3D11::LoadTextureFromStream(HQDataReaderStream* dat
 /*
 Load cube texture from 6 files
 */
-HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex)
 {
 	if(!pD3DDevice)
 		return HQ_FAILED;
@@ -577,7 +699,7 @@ HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromStreams(HQDataReaderStream
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D11::CreateSingleColorTexture(HQTexture *pTex,HQColorui color)
+HQReturnVal HQTextureManagerD3D11::CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
 {
 	t2DDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	t2DDesc.Width = 1;
@@ -604,7 +726,7 @@ HQReturnVal HQTextureManagerD3D11::CreateSingleColorTexture(HQTexture *pTex,HQCo
 /*
 create texture object from pixel data
 */
-HQReturnVal HQTextureManagerD3D11::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	SurfaceFormat format=bitmap.GetSurfaceFormat();
@@ -750,7 +872,7 @@ HQReturnVal HQTextureManagerD3D11::CreateTexture(bool changeAlpha,hq_uint32 numM
 		return re;
 	return this->CreateShaderResourceView(pTex);
 }
-HQReturnVal HQTextureManagerD3D11::Create2DTexture(hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	unsigned long rowSize;//độ lớn 1 hàng của 1 mipmap level trong dữ liệu ảnh
@@ -862,7 +984,7 @@ HQReturnVal HQTextureManagerD3D11::Create2DTexture(hq_uint32 numMipmaps,HQTextur
 
 	return HQ_OK;
 }
-HQReturnVal HQTextureManagerD3D11::CreateCubeTexture(hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	unsigned long rowSize;//độ lớn 1 hàng của 1 mipmap level trong dữ liệu ảnh
@@ -1053,7 +1175,7 @@ HQReturnVal HQTextureManagerD3D11::SetTransparency(hq_float32 alpha)
 }
 
 
-HQReturnVal HQTextureManagerD3D11::CreateShaderResourceView(HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::CreateShaderResourceView(HQBaseTexture * pTex)
 {
 	HQTextureResourceD3D11 * pT = (HQTextureResourceD3D11*)pTex->pData;
 	D3D11_SHADER_RESOURCE_VIEW_DESC vDesc;
@@ -1087,8 +1209,14 @@ HQReturnVal HQTextureManagerD3D11::CreateShaderResourceView(HQTexture * pTex)
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D11::CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
+HQReturnVal HQTextureManagerD3D11::CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
 {
+	HQTextureBufferD3D11 *pTexBufD3D = static_cast<HQTextureBufferD3D11*> (pTex);
+	pTexBufD3D->isDynamic = isDynamic;
+	pTexBufD3D->size = size;
+	pTexBufD3D->pD3DContext = this->pD3DContext;
+	pTexBufD3D->pLog = this;
+
 	hq_uint32 texelSize;
 
 	if (g_pD3DDev->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
@@ -1131,65 +1259,7 @@ HQReturnVal HQTextureManagerD3D11::CreateTextureBuffer(HQTexture *pTex ,HQTextur
 
 	return this->CreateShaderResourceView(pTex);
 }
-HQReturnVal HQTextureManagerD3D11::MapTextureBuffer(hq_uint32 textureID , void **ppData )
-{
-	HQTexture* pTexture = this->textures.GetItemRawPointer(textureID);
 
-#if defined _DEBUG || defined DEBUG
-	if (!ppData)
-		return HQ_FAILED;
-	if (pTexture == NULL || pTexture->type != HQ_TEXTURE_BUFFER)
-		return HQ_FAILED_INVALID_ID;
-#endif	
-	
-	ID3D11Resource * pD3DTexture = ((HQTextureResourceD3D11*) pTexture->pData)->pTexture;
-
-	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-
-	if(FAILED(pD3DContext->Map(pD3DTexture , 0 , D3D11_MAP_WRITE_DISCARD , 0 , &mappedSubResource)))
-		return HQ_FAILED;
-	*ppData = mappedSubResource.pData;
-
-	return HQ_OK;
-}
-HQReturnVal HQTextureManagerD3D11::UnmapTextureBuffer(hq_uint32 textureID) 
-{
-	HQTexture* pTexture = this->textures.GetItemRawPointer(textureID);
-#if defined _DEBUG || defined DEBUG	
-	if (pTexture == NULL || pTexture->type != HQ_TEXTURE_BUFFER)
-		return HQ_FAILED_INVALID_ID;
-#endif
-	
-	ID3D11Resource * pD3DTexture = ((HQTextureResourceD3D11*) pTexture->pData)->pTexture;
-	pD3DContext->Unmap(pD3DTexture , 0 );
-	return HQ_OK;
-}
-
-
-
-HQReturnVal HQTextureManagerD3D11::GetTexture2DSize(hq_uint32 textureID, hquint32 &width, hquint32& height)
-{
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
-	if (pTexture == NULL)
-		return HQ_FAILED_INVALID_ID;
-
-	switch (pTexture->type)
-	{
-	case HQ_TEXTURE_2D:
-	case HQ_TEXTURE_CUBE:
-		{
-			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *) ((HQTextureResourceD3D11*) pTexture->pData)->pTexture;
-			D3D11_TEXTURE2D_DESC desc;
-			textureD3D->GetDesc(&desc);
-			width = desc.Width;
-			height = desc.Height;
-		}
-		break;
-	default:
-		return HQ_FAILED;
-	}
-	return HQ_OK;
-}
 
 HQTextureCompressionSupport HQTextureManagerD3D11::IsCompressionSupported(HQTextureType textureType,HQTextureCompressionFormat type)
 {
@@ -1218,7 +1288,7 @@ HQBaseRawPixelBuffer* HQTextureManagerD3D11::CreatePixelBufferImpl(HQRawPixelFor
 	return HQ_NEW HQBaseRawPixelBuffer(HQ_RPFMT_R8G8B8A8, width, height);//only 32 bit pixel buffer is supported
 }
 
-HQReturnVal HQTextureManagerD3D11::CreateTexture(HQTexture *pTex, const HQBaseRawPixelBuffer* color)
+HQReturnVal HQTextureManagerD3D11::CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
 {
 
 	color->MakeWrapperBitmap(bitmap);

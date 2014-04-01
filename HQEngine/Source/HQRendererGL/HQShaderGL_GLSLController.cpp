@@ -406,8 +406,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 							  HQSharedPtr<HQShaderObjectGL>& pVShader,
 							  HQSharedPtr<HQShaderObjectGL>& pGShader,
 							  HQSharedPtr<HQShaderObjectGL>& pFShader,
-							  const char** uniformParameterNames,
-							  hq_uint32 *pID)
+							  const char** uniformParameterNames)
 {
 
 	hq_uint32 flags=0;//cờ thể hiện trong program có những loại shader nào
@@ -530,13 +529,10 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 	}
 #endif
 
-	hq_uint32 newProgramID;
-	if (!g_pShaderMan->AddItem(pNewProgramObj, &newProgramID))
+	if (!g_pShaderMan->AddItem(pNewProgramObj))
 	{
 		return HQ_FAILED_MEM_ALLOC;
 	}
-	if (pID != NULL)
-		*pID = newProgramID;
 
 	return HQ_OK;
 }
@@ -640,30 +636,22 @@ HQReturnVal HQGLSLShaderController::CreateShaderFromMemory(HQShaderType type,
 
 HQReturnVal HQGLSLShaderController::CreateProgram(
 							    HQBaseShaderProgramGL *pNewProgramObj,
-								hq_uint32 vertexShaderID,
-								hq_uint32 geometryShaderID,
-								hq_uint32 pixelShaderID,
 								HQSharedPtr<HQShaderObjectGL>& pVShader,
 								HQSharedPtr<HQShaderObjectGL>& pGShader,
 								HQSharedPtr<HQShaderObjectGL>& pFShader,
-								const char** uniformParameterNames,
-								hq_uint32 *pID)
+								const char** uniformParameterNames)
 {
 	if (pNewProgramObj->isGLSL == false)
 		return HQ_FAILED;
-	hquint32 programID;
-	HQReturnVal re = this->CreateProgramGLSL(pNewProgramObj, pVShader, pGShader, pFShader, uniformParameterNames, &programID);
 	
-	if (pID != NULL)
-		*pID = programID;
+	HQReturnVal re = this->CreateProgramGLSL(pNewProgramObj, pVShader, pGShader, pFShader, uniformParameterNames);
 
 	//store shaders' IDs
 	if (!HQFailed(re))
 	{
-		HQSharedPtr<HQBaseShaderProgramGL> pProgram = g_pShaderMan->GetItemPointer(programID);
-		pProgram->vertexShaderID = vertexShaderID;
-		pProgram->geometryShaderID = geometryShaderID;
-		pProgram->pixelShaderID = pixelShaderID;
+		pNewProgramObj->vertexShader = pVShader.GetRawPointer();
+		pNewProgramObj->geometryShader = pGShader.GetRawPointer();
+		pNewProgramObj->pixelShader = pFShader.GetRawPointer();
 	}
 
 	return re;

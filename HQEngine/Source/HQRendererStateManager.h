@@ -69,7 +69,7 @@ public:
 	///			-Ví dụ muốn gắn sampler state vào sampler slot 3 của vertex shader , ta truyền tham số {index} = (3 | HQ_VERTEX_SHADER). 
 	///			-Số sampler slot mỗi shader stage có tùy vào giá trị method GetMaxShaderStageSamplers() của render device trả về. 
 	///			-pixel shader dùng chung sampler slot với fixed function sampler. 
-	///OpenGL : -{index} là ID của texture. 
+	///OpenGL : -{index} là resource index của texture, truy van qua GetResourceIndex(). 
 	///truyền {samplerStateID} = 0 nếu muốn set sampler state mặc định.Sampler state mặc định có filter mode là linear
 	///
 	virtual HQReturnVal SetSamplerState(hq_uint32 index , hq_uint32 samplerStateID) = 0;

@@ -93,12 +93,12 @@ inline void glFramebufferTexture2D_wrapper(GLenum target,  GLenum attachment,  G
 
 /*-------------------------*/
 
-struct HQDepthStencilBufferGL : public HQBaseCustomRenderBuffer, public HQResetable
+struct HQDepthStencilBufferGL : public HQBaseDepthStencilBufferView, public HQResetable
 {
 	HQDepthStencilBufferGL(hq_uint32 _width ,hq_uint32 _height ,
 							HQMultiSampleType _multiSampleType,
 							GLdepthStencilFormat format)
-			: HQBaseCustomRenderBuffer(_width , _height ,
+							: HQBaseDepthStencilBufferView(_width, _height,
 									  _multiSampleType)
 	{
 		this->depthStencilName[0] = this->depthStencilName[1] = 0;
@@ -184,10 +184,10 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 	HQRenderTargetTextureGL(hq_uint32 _width ,hq_uint32 _height ,
 							HQMultiSampleType _multiSampleType,
 							HQRenderTargetFormat hqFormat , hq_uint32 _numMipmaps,
-							hq_uint32 _textureID , HQSharedPtr<HQTexture> _pTex)
+							HQSharedPtr<HQBaseTexture> _pTex)
 		: HQBaseRenderTargetTexture(_width , _height ,
 							_multiSampleType, _numMipmaps,
-							_textureID , _pTex)
+							_pTex)
 	{
 		this->hqFormat = hqFormat;
 
@@ -602,8 +602,8 @@ HQRenderTargetManagerFBO::~HQRenderTargetManagerFBO()
 HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width, hq_uint32 height, bool hasMipmaps,
 											   HQRenderTargetFormat format, HQMultiSampleType multisampleType,
 											   HQTextureType textureType,
-											   hq_uint32 *pRenderTargetID_Out,
-											   hq_uint32 *pTextureID_Out)
+											   HQRenderTargetView **pRenderTargetID_Out,
+											   HQTexture **pTextureID_Out)
 {
 #ifdef HQ_OPENGLES
 	if(!GLEW_OES_texture_non_power_of_two)//texture size must be power of two
@@ -649,8 +649,8 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 		Log("CreateRenderTargetTexture() failed : %s is not supported!" , str);
 		return HQ_FAILED_MULTISAMPLE_TYPE_NOT_SUPPORT;
 	}
-	hq_uint32 textureID = 0;
-	HQSharedPtr<HQTexture> pNewTex = this->pTextureManager->CreateEmptyTexture(textureType , &textureID);
+	HQTexture* textureID = 0;
+	HQSharedPtr<HQBaseTexture> pNewTex = this->pTextureManager->CreateEmptyTexture(textureType , &textureID);
 	if (pNewTex == NULL)
 		return HQ_FAILED_MEM_ALLOC;
 
@@ -664,7 +664,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 	HQRenderTargetTextureGL *pNewRenderTarget =
 		new HQRenderTargetTextureGL(width , height ,
 									multisampleType ,format ,
-									numMipmaps , textureID , pNewTex
+									numMipmaps , pNewTex
 									);
 	if (pNewRenderTarget == NULL)
 	{
@@ -697,7 +697,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 HQReturnVal HQRenderTargetManagerFBO::CreateDepthStencilBuffer(hq_uint32 width , hq_uint32 height,
 										HQDepthStencilFormat format,
 										HQMultiSampleType multisampleType,
-										hq_uint32 *pDepthStencilBufferID_Out)
+										HQDepthStencilBufferView **pDepthStencilBufferID_Out)
 {
 
 	char str[256];
@@ -741,7 +741,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateDepthStencilBuffer(hq_uint32 width ,
 
 HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetGroupImpl(
 											 const HQRenderTargetDesc *renderTargetDescs, 
-											 hq_uint32 depthStencilBufferID, 
+											 HQDepthStencilBufferView* depthStencilBufferID, 
 											 hq_uint32 numRenderTargets,
 											 HQBaseRenderTargetGroup **ppRenderTargetGroupOut)
 {
@@ -768,7 +768,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetGroupImpl(
 
 	for (hq_uint32 i = 0 ; i < numRenderTargets ; ++i)
 	{
-		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDescs[i].renderTargetID);
+		HQSharedPtr<HQBaseRenderTargetView> pRenderTarget = this->renderTargets.GetItemPointer(renderTargetDescs[i].renderTargetID);
 
 		if (pRenderTarget == NULL)
 		{
@@ -832,7 +832,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetGroupImpl(
 	}
 
 	/*----depth stencil buffer------------*/
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
+	HQSharedPtr<HQBaseDepthStencilBufferView> pDepthStencilBuffer = this->depthStencilBuffers.GetItemPointer(depthStencilBufferID);
 
 	if (pDepthStencilBuffer == NULL)
 	{
@@ -910,7 +910,7 @@ void HQRenderTargetManagerFBO::ActiveDefaultFrameBuffer()
 }
 
 
-HQReturnVal HQRenderTargetManagerFBO::GenerateMipmaps(hq_uint32 renderTargetTextureID)
+HQReturnVal HQRenderTargetManagerFBO::GenerateMipmaps(HQRenderTargetView* renderTargetTextureID)
 {
 	HQBaseCustomRenderBuffer* pRenderTarget = this->renderTargets.GetItemRawPointer(renderTargetTextureID);
 #if defined _DEBUG || defined DEBUG
@@ -950,7 +950,7 @@ void HQRenderTargetManagerFBO::OnLost(){
 
 void HQRenderTargetManagerFBO::OnReset(){
 	//reset render targets
-	HQItemManager<HQBaseCustomRenderBuffer>::Iterator ite1;
+	HQItemManager<HQBaseRenderTargetView>::Iterator ite1;
 	this->renderTargets.GetIterator(ite1);
 
 	while (!ite1.IsAtEnd())
@@ -965,7 +965,7 @@ void HQRenderTargetManagerFBO::OnReset(){
 	}
 
 	//reset depth stencil buffers
-	HQItemManager<HQBaseCustomRenderBuffer>::Iterator ite2;
+	HQItemManager<HQBaseDepthStencilBufferView>::Iterator ite2;
 	this->depthStencilBuffers.GetIterator(ite2);
 
 	while (!ite2.IsAtEnd())

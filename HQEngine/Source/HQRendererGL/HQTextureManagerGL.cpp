@@ -37,7 +37,7 @@ typedef void (GLAPIENTRY * PFNGLTEXBUFFERPROC) (GLenum target, GLenum internalfo
 void GLAPIENTRY glTexBufferDummy(GLenum target, GLenum internalformat, GLuint buffer){}
 PFNGLTEXBUFFERPROC glTexBufferWrapper ;
 
-HQTextureGL::HQTextureGL(HQTextureType type ):HQTexture()
+HQTextureGL::HQTextureGL(HQTextureType type ):HQBaseTexture()
 {
 	this->type = type;
 	
@@ -75,6 +75,36 @@ HQTextureGL::~HQTextureGL()
 		free (textureDesc);
 }
 
+hquint32 HQTextureGL::GetWidth() const
+{
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:
+	{
+		HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)this->textureDesc;
+		return l_textureDesc->width;
+	}
+		break;
+	default:
+		return 0;
+	}
+}
+
+hquint32 HQTextureGL::GetHeight() const
+{
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:
+	{
+		HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)this->textureDesc;
+		return l_textureDesc->height;
+	}
+		break;
+	default:
+		return 0;
+	}
+}
+
 #ifndef HQ_OPENGLES
 struct HQTextureBufferGL : public HQTextureGL
 {
@@ -96,11 +126,69 @@ struct HQTextureBufferGL : public HQTextureGL
 		}
 	}
 
+	//implement HQTexture
+	virtual hquint32 GetWidth() const { return size; }
+	virtual hquint32 GetHeight() const { return 1; }
+
+	//implement HQMappableResource
+	virtual hquint32 GetSize() const { return size; }
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+
 	GLuint buffer;
 	HQTextureManagerGL * manager;
 	hq_uint32 size;
 	GLenum usage;
 };
+
+
+HQReturnVal HQTextureBufferGL::Update(hq_uint32 offset, hq_uint32 size, const void * pData)
+{
+#if defined _DEBUG || defined DEBUG
+	if (pData == NULL)
+		return HQ_FAILED;
+	if (offset != 0 || (size != this->size && size != 0))
+	{
+		manager->Log("Error : texture buffer can't be updated partially!");
+		return HQ_FAILED;
+	}
+#endif
+
+	manager->BindTextureBuffer(this->buffer);
+
+	glBufferSubData(GL_TEXTURE_BUFFER, 0, this->size, pData);//copy data to entire buffer
+
+	return HQ_OK;
+}
+HQReturnVal HQTextureBufferGL::Unmap()
+{
+	manager->BindTextureBuffer(this->buffer);
+
+	glUnmapBuffer(GL_TEXTURE_BUFFER);
+
+	return HQ_OK;
+}
+
+HQReturnVal HQTextureBufferGL::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
+{
+#if defined _DEBUG || defined DEBUG
+	if (ppData == NULL)
+		return HQ_FAILED;
+	if (offset != 0 || (size != this->size && size != 0))
+	{
+		manager->Log("Error : texture buffer can't be updated partially!");
+		return HQ_FAILED;
+	}
+#endif
+
+	manager->BindTextureBuffer(this->buffer);
+
+	*ppData = glMapBufferRange(GL_TEXTURE_BUFFER, 0, this->size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+
+	return HQ_OK;
+}
+
 #endif
 /*---------helper functions--------*/
 
@@ -426,7 +514,7 @@ HQTextureManagerGL::~HQTextureManagerGL()
 	SafeDeleteArray(this->texUnits);
 }
 
-HQTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
+HQBaseTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 {
 #ifdef HQ_OPENGLES
 	if(type == HQ_TEXTURE_CUBE && !GLEW_VERSION_2_0)//cube texture not supported
@@ -484,7 +572,7 @@ HQTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 }
 
 
-HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , hq_uint32 textureID)
+HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , HQTexture* textureID)
 {
 #if defined _DEBUG || defined DEBUG
 	if (slot >= this->maxTextureUnits)
@@ -507,7 +595,7 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , hq_uint32 textureID)
 	}
 #endif
 
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 	HQTextureGL* pTextureRawPtr = (HQTextureGL*)pTexture.GetRawPointer();
 	if (pTextureRawPtr == NULL)
 		return HQ_OK;
@@ -515,7 +603,7 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , hq_uint32 textureID)
 	HQTextureUnitInfoGL &texUnitInfo =  this->texUnits[slot];
 
 #if 1
-	HQSharedPtr<HQTexture> &currentTexture = texUnitInfo.texture[ pTextureRawPtr->type ];
+	HQSharedPtr<HQBaseTexture> &currentTexture = texUnitInfo.texture[ pTextureRawPtr->type ];
 	if (pTexture != currentTexture)
 	{
 		GLuint &textureName = *((GLuint*)pTextureRawPtr->pData);
@@ -557,7 +645,7 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , hq_uint32 textureID)
 }
 
 
-HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , hq_uint32 textureID)
+HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQTexture* textureID)
 {
 #if defined _DEBUG || defined DEBUG
 	if (slot >= this->maxTextureUnits)
@@ -580,7 +668,7 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , hq_uin
 	}
 #endif
 
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 	HQTextureGL* pTextureRawPtr = (HQTextureGL*)pTexture.GetRawPointer();
 	if (pTextureRawPtr == NULL)
 		return HQ_OK;
@@ -588,7 +676,7 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , hq_uin
 	HQTextureUnitInfoGL &texUnitInfo =  this->texUnits[slot];
 
 #if 1
-	HQSharedPtr<HQTexture> &currentTexture = texUnitInfo.texture[ pTextureRawPtr->type ];
+	HQSharedPtr<HQBaseTexture> &currentTexture = texUnitInfo.texture[ pTextureRawPtr->type ];
 	if (pTexture != currentTexture)
 	{
 		GLuint &textureName = *((GLuint*)pTextureRawPtr->pData);
@@ -632,7 +720,7 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , hq_uin
 /*
 Load texture from file
 */
-HQReturnVal HQTextureManagerGL::LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex)
+HQReturnVal HQTextureManagerGL::LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex)
 {
 	const char nullStreamName[] = "";
 	const char *streamName = dataStream->GetName() != NULL? dataStream->GetName(): nullStreamName;
@@ -824,7 +912,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromStream(HQDataReaderStream* dataSt
 /*
 Load cube texture from 6 files
 */
-HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex)
+HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex)
 {
 	//các thông tin cơ sở
 	hq_uint32 w,h;//width,height
@@ -957,7 +1045,7 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* d
 }
 
 
-HQReturnVal HQTextureManagerGL::CreateSingleColorTexture(HQTexture *pTex,HQColorui color)
+HQReturnVal HQTextureManagerGL::CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
 {
 	GLuint *pTextureName = (GLuint*)pTex->pData;
 	glBindTexture(GL_TEXTURE_2D , *pTextureName);
@@ -976,7 +1064,7 @@ HQReturnVal HQTextureManagerGL::CreateSingleColorTexture(HQTexture *pTex,HQColor
 /*
 create texture object from pixel data
 */
-HQReturnVal HQTextureManagerGL::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal HQTextureManagerGL::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	SurfaceFormat format=bitmap.GetSurfaceFormat();
@@ -1040,7 +1128,7 @@ HQReturnVal HQTextureManagerGL::CreateTexture(bool changeAlpha,hq_uint32 numMipm
 	}
 	return HQ_FAILED;
 }
-HQReturnVal HQTextureManagerGL::Create2DTexture(hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal HQTextureManagerGL::Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	bool onlyFirstLevel = false;
 
@@ -1120,7 +1208,7 @@ HQReturnVal HQTextureManagerGL::Create2DTexture(hq_uint32 numMipmaps,HQTexture *
 
 	return HQ_OK;
 }
-HQReturnVal HQTextureManagerGL::CreateCubeTexture(hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal HQTextureManagerGL::CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	bool onlyFirstLevel = false;
 
@@ -1285,7 +1373,7 @@ HQReturnVal HQTextureManagerGL::SetTransparency(hq_float32 alpha)
 }
 #ifndef HQ_OPENGLES
 
-HQReturnVal HQTextureManagerGL::CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
+HQReturnVal HQTextureManagerGL::CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
 {
 	if (!g_pOGLDev->IsTextureBufferFormatSupported(format))
 		return HQ_FAILED_FORMAT_NOT_SUPPORT;
@@ -1316,68 +1404,11 @@ HQReturnVal HQTextureManagerGL::CreateTextureBuffer(HQTexture *pTex ,HQTextureBu
 
 	return HQ_OK;
 }
-HQReturnVal HQTextureManagerGL::MapTextureBuffer(hq_uint32 textureID , void **ppData )
-{
-	HQTexture* pTexture = this->textures.GetItemRawPointer(textureID);
-#if defined _DEBUG || defined DEBUG
-	if (pTexture == NULL || pTexture->type != HQ_TEXTURE_BUFFER)
-		return HQ_FAILED_INVALID_ID;
-	if (ppData == NULL)
-		return HQ_FAILED;
+
 #endif
-
-	HQTextureBufferGL * tbuffer = (HQTextureBufferGL *)pTexture;
-
-	this->BindTextureBuffer(tbuffer->buffer);
-
-	glBufferData(GL_TEXTURE_BUFFER , tbuffer->size , NULL , tbuffer->usage);//discard old data
-
-	*ppData = glMapBuffer( GL_TEXTURE_BUFFER , GL_WRITE_ONLY);
-	
-	return HQ_OK;
-}
-HQReturnVal HQTextureManagerGL::UnmapTextureBuffer(hq_uint32 textureID)
-{
-	HQTexture* pTexture = this->textures.GetItemRawPointer(textureID);
-#if defined _DEBUG || defined DEBUG	
-	if (pTexture == NULL || pTexture->type != HQ_TEXTURE_BUFFER)
-		return HQ_FAILED_INVALID_ID;
-#endif
-
-	HQTextureBufferGL * tbuffer = (HQTextureBufferGL *)pTexture;
-
-	this->BindTextureBuffer(tbuffer->buffer);
-	glUnmapBuffer(GL_TEXTURE_BUFFER);
-	return HQ_OK;
-}
-
-#endif//#ifndef HQ_OPENGLES
-
-
-
-HQReturnVal HQTextureManagerGL::GetTexture2DSize(hq_uint32 textureID, hquint32 &width, hquint32& height)
-{
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
-	if (pTexture == NULL)
-		return HQ_FAILED_INVALID_ID;
-
-	switch (pTexture->type)
-	{
-	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:
-		{
-			HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)((HQTextureGL*)pTexture.GetRawPointer())->textureDesc;
-			width = l_textureDesc->width;
-			height = l_textureDesc->height;
-		}
-		break;
-	default:
-		return HQ_FAILED;
-	}
-	return HQ_OK;
-}
 
 //define the size for texture. useful for textures created outside texture manager, such as those created by render target manager
-void HQTextureManagerGL::DefineTexture2DSize(HQTexture* pTex, hquint32 width, hquint32 height)
+void HQTextureManagerGL::DefineTexture2DSize(HQBaseTexture* pTex, hquint32 width, hquint32 height)
 {
 	if (pTex == NULL)
 		return;
@@ -1434,9 +1465,9 @@ HQTextureCompressionSupport HQTextureManagerGL::IsCompressionSupported(HQTexture
 	}
 }
 
-HQReturnVal HQTextureManagerGL::RemoveTexture(hq_uint32 ID)
+HQReturnVal HQTextureManagerGL::RemoveTexture(HQTexture* ID)
 {
-	const HQSharedPtr<HQTexture> pTex = this->GetTexture(ID);
+	const HQSharedPtr<HQBaseTexture> pTex = this->GetTextureSharedPtr(ID);
 	if (pTex == NULL)
 		return HQ_FAILED_INVALID_ID;
 
@@ -1445,7 +1476,7 @@ HQReturnVal HQTextureManagerGL::RemoveTexture(hq_uint32 ID)
 	for (hquint32 i = 0; i < this->maxTextureUnits ; ++i)
 	{
 		if (this->texUnits[i].texture[pTextureRawPtr->type] == pTex)
-			this->texUnits[i].texture[pTextureRawPtr->type] = HQSharedPtr<HQTexture>::null;
+			this->texUnits[i].texture[pTextureRawPtr->type] = HQSharedPtr<HQBaseTexture>::null;
 	}
 
 	return HQBaseTextureManager::RemoveTexture(ID);
@@ -1454,9 +1485,9 @@ void HQTextureManagerGL::RemoveAllTexture()
 {
 	for (hquint32 i = 0; i < this->maxTextureUnits ; ++i)
 	{
-		this->texUnits[i].texture[HQ_TEXTURE_2D] = HQSharedPtr<HQTexture>::null;
-		this->texUnits[i].texture[HQ_TEXTURE_CUBE] = HQSharedPtr<HQTexture>::null;
-		this->texUnits[i].texture[HQ_TEXTURE_BUFFER] = HQSharedPtr<HQTexture>::null;
+		this->texUnits[i].texture[HQ_TEXTURE_2D] = HQSharedPtr<HQBaseTexture>::null;
+		this->texUnits[i].texture[HQ_TEXTURE_CUBE] = HQSharedPtr<HQBaseTexture>::null;
+		this->texUnits[i].texture[HQ_TEXTURE_BUFFER] = HQSharedPtr<HQBaseTexture>::null;
 	}
 	HQBaseTextureManager::RemoveAllTexture();
 }
@@ -1483,7 +1514,7 @@ HQBaseRawPixelBuffer* HQTextureManagerGL::CreatePixelBufferImpl(HQRawPixelFormat
 	}
 }
 
-HQReturnVal HQTextureManagerGL::CreateTexture(HQTexture *pTex, const HQBaseRawPixelBuffer* color)
+HQReturnVal HQTextureManagerGL::CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
 {
 
 	color->MakeWrapperBitmap(bitmap);

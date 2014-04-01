@@ -29,32 +29,33 @@ extern void hqengine_res_parser_clean_up();
 /*------------texture resource----------*/
 HQEngineTextureResImpl::HQEngineTextureResImpl(const char* name)
 : HQNamedGraphicsRelatedObj(name),
-m_textureID(HQ_NULL_ID)
+m_textureID(NULL)
 {
 }
 
 HQEngineTextureResImpl::~HQEngineTextureResImpl()
 {
-	if (m_textureID != HQ_NULL_ID)
+	if (m_textureID != NULL)
 		m_renderDevice->GetTextureManager()->RemoveTexture(m_textureID);
 }
 
-hquint32 HQEngineTextureResImpl::GetTexture2DSize(hquint32 &width, hquint32 &height) const
+void HQEngineTextureResImpl::GetTexture2DSize(hquint32 &width, hquint32 &height) const
 {
-	return m_renderDevice->GetTextureManager()->GetTexture2DSize(m_textureID, width, height);
+	width = m_textureID->GetWidth();
+	height = m_textureID->GetHeight();
 }
 
 
 /*-----------shader resource------------------------------*/
 HQEngineShaderResImpl::HQEngineShaderResImpl(const char* name)
 : HQNamedGraphicsRelatedObj(name),
-m_shaderID(HQ_NULL_ID)
+m_shader(NULL)
 {
 }
 HQEngineShaderResImpl::~HQEngineShaderResImpl()
 {
-	if (m_shaderID != HQ_NULL_ID)
-		m_renderDevice->GetShaderManager()->DestroyShader(m_shaderID);
+	if (m_shader != NULL)
+		m_renderDevice->GetShaderManager()->DestroyShader(m_shader);
 }
 
 /*----------------resource loading session----------------*/
@@ -607,7 +608,7 @@ HQReturnVal HQEngineResManagerImpl::AddTextureResource(const char *name,
 	}
 
 	//create texture
-	hquint32 textureID;
+	HQTexture* textureID;
 	HQReturnVal re = HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
 		->AddTexture(stream, 1.0f, NULL, 0, generateMipmap, type, &textureID);
 	stream->Release();
@@ -650,7 +651,7 @@ HQReturnVal HQEngineResManagerImpl::AddCubeTextureResource(const char *name,
 	}
 
 	//create texture
-	hquint32 textureID;
+	HQTexture* textureID;
 	HQReturnVal re = HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
 		->AddCubeTexture(streams, 1.f, NULL, 0, generateMipmap, &textureID);
 	for (int j = 0; j < 6; ++j)
@@ -684,7 +685,8 @@ HQReturnVal HQEngineResManagerImpl::AddRenderTargetTextureResource(
 	}
 
 	//create render target
-	hquint32 textureID, renderTargetID;
+	HQTexture* textureID;
+	HQRenderTargetView* renderTargetID;
 	HQReturnVal re = HQEngineApp::GetInstance()->GetRenderDevice()->GetRenderTargetManager()
 		->CreateRenderTargetTexture(width, height, hasMipmaps, format, multisampleType, textureType, 
 									&renderTargetID, &textureID);
@@ -723,7 +725,7 @@ HQReturnVal HQEngineResManagerImpl::AddShaderResource(
 	}
 
 	//create shader
-	hquint32 shaderID;
+	HQShaderObject* shaderID;
 	HQReturnVal re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
 		->CreateShaderFromStream(type, compileMode, stream, pDefines, entryFunctionName, &shaderID);
 	stream->Release();
@@ -759,7 +761,7 @@ HQReturnVal HQEngineResManagerImpl::AddShaderResourceFromByteCode(
 	}
 
 	//create shader
-	hquint32 shaderID;
+	HQShaderObject* shaderID;
 	HQReturnVal re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
 		->CreateShaderFromByteCodeStream(type, stream, &shaderID);
 	stream->Release();

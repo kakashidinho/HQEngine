@@ -34,11 +34,11 @@ struct HQMeshNode::GeometricInfo : public HQReferenceCountObj
 		delete[] groups;
 	}
 
-	hquint32 vertexInputLayout;
-	hquint32 vertexBuffer;
+	HQVertexLayout* vertexInputLayout;
+	HQVertexBuffer* vertexBuffer;
 	hquint32 numVertices;
 	hquint32 vertexBufferStride;
-	hquint32 indexBuffer;
+	HQIndexBuffer* indexBuffer;
 	HQIndexDataType indexDataType;
 
 	hquint32 numGroups;

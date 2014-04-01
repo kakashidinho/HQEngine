@@ -39,10 +39,12 @@ struct HQShaderParameterGL
 };
 
 /*----------HQShaderObjectGL----------------------*/
-struct HQShaderObjectGL
+struct HQShaderObjectGL: public HQShaderObject, public HQBaseIDObject
 {
 	HQShaderObjectGL();
 	~HQShaderObjectGL();
+
+	virtual HQShaderType GetType() const { return type; }
 
 	GLuint shader;//for shader created from glsl
 	HQShaderType type;
@@ -54,10 +56,12 @@ struct HQShaderObjectGL
 };
 
 /*---------HQBaseShaderProgramGL----------------------*/
-struct HQBaseShaderProgramGL
+struct HQBaseShaderProgramGL : public HQShaderProgram, public HQBaseIDObject
 {
 	HQBaseShaderProgramGL();
 	virtual ~HQBaseShaderProgramGL();
+
+	virtual HQShaderObject * GetShader(HQShaderType type);//implement HQShaderProgram
 
 	HQShaderParameterGL* TryCreateParameterObject(const char *parameterName);//just create paremeter object (if it exists in shader), doesn't add to paremeter list
 	hq_uint32 TryCreateParamObjAndAddToParamsList(const char *parameterName);//create paremeter object (if it exists in shader), return parameter index
@@ -78,9 +82,9 @@ struct HQBaseShaderProgramGL
 	HQClosedStringPrimeHashTable<hquint32> parameterIndexes;
 	HQItemManager<HQShaderParameterGL> parameters;
 
-	hquint32 vertexShaderID;
-	hquint32 geometryShaderID;
-	hquint32 pixelShaderID;
+	HQShaderObjectGL* vertexShader;
+	HQShaderObjectGL* geometryShader;
+	HQShaderObjectGL* pixelShader;
 	bool isGLSL;//created from openGL shading laguage or Cg language
 };
 
@@ -128,7 +132,7 @@ public:
 	///
 	HQReturnVal CreateShaderFromByteCodeStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,
-									 hq_uint32 *pID)
+									 HQShaderObject** pID)
 	{
 		return HQ_FAILED;
 	}
@@ -139,7 +143,7 @@ public:
 	HQReturnVal CreateShaderFromByteCode(HQShaderType type,
 									 const hqubyte8* byteCodeData,
 									 hq_uint32 byteCodeLength,
-									 hq_uint32 *pID)
+									 HQShaderObject** pID)
 	{
 		return HQ_FAILED;
 	}
@@ -149,7 +153,7 @@ protected:
 /*-------------HQBaseCommonShaderManagerGL----------------*/
 class HQBaseCommonShaderManagerGL:
 	public HQBaseShaderManagerGL,
-	public HQItemManager<HQBaseShaderProgramGL> ,
+	public HQIDItemManager<HQBaseShaderProgramGL> ,
 	public HQLoggableObject
 {
 public:
@@ -160,27 +164,25 @@ public:
 	bool IsUsingVShader(); //có đang dùng vertex shader không,hay đang dùng fixed function
 	bool IsUsingGShader();//có đang dùng geometry shader không,hay đang dùng fixed function
 	bool IsUsingPShader();//có đang dùng pixel/fragment shader không,hay đang dùng fixed function
-	bool IsUsingShader() {return this->activeProgram != HQ_NOT_USE_SHADER;}
+	bool IsUsingShader() {return this->activeProgram != NULL;}
 
-	hq_uint32 GetActiveProgram() {return activeProgram;}
+	HQSharedPtr<HQBaseShaderProgramGL> GetActiveProgram() { return activeProgram; }
 
-	HQReturnVal DestroyProgram(hq_uint32 programID);
+	HQReturnVal DestroyProgram(HQShaderProgram* programID);
 	void DestroyAllProgram();
-	HQReturnVal DestroyShader(hq_uint32 shaderID);
+	HQReturnVal DestroyShader(HQShaderObject* shaderID);
 	void DestroyAllShader() ;
 	void DestroyAllResource();
 
-	hq_uint32 GetShader(hq_uint32 programID, HQShaderType shaderType);
-
-	hq_uint32 GetParameterIndex(hq_uint32 programID ,const char *parameterName);
+	hq_uint32 GetParameterIndex(HQShaderProgram* programID ,const char *parameterName);
 
 protected:
 	virtual HQBaseShaderProgramGL * CreateNewProgramObject() = 0;
 	virtual void OnProgramCreated(HQBaseShaderProgramGL *program) = 0;
 	virtual void OnProgramActivated(HQBaseShaderProgramGL* program) = 0;//a handler method to notify the parent class that a program has been activated
 
-	hq_uint32 activeProgram;
-	HQItemManager<HQShaderObjectGL> shaderObjects;//danh sách shader object
+	HQSharedPtr<HQBaseShaderProgramGL> activeProgram;
+	HQIDItemManager<HQShaderObjectGL> shaderObjects;//danh sách shader object
 
 	HQSharedPtr<HQShaderParameterGL> GetParameterInline(HQBaseShaderProgramGL* pProgramRawPtr, const char *parameterName);
 };

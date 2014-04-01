@@ -31,7 +31,7 @@ struct HQSamplerStateGL
 };
 
 
-struct HQTextureGL:public HQTexture
+struct HQTextureGL:public HQBaseTexture
 {
 	HQTextureGL(HQTextureType type = HQ_TEXTURE_2D);
 	~HQTextureGL();
@@ -39,11 +39,15 @@ struct HQTextureGL:public HQTexture
 	GLenum textureTarget;
 	void *textureDesc;//width, height ...etc
 	HQSharedPtr<HQSamplerStateGL> pSamplerState;
+
+	//implement HQTexture
+	virtual hquint32 GetWidth() const;
+	virtual hquint32 GetHeight() const;
 };
 
 struct HQTextureUnitInfoGL
 {
-	HQSharedPtr<HQTexture> texture[3];//current bound textures (2d , cube , buffer)
+	HQSharedPtr<HQBaseTexture> texture[3];//current bound textures (2d , cube , buffer)
 
 	GLuint GetTexture2DGL() const {if (texture[HQ_TEXTURE_2D] != NULL) return *(GLuint*)texture[HQ_TEXTURE_2D]->pData ; return 0;}
 	GLuint GetTextureCubeGL() const {if (texture[HQ_TEXTURE_CUBE] != NULL) return *(GLuint*)texture[HQ_TEXTURE_CUBE]->pData ; return 0;}
@@ -65,8 +69,7 @@ public:
 	void InvalidateCurrentBoundTBuffer() {this->currentBoundTBuffer = 0;}
 #endif
 
-	HQReturnVal GetTexture2DSize(hq_uint32 textureID, hquint32 &width, hquint32& height);
-	void DefineTexture2DSize(HQTexture* pTex, hquint32 width, hquint32 height);//define the size for texture. useful for textures created outside texture manager, such as those created by render target manager
+	void DefineTexture2DSize(HQBaseTexture* pTex, hquint32 width, hquint32 height);//define the size for texture. useful for textures created outside texture manager, such as those created by render target manager
 
 	HQTextureCompressionSupport IsCompressionSupported(HQTextureType textureType,HQTextureCompressionFormat type);
 	
@@ -78,50 +81,40 @@ public:
 			this->activeTexture = slot;
 		}
 	}
-private:
-	UINT activeTexture;//current active texture unit
-#ifndef HQ_OPENGLES
-	GLuint currentBoundTBuffer;
-#endif
-	HQTextureUnitInfoGL * texUnits;
-	hq_uint32 maxTextureUnits;
 
-	inline void BindTexture(hq_uint32 slot ,GLenum target ,  GLuint texture)
+	inline void BindTexture(hq_uint32 slot, GLenum target, GLuint texture)
 	{
 		this->ActiveTextureUnit(slot);
-		glBindTexture(target , texture);
+		glBindTexture(target, texture);
 	}
 #ifndef HQ_OPENGLES
 	inline void BindTextureBuffer(GLuint buffer)
 	{
 		if (currentBoundTBuffer != buffer)
 		{
-			glBindBuffer(GL_TEXTURE_BUFFER , buffer);
+			glBindBuffer(GL_TEXTURE_BUFFER, buffer);
 			currentBoundTBuffer = buffer;
 		}
 	}
 #endif
 
-public:
-	HQReturnVal SetTexture(hq_uint32 slot , hq_uint32 textureID);
-	HQReturnVal SetTextureForPixelShader(hq_uint32 slot , hq_uint32 textureID);
-	HQTexture * CreateNewTextureObject(HQTextureType type);
-	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex);
-	HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex);
-	HQReturnVal CreateSingleColorTexture(HQTexture *pTex,HQColorui color);
-	HQReturnVal CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQTexture * pTex);
-	HQReturnVal Create2DTexture(hq_uint32 numMipmaps,HQTexture * pTex);
-	HQReturnVal CreateCubeTexture(hq_uint32 numMipmaps,HQTexture * pTex);
+	HQReturnVal SetTexture(hq_uint32 slot , HQTexture* textureID);
+	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
+	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
+	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);
+	HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex);
+	HQReturnVal CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color);
+	HQReturnVal CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex);
+	HQReturnVal Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex);
+	HQReturnVal CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex);
 	HQReturnVal SetAlphaValue(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 B,hq_ubyte8 A);//set giá trị alpha của texel trong texture có giá trị RGB như tham số(hoặc R nến định dạng texture chỉ có kênh 8 bit greyscale) thành giá trị A.
 	HQReturnVal SetTransparency(hq_float32 alpha);//set giá trị alpha lớn nhất của toàn bộ texel thành alpha
 	
 #ifndef HQ_OPENGLES
-	HQReturnVal CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic);
-	HQReturnVal MapTextureBuffer(hq_uint32 textureID , void **ppData);
-	HQReturnVal UnmapTextureBuffer(hq_uint32 textureID) ;
+	HQReturnVal CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic);
 #endif
 
-	HQReturnVal RemoveTexture(hq_uint32 ID);
+	HQReturnVal RemoveTexture(HQTexture* ID);
 	void RemoveAllTexture();
 
 #if defined DEVICE_LOST_POSSIBLE
@@ -129,6 +122,14 @@ public:
 #endif
 
 	HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
-	HQReturnVal CreateTexture(HQTexture *pTex, const HQBaseRawPixelBuffer* color);
+	HQReturnVal CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);
+
+private:
+	UINT activeTexture;//current active texture unit
+#ifndef HQ_OPENGLES
+	GLuint currentBoundTBuffer;
+#endif
+	HQTextureUnitInfoGL * texUnits;
+	hq_uint32 maxTextureUnits;
 };
 #endif

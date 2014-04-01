@@ -31,13 +31,13 @@ public:
 	};
 };
 
-template <class T>
 struct HQPointerRelease{
+	template <class T>
 	static inline void Release (T *&ptr) {if (ptr != NULL) delete ptr ; ptr = NULL;}
 };
 
-template <class T>
 struct HQArrayPointerRelease{
+	template <class T>
 	static inline void Release  (T *&ptr) {if (ptr != NULL) delete[] ptr ; ptr = NULL;}
 };
 
@@ -58,7 +58,9 @@ public:
 	const T* operator ->()const;
 	inline T* GetRawPointer() {return m_ptr;}
 	inline const T* GetRawPointer()const {return m_ptr;}
-	inline HQBaseSharedPtr<T , PointerRelease>& operator = (const HQBaseSharedPtr<T , PointerRelease>& sptr2)  {this->Copy(sptr2) ; return *this;}
+	inline HQBaseSharedPtr<T, PointerRelease>& operator = (const HQBaseSharedPtr<T, PointerRelease>& sptr2)  { this->Copy<T>(sptr2); return *this; }
+	template <class CompatibleT>
+	inline HQBaseSharedPtr<T, PointerRelease>& operator = (const HQBaseSharedPtr<CompatibleT, PointerRelease>& sptr2)  { this->Copy<CompatibleT>(sptr2); return *this; }
 
 	inline bool operator == (const HQBaseSharedPtr<T , PointerRelease>& sptr2)const {return m_ptr == sptr2.m_ptr;}
 	inline bool operator != (const HQBaseSharedPtr<T , PointerRelease>& sptr2)const {return m_ptr != sptr2.m_ptr;};
@@ -70,6 +72,12 @@ public:
 	hq_uint32 Release() {return m_ref->Release();}//decrease reference count
 	HQBaseSharedPtr<T , PointerRelease>& ToNull();
 
+	template <class CompatibleT>
+	HQBaseSharedPtr<CompatibleT, PointerRelease> DownCast();
+
+	template <class CompatibleT>
+	HQBaseSharedPtr<CompatibleT, PointerRelease> UpCast();
+
 	//null pointer
 	static const HQBaseSharedPtr<T , PointerRelease> null;
 
@@ -78,7 +86,11 @@ protected:
 	T * m_ptr;//the real pointer
 	mutable HQReference* m_ref;
 
-	void Copy(const HQBaseSharedPtr<T , PointerRelease>& sptr2);
+	template <class CompatibleT>
+	void Copy(const HQBaseSharedPtr<CompatibleT, PointerRelease>& sptr2);
+
+	template <class CompatibleT>
+	void CastedCopy(const HQBaseSharedPtr<CompatibleT, PointerRelease>& sptr2);
 	
 	static const HQBaseSharedPtr<T , PointerRelease>& GetOriNullPtr() {
 		static const HQBaseSharedPtr<T , PointerRelease> original_null(0);
@@ -86,6 +98,9 @@ protected:
 	}
 
 private:
+	template <class T2, class PointerRelease2>
+	friend class HQBaseSharedPtr;
+
 	explicit HQBaseSharedPtr(int theNullArg);///this constructor is for creating the original null pointer
 };
 
@@ -174,9 +189,30 @@ inline const T* HQBaseSharedPtr<T , PointerRelease>::operator ->() const
 }
 
 template <class T, class PointerRelease>
-void HQBaseSharedPtr<T , PointerRelease>::Copy(const HQBaseSharedPtr<T , PointerRelease> &sptr2)
+template <class CompatibleT>
+inline HQBaseSharedPtr<CompatibleT, PointerRelease> HQBaseSharedPtr<T, PointerRelease>::UpCast()
 {
-	if(this!=&sptr2)//not self assign
+	HQBaseSharedPtr<CompatibleT, PointerRelease> castedPtr;
+	castedPtr.Copy(*this);
+
+	return castedPtr;
+}
+
+template <class T, class PointerRelease>
+template <class CompatibleT>
+inline HQBaseSharedPtr<CompatibleT, PointerRelease> HQBaseSharedPtr<T, PointerRelease>::DownCast()
+{
+	HQBaseSharedPtr<CompatibleT, PointerRelease> castedPtr;
+	castedPtr.CastedCopy(*this);
+
+	return castedPtr;
+}
+
+template <class T, class PointerRelease>
+template <class CompatibleT>
+inline void HQBaseSharedPtr<T, PointerRelease>::Copy(const HQBaseSharedPtr<CompatibleT, PointerRelease> &sptr2)
+{
+	if((void*)this != (void*)&sptr2)//not self assign
 	{
 		if(m_ref->Release() == 0)
 		{
@@ -184,6 +220,23 @@ void HQBaseSharedPtr<T , PointerRelease>::Copy(const HQBaseSharedPtr<T , Pointer
 			delete m_ref;
 		}
 		this->m_ptr = sptr2.m_ptr;
+		this->m_ref = sptr2.m_ref;
+		this->m_ref->AddRef();
+	}
+}
+
+template <class T, class PointerRelease>
+template <class CompatibleT>
+inline void HQBaseSharedPtr<T, PointerRelease>::CastedCopy(const HQBaseSharedPtr<CompatibleT, PointerRelease> &sptr2)
+{
+	if ((void*)this != (void*)&sptr2)//not self assign
+	{
+		if (m_ref->Release() == 0)
+		{
+			PointerRelease::Release(m_ptr);
+			delete m_ref;
+		}
+		this->m_ptr = static_cast<T*>(sptr2.m_ptr);
 		this->m_ref = sptr2.m_ref;
 		this->m_ref->AddRef();
 	}
@@ -199,22 +252,28 @@ inline HQBaseSharedPtr<T , PointerRelease>& HQBaseSharedPtr<T , PointerRelease>:
 
 //Shared normal pointer
 template <class T>
-class HQSharedPtr : public HQBaseSharedPtr<T , HQPointerRelease<T> > {
+class HQSharedPtr : public HQBaseSharedPtr<T , HQPointerRelease > {
 private:
-	typedef HQBaseSharedPtr<T , HQPointerRelease<T> > ParentType;
+	typedef HQBaseSharedPtr<T , HQPointerRelease > ParentType;
 public:
 	inline HQSharedPtr() : ParentType(ParentType::GetOriNullPtr()) {}
 	inline HQSharedPtr(T *rawptr) : ParentType (rawptr) {}
 	inline HQSharedPtr(const HQSharedPtr & sptr2):ParentType(sptr2) {}//copy constructor
 	inline HQSharedPtr(const ParentType & sptr2):ParentType(sptr2) {}//copy constructor
-	
+
+	template <class CompatibleT>
+	HQSharedPtr<CompatibleT> DownCast() { return ParentType::DownCast<CompatibleT>(); }
+
+	template <class CompatibleT>
+	HQSharedPtr<CompatibleT> UpCast() { return ParentType::UpCast<CompatibleT>(); }
 };
+
 
 //Shared array pointer
 template <class T>
-class HQSharedArrayPtr : public HQBaseSharedPtr<T , HQArrayPointerRelease<T> > {
+class HQSharedArrayPtr : public HQBaseSharedPtr<T , HQArrayPointerRelease > {
 private:
-	typedef HQBaseSharedPtr<T , HQArrayPointerRelease<T> > ParentType;
+	typedef HQBaseSharedPtr<T , HQArrayPointerRelease > ParentType;
 public:
 
 	inline HQSharedArrayPtr() : ParentType(ParentType::GetOriNullPtr()) {}

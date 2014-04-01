@@ -122,11 +122,11 @@ private:
 private:
 	bool deviceLost;
 	int API;
-	hq_uint32 uniformBuffer[2];
-	hq_uint32 vertexbuffer[4];
-	hq_uint32 indexbuffer;
-	hq_uint32 vertexLayout[3];
-	hq_uint32 colorTexture;
+	HQUniformBuffer* uniformBuffer[2];
+	HQVertexBuffer* vertexbuffer[4];
+	HQIndexBuffer* indexbuffer;
+	HQVertexLayout* vertexLayout[3];
+	HQTexture* colorTexture;
 	hq_uint32 music;
 	HQA16ByteStorageArrayPtr< HQMatrix3x4 , 3> rotation;
 	HQA16ByteMatrix4Ptr viewProj;

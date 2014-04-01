@@ -214,6 +214,7 @@ Game::Game()
 	HQMatrix4Multiply(view, proj, this->viewProj);
 	
 
+	memset(this->uniformBuffer, 0, sizeof(this->uniformBuffer));
 
 	if (API == OGL_RENDERER)
 	{
@@ -394,7 +395,7 @@ void Game::Render(HQTime dt)
 		HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("mesh-effect")->GetPass(i)->Apply();
 
 		BUFFER2 * pTBuffer0 = NULL;
-		pDevice->GetShaderManager()->MapUniformBuffer(this->uniformBuffer[1] , (void**)&pTBuffer0);
+		this->uniformBuffer[1]->Map (&pTBuffer0);
 
 		if(pTBuffer0)
 		{
@@ -405,7 +406,8 @@ void Game::Render(HQTime dt)
 			memcpy(&pTBuffer0->bones, boneMatrices, numBones * sizeof(HQMatrix3x4));
 			memcpy(&pTBuffer0->viewProj, viewProj, sizeof(HQMatrix4));
 		}
-		pDevice->GetShaderManager()->UnmapUniformBuffer(this->uniformBuffer[1]);
+
+		this->uniformBuffer[1]->Unmap();
 
 		mesh[i]->DrawInOneCall();
 	}//for (int i = 0; i < 2; ++i)

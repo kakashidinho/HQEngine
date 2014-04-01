@@ -45,7 +45,7 @@ public:
 
 	
 	//generate full range mipmaps for render target texture <renderTargetTextureID>
-	HQReturnVal GenerateMipmaps(hq_uint32 renderTargetTextureID);
+	HQReturnVal GenerateMipmaps(HQRenderTargetView* renderTargetTextureID);
 
 	//create render target texture
 	//<pRenderTargetID_Out> - will store ID of newly created render target
@@ -59,15 +59,15 @@ public:
 								  HQRenderTargetFormat format , 
 								  HQMultiSampleType multisampleType,
 								  HQTextureType textureType,
-								  hq_uint32 *pRenderTargetID_Out,
-								  hq_uint32 *pTextureID_Out);
+								  HQRenderTargetView** pRenderTargetID_Out,
+								  HQTexture **pTextureID_Out);
 	//create custom depth stencil buffer
 	//return HQ_FAILED_FORMAT_NOT_SUPPORT if <format> is not supported
 	//return HQ_FAILED_MULTISAMPLE_TYPE_NOT_SUPPORT if <multisampleType> is not supported
 	HQReturnVal CreateDepthStencilBuffer(hq_uint32 width , hq_uint32 height,
 										HQDepthStencilFormat format,
 										HQMultiSampleType multisampleType,
-										hq_uint32 *pDepthStencilBufferID_Out);
+										HQDepthStencilBufferView **pDepthStencilBufferID_Out);
 	
 
 	void ActiveDefaultFrameBuffer();
@@ -80,7 +80,7 @@ public:
 	///see HQBaseRenderTargetManager base class
 	///
 	HQReturnVal CreateRenderTargetGroupImpl(const HQRenderTargetDesc *renderTargetDescs , 
-									hq_uint32 depthStencilBufferID ,
+									HQDepthStencilBufferView* depthStencilBufferID,
 									hq_uint32 numRenderTargets,//number of render targers
 									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
 									) ;

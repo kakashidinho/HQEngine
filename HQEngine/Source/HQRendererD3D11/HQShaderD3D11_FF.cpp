@@ -92,7 +92,7 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 {
 	HQFixedFunctionShaderD3D11()
 		: m_flags(PARAMETERS_DIRTY),
-		m_constantBuffer(HQ_NOT_AVAIL_ID),
+		m_constantBuffer(NULL),
 		m_activeProgramIndex(0),
 		m_viewMatrix(HQMatrix4::New()),
 		m_projMatrix(HQMatrix4::New())
@@ -102,13 +102,13 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 		hquint32 numFFPrograms = sizeof(m_program) / sizeof(hquint32);
 
 		for (hquint32 i = 0; i < numFFVShaders; ++i)
-			m_vertexShader[i] = HQ_NOT_AVAIL_ID;
+			m_vertexShader[i] = NULL;
 
 		for (hquint32 i = 0; i < numFFPShaders; ++i)
-			m_pixelShader[i] = HQ_NOT_AVAIL_ID;
+			m_pixelShader[i] = NULL;
 
 		for (hquint32 i = 0; i < numFFPrograms; ++i)
-			m_program[i] = HQ_NOT_AVAIL_ID;
+			m_program[i] = NULL;
 	}
 
 	~HQFixedFunctionShaderD3D11(){
@@ -247,17 +247,17 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 		return (GetVertexShaderIndex(light, specular, texture) << 1) | GetPixelShaderIndex(texture);
 	}
 
-	hquint32 & GetVertexShaderSlot(bool light, bool specular, bool texture)
+	HQShaderObject* & GetVertexShaderSlot(bool light, bool specular, bool texture)
 	{
 		return this->m_vertexShader[GetVertexShaderIndex(light, specular, texture)];
 	}
 
-	hquint32 & GetPixelShaderSlot( bool texture)
+	HQShaderObject* & GetPixelShaderSlot(bool texture)
 	{
 		return this->m_pixelShader[GetPixelShaderIndex(texture)];
 	}
 
-	hquint32 & GetProgramSlot(bool light, bool specular, bool texture)
+	HQShaderProgram* & GetProgramSlot(bool light, bool specular, bool texture)
 	{
 		return this->m_program[GetProgramIndex(light, specular, texture)];
 	}
@@ -329,7 +329,7 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 			m_flags &= ~FF_ACTIVE;
 	}
 
-	hquint32 GetCurrentProgram()
+	HQShaderProgram* GetCurrentProgram()
 	{
 		return m_program[m_activeProgramIndex];
 	}
@@ -341,10 +341,10 @@ struct HQFixedFunctionShaderD3D11: public HQA16ByteObject
 	HQMatrix4 *m_projMatrix;
 
 
-	hquint32 m_vertexShader[8];
-	hquint32 m_pixelShader[2];
-	hquint32 m_program[16];
-	hquint32 m_constantBuffer;//const buffer
+	HQShaderObject* m_vertexShader[8];
+	HQShaderObject* m_pixelShader[2];
+	HQShaderProgram* m_program[16];
+	HQUniformBuffer* m_constantBuffer;//const buffer
 	HQSharedPtr<HQShaderConstBufferD3D11> m_constantBufferPtr;//cached pointer to const buffer
 	HQSharedPtr<HQShaderConstBufferD3D11> m_prevVConstBufferPtr;//previous constant buffer set to the same vertex shader slot as this fixed function shader own buffer
 	HQSharedPtr<HQShaderConstBufferD3D11> m_prevPConstBufferPtr;//previous constant buffer set to the same pixel shader slot as this fixed function shader own buffer
@@ -393,14 +393,24 @@ void HQShaderManagerD3D11::InitFFEmu()
 				continue;
 			for (int texture = 0; texture < 2; ++texture)
 			{
+#if defined WIN32 || defined _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable:4800)
+#endif
+
 				bool useLighting = (bool) light;
 				bool useSpecular = (bool)specular;
 				bool useTexture = (bool) texture;
 
+#if defined WIN32 || defined _MSC_VER
+#	pragma warning(pop)
+#endif
+
+
 				this->CreateProgram(
 					pFFEmu->GetVertexShaderSlot(useLighting, useSpecular,  useTexture),
 					pFFEmu->GetPixelShaderSlot(useTexture), 
-					HQ_NOT_USE_GSHADER, 
+					NULL, 
 					NULL, 
 					&pFFEmu->GetProgramSlot(useLighting, useSpecular,  useTexture));
 			}//for (int texture = 0; texture < 2; ++texture)
@@ -492,12 +502,12 @@ bool HQShaderManagerD3D11::IsFFEmuActive()
 	return pFFEmu->IsActive();
 }
 
-hquint32 HQShaderManagerD3D11::GetFFVertexShaderForInputLayoutCreation()
+HQShaderObject* HQShaderManagerD3D11::GetFFVertexShaderForInputLayoutCreation()
 {
 	return pFFEmu->GetVertexShaderSlot(false, false, true);
 }
 
-bool HQShaderManagerD3D11::IsFFShader(hquint32 shaderID)//fixed function pixel shader
+bool HQShaderManagerD3D11::IsFFShader(HQShaderObject* shaderID)//fixed function pixel shader
 {
 	for (int light = 0; light < 2; ++light)
 	{
@@ -507,9 +517,19 @@ bool HQShaderManagerD3D11::IsFFShader(hquint32 shaderID)//fixed function pixel s
 				continue;
 			for (int texture = 0; texture < 2; ++texture)
 			{
+#if defined WIN32 || defined _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable:4800)
+#endif
+
 				bool useLighting = (bool) light;
 				bool useSpecular = (bool)specular;
 				bool useTexture = (bool) texture;
+
+#if defined WIN32 || defined _MSC_VER
+#	pragma warning(pop)
+#endif
+
 
 				if (shaderID == pFFEmu->GetVertexShaderSlot(useLighting, useSpecular,  useTexture))
 					return true;
@@ -523,7 +543,7 @@ bool HQShaderManagerD3D11::IsFFShader(hquint32 shaderID)//fixed function pixel s
 	return false;
 }
 
-bool HQShaderManagerD3D11::IsFFProgram(hquint32 programID)//fixed function program
+bool HQShaderManagerD3D11::IsFFProgram(HQShaderProgram* programID)//fixed function program
 {
 	for (int light = 0; light < 2; ++light)
 	{
@@ -533,9 +553,19 @@ bool HQShaderManagerD3D11::IsFFProgram(hquint32 programID)//fixed function progr
 				continue;
 			for (int texture = 0; texture < 2; ++texture)
 			{
+#if defined WIN32 || defined _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable:4800)
+#endif
+
 				bool useLighting = (bool) light;
 				bool useSpecular = (bool)specular;
 				bool useTexture = (bool) texture;
+
+#if defined WIN32 || defined _MSC_VER
+#	pragma warning(pop)
+#endif
+
 
 				if (programID == pFFEmu->GetProgramSlot(useLighting, useSpecular,  useTexture))
 					return true;
@@ -546,7 +576,7 @@ bool HQShaderManagerD3D11::IsFFProgram(hquint32 programID)//fixed function progr
 	return false;
 }
 
-bool HQShaderManagerD3D11::IsFFConstBuffer(hquint32 id)//fixed function const buffer
+bool HQShaderManagerD3D11::IsFFConstBuffer(HQUniformBuffer* id)//fixed function const buffer
 {
 	return id == pFFEmu->m_constantBuffer;
 }
@@ -642,7 +672,7 @@ void HQShaderManagerD3D11::NotifyFFRenderIfNeeded()// notify shader manager that
 	if (pFFEmu->m_flags & PARAMETERS_DIRTY)
 	{
 		
-		this->UpdateUniformBuffer(pFFEmu->m_constantBuffer, &pFFEmu->m_parameters);//update buffer
+		pFFEmu->m_constantBuffer->Update( &pFFEmu->m_parameters);//update buffer
 
 		pFFEmu->m_flags &= ~PARAMETERS_DIRTY;
 	}

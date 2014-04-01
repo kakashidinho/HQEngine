@@ -23,7 +23,7 @@ COPYING.txt included with this distribution for more information.
 //texture
 class HQEngineTextureResource: public virtual HQEngineNamedObj {
 public:
-	virtual hquint32 GetTexture2DSize(hquint32 &width, hquint32 &height) const = 0;
+	virtual void GetTexture2DSize(hquint32 &width, hquint32 &height) const = 0;
 	virtual bool IsRenderTarget() const = 0;
 
 protected:

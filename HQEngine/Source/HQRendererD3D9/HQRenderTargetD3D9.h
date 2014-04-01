@@ -24,7 +24,7 @@ private:
 	LPDIRECT3DSURFACE9 pD3DBackBuffer;//default back buffer
 	LPDIRECT3DSURFACE9 pD3DDSBuffer;//default depth stencil buffer
 
-	HQSharedPtr<HQBaseCustomRenderBuffer> pActiveDepthStencilBuffer;//current active depth stencil buffer
+	HQSharedPtr<HQBaseDepthStencilBufferView> pActiveDepthStencilBuffer;//current active depth stencil buffer
 	HQRenderTargetInfo *activeRenderTargets;//active Render targets
 
 	hquint32 numActiveRenderTargets;//number of currently active render targets
@@ -46,7 +46,7 @@ public:
 	static D3DFORMAT GetD3DFormat(HQDepthStencilFormat format);
 
 	//generate full range mipmaps for render target texture <renderTargetTextureID>
-	HQReturnVal GenerateMipmaps(hq_uint32 renderTargetTextureID);
+	HQReturnVal GenerateMipmaps(HQRenderTargetView* renderTargetTextureID);
 
 	//create render target texture
 	//<pRenderTargetID_Out> - will store ID of newly created render target
@@ -60,15 +60,15 @@ public:
 								  HQRenderTargetFormat format , 
 								  HQMultiSampleType multisampleType,
 								  HQTextureType textureType,
-								  hq_uint32 *pRenderTargetID_Out,
-								  hq_uint32 *pTextureID_Out);
+								  HQRenderTargetView** pRenderTargetID_Out,
+								  HQTexture** pTextureID_Out);
 	//create custom depth stencil buffer
 	//return HQ_FAILED_FORMAT_NOT_SUPPORT if <format> is not supported
 	//return HQ_FAILED_MULTISAMPLE_TYPE_NOT_SUPPORT if <multisampleType> is not supported
 	HQReturnVal CreateDepthStencilBuffer(hq_uint32 width , hq_uint32 height,
 										HQDepthStencilFormat format,
 										HQMultiSampleType multisampleType,
-										hq_uint32 *pDepthStencilBufferID_Out);
+										HQDepthStencilBufferView **pDepthStencilBufferID_Out);
 	
 	///
 	///see HQBaseRenderTargetManager base class
@@ -78,7 +78,7 @@ public:
 	///see HQBaseRenderTargetManager base class
 	///
 	HQReturnVal CreateRenderTargetGroupImpl(const HQRenderTargetDesc *renderTargetDescs , 
-									hq_uint32 depthStencilBufferID ,
+									HQDepthStencilBufferView* depthStencilBufferID,
 									hq_uint32 numRenderTargets,//number of render targers
 									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
 									) ;

@@ -48,7 +48,7 @@ struct HQMeshNode::MeshFileHeader
 HQMeshNode::HQMeshNode(const char *name,
 		const char *hqMeshFileName, 
 		HQRenderDevice *pDevice, 
-		hquint32 vertexShaderID, 
+		HQShaderObject* vertexShaderID,
 		HQLogStream *pLogStream)
 :	HQSceneNode(name),
 	m_pRenderDevice(pDevice), 
@@ -75,7 +75,7 @@ HQMeshNode::HQMeshNode(const char *name,
 
 	HQEngineShaderResource* shaderRes = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource(vertexShaderName);
 	HQEngineShaderResImpl* shaderResImpl = (HQEngineShaderResImpl*) shaderRes;
-	hquint32 vertexShaderID = shaderResImpl != NULL ? shaderResImpl->GetShaderID(): HQ_NOT_USE_VSHADER;
+	HQShaderObject* vertexShaderID = shaderResImpl != NULL ? shaderResImpl->GetRawShader() : NULL;
 
 
 	this->Init(name, hqMeshFileName, vertexShaderID, pLogStream);
@@ -85,7 +85,7 @@ HQMeshNode::HQMeshNode(const char *name,
 
 void HQMeshNode::Init(const char *name,
 		const char *hqMeshFileName ,
-		hquint32 vertexShaderID,
+		HQShaderObject* vertexShaderID,
 		HQLogStream *pLogStream)
 {
 	m_hqMeshFileName = HQ_NEW char[strlen(hqMeshFileName) + 1];
@@ -253,7 +253,7 @@ void HQMeshNode::OnResetDevice()
 	fclose(f);
 }
 
-bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, hquint32 vertexShaderID)
+bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderObject* vertexShaderID)
 {
 	HQDataReaderStream *f = (HQDataReaderStream*) fptr;
 	HQReturnVal re;
@@ -306,8 +306,7 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, hquint32 
 			false, false,
 			&this->m_geoInfo->vertexBuffer);
 	else
-		re = m_pRenderDevice->GetVertexStreamManager()->UpdateVertexBuffer(
-			this->m_geoInfo->vertexBuffer,
+		re = this->m_geoInfo->vertexBuffer->Update(
 			0, 
 			vertexBufferSize,
 			verticesData);
@@ -342,8 +341,7 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, hquint32 
 			header.indexDataType,
 			&this->m_geoInfo->indexBuffer);
 	else
-		re = m_pRenderDevice->GetVertexStreamManager()->UpdateIndexBuffer(
-				this->m_geoInfo->indexBuffer,
+		re = this->m_geoInfo->indexBuffer->Update(
 				0,
 				indexBufferSize,
 				indicesData);

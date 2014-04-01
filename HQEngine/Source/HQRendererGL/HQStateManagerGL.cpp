@@ -592,7 +592,7 @@ HQReturnVal HQStateManagerGL::CreateSamplerState(const HQSamplerStateDesc &desc 
 
 HQReturnVal HQStateManagerGL::SetSamplerState(hq_uint32 index , hq_uint32 samplerStateID)
 {
-	HQSharedPtr<HQTexture> pTexture = this->pTextureMan->GetTexture(index);
+	HQSharedPtr<HQBaseTexture> pTexture = this->pTextureMan->GetTextureSharedPtrAt(index);
 
 	HQSharedPtr<HQSamplerStateGL> pState = this->sStates.GetItemPointer(samplerStateID);
 #if defined _DEBUG || defined DEBUG
@@ -607,7 +607,7 @@ HQReturnVal HQStateManagerGL::SetSamplerState(hq_uint32 index , hq_uint32 sample
 		GLenum target = pTextureGL->textureTarget;
 		GLuint currentBoundTex;
 
-		HQSharedPtr<HQTexture> currentTexture = this->pTextureMan->GetActiveTextureUnitInfo().texture[pTextureGL->type];
+		HQSharedPtr<HQBaseTexture> currentTexture = this->pTextureMan->GetActiveTextureUnitInfo().texture[pTextureGL->type];
 		if (currentTexture == NULL)
 			currentBoundTex = 0;
 		else

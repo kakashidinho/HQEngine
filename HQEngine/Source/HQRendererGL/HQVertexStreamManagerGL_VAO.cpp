@@ -13,6 +13,96 @@ COPYING.txt included with this distribution for more information.
 
 #define VAO_IBO_DIRTY 0x1
 
+/*-----------------HQMappableVertexBufferGL_VAO --------------*/
+struct HQMappableVertexBufferGL_VAO : public HQMappableVertexBufferGL {
+	HQMappableVertexBufferGL_VAO(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage)
+	: HQMappableVertexBufferGL(manager, size, usage) {}
+
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+};
+
+HQReturnVal HQMappableVertexBufferGL_VAO::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
+{
+	manager->BindVertexBuffer(this->bufferName);
+	GLbitfield access = GL_MAP_WRITE_BIT;
+	if (mapType == HQ_MAP_DISCARD)
+	{
+		access |= GL_MAP_INVALIDATE_BUFFER_BIT;
+	}
+
+	if (size == 0)
+		size = this->size - offset;
+
+#if defined _DEBUG || defined DEBUG
+	if (ppData == NULL)
+		return HQ_FAILED;
+#endif
+	*ppData = (hqubyte8*)glMapBufferRange(GL_ARRAY_BUFFER, offset, size, access);
+
+	if (*ppData == NULL)
+		return HQ_FAILED;
+
+	return HQ_OK;
+}
+
+
+/*-------------------------HQMappableIndexBufferGL_VAO----------------------*/
+struct HQMappableIndexBufferGL_VAO : public HQMappableIndexBufferGL {
+	HQMappableIndexBufferGL_VAO(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage, HQIndexDataType dataType)
+	: HQMappableIndexBufferGL(manager, size, usage, dataType) {}
+
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+};
+
+HQReturnVal HQMappableIndexBufferGL_VAO::Update(hq_uint32 offset, hq_uint32 size, const void * pData)
+{
+	hq_uint32 i = offset + size;
+	if (i > this->size)
+		return HQ_FAILED_INVALID_SIZE;
+	if (i == 0)//update toàn bộ buffer
+		size = this->size;
+
+	static_cast<HQVertexStreamManagerGL_VAO*>(manager)->BindIndexBuffer(this->bufferName);
+
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, pData);
+
+	return HQ_OK;
+}
+HQReturnVal HQMappableIndexBufferGL_VAO::Unmap()
+{
+	static_cast<HQVertexStreamManagerGL_VAO*>(manager)->BindIndexBuffer(this->bufferName);
+
+	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+
+	return HQ_OK;
+}
+HQReturnVal HQMappableIndexBufferGL_VAO::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
+{
+	static_cast<HQVertexStreamManagerGL_VAO*>(manager)->BindIndexBuffer(this->bufferName);
+
+	GLbitfield access = GL_MAP_WRITE_BIT;
+	if (mapType == HQ_MAP_DISCARD)
+	{
+		access |= GL_MAP_INVALIDATE_BUFFER_BIT;
+	}
+
+	if (size == 0)
+		size = this->size - offset;
+
+#if defined _DEBUG || defined DEBUG
+	if (ppData == NULL)
+		return HQ_FAILED;
+#endif
+	*ppData = (hqubyte8*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, offset, size, access);
+
+	if (*ppData == NULL)
+		return HQ_FAILED;
+
+	return HQ_OK;
+}
+
 /*-------------HQVertexStreamGL_VAO--------------------------------------*/
 HQVertexStreamGL_VAO::HQVertexStreamGL_VAO()
 : fromWhichBO(0), stride(0)
@@ -165,6 +255,16 @@ HQVertexStreamManagerGL_VAO::~HQVertexStreamManagerGL_VAO()
 	glDeleteVertexArrays(1, &m_defaultVAO_GL);
 }
 
+HQVertexBufferGL * HQVertexStreamManagerGL_VAO::CreateNewVertexBufferObj(hq_uint32 size, GLenum usage)
+{
+	return HQ_NEW HQMappableVertexBufferGL_VAO(this, size, usage);
+}
+
+HQIndexBufferGL * HQVertexStreamManagerGL_VAO::CreateNewIndexBufferObj(hq_uint32 size, GLenum usage, HQIndexDataType dataType)
+{
+	return HQ_NEW HQMappableIndexBufferGL_VAO(this, size, usage, dataType);
+}
+
 inline void HQVertexStreamManagerGL_VAO::BindIndexBuffer(GLuint ibo)
 {
 	if (m_currentVAO != NULL)
@@ -193,11 +293,11 @@ inline void HQVertexStreamManagerGL_VAO::ActiveVAO(const HQSharedPtr<HQVertexArr
 	}
 }
 
-HQReturnVal HQVertexStreamManagerGL_VAO::SetVertexBuffer(hq_uint32 vertexBufferID, hq_uint32 streamIndex, hq_uint32 stride)
+HQReturnVal HQVertexStreamManagerGL_VAO::SetVertexBuffer(HQVertexBuffer* vertexBufferID, hq_uint32 streamIndex, hq_uint32 stride)
 {
 	if (streamIndex >= this->maxVertexAttribs)
 		return HQ_FAILED;
-	HQSharedPtr<HQBufferGL> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID);
+	HQSharedPtr<HQBufferGL> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID).UpCast<HQBufferGL>();
 	HQVertexStreamGL &stream = this->streams[streamIndex];
 	if (stream.vertexBuffer != vBuffer || stream.stride != stride)
 	{
@@ -218,7 +318,7 @@ HQReturnVal HQVertexStreamManagerGL_VAO::SetVertexBuffer(hq_uint32 vertexBufferI
 	return HQ_OK;
 }
 
-HQReturnVal HQVertexStreamManagerGL_VAO::SetIndexBuffer(hq_uint32 indexBufferID)
+HQReturnVal HQVertexStreamManagerGL_VAO::SetIndexBuffer(HQIndexBuffer* indexBufferID)
 {
 	HQSharedPtr<HQIndexBufferGL> iBuffer = this->indexBuffers.GetItemPointer(indexBufferID);
 	if (this->activeIndexBuffer != iBuffer)
@@ -251,7 +351,7 @@ HQReturnVal HQVertexStreamManagerGL_VAO::SetIndexBuffer(hq_uint32 indexBufferID)
 	return HQ_OK;
 }
 
-HQReturnVal HQVertexStreamManagerGL_VAO::SetVertexInputLayout(hq_uint32 inputLayoutID)
+HQReturnVal HQVertexStreamManagerGL_VAO::SetVertexInputLayout(HQVertexLayout* inputLayoutID)
 {
 
 	HQSharedPtr<HQVertexInputLayoutGL> pVLayout = this->inputLayouts.GetItemPointer(inputLayoutID);
@@ -268,59 +368,6 @@ HQReturnVal HQVertexStreamManagerGL_VAO::SetVertexInputLayout(hq_uint32 inputLay
 	return HQ_OK;
 }
 
-HQReturnVal HQVertexStreamManagerGL_VAO::MapIndexBuffer(hq_uint32 bufferID, HQMapType mapType, void **ppData)
-{
-	HQSharedPtr<HQIndexBufferGL> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-#endif
-	this->BindIndexBuffer(pBuffer->bufferName);
-
-	if (mapType == HQ_MAP_DISCARD)
-	{
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, pBuffer->size, NULL, pBuffer->usage);
-	}
-#if defined _DEBUG || defined DEBUG
-	if (ppData == NULL)
-		return HQ_FAILED;
-#endif
-	*ppData = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY);
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerGL_VAO::UnmapIndexBuffer(hq_uint32 bufferID)
-{
-	HQSharedPtr<HQIndexBufferGL> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-#endif
-	this->BindIndexBuffer(pBuffer->bufferName);
-
-	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-	return HQ_OK;
-}
-
-
-HQReturnVal HQVertexStreamManagerGL_VAO::UpdateIndexBuffer(hquint32 bufferID, hq_uint32 offset, hq_uint32 size, const void * pData)
-{
-	HQSharedPtr<HQIndexBufferGL> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-#endif
-	hq_uint32 i = offset + size;
-	if (i > pBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-	if (i == 0)//update toàn bộ buffer
-		size = pBuffer->size;
-
-	this->BindIndexBuffer(pBuffer->bufferName);
-
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, pData);
-
-	return HQ_OK;
-}
 
 inline HQSharedPtr<HQVertexArrayObjGL> HQVertexStreamManagerGL_VAO::GetOrCreateNewVAO()
 {
@@ -354,9 +401,9 @@ void HQVertexStreamManagerGL_VAO::Commit()//tell vertex stream manager that we a
 	}
 }
 
-HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexBuffer(hq_uint32 vertexBufferID)
+HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexBuffer(HQVertexBuffer* vertexBufferID)
 {
-	HQSharedPtr<HQBufferGL> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID);
+	HQSharedPtr<HQBufferGL> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID).UpCast<HQBufferGL>();
 
 	HQReturnVal re = (HQReturnVal)HQVertexStreamManagerGL::RemoveVertexBuffer(vertexBufferID);
 
@@ -366,7 +413,7 @@ HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexBuffer(hq_uint32 vertexBuff
 		for (hquint32 i = 0; i < this->maxVertexAttribs; ++i)
 		{
 			if (this->streams[i].vertexBuffer == vBuffer)
-				this->SetVertexBuffer(HQ_NULL_ID, i, 0);
+				this->SetVertexBuffer(NULL, i, 0);
 		}
 
 
@@ -379,11 +426,11 @@ HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexBuffer(hq_uint32 vertexBuff
 	return re;
 }
 
-HQReturnVal HQVertexStreamManagerGL_VAO::RemoveIndexBuffer(hq_uint32 indexBufferID)
+HQReturnVal HQVertexStreamManagerGL_VAO::RemoveIndexBuffer(HQIndexBuffer* indexBufferID)
 {
 	HQSharedPtr<HQIndexBufferGL> iBuffer = this->indexBuffers.GetItemPointer(indexBufferID);
 	if (this->activeIndexBuffer == iBuffer)
-		this->SetIndexBuffer(HQ_NULL_ID);
+		this->SetIndexBuffer(NULL);
 
 	HQReturnVal re = (HQReturnVal)HQVertexStreamManagerGL::RemoveIndexBuffer(indexBufferID);
 
@@ -395,11 +442,11 @@ HQReturnVal HQVertexStreamManagerGL_VAO::RemoveIndexBuffer(hq_uint32 indexBuffer
 	return re;
 }
 
-HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexInputLayout(hq_uint32 inputLayoutID)
+HQReturnVal HQVertexStreamManagerGL_VAO::RemoveVertexInputLayout(HQVertexLayout* inputLayoutID)
 {
 	HQSharedPtr<HQVertexInputLayoutGL> vLayout = this->inputLayouts.GetItemPointer(inputLayoutID);
 	if (this->activeInputLayout == vLayout)
-		this->SetVertexInputLayout(HQ_NULL_ID);
+		this->SetVertexInputLayout(NULL);
 
 	HQReturnVal re = (HQReturnVal)HQVertexStreamManagerGL::RemoveVertexInputLayout(inputLayoutID);
 
@@ -415,13 +462,13 @@ void HQVertexStreamManagerGL_VAO::RemoveAllVertexBuffer()
 {
 	for (hquint32 i = 0; i < this->maxVertexAttribs; ++i)
 	{
-		this->SetVertexBuffer(HQ_NULL_ID, i, 0);
+		this->SetVertexBuffer(NULL, i, 0);
 	}
 
-	HQItemManager<HQBufferGL>::Iterator ite;
+	HQItemManager<HQVertexBufferGL>::Iterator ite;
 	for (this->vertexBuffers.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 	{
-		HQSharedPtr<HQBufferGL> vBuffer = ite.GetItemPointer();
+		HQSharedPtr<HQBufferGL> vBuffer = ite.GetItemPointer().UpCast<HQBufferGL>();
 		if (vBuffer.GetRefCount() == 2)
 		{
 			this->RemoveDependentVAOs(vBuffer);//remove every VAO the uses this buffer
@@ -433,7 +480,7 @@ void HQVertexStreamManagerGL_VAO::RemoveAllVertexBuffer()
 
 void HQVertexStreamManagerGL_VAO::RemoveAllIndexBuffer()
 {
-	this->SetIndexBuffer(HQ_NULL_ID);
+	this->SetIndexBuffer(NULL);
 
 	HQItemManager<HQIndexBufferGL>::Iterator ite;
 	for (this->indexBuffers.GetIterator(ite); !ite.IsAtEnd(); ++ite)
@@ -451,7 +498,7 @@ void HQVertexStreamManagerGL_VAO::RemoveAllIndexBuffer()
 
 void HQVertexStreamManagerGL_VAO::RemoveAllVertexInputLayout()
 {
-	this->SetVertexInputLayout(HQ_NULL_ID);
+	this->SetVertexInputLayout(NULL);
 
 	HQItemManager<HQVertexInputLayoutGL>::Iterator ite;
 	for (this->inputLayouts.GetIterator(ite); !ite.IsAtEnd(); ++ite)

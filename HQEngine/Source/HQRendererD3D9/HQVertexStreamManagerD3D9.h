@@ -32,7 +32,7 @@ struct HQBufferD3D9
 	hq_uint32 size;
 };
 
-struct HQVertexBufferD3D9 : public HQBufferD3D9
+struct HQVertexBufferD3D9 : public HQBufferD3D9, public HQVertexBuffer, public HQBaseIDObject
 {
 	HQVertexBufferD3D9(LPDIRECT3DDEVICE9 pD3DDevice , hq_uint32 size , bool isDynamic , bool isForPointSprites) 
 		: HQBufferD3D9(pD3DDevice , size , isDynamic)
@@ -42,6 +42,13 @@ struct HQVertexBufferD3D9 : public HQBufferD3D9
 		OnResetDevice();
 	}
 	~HQVertexBufferD3D9() { OnLostDevice() ;}
+
+	virtual hquint32 GetSize() const { return size; }
+
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+
 	void OnResetDevice();
 	void OnLostDevice() {SafeRelease(pD3DBuffer);}
 	
@@ -50,7 +57,7 @@ struct HQVertexBufferD3D9 : public HQBufferD3D9
 };
 
 
-struct HQIndexBufferD3D9 : public HQBufferD3D9
+struct HQIndexBufferD3D9 : public HQBufferD3D9, public HQIndexBuffer, public HQBaseIDObject
 {
 	HQIndexBufferD3D9(LPDIRECT3DDEVICE9 pD3DDevice , hq_uint32 size , 
 		bool isDynamic , HQIndexDataType dataType) 
@@ -61,6 +68,13 @@ struct HQIndexBufferD3D9 : public HQBufferD3D9
 		OnResetDevice();
 	}
 	~HQIndexBufferD3D9() {OnLostDevice() ;}
+
+	virtual hquint32 GetSize() const { return size; }
+
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
+	virtual HQReturnVal Unmap();
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+
 	void OnResetDevice();
 	void OnLostDevice() {SafeRelease(pD3DBuffer);}
 
@@ -69,7 +83,7 @@ struct HQIndexBufferD3D9 : public HQBufferD3D9
 };
 
 
-struct HQVertexInputLayoutD3D9
+struct HQVertexInputLayoutD3D9 : public HQVertexLayout, public HQBaseIDObject
 {
 	HQVertexInputLayoutD3D9(LPDIRECT3DDEVICE9 pD3DDevice , D3DVERTEXELEMENT9 *elements) {
 		this->pD3DDevice = pD3DDevice;
@@ -101,9 +115,9 @@ class HQVertexStreamManagerD3D9: public HQVertexStreamManager , public HQLoggabl
 private:
 	LPDIRECT3DDEVICE9 pD3DDevice;
 
-	HQItemManager<HQVertexBufferD3D9> vertexBuffers;
-	HQItemManager<HQIndexBufferD3D9> indexBuffers;
-	HQItemManager<HQVertexInputLayoutD3D9> inputLayouts;
+	HQIDItemManager<HQVertexBufferD3D9> vertexBuffers;
+	HQIDItemManager<HQIndexBufferD3D9> indexBuffers;
+	HQIDItemManager<HQVertexInputLayoutD3D9> inputLayouts;
 
 	HQSharedPtr<HQIndexBufferD3D9> activeIndexBuffer;
 	HQSharedPtr<HQVertexInputLayoutD3D9> activeInputLayout;
@@ -117,31 +131,23 @@ public:
 	~HQVertexStreamManagerD3D9() ;
 	
 
-	HQReturnVal CreateVertexBuffer(const void *initData , hq_uint32 size , bool dynamic , bool isForPointSprites ,hq_uint32 *pVertexBufferID);
-	HQReturnVal CreateIndexBuffer(const void *initData , hq_uint32 size , bool dynamic , HQIndexDataType dataType , hq_uint32 *pIndexBufferID);
+	HQReturnVal CreateVertexBuffer(const void *initData , hq_uint32 size , bool dynamic , bool isForPointSprites ,HQVertexBuffer** pVertexBufferID);
+	HQReturnVal CreateIndexBuffer(const void *initData , hq_uint32 size , bool dynamic , HQIndexDataType dataType , HQIndexBuffer** pIndexBufferID);
 
 	HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDesc , 
 												hq_uint32 numAttrib ,
-												hq_uint32 vertexShaderID , 
-												hq_uint32 *pInputLayoutID);
+												HQShaderObject* vertexShaderID , 
+												HQVertexLayout **pInputLayoutID);
 
-	HQReturnVal SetVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 streamIndex , hq_uint32 stride ) ;
+	HQReturnVal SetVertexBuffer(HQVertexBuffer* vertexBufferID, hq_uint32 streamIndex, hq_uint32 stride);
 
-	HQReturnVal SetIndexBuffer(hq_uint32 indexBufferID );
+	HQReturnVal SetIndexBuffer(HQIndexBuffer* indexBufferID);
 
-	HQReturnVal SetVertexInputLayout(hq_uint32 inputLayoutID) ;
+	HQReturnVal SetVertexInputLayout(HQVertexLayout* inputLayoutID);
 	
-	HQReturnVal MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) ;
-	HQReturnVal UnmapVertexBuffer(hq_uint32 vertexBufferID) ;
-	HQReturnVal MapIndexBuffer(hq_uint32 indexBufferID, HQMapType mapType, void **ppData);
-	HQReturnVal UnmapIndexBuffer(hq_uint32 indexBufferID);
-	
-	HQReturnVal UpdateVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 offset , hq_uint32 size , const void * pData);
-	HQReturnVal UpdateIndexBuffer(hq_uint32 indexBufferID, hq_uint32 offset , hq_uint32 size , const void * pData);
-
-	HQReturnVal RemoveVertexBuffer(hq_uint32 vertexBufferID) ;
-	HQReturnVal RemoveIndexBuffer(hq_uint32 indexBufferID) ;
-	HQReturnVal RemoveVertexInputLayout(hq_uint32 inputLayoutID) ;
+	HQReturnVal RemoveVertexBuffer(HQVertexBuffer* vertexBufferID);
+	HQReturnVal RemoveIndexBuffer(HQIndexBuffer* indexBufferID);
+	HQReturnVal RemoveVertexInputLayout(HQVertexLayout* inputLayoutID);
 	void RemoveAllVertexBuffer() ;
 	void RemoveAllIndexBuffer() ;
 	void RemoveAllVertexInputLayout() ;

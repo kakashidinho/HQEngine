@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQVertexStreamManagerD3D9.h"
 
 /*---------buffer----------------------*/
+//--------------HQVertexBufferD3D9----------------------
 void HQVertexBufferD3D9::OnResetDevice()
 {
 	DWORD usage = D3DUSAGE_WRITEONLY;
@@ -26,6 +27,68 @@ void HQVertexBufferD3D9::OnResetDevice()
 		SafeRelease(pD3DBuffer);
 	}
 }
+
+HQReturnVal HQVertexBufferD3D9::Unmap()
+{
+#if defined _DEBUG || defined DEBUG	
+	if (this->pD3DBuffer == NULL)
+		return HQ_FAILED;
+#endif
+
+	this->pD3DBuffer->Unlock();
+
+	return HQ_OK;
+}
+
+HQReturnVal HQVertexBufferD3D9::Update(hq_uint32 offset, hq_uint32 size, const void * pData)
+{
+#if defined _DEBUG || defined DEBUG	
+	if (this->pD3DBuffer == NULL)
+		return HQ_FAILED;
+#endif
+	hq_uint32 i = offset + size;
+	if (i > this->size)
+		return HQ_FAILED_INVALID_SIZE;
+
+	void *l_pData;
+	if (FAILED(this->pD3DBuffer->Lock(offset, size, (void**)&l_pData, 0)))
+		return HQ_FAILED;
+	if (i == 0)
+		memcpy(l_pData, pData, this->size);//update toàn bộ buffer
+	else
+		memcpy(l_pData, pData, size);
+
+	this->pD3DBuffer->Unlock();
+	return HQ_OK;
+}
+HQReturnVal HQVertexBufferD3D9::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
+{
+#if defined _DEBUG || defined DEBUG	
+	if (this->pD3DBuffer == NULL)
+		return HQ_FAILED;
+#endif
+
+	if (size == 0 && offset != 0)
+		size = this->size - offset;
+
+	DWORD lockFlags = 0;
+	switch (mapType)
+	{
+	case HQ_MAP_DISCARD:
+		lockFlags = D3DLOCK_DISCARD;
+		break;
+	case HQ_MAP_NOOVERWRITE:
+		lockFlags = D3DLOCK_NOOVERWRITE;
+		break;
+	}
+
+	if (FAILED(this->pD3DBuffer->Lock(offset, size, ppData, lockFlags)))
+		return HQ_FAILED;
+
+	return HQ_OK;
+}
+
+//-------------------HQIndexBufferD3D9-------------------------
 void HQIndexBufferD3D9::OnResetDevice()
 {
 	DWORD usage = D3DUSAGE_WRITEONLY;
@@ -54,6 +117,65 @@ void HQIndexBufferD3D9::OnResetDevice()
 	}
 }
 
+HQReturnVal HQIndexBufferD3D9::Unmap()
+{
+#if defined _DEBUG || defined DEBUG	
+	if (this->pD3DBuffer == NULL)
+		return HQ_FAILED;
+#endif
+
+	this->pD3DBuffer->Unlock();
+
+	return HQ_OK;
+}
+
+HQReturnVal HQIndexBufferD3D9::Update(hq_uint32 offset, hq_uint32 size, const void * pData)
+{
+#if defined _DEBUG || defined DEBUG	
+	if (this->pD3DBuffer == NULL)
+		return HQ_FAILED;
+#endif
+	hq_uint32 i = offset + size;
+	if (i > this->size)
+		return HQ_FAILED_INVALID_SIZE;
+
+	void *l_pData;
+	if (FAILED(this->pD3DBuffer->Lock(offset, size, (void**)&l_pData, 0)))
+		return HQ_FAILED;
+	if (i == 0)
+		memcpy(l_pData, pData, this->size);//update toàn bộ buffer
+	else
+		memcpy(l_pData, pData, size);
+
+	this->pD3DBuffer->Unlock();
+	return HQ_OK;
+}
+HQReturnVal HQIndexBufferD3D9::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
+{
+#if defined _DEBUG || defined DEBUG	
+	if (this->pD3DBuffer == NULL)
+		return HQ_FAILED;
+#endif
+	if (size == 0 && offset != 0)
+		size = this->size - offset;
+
+	DWORD lockFlags = 0;
+	switch (mapType)
+	{
+	case HQ_MAP_DISCARD:
+		lockFlags = D3DLOCK_DISCARD;
+		break;
+	case HQ_MAP_NOOVERWRITE:
+		lockFlags = D3DLOCK_NOOVERWRITE;
+		break;
+	}
+
+	if (FAILED(this->pD3DBuffer->Lock(offset, size, ppData, lockFlags)))
+		return HQ_FAILED;
+
+	return HQ_OK;
+}
+
 /*---------vertex input layout---------*/
 void HQVertexInputLayoutD3D9::OnResetDevice()
 {
@@ -76,7 +198,7 @@ HQVertexStreamManagerD3D9::~HQVertexStreamManagerD3D9()
 	Log("Released!");
 }
 
-HQReturnVal HQVertexStreamManagerD3D9::CreateVertexBuffer(const void *initData , hq_uint32 size , bool dynamic , bool isForPointSprites ,hq_uint32 *pID)
+HQReturnVal HQVertexStreamManagerD3D9::CreateVertexBuffer(const void *initData , hq_uint32 size , bool dynamic , bool isForPointSprites ,HQVertexBuffer **pID)
 {
 	HQVertexBufferD3D9* newVBuffer = new HQVertexBufferD3D9(this->pD3DDevice , size , dynamic , isForPointSprites);
 
@@ -97,7 +219,7 @@ HQReturnVal HQVertexStreamManagerD3D9::CreateVertexBuffer(const void *initData ,
 	return HQ_OK;
 }
 
-HQReturnVal HQVertexStreamManagerD3D9::CreateIndexBuffer(const void *initData , hq_uint32 size , bool dynamic , HQIndexDataType dataType , hq_uint32 *pID)
+HQReturnVal HQVertexStreamManagerD3D9::CreateIndexBuffer(const void *initData , hq_uint32 size , bool dynamic , HQIndexDataType dataType , HQIndexBuffer **pID)
 {
 	HQIndexBufferD3D9* newIBuffer = new HQIndexBufferD3D9(this->pD3DDevice , size , dynamic , dataType);
 
@@ -119,8 +241,8 @@ HQReturnVal HQVertexStreamManagerD3D9::CreateIndexBuffer(const void *initData , 
 
 HQReturnVal HQVertexStreamManagerD3D9::CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDesc , 
 												hq_uint32 numAttrib ,
-												hq_uint32 vertexShaderID , 
-												hq_uint32 *pID)
+												HQShaderObject* vertexShaderID , 
+												HQVertexLayout **pID)
 {
 	if (vAttribDesc == NULL)
 		return HQ_FAILED;
@@ -260,7 +382,7 @@ void HQVertexStreamManagerD3D9::ConvertToVertexElement(const HQVertexAttribDesc 
 	}
 }
 
-HQReturnVal HQVertexStreamManagerD3D9::SetVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 streamIndex , hq_uint32 stride)
+HQReturnVal HQVertexStreamManagerD3D9::SetVertexBuffer(HQVertexBuffer* vertexBufferID , hq_uint32 streamIndex , hq_uint32 stride)
 {
 #if defined _DEBUG || defined DEBUG
 	if (streamIndex >= 16)
@@ -280,7 +402,7 @@ HQReturnVal HQVertexStreamManagerD3D9::SetVertexBuffer(hq_uint32 vertexBufferID 
 	return HQ_OK;
 }
 
-HQReturnVal  HQVertexStreamManagerD3D9::SetIndexBuffer(hq_uint32 indexBufferID)
+HQReturnVal  HQVertexStreamManagerD3D9::SetIndexBuffer(HQIndexBuffer* indexBufferID)
 {
 	HQSharedPtr<HQIndexBufferD3D9> iBuffer = this->indexBuffers.GetItemPointer(indexBufferID);
 	if (this->activeIndexBuffer != iBuffer)
@@ -295,7 +417,7 @@ HQReturnVal  HQVertexStreamManagerD3D9::SetIndexBuffer(hq_uint32 indexBufferID)
 	return HQ_OK;
 }
 
-HQReturnVal  HQVertexStreamManagerD3D9::SetVertexInputLayout(hq_uint32 inputLayoutID) 
+HQReturnVal  HQVertexStreamManagerD3D9::SetVertexInputLayout(HQVertexLayout* inputLayoutID)
 {
 	HQSharedPtr<HQVertexInputLayoutD3D9> pVLayout = this->inputLayouts.GetItemPointer(inputLayoutID);
 	
@@ -313,146 +435,16 @@ HQReturnVal  HQVertexStreamManagerD3D9::SetVertexInputLayout(hq_uint32 inputLayo
 
 }
 
-HQReturnVal HQVertexStreamManagerD3D9::MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) 
-{
-	HQVertexBufferD3D9* vBuffer = this->vertexBuffers.GetItemRawPointer(vertexBufferID);
-#if defined _DEBUG || defined DEBUG	
-	if (vBuffer == NULL)
-		return HQ_FAILED_INVALID_ID;
-	if (vBuffer->pD3DBuffer == NULL)
-		return HQ_FAILED;
-#endif
 
-	DWORD lockFlags = 0 ;
-	switch (mapType)
-	{
-	case HQ_MAP_DISCARD:
-		lockFlags = D3DLOCK_DISCARD;
-		break;
-	case HQ_MAP_NOOVERWRITE:
-		lockFlags = D3DLOCK_NOOVERWRITE;
-		break;
-	}
-	
-	if (FAILED(vBuffer->pD3DBuffer->Lock(0 , 0 , ppData , lockFlags)))
-		return HQ_FAILED;
-
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerD3D9::UnmapVertexBuffer(hq_uint32 vertexBufferID) 
-{
-	HQVertexBufferD3D9* vBuffer = this->vertexBuffers.GetItemRawPointer(vertexBufferID);
-#if defined _DEBUG || defined DEBUG
-	if (vBuffer == NULL)
-		return HQ_FAILED_INVALID_ID;
-	if (vBuffer->pD3DBuffer == NULL)
-		return HQ_FAILED;
-#endif
-	if (FAILED(vBuffer->pD3DBuffer->Unlock()))
-		return HQ_FAILED;
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerD3D9::MapIndexBuffer(hquint32 bufferID, HQMapType mapType , void **ppData) 
-{
-	HQSharedPtr<HQIndexBufferD3D9> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-	if (pBuffer->pD3DBuffer == NULL)
-		return HQ_FAILED;
-#endif
-
-	DWORD lockFlags = 0 ;
-	switch (mapType)
-	{
-	case HQ_MAP_DISCARD:
-		lockFlags = D3DLOCK_DISCARD;
-		break;
-	case HQ_MAP_NOOVERWRITE:
-		lockFlags = D3DLOCK_NOOVERWRITE;
-		break;
-	}
-	
-	if (FAILED(pBuffer->pD3DBuffer->Lock(0, 0, ppData, lockFlags)))
-		return HQ_FAILED;
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerD3D9::UnmapIndexBuffer(hquint32 bufferID)
-{
-	HQSharedPtr<HQIndexBufferD3D9> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-
-	if (pBuffer->pD3DBuffer == NULL)
-		return HQ_FAILED;
-#endif
-
-	if (FAILED(pBuffer->pD3DBuffer->Unlock()))
-		return HQ_FAILED;
-	return HQ_OK;
-}
-
-
-HQReturnVal HQVertexStreamManagerD3D9::UpdateVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 offset , hq_uint32 size , const void * pData)
-{
-	HQVertexBufferD3D9* vBuffer = this->vertexBuffers.GetItemRawPointer(vertexBufferID);
-#if defined _DEBUG || defined DEBUG	
-	if (vBuffer == NULL)
-		return HQ_FAILED_INVALID_ID;
-#endif
-	
-	hq_uint32 i = offset + size;
-	if (i > vBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-
-	void *l_pData;
-	if (FAILED(vBuffer->pD3DBuffer->Lock(offset , size , (void**)&l_pData , 0)))
-		return HQ_FAILED;
-	if (i == 0)
-		memcpy(l_pData , pData , vBuffer->size);//update toàn bộ buffer
-	else
-		memcpy(l_pData , pData , size);
-
-	vBuffer->pD3DBuffer->Unlock();
-	return HQ_OK;
-}
-
-HQReturnVal HQVertexStreamManagerD3D9::UpdateIndexBuffer(hquint32 bufferID, hq_uint32 offset , hq_uint32 size , const void * pData)
-{
-	HQSharedPtr<HQIndexBufferD3D9> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-#endif
-
-	hq_uint32 i = offset + size;
-	if (i > pBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-	
-	void *l_pData;
-	if (FAILED(pBuffer->pD3DBuffer->Lock(offset , size , &l_pData , 0)))
-		return HQ_FAILED;
-
-	if (i == 0)
-		memcpy(l_pData , pData , pBuffer->size);//update toàn bộ buffer
-	else
-		memcpy(l_pData , pData , size);
-
-	pBuffer->pD3DBuffer->Unlock();
-
-	return HQ_OK;
-}
-
-HQReturnVal HQVertexStreamManagerD3D9::RemoveVertexBuffer(hq_uint32 ID) 
+HQReturnVal HQVertexStreamManagerD3D9::RemoveVertexBuffer(HQVertexBuffer* ID)
 {
 	return (HQReturnVal)this->vertexBuffers.Remove(ID);
 }
-HQReturnVal HQVertexStreamManagerD3D9::RemoveIndexBuffer(hq_uint32 ID) 
+HQReturnVal HQVertexStreamManagerD3D9::RemoveIndexBuffer(HQIndexBuffer* ID)
 {
 	return (HQReturnVal)this->indexBuffers.Remove(ID);
 }
-HQReturnVal HQVertexStreamManagerD3D9::RemoveVertexInputLayout(hq_uint32 ID) 
+HQReturnVal HQVertexStreamManagerD3D9::RemoveVertexInputLayout(HQVertexLayout* ID)
 {
 	return (HQReturnVal)this->inputLayouts.Remove(ID);
 }

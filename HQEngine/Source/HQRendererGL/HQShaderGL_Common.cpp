@@ -68,6 +68,21 @@ HQBaseShaderProgramGL::~HQBaseShaderProgramGL()
 	}
 }
 
+HQShaderObject * HQBaseShaderProgramGL::GetShader(HQShaderType type)
+{
+	switch (type)
+	{
+	case HQ_VERTEX_SHADER:
+		return vertexShader;
+	case HQ_PIXEL_SHADER:
+		return pixelShader;
+	case HQ_GEOMETRY_SHADER:
+		return geometryShader;
+	}
+
+	return NULL;
+}
+
 HQShaderParameterGL* HQBaseShaderProgramGL::TryCreateParameterObject(const char *parameterName)
 {
 	if (isGLSL)
@@ -117,7 +132,7 @@ hq_uint32 HQBaseShaderProgramGL::TryCreateParamObjAndAddToParamsList(const char 
 HQBaseCommonShaderManagerGL::HQBaseCommonShaderManagerGL(HQLogStream* logFileStream , const char * logPrefix , bool flushLog)
 :HQLoggableObject(logFileStream , logPrefix , flushLog , 1024) 
 {
-	activeProgram=HQ_NOT_USE_SHADER;
+	activeProgram=NULL;
 
 	g_pShaderMan = this;
 }
@@ -132,45 +147,42 @@ HQBaseCommonShaderManagerGL::~HQBaseCommonShaderManagerGL()
 
 bool HQBaseCommonShaderManagerGL::IsUsingVShader() //có đang dùng vertex shader không,hay đang dùng fixed function
 {
-	HQSharedPtr<HQBaseShaderProgramGL> pProgram = this->GetItemPointerNonCheck(activeProgram);
-	if (pProgram == NULL)
+	if (activeProgram == NULL)
 		return false;
 
-	return pProgram->vertexShaderID != HQ_NOT_USE_VSHADER;
+	return activeProgram->vertexShader != NULL;
 }
 bool HQBaseCommonShaderManagerGL::IsUsingGShader()//có đang dùng geometry shader không,hay đang dùng fixed function
 {
-	HQSharedPtr<HQBaseShaderProgramGL> pProgram = this->GetItemPointerNonCheck(activeProgram);
-	if (pProgram == NULL)
+	if (activeProgram == NULL)
 		return false;
 
-	return pProgram->geometryShaderID != HQ_NOT_USE_GSHADER;
+	return activeProgram->geometryShader != NULL;
 }
 bool HQBaseCommonShaderManagerGL::IsUsingPShader() //có đang dùng pixel/fragment shader không,hay đang dùng fixed function
 {
-	HQSharedPtr<HQBaseShaderProgramGL> pProgram = this->GetItemPointerNonCheck(activeProgram);
-	if (pProgram == NULL)
+	if (activeProgram == NULL)
 		return false;
 
-	return pProgram->pixelShaderID != HQ_NOT_USE_PSHADER;
+	return activeProgram->pixelShader != NULL;
 }
 
 
 /*------------------------*/
 
-HQReturnVal HQBaseCommonShaderManagerGL::DestroyProgram(hq_uint32 programID)
+HQReturnVal HQBaseCommonShaderManagerGL::DestroyProgram(HQShaderProgram* programID)
 {
 	HQSharedPtr<HQBaseShaderProgramGL> pProgram = this->GetItemPointer(programID);
 	if(pProgram == NULL)
 		return HQ_FAILED;
-	if(programID==activeProgram)
+	if(programID==activeProgram.GetRawPointer())
 	{
 #if defined DEVICE_LOST_POSSIBLE
 		if (!g_pOGLDev->IsDeviceLost())//must not call opengl when device is lost
 #endif
-			this->ActiveProgram(HQ_NOT_USE_SHADER);
+			this->ActiveProgram(NULL);
 		
-		this->activeProgram = HQ_NOT_USE_SHADER;
+		this->activeProgram = NULL;
 	}
 	this->Remove(programID);
 	return HQ_OK;
@@ -181,13 +193,13 @@ void HQBaseCommonShaderManagerGL::DestroyAllProgram()
 #if defined DEVICE_LOST_POSSIBLE
 	if (!g_pOGLDev->IsDeviceLost())//must not call opengl when device is lost
 #endif
-		this->ActiveProgram(HQ_NOT_USE_SHADER);
+		this->ActiveProgram(NULL);
 
 	this->RemoveAll();
-	this->activeProgram = HQ_NOT_USE_SHADER;
+	this->activeProgram = NULL;
 }
 
-HQReturnVal HQBaseCommonShaderManagerGL::DestroyShader(hq_uint32 shaderID)
+HQReturnVal HQBaseCommonShaderManagerGL::DestroyShader(HQShaderObject* shaderID)
 {
 	return (HQReturnVal)this->shaderObjects.Remove(shaderID);
 }
@@ -206,29 +218,13 @@ void HQBaseCommonShaderManagerGL::DestroyAllResource()
 	DestroyAllShader();
 }
 
-hq_uint32 HQBaseCommonShaderManagerGL::GetShader(hq_uint32 programID, HQShaderType shaderType)
-{
-	HQSharedPtr<HQBaseShaderProgramGL> pProgram = this->GetItemPointer(programID);
-
-	switch (shaderType)
-	{
-	case HQ_VERTEX_SHADER:
-		return (pProgram != NULL)? pProgram->vertexShaderID : HQ_NOT_USE_VSHADER;
-	case HQ_GEOMETRY_SHADER:
-		return (pProgram != NULL)? pProgram->geometryShaderID : HQ_NOT_USE_GSHADER;
-	case HQ_PIXEL_SHADER:
-		return (pProgram != NULL)? pProgram->pixelShaderID : HQ_NOT_USE_PSHADER;
-	}
-
-	return HQ_NOT_USE_VSHADER;
-}
 
 
 
 /*--------------------------------------*/
 
 
-hq_uint32 HQBaseCommonShaderManagerGL::GetParameterIndex(hq_uint32 programID ,
+hq_uint32 HQBaseCommonShaderManagerGL::GetParameterIndex(HQShaderProgram* programID ,
 											const char *parameterName)
 {
 	HQSharedPtr<HQBaseShaderProgramGL> pProgram	= this->GetItemPointer(programID);

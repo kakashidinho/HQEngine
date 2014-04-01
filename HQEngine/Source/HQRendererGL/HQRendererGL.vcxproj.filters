@@ -119,9 +119,6 @@
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cgFunctionPointers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="glHeaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>

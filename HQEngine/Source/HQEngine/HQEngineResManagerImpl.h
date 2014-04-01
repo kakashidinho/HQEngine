@@ -28,15 +28,15 @@ public:
 	HQEngineTextureResImpl(const char* name);
 	virtual ~HQEngineTextureResImpl();
 
-	void Init(hquint32 textureID, hquint32 renderTargetID = HQ_NULL_ID) {m_textureID = textureID; m_renderTargetID = renderTargetID;}
-	hquint32 GetTextureID() const {return m_textureID;}
-	hquint32 GetRenderTargetID() const {return m_renderTargetID;}
-	virtual hquint32 GetTexture2DSize(hquint32 &width, hquint32 &height) const;
-	virtual bool IsRenderTarget() const {return m_renderTargetID != HQ_NULL_ID;}
+	void Init(HQTexture* textureID, HQRenderTargetView* renderTargetID = NULL) {m_textureID = textureID; m_renderTargetID = renderTargetID;}
+	HQTexture* GetRawTexture() const { return m_textureID; }
+	HQRenderTargetView* GetRenderTargetID() const { return m_renderTargetID; }
+	virtual void GetTexture2DSize(hquint32 &width, hquint32 &height) const;
+	virtual bool IsRenderTarget() const {return m_renderTargetID != NULL;}
 
 private:
-	hquint32 m_textureID;
-	hquint32 m_renderTargetID;
+	HQTexture* m_textureID;
+	HQRenderTargetView* m_renderTargetID;
 };
 
 //shader resource
@@ -45,13 +45,12 @@ public:
 	HQEngineShaderResImpl(const char* name);
 	virtual ~HQEngineShaderResImpl();
 
-	void Init(HQShaderType type, hquint32 shaderID) {m_shaderID = shaderID; m_shaderType = type;}
-	virtual hquint32 GetShaderID() const {return m_shaderID;}
-	virtual HQShaderType GetShaderType() const {return m_shaderType;}
+	void Init(HQShaderType type, HQShaderObject* shaderID) { m_shader = shaderID; }
+	virtual HQShaderObject* GetRawShader() const { return m_shader; }
+	virtual HQShaderType GetShaderType() const { return m_shader->GetType(); }
 
 private:
-	hquint32 m_shaderID;
-	HQShaderType m_shaderType;
+	HQShaderObject* m_shader;
 };
 
 

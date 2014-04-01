@@ -43,10 +43,14 @@ typedef ID3DXConstantTable HQConstantTableD3D9;
 struct HQConstantTableD3D9;
 #endif
 
-struct HQShaderObjectD3D9
+struct HQShaderObjectD3D9: public HQShaderObject, public HQBaseIDObject
 {
 	HQShaderObjectD3D9();
 	~HQShaderObjectD3D9();
+
+	virtual HQShaderType GetType() const {
+		return type;
+	}
 
 	union {
 		IDirect3DVertexShader9* vshader;
@@ -60,10 +64,19 @@ struct HQShaderObjectD3D9
 
 
 
-struct HQShaderProgramD3D9
+struct HQShaderProgramD3D9 : public HQShaderProgram, public HQBaseIDObject
 {
-	hquint32 vertexShaderID;
-	hquint32 pixelShaderID;
+	virtual HQShaderObject * GetShader(HQShaderType type) {
+		switch (type)
+		{
+		case HQ_VERTEX_SHADER:
+			return vertexShader.GetRawPointer();
+		case HQ_PIXEL_SHADER:
+			return pixelShader.GetRawPointer();
+		default:
+			return NULL;
+		}
+	}
 
 	HQSharedPtr<HQShaderObjectD3D9> vertexShader;
 	HQSharedPtr<HQShaderObjectD3D9> pixelShader;
@@ -71,19 +84,26 @@ struct HQShaderProgramD3D9
 	HQItemManager<HQParameterD3D9> parameters;
 };
 
-struct HQShaderConstBufferD3D9
+#ifdef WIN32
+#	pragma warning( push )
+#	pragma warning( disable : 4250 )//dominance inheritance of HQSysMemBuffer
+#endif
+
+struct HQShaderConstBufferD3D9: public HQSysMemBuffer, public HQUniformBuffer, public HQBaseIDObject
 {
-	HQShaderConstBufferD3D9(bool isDynamic, hq_uint32 size);
+	HQShaderConstBufferD3D9(HQSysMemBuffer::Listener* listener, bool isDynamic, hq_uint32 size);
 	~HQShaderConstBufferD3D9();
 
-	void *pRawBuffer;
 	bool isDynamic;
-	hq_uint32 size;
 	typedef HQLinkedList<hquint32, HQPoolMemoryManager> BufferSlotList;
 	BufferSlotList boundSlots;//list of slots that this buffer bound to
 };
 
-class HQShaderManagerD3D9:public HQShaderManager,private HQItemManager<HQShaderProgramD3D9> , public HQLoggableObject
+#ifdef WIN32
+#	pragma warning( pop )
+#endif
+
+class HQShaderManagerD3D9 :public HQShaderManager, private HQIDItemManager<HQShaderProgramD3D9>, public HQLoggableObject, public HQSysMemBuffer::Listener
 {
 public:
 	HQShaderManagerD3D9(LPDIRECT3DDEVICE9 g_pD3DDev,HQLogStream* logFileStream ,bool flushLog);
@@ -94,7 +114,7 @@ public:
 	bool IsUsingPShader();//có đang dùng pixel/fragment shader không,hay đang dùng fixed function
 	bool IsUsingShader() {return this->activeProgram != NULL;}
 
-	HQReturnVal ActiveProgram(hq_uint32 programID);
+	HQReturnVal ActiveProgram(HQShaderProgram* programID);
 	void Commit();//this method should be called before draw any thing
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
@@ -102,34 +122,34 @@ public:
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID);
+									 HQShaderObject **pID);
 	HQReturnVal CreateShaderFromMemory(HQShaderType type,
 									 const char* pSourceData,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID);
+									 HQShaderObject **pID);
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
 									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
-									 hq_uint32 *pID);
+									 HQShaderObject **pID);
 
 	HQReturnVal CreateShaderFromMemory(HQShaderType type,
 									 HQShaderCompileMode compileMode,
 									 const char* pSourceData,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
-									 hq_uint32 *pID);
+									 HQShaderObject **pID);
 
 	///
 	///tạo shader từ mã đã compile
 	///
 	HQReturnVal CreateShaderFromByteCodeStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 	{
 		return HQ_FAILED;
 	}
@@ -140,24 +160,22 @@ public:
 	HQReturnVal CreateShaderFromByteCode(HQShaderType type,
 									 const hqubyte8* byteCodeData,
 									 hq_uint32 byteCodeLength,
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 	{
 		return HQ_FAILED;
 	}
 
-	HQReturnVal CreateProgram(hq_uint32 vertexShaderID,
-							  hq_uint32 pixelShaderID,
-							  hq_uint32 geometryShaderID,
-							  const char** uniformParameterNames,
-							  hq_uint32 *pID);
+	HQReturnVal CreateProgram(HQShaderObject * vertexShaderID,
+								HQShaderObject * pixelShaderID,
+								HQShaderObject * geometryShaderID,
+								const char** uniformParameterNames,
+								HQShaderProgram **pID);
 
-	HQReturnVal DestroyProgram(hq_uint32 programID);
+	HQReturnVal DestroyProgram(HQShaderProgram* programID);
 	void DestroyAllProgram();
-	HQReturnVal DestroyShader(hq_uint32 shaderID);
+	HQReturnVal DestroyShader(HQShaderObject* shaderID);
 	void DestroyAllShader() ;
 	void DestroyAllResource();
-
-	hq_uint32 GetShader(hq_uint32 programID, HQShaderType shaderType);
 	
 	HQReturnVal SetUniformInt(const char* parameterName,
 						 const int* pValues,
@@ -193,7 +211,7 @@ public:
 
 	/*-------parameter index version-----------*/
 
-	hq_uint32 GetParameterIndex(hq_uint32 programID , 
+	hq_uint32 GetParameterIndex(HQShaderProgram* programID , 
 											const char *parameterName);
 	
 	HQReturnVal SetUniformInt(hq_uint32 parameterIndex,
@@ -238,31 +256,26 @@ public:
 
 	friend void cgErrorCallBack(void);
 
-	HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut);
-	HQReturnVal DestroyUniformBuffer(hq_uint32 bufferID);
+	HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut);
+	HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID);
 	void DestroyAllUniformBuffers();
-	HQReturnVal SetUniformBuffer(hq_uint32 slot ,  hq_uint32 bufferID );
-	HQReturnVal MapUniformBuffer(hq_uint32 bufferID , void **ppData);
-	HQReturnVal UnmapUniformBuffer(hq_uint32 bufferID);
-	HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData);
+	HQReturnVal SetUniformBuffer(hq_uint32 slot ,  HQUniformBuffer* bufferID );
 
 	void OnResetDevice();
 private:
 	struct BufferSlotInfo;
 
 	HQSharedPtr<HQShaderProgramD3D9> activeProgram; 
-#if defined _DEBUG || defined DEBUG
-	hq_uint32 activeProgramID;
-#endif
+
 	HQSharedPtr<HQShaderObjectD3D9> activeVShader,activePShader;
 
 	CGcontext cgContext;
 	CGprofile cgVertexProfile,cgPixelProfile;
 
 	LPDIRECT3DDEVICE9 pD3DDevice;
-	HQItemManager<HQShaderObjectD3D9> shaderObjects;//danh sách shader object
+	HQIDItemManager<HQShaderObjectD3D9> shaderObjects;//danh sách shader object
 
-	HQItemManager<HQShaderConstBufferD3D9> shaderConstBuffers;//const buffer list
+	HQIDItemManager<HQShaderConstBufferD3D9> shaderConstBuffers;//const buffer list
 
 	BufferSlotInfo* vshaderConstSlots;
 	BufferSlotInfo* pshaderConstSlots;
@@ -280,7 +293,7 @@ private:
 									 const HQShaderMacro *pDefines,
 									 const char **args,
 									 bool debugMode,
-									 hq_uint32 *pID
+									 HQShaderObject **pID
 									 );
 	HQReturnVal CreateShaderFromMemoryEx(HQShaderType type,
 									 const char* pSourceData,
@@ -289,7 +302,7 @@ private:
 									 const HQShaderMacro *pDefines,
 									 const char **args,
 									 bool debugMode,
-									 hq_uint32 *pID);
+									 HQShaderObject **pID);
 
 	HQSharedPtr<HQParameterD3D9> GetUniformParam(HQSharedPtr<HQShaderProgramD3D9>& pProgram,const char* parameterName);
 	hq_uint32 GetParameterIndex(HQSharedPtr<HQShaderProgramD3D9>& pProgram, 
@@ -324,6 +337,8 @@ private:
 
 
 	hquint32 GetD3DConstantStartRegister(HQConstantTableD3D9* table, const char* name);
+
+	virtual void BufferChangeEnded(HQSysMemBuffer* pConstBuffer);//implement HQSysMemBuffer::Listener
 
 	void MarkBufferSlotDirty(hquint32 index);//mark the buffer slot dirty for all dependent shaders
 	void MarkAllBufferSlotsDirtyForVShader(HQShaderObjectD3D9* shader);//mark all buffer slots associated with specified vertex shader dirty

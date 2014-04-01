@@ -58,23 +58,21 @@ public:
 
 	void Commit();
 
-	HQReturnVal MapIndexBuffer(hq_uint32 indexBufferID, HQMapType mapType, void **ppData);
-	HQReturnVal UnmapIndexBuffer(hq_uint32 indexBufferID);
+	HQReturnVal SetVertexBuffer(HQVertexBuffer* vertexBufferID, hq_uint32 streamIndex, hq_uint32 stride);
+	HQReturnVal SetVertexInputLayout(HQVertexLayout* inputLayoutID);
+	HQReturnVal SetIndexBuffer(HQIndexBuffer* indexBufferID );
 
-	HQReturnVal UpdateIndexBuffer(hq_uint32 indexBufferID, hq_uint32 offset, hq_uint32 size, const void * pData);
-
-	HQReturnVal SetVertexBuffer(hq_uint32 vertexBufferID, hq_uint32 streamIndex, hq_uint32 stride);
-	HQReturnVal SetVertexInputLayout(hq_uint32 inputLayoutID);
-	HQReturnVal SetIndexBuffer(hq_uint32 indexBufferID );
-
-	HQReturnVal RemoveVertexBuffer(hq_uint32 vertexBufferID);
-	HQReturnVal RemoveVertexInputLayout(hq_uint32 inputLayoutID);
-	HQReturnVal RemoveIndexBuffer(hq_uint32 indexBufferID) ;
+	HQReturnVal RemoveVertexBuffer(HQVertexBuffer* vertexBufferID);
+	HQReturnVal RemoveVertexInputLayout(HQVertexLayout* inputLayoutID);
+	HQReturnVal RemoveIndexBuffer(HQIndexBuffer* indexBufferID);
 	void RemoveAllVertexBuffer();
 	void RemoveAllVertexInputLayout();
-	void RemoveAllIndexBuffer() ;
+	void RemoveAllIndexBuffer();
+
+	void BindIndexBuffer(GLuint ibo);//internal use only
 private:
-	void BindIndexBuffer(GLuint ibo);
+	virtual HQVertexBufferGL * CreateNewVertexBufferObj(hq_uint32 size, GLenum usage);
+	virtual HQIndexBufferGL * CreateNewIndexBufferObj(hq_uint32 size, GLenum usage, HQIndexDataType dataType);
 
 	HQSharedPtr<HQVertexArrayObjGL> GetOrCreateNewVAO();
 	void ActiveVAO(const HQSharedPtr<HQVertexArrayObjGL> &vao);

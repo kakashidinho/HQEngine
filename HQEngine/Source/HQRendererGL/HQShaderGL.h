@@ -60,39 +60,39 @@ public:
 	
 	
 
-	HQReturnVal ActiveProgram(hq_uint32 programID);
+	HQReturnVal ActiveProgram(HQShaderProgram* programID);
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID);
+									 HQShaderObject** pID);
 	HQReturnVal CreateShaderFromMemory(HQShaderType type,
 									 const char* pSourceData,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID);
+									 HQShaderObject** pID);
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
 									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
-									 hq_uint32 *pID);
+									 HQShaderObject** pID);
 
 	HQReturnVal CreateShaderFromMemory(HQShaderType type,
 									 HQShaderCompileMode compileMode,
 									 const char* pSourceData,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
-									 hq_uint32 *pID);
-	HQReturnVal CreateProgram(hq_uint32 vertexShaderID,
-							  hq_uint32 pixelShaderID,
-							  hq_uint32 geometryShaderID,
-							  const char** uniformParameterNames,
-							  hq_uint32 *pID);
+									 HQShaderObject** pID);
+	HQReturnVal CreateProgram(HQShaderObject* vertexShaderID,
+								HQShaderObject* pixelShaderID,
+								HQShaderObject* geometryShaderID,
+								const char** uniformParameterNames,
+								HQShaderProgram** pID);
 
 	HQReturnVal SetUniformBool(const char* parameterName,
 						 const HQBool* pValues,

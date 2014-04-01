@@ -36,13 +36,13 @@ public:
 	virtual ~HQEngineShaderProgramWrapper();
 
 	HQReturnVal Init(const CreationParams &params);
-	virtual hquint32 GetProgramID() const {return m_programID;}
+	virtual HQShaderProgram* GetRawProgram() const {return m_programID;}
 	const CreationParams& GetCreationParams() const {return m_creationParams;}
 	virtual HQReturnVal Active() ;
 
 private:
 	CreationParams m_creationParams;
-	hquint32 m_programID;
+	HQShaderProgram* m_programID;
 };
 
 //blend state
@@ -152,7 +152,7 @@ public:
 	const CreationParams & GetCreationParams() const {return creationParams;}
 
 	CreationParams creationParams;	
-	hquint32 bufferID;
+	HQDepthStencilBufferView* bufferID;
 };
 
 //render target
@@ -188,7 +188,7 @@ public:
 
 	HQReturnVal Active();
 
-	hquint32 groupID;
+	HQRenderTargetGroup* groupID;
 	CreationParams creationParams;
 };
 
@@ -288,7 +288,7 @@ public:
 	virtual HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs , 
 												hq_uint32 numAttrib ,
 												HQEngineShaderResource* vertexShader , 
-												hq_uint32 *pInputLayoutID);
+												HQVertexLayout **pInputLayoutID);
 
 	virtual HQReturnVal SetTexture(hq_uint32 slot, HQEngineTextureResource* texture);
 	virtual HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQEngineTextureResource* texture);

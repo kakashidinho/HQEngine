@@ -12,6 +12,8 @@ COPYING.txt included with this distribution for more information.
 #define _HQ_CORE_TYPE_
 
 #include "HQPrimitiveDataType.h"
+#include "HQReturnVal.h"
+#include "HQReferenceCountObj.h"
 #include "HQ2DMath.h"
 
 #ifndef HQ_NOT_AVAIL_ID
@@ -20,29 +22,6 @@ COPYING.txt included with this distribution for more information.
 
 #ifndef HQ_NULL_ID
 #	define HQ_NULL_ID HQ_NOT_AVAIL_ID
-#endif
-
-#define HQ_NOT_USE_VSHADER 0xcdcdcdcd
-#define HQ_NOT_USE_GSHADER 0xcdcdcddd
-#define HQ_NOT_USE_PSHADER 0xcdcddddd
-#define HQ_NOT_USE_SHADER 0xcddddddd
-
-#ifndef HQ_NULL_VSHADER
-#	define HQ_NULL_VSHADER HQ_NOT_USE_VSHADER
-#endif
-
-#ifndef HQ_NULL_PSHADER
-#	define HQ_NULL_PSHADER HQ_NOT_USE_PSHADER
-#endif
-
-
-#ifndef HQ_NULL_GSHADER
-#	define HQ_NULL_GSHADER HQ_NOT_USE_GSHADER
-#endif
-
-
-#ifndef NULL_PROGRAM
-#	define NULL_PROGRAM HQ_NOT_USE_SHADER
 #endif
 
 
@@ -351,12 +330,14 @@ typedef struct HQSamplerStateDesc
 
 } _HQSamplerStateDesc;
 
+class HQRenderTargetView;
+
 typedef struct HQRenderTargetDesc
 {
 	HQRenderTargetDesc();
-	HQRenderTargetDesc(hq_uint32 renderTargetID , HQCubeTextureFace cubeFace = HQ_CTF_POS_X);
+	HQRenderTargetDesc(HQRenderTargetView* renderTargetID, HQCubeTextureFace cubeFace = HQ_CTF_POS_X);
 
-	hq_uint32 renderTargetID;//id of render target
+	HQRenderTargetView* renderTargetID;//id of render target
 	HQCubeTextureFace cubeFace;//if render target is cube texture , this attribute will indicate which face will be used as render target
 }_HQRenderTargetDesc;
 
@@ -481,6 +462,146 @@ typedef enum _HQTextureCompressionSupport
 	HQ_TCS_NONE,//no hardware/software support
 	HQ_TCS_FORCE_DWORD = 0xffffffff
 }HQTextureCompressionSupport;
+
+
+
+///
+///the pixel at (0,0) is top left
+///
+class HQRawPixelBuffer : public HQReferenceCountObj
+{
+public:
+	virtual hquint32 GetWidth() const = 0;
+	virtual hquint32 GetHeight() const = 0;
+	///
+	///RGB is ignored in A8 pixel buffer. GB is ignored in L8A8 buffer (R is set to luminance value). 
+	///A is ignored in R5G6B5 buffer. Color channel range is 0.0f-1.0f
+	///
+	virtual void SetPixelf(hquint32 x, hquint32 y, float r, float g, float b, float a) = 0;
+	///
+	///RGB is ignored in A8 pixel buffer. GB is ignored in L8A8 buffer (R is set to luminance value). 
+	///A is ignored in R5G6B5 buffer. Color channel range is 0-255
+	///
+	virtual void SetPixel(hquint32 x, hquint32 y, hqubyte8 r, hqubyte8 g, hqubyte8 b, hqubyte8 a) = 0;
+
+	virtual void SetPixelf(hquint32 x, hquint32 y, float r, float g, float b)///alpha is assumed to be 1.0f. Same as SetPixel(x, y, r, g, b, 1)
+	{
+		SetPixelf(x, y, r, g, b, 1.0f);
+	}
+	virtual void SetPixel(hquint32 x, hquint32 y, hqubyte8 r, hqubyte8 g, hqubyte8 b)///alpha is assumed to be 255. Same as SetPixel(x, y, r, g, b, 1)
+	{
+		SetPixel(x, y, r, g, b, 255);
+	}
+	virtual void SetPixelf(hquint32 x, hquint32 y, float l, float a)///luminance and alpha. Same as SetPixel(x, y, l, l, l, a)
+	{
+		SetPixelf(x, y, l, l, l, a);
+	}
+	virtual void SetPixel(hquint32 x, hquint32 y, hqubyte8 l, hqubyte8 a)///luminance and alpha. Same as SetPixel(x, y, l, l, l, a)
+	{
+		SetPixel(x, y, l, l, l, a);
+	}
+	virtual void SetPixelf(hquint32 x, hquint32 y, float a)///RGB is assumed to be black. Same as SetPixel(x, y, 0, 0, 0, a)
+	{
+		SetPixelf(x, y, 0.0f, 0.0f, 0.0f, a);
+	}
+	virtual void SetPixel(hquint32 x, hquint32 y, hqubyte8 a)///RGB is assumed to be black. Same as SetPixel(x, y, 0, 0, 0, a)
+	{
+		SetPixel(x, y, 0, 0, 0, a);
+	}
+
+	virtual HQColor GetPixelData(int x, int y) const = 0;
+	virtual HQRawPixelFormat GetFormat() const = 0;
+protected:
+	HQRawPixelBuffer() : HQReferenceCountObj() {}
+	virtual ~HQRawPixelBuffer() {}
+};
+
+class HQGraphicsRestrictedObj {
+protected:
+	virtual ~HQGraphicsRestrictedObj() {};
+};
+
+class HQMappableResource : public virtual HQGraphicsRestrictedObj {
+public:
+	template <class T>
+	inline HQReturnVal Map(T** ppData, HQMapType mapType = HQ_MAP_DISCARD, hquint32 offset = 0, hquint32 size = 0) {
+		return GenericMap((void**)ppData, mapType, offset, size);
+	}
+	virtual hquint32 GetSize() const = 0;///mappable size
+	virtual inline HQReturnVal Update(const void * pData)///update entire resource
+	{
+		return Update(0, GetSize(), pData);
+	}
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData) = 0;
+	virtual HQReturnVal Unmap() = 0;
+protected:
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType = HQ_MAP_DISCARD, hquint32 offset = 0, hquint32 size = 0) = 0;
+};
+
+class HQTexture : public virtual HQGraphicsRestrictedObj {
+public:
+	virtual hquint32 GetResourceIndex() const = 0;///return assigned index for resource
+
+	virtual HQTextureType GetType() const = 0;
+	///
+	///get first level's size
+	///
+	virtual hquint32 GetWidth() const =  0;
+	///
+	///get first level's size
+	///
+	virtual hquint32 GetHeight() const = 0;
+protected:
+	virtual ~HQTexture() {}
+};
+
+class HQUpdatableTexture : public HQTexture, public HQMappableResource {
+
+};
+
+class HQTextureBuffer : public HQUpdatableTexture {
+};
+
+class HQVertexBuffer : public virtual HQMappableResource {
+
+};
+
+class HQIndexBuffer : public virtual HQMappableResource {
+
+};
+
+class HQUniformBuffer : public virtual HQMappableResource {
+
+};
+
+class HQRenderTargetView : public virtual HQGraphicsRestrictedObj {
+
+};
+
+class HQDepthStencilBufferView : public virtual HQGraphicsRestrictedObj {
+
+};
+
+class HQRenderTargetGroup : public virtual HQGraphicsRestrictedObj {
+
+};
+
+class HQVertexLayout : public virtual HQGraphicsRestrictedObj {
+
+};
+
+class HQShaderObject : public virtual HQGraphicsRestrictedObj {
+public:
+	virtual HQShaderType GetType() const = 0;
+};
+
+class HQShaderProgram : public virtual HQGraphicsRestrictedObj {
+public:
+	virtual bool HasShaderStage(HQShaderType type) {
+		return GetShader(type) == NULL;
+	}
+	virtual HQShaderObject * GetShader(HQShaderType type) = 0;
+};
 
 #include "HQRendererCoreTypeInline.h"
 #include "HQRendererCoreTypeFixedFunction.h"

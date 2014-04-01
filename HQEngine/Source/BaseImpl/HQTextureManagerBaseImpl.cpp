@@ -251,7 +251,7 @@ HQBaseTextureManager::~HQBaseTextureManager()
 /*
 release
 */
-HQReturnVal HQBaseTextureManager::RemoveTexture(hq_uint32 ID)
+HQReturnVal HQBaseTextureManager::RemoveTexture(HQTexture* ID)
 {
 	return (HQReturnVal)this->textures.Remove(ID);
 }
@@ -264,17 +264,22 @@ void HQBaseTextureManager::RemoveAllTexture()
 /*
 get texture
 */
-const HQSharedPtr<HQTexture> HQBaseTextureManager::GetTexture(hq_uint32 ID)
+const HQSharedPtr<HQBaseTexture> HQBaseTextureManager::GetTextureSharedPtr(HQTexture* ID)
 {
 	return this->textures.GetItemPointer(ID);
 }
 
-HQReturnVal HQBaseTextureManager::AddSingleColorTexture(HQColorui color ,  hq_uint32 *pTextureID)
+const HQSharedPtr<HQBaseTexture> HQBaseTextureManager::GetTextureSharedPtrAt(hquint32 resourceIndex)
 {
-	hq_uint32 texID;
-	HQItemManager<HQTexture>::Iterator ite;
+	return this->textures.ParentType::GetItemPointer(resourceIndex);
+}
+
+HQReturnVal HQBaseTextureManager::AddSingleColorTexture(HQColorui color, HQTexture** pTextureID)
+{
+	HQTexture* texID;
+	HQItemManager<HQBaseTexture>::Iterator ite;
 	this->textures.GetIterator(ite);
-	HQTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_2D);
+	HQBaseTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_2D);
 
 	pNewTex->nColorKey=0;
 	pNewTex->colorKey=NULL;
@@ -301,9 +306,9 @@ HQReturnVal HQBaseTextureManager::AddSingleColorTexture(HQColorui color ,  hq_ui
 
 #ifndef HQ_OPENGLES
 
-HQReturnVal HQBaseTextureManager::AddTextureBuffer(HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic , hq_uint32 *pTextureID)
+HQReturnVal HQBaseTextureManager::AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID)
 {
-	HQTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_BUFFER);
+	HQBaseTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_BUFFER);
 
 	HQReturnVal result=this->CreateTextureBuffer(pNewTex , format , size , initData, isDynamic);
 	if(result!=HQ_OK)
@@ -328,14 +333,14 @@ HQRawPixelBuffer* HQBaseTextureManager::CreatePixelBuffer(HQRawPixelFormat inten
 	return CreatePixelBufferImpl(intendedFormat, width, height);//must return HQBaseRawPixelBuffer*
 }
 
-HQReturnVal HQBaseTextureManager::AddTexture(const HQRawPixelBuffer* color , bool generateMipmap, hq_uint32 *pTextureID)
+HQReturnVal HQBaseTextureManager::AddTexture(const HQRawPixelBuffer* color, bool generateMipmap, HQTexture** pTextureID)
 {
 	if (dynamic_cast<const HQBaseRawPixelBuffer*> (color) == NULL)
 		return HQ_FAILED_INVALID_PARAMETER;
 
 	this->generateMipmap = generateMipmap;
 
-	HQTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_2D);
+	HQBaseTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_2D);
 
 	HQReturnVal result=this->CreateTexture(pNewTex , static_cast<const HQBaseRawPixelBuffer*> (color));
 	if(result!=HQ_OK)
@@ -359,15 +364,15 @@ HQReturnVal HQBaseTextureManager::AddTexture(HQDataReaderStream* dataStream,
 						   hq_uint32 numColorKey,
 						   bool generateMipmap,
 						   HQTextureType textureType,
-						   hq_uint32 *pTextureID)
+						   HQTexture** pTextureID)
 {
 
 	this->generateMipmap = generateMipmap;
-	hq_uint32 texID;
-	HQItemManager<HQTexture>::Iterator ite;
+	HQTexture* texID;
+	HQItemManager<HQBaseTexture>::Iterator ite;
 	this->textures.GetIterator(ite);
 	
-	HQTexture *pNewTex = this->CreateNewTextureObject(textureType);
+	HQBaseTexture *pNewTex = this->CreateNewTextureObject(textureType);
 	if (pNewTex == NULL)
         return HQ_FAILED;
 
@@ -412,16 +417,16 @@ HQReturnVal HQBaseTextureManager::AddCubeTexture(HQDataReaderStream* dataStreams
 						   const HQColor *colorKey,
 						   hq_uint32 numColorKey,
 						   bool generateMipmap,
-						   hq_uint32 *pTextureID)
+						   HQTexture** pTextureID)
 {
 
-	hq_uint32 texID;
+	HQTexture* texID;
 	this->generateMipmap = generateMipmap;
 
 	
-	HQItemManager<HQTexture>::Iterator ite;
+	HQItemManager<HQBaseTexture>::Iterator ite;
 	this->textures.GetIterator(ite);
-	HQTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_CUBE);
+	HQBaseTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_CUBE);
 	if (pNewTex == NULL)
 		return HQ_FAILED;
 
@@ -517,7 +522,7 @@ hq_uint32 HQBaseTextureManager::CalculateFullNumMipmaps(hq_uint32 width, hq_uint
 		nMips++;
 	return nMips;
 }
-void HQBaseTextureManager::ChangePixelData( HQTexture *pTex )
+void HQBaseTextureManager::ChangePixelData( HQBaseTexture *pTex )
 {
 	if(pTex->colorKey){
 		//chuyển color có giá trị RGB như colorkey thành giống giá trị RGBA của colorkey
@@ -540,15 +545,15 @@ void HQBaseTextureManager::ChangePixelData( HQTexture *pTex )
 }
 
 
-HQSharedPtr<HQTexture> HQBaseTextureManager::CreateEmptyTexture(HQTextureType textureType , hq_uint32 *pTextureID)
+HQSharedPtr<HQBaseTexture> HQBaseTextureManager::CreateEmptyTexture(HQTextureType textureType, HQTexture** pTextureID)
 {
-	HQTexture * pNewTex = this->CreateNewTextureObject( textureType);
+	HQBaseTexture * pNewTex = this->CreateNewTextureObject( textureType);
 
-	hq_uint32 newID = 0;
+	HQTexture* newID = 0;
 	if(!pNewTex || !this->textures.AddItem(pNewTex , &newID))
 	{
 		SafeDelete(pNewTex);
-		return HQSharedPtr<HQTexture>::null;
+		return HQSharedPtr<HQBaseTexture>::null;
 	}
 	if(pTextureID != NULL)
 		*pTextureID = newID;

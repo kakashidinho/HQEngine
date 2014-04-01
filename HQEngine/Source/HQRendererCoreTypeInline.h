@@ -168,12 +168,12 @@ inline HQSamplerStateDesc::HQSamplerStateDesc(	HQFilterMode _filterMode ,
 }
 
 inline HQRenderTargetDesc::HQRenderTargetDesc()
-: cubeFace (HQ_CTF_POS_X)
+: renderTargetID(NULL), cubeFace (HQ_CTF_POS_X)
 {
 }
 
 
-inline HQRenderTargetDesc:: HQRenderTargetDesc(hq_uint32 RTargetID , HQCubeTextureFace face)
+inline HQRenderTargetDesc::HQRenderTargetDesc(HQRenderTargetView* RTargetID, HQCubeTextureFace face)
 : renderTargetID (RTargetID) , cubeFace (face)
 {
 }

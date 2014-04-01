@@ -14,6 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQPlatformDef.h"
 #include "../HQPrimeNumber.h"
 #include "../HQClosedStringHashTable.h"
+#include "../HQItemManager.h"
 
 /*---------------flags--------------------*/
 #ifdef HQ_ANDROID_PLATFORM
@@ -186,4 +187,184 @@ protected:
 	}
 };
 
+
+class HQBaseIDObject {
+public:
+	HQBaseIDObject() { ID = HQ_NULL_ID; }
+	virtual ~HQBaseIDObject(){}
+
+	hquint32 GetID() const { return ID; }
+	void SetID(hquint32 id) { this->ID = id; }
+private:
+	hquint32 ID;
+};
+
+/*------------HQIDItemManager----------------*/
+template <class T> //T must be subclass of HQBaseIDObject
+class HQIDItemManager : public HQItemManager<T> {
+public:
+	typedef HQItemManager<T> ParentType;
+	template <class compatibleT>
+	bool AddItem(T* pItem, compatibleT **ppItem)
+	{
+		hquint32 itemID;
+		bool re = ParentType::AddItem(pItem, &itemID);
+		if (re)
+		{
+			if (ppItem != NULL)
+				*ppItem = pItem;
+			if (pItem != NULL)
+				pItem->SetID(itemID);
+		}
+		return re;
+	}
+
+	bool AddItem(const HQSharedPtr<T> & pItem){
+		hquint32 itemID;
+		bool re = ParentType::AddItem(pItem, &itemID);
+		if (re)
+		{
+			//work around const 
+			HQSharedPtr<T> const_casted_ptr = pItem;
+			if (const_casted_ptr != NULL)
+				const_casted_ptr->SetID(itemID);
+		}
+		return re;
+	}
+
+	template <class compatibleT>
+	bool AddItem(const HQSharedPtr<T> & pItem, compatibleT **ppItem){
+		hquint32 itemID;
+		bool re = ParentType::AddItem(pItem, &itemID);
+		if (re)
+		{
+			if (ppItem != NULL)
+				*ppItem = pItem.GetRawPointer();
+			//work around const 
+			HQSharedPtr<T> const_casted_ptr = pItem;
+			if (const_casted_ptr != NULL)
+				const_casted_ptr->SetID(itemID);
+		}
+		return re;
+	}
+
+	template <class compatibleT>
+	hqint32 Remove(compatibleT* pItem)//remove item 
+	{
+		T * pIDItem = static_cast<T*> (pItem);
+		if (pIDItem == NULL)
+			return ParentType::Remove(HQ_NULL_ID);
+		return ParentType::Remove(pIDItem->GetID());
+	}
+
+	template <class compatibleT>
+	HQSharedPtr<T> GetItemPointer(compatibleT* cptr)//get shared pointer to item
+	{
+		T *ptr = static_cast<T*>(cptr);
+		if (ptr == NULL)
+			return HQSharedPtr<T>::null;
+		return ParentType::GetItemPointer(ptr->GetID());
+	}
+
+	template <class compatibleT>
+	T* GetItemRawPointer(compatibleT* cptr)
+	{
+		T *ptr = static_cast<T*>(cptr);
+		if (ptr == NULL)
+			return NULL;
+		return ParentType::GetItemRawPointer(ptr->GetID());
+	}
+
+	template <class compatibleT>
+	HQSharedPtr<T> GetItemPointerNonCheck(compatibleT* cptr)//get shared pointer to item
+	{
+		T *ptr = static_cast<T*>(cptr);
+		return ParentType::GetItemPointerNonCheck(ptr->GetID());
+	}
+
+	template <class compatibleT>
+	T* GetItemRawPointerNonCheck(compatibleT* cptr)//get shared pointer to item
+	{
+		T *ptr = static_cast<T*>(cptr);
+		return ParentType::GetItemRawPointerNonCheck(ptr->GetID());
+	}
+};
+
+
+/*----------------sysmtem memory buffer-----------------------*/
+class HQSysMemBuffer;
+
+class HQSysMemBufferListener {
+public:
+	virtual bool BufferMapping(HQSysMemBuffer* buffer, HQMapType mapType) { return true; }//return false if dont want buffer to be mapped
+	virtual bool BufferUpdating(HQSysMemBuffer* buffer) { return true; }//return false if dont want buffer to be updated
+	virtual void BufferChangeEnded(HQSysMemBuffer* buffer) {}//subclass should implement this
+};
+
+class HQSysMemBuffer : public virtual HQMappableResource, public  HQSysMemBufferListener{
+public:
+	typedef HQSysMemBufferListener Listener;
+
+	HQSysMemBuffer() :listener(this) { pRawBuffer = NULL; size = 0; }
+	HQSysMemBuffer(Listener *_listener):listener(_listener) { pRawBuffer = NULL; size = 0; }
+	virtual ~HQSysMemBuffer() { DeallocRawBuffer(); }
+
+	virtual hquint32 GetSize() const { return size; }///mappable size
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData) {
+		if (listener->BufferUpdating(this) == false)
+			return HQ_FAILED;
+		if (offset > this->size)
+			return HQ_FAILED;
+		if (size == 0)
+			size = this->size - offset;
+#if defined DEBUG || defined _DEBUG
+		if (pData == NULL)
+			return HQ_FAILED;
+#endif
+
+		memcpy((hqubyte8*)pRawBuffer + offset, pData, size);
+
+		listener->BufferChangeEnded(this);
+
+		return HQ_OK;
+	}
+	virtual HQReturnVal Unmap() {
+		listener->BufferChangeEnded(this);
+		return HQ_OK;
+	}
+
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType = HQ_MAP_DISCARD, hquint32 offset = 0, hquint32 size = 0){
+		if (listener->BufferMapping(this, mapType) == false)
+			return HQ_FAILED;
+		if (ppData == NULL)
+			return HQ_FAILED;
+		*ppData = (hqubyte8*)pRawBuffer + offset;
+
+		return HQ_OK;
+	}
+
+	const void * GetRawBuffer() const { return pRawBuffer; }
+
+protected:
+	virtual void DeallocRawBuffer()
+	{
+		if (pRawBuffer != NULL) {
+			delete[]((hqubyte8*)pRawBuffer);
+			pRawBuffer = NULL;
+		}
+
+		size = 0;
+	}
+	virtual void AllocRawBuffer(hquint32 size) {
+		DeallocRawBuffer();
+		this->size = size;
+		this->pRawBuffer = HQ_NEW hqubyte8[size];
+	}
+	
+	Listener *listener;
+
+	hquint32 size;
+	void * pRawBuffer;
+
+};
 #endif

@@ -423,30 +423,29 @@ HQShaderObjectD3D9::~HQShaderObjectD3D9()
 }
 
 /*----------HQShaderConstBufferD3D9-----------*/
-HQShaderConstBufferD3D9::HQShaderConstBufferD3D9(bool isDynamic, hq_uint32 size)
-: boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(BufferSlotList::LinkedListNodeType), 32))
+HQShaderConstBufferD3D9::HQShaderConstBufferD3D9(HQSysMemBuffer::Listener* listener, bool isDynamic, hq_uint32 size)
+: HQSysMemBuffer(listener),
+boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(BufferSlotList::LinkedListNodeType), 32))
 {
 	//must allocate a buffer with size is multiple of 16 byte
 	size_t realSize = size;
 	size_t remain = size % 16;
 	if (remain > 0)
 		realSize += (16 - remain);
-	this->pRawBuffer = HQ_NEW hqubyte8[realSize]; 
-	this->size = size;
+
+	this->AllocRawBuffer(realSize);//allocate raw buffer with <realSize>
+	this->size = size;//but only <size> bytes are mappable
+
 	this->isDynamic = isDynamic;
 }
 
 HQShaderConstBufferD3D9::~HQShaderConstBufferD3D9()
 {
-	delete[] this->pRawBuffer;
 }
 
 /*---------HQShaderManagerD3D9--------------*/
 HQShaderManagerD3D9::HQShaderManagerD3D9(LPDIRECT3DDEVICE9 pD3DDevice,HQLogStream* logFileStream,bool flushLog)
 : HQLoggableObject(logFileStream , "D3D9 Shader Manager :" , flushLog , 1024)
-#if defined _DEBUG || defined DEBUG
-	,activeProgramID(HQ_NOT_USE_SHADER)
-#endif
 {
 	this->pD3DDevice=pD3DDevice;
 
@@ -521,9 +520,9 @@ bool HQShaderManagerD3D9::IsUsingPShader() //có đang dùng pixel/fragment shad
 	return activeProgram->pixelShader != NULL;
 }
 /*------------------------*/
-HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
+HQReturnVal HQShaderManagerD3D9::ActiveProgram(HQShaderProgram* programID)
 {
-	if (programID == HQ_NOT_USE_SHADER)
+	if (programID == NULL)
 	{
 		if (activeProgram == NULL)
 			return HQ_OK;
@@ -539,10 +538,6 @@ HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
 
 		activeVShader=HQSharedPtr<HQShaderObjectD3D9>::null;
 		activePShader=HQSharedPtr<HQShaderObjectD3D9>::null;
-
-#if defined _DEBUG || defined DEBUG
-		activeProgramID = HQ_NOT_USE_SHADER;
-#endif
 		
 		return HQ_OK;
 	}
@@ -585,21 +580,18 @@ HQReturnVal HQShaderManagerD3D9::ActiveProgram(hq_uint32 programID)
 			}
 		}
 		activeProgram=pProgram;
-#if defined _DEBUG || defined DEBUG
-		activeProgramID = programID;
-#endif
 	}
 	return HQ_OK;
 }
 /*------------------------*/
-HQReturnVal HQShaderManagerD3D9::DestroyProgram(hq_uint32 programID)
+HQReturnVal HQShaderManagerD3D9::DestroyProgram(HQShaderProgram* programID)
 {
 	HQSharedPtr<HQShaderProgramD3D9> pProgram = this->GetItemPointer(programID);
 	if(pProgram == NULL)
 		return HQ_FAILED;
 	if(pProgram==activeProgram)
 	{
-		this->ActiveProgram(HQ_NOT_USE_SHADER);
+		this->ActiveProgram(NULL);
 	}
 	this->Remove(programID);
 	return HQ_OK;
@@ -607,7 +599,7 @@ HQReturnVal HQShaderManagerD3D9::DestroyProgram(hq_uint32 programID)
 
 void HQShaderManagerD3D9::DestroyAllProgram()
 {
-	this->ActiveProgram(HQ_NOT_USE_SHADER);
+	this->ActiveProgram(NULL);
 	
 	this->RemoveAll();
 }
@@ -620,7 +612,7 @@ void HQShaderManagerD3D9::DestroyAllResource()
 }
 
 
-HQReturnVal HQShaderManagerD3D9::DestroyShader(hq_uint32 shaderID)
+HQReturnVal HQShaderManagerD3D9::DestroyShader(HQShaderObject * shaderID)
 {return (HQReturnVal)this->shaderObjects.Remove(shaderID);
 }
 
@@ -721,7 +713,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 									 const HQShaderMacro *pDefines,
 									 const char **args,
 									 bool debugMode , 
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 {
 	const char nullStreamName[] = "";
 	const char *streamName = dataStream->GetName() != NULL? dataStream->GetName(): nullStreamName;
@@ -889,7 +881,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 									 const HQShaderMacro *pDefines,
 									 const char **args,
 									 bool debugMode,
-									 hq_uint32 *pID)
+									 HQShaderObject ** pID)
 {
 	
 
@@ -1004,7 +996,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStream(HQShaderType type,
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
-										hq_uint32 *pID)
+										HQShaderObject **pID)
 {
 	char ** args = this->GetCompileArguments(pDefines, false);
 	HQReturnVal re = this->CreateShaderFromStreamEx(type,dataStream,isPreCompiled , entryFunctionName , pDefines, (const char**)args ,false , pID);
@@ -1017,7 +1009,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemory(HQShaderType type,
 										  const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										  bool isPreCompiled,
 										  const char* entryFunctionName,
-										  hq_uint32 *pID)
+										  HQShaderObject **pID)
 {
 	char ** args = this->GetCompileArguments(pDefines, false);
 	HQReturnVal re =  this->CreateShaderFromMemoryEx(type , pSourceData,isPreCompiled,entryFunctionName, pDefines, (const char**)args , false, pID);
@@ -1030,7 +1022,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStream(HQShaderType type,
 								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
-								 hq_uint32 *pID)
+								 HQShaderObject **pID)
 {
 	HQReturnVal re;
 	char ** args = NULL;
@@ -1056,7 +1048,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemory(HQShaderType type,
 								 const char* pSourceData,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
-								 hq_uint32 *pID)
+								 HQShaderObject **pID)
 {
 	HQReturnVal re;
 	char ** args = NULL;
@@ -1076,27 +1068,27 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemory(HQShaderType type,
 }
 
 
-HQReturnVal HQShaderManagerD3D9::CreateProgram(hq_uint32 vertexShaderID,
-							  hq_uint32 pixelShaderID,
-							  hq_uint32 geometryShaderID,
-							  const char** uniformParameterNames,
-							  hq_uint32 *pID)
+HQReturnVal HQShaderManagerD3D9::CreateProgram(HQShaderObject * vertexShaderID,
+	HQShaderObject * pixelShaderID,
+	HQShaderObject * geometryShaderID,
+	const char** uniformParameterNames,
+	HQShaderProgram **pID)
 {
-	if(vertexShaderID==HQ_NOT_USE_VSHADER && pixelShaderID==HQ_NOT_USE_PSHADER && geometryShaderID==HQ_NOT_USE_GSHADER)
+	if(vertexShaderID==NULL && pixelShaderID==NULL && geometryShaderID==NULL)
 		return HQ_FAILED_SHADER_PROGRAM_NEED_SHADEROBJECT;//tất cả đều là fixed function => báo lỗi
 	
 	HQSharedPtr<HQShaderObjectD3D9> pVShader = HQSharedPtr<HQShaderObjectD3D9> :: null;
 	HQSharedPtr<HQShaderObjectD3D9> pPShader = HQSharedPtr<HQShaderObjectD3D9> :: null;
-	if (vertexShaderID != HQ_NOT_USE_VSHADER)
+	if (vertexShaderID != NULL)
 		pVShader = this->shaderObjects.GetItemPointer(vertexShaderID);
-	if (pixelShaderID != HQ_NOT_USE_PSHADER)
+	if (pixelShaderID != NULL)
 		pPShader = this->shaderObjects.GetItemPointer(pixelShaderID);
 	
 	if(pVShader == NULL || pPShader == NULL)
 		return HQ_FAILED_INVALID_ID;
-	if(vertexShaderID!=HQ_NOT_USE_VSHADER && pVShader->type!=HQ_VERTEX_SHADER)//shader có id <vertexShaderID> không phải vertex shader
+	if(vertexShaderID!=NULL && pVShader->type!=HQ_VERTEX_SHADER)//shader có id <vertexShaderID> không phải vertex shader
 		return HQ_FAILED_WRONG_SHADER_TYPE;
-	if(pixelShaderID!=HQ_NOT_USE_PSHADER && pPShader->type!=HQ_PIXEL_SHADER)//shader có id <pixelShaderID> không phải pixel shader
+	if(pixelShaderID!=NULL && pPShader->type!=HQ_PIXEL_SHADER)//shader có id <pixelShaderID> không phải pixel shader
 		return HQ_FAILED_WRONG_SHADER_TYPE;
 
 	HQShaderProgramD3D9 *pShader=new HQShaderProgramD3D9();
@@ -1104,12 +1096,8 @@ HQReturnVal HQShaderManagerD3D9::CreateProgram(hq_uint32 vertexShaderID,
 	//store shaders' pointers
 	pShader->vertexShader = pVShader;
 	pShader->pixelShader = pPShader;
-
-	//store shaders' IDs
-	pShader->vertexShaderID = (pVShader != NULL)? vertexShaderID : HQ_NOT_USE_VSHADER;
-	pShader->pixelShaderID = (pPShader != NULL)? pixelShaderID : HQ_NOT_USE_PSHADER;
 	
-	hq_uint32 newProgramID;
+	HQShaderProgram* newProgramID;
 	if(!this->AddItem(pShader,&newProgramID))
 	{
 		delete pShader;
@@ -1130,21 +1118,6 @@ HQReturnVal HQShaderManagerD3D9::CreateProgram(hq_uint32 vertexShaderID,
 	if(pID != NULL)
 		*pID = newProgramID;
 	return HQ_OK;
-}
-
-hq_uint32 HQShaderManagerD3D9::GetShader(hq_uint32 programID, HQShaderType shaderType)
-{
-	HQSharedPtr<HQShaderProgramD3D9> pProgram = this->GetItemPointer(programID);
-
-	switch (shaderType)
-	{
-	case HQ_VERTEX_SHADER:
-		return (pProgram != NULL)? pProgram->vertexShaderID : HQ_NOT_USE_VSHADER;
-	case HQ_PIXEL_SHADER:
-		return (pProgram != NULL)? pProgram->pixelShaderID : HQ_NOT_USE_PSHADER;
-	}
-
-	return HQ_NOT_USE_GSHADER;
 }
 
 /*-----------------------*/
@@ -1338,7 +1311,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformInt(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1365,7 +1338,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform2Int(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1392,7 +1365,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform3Int(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1419,7 +1392,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform4Int(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1446,7 +1419,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformFloat(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1473,7 +1446,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform2Float(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1500,7 +1473,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform3Float(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1527,7 +1500,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniform4Float(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1554,7 +1527,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1582,7 +1555,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(const char* parameterName,
 #if defined _DEBUG || defined DEBUG
 	if(param == NULL)
 	{
-		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgramID);
+		Log("error :parameter \"%s\" not found from program (%u)!",parameterName,activeProgram->GetID());
 		return HQ_FAILED_SHADER_PARAMETER_NOT_FOUND;
 	}
 #endif
@@ -1603,7 +1576,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(const char* parameterName,
 #define GETPARAM(paramIndex) (activeProgram->parameters.GetItemRawPointerNonCheck(paramIndex))
 #endif
 
-hq_uint32 HQShaderManagerD3D9::GetParameterIndex(hq_uint32 programID , 
+hq_uint32 HQShaderManagerD3D9::GetParameterIndex(HQShaderProgram* programID , 
 											const char *parameterName)
 {
 	HQSharedPtr<HQShaderProgramD3D9> pProgram	= this->GetItemPointer(programID);
@@ -1891,11 +1864,11 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(hq_uint32 parameterIndex,
 	return HQ_OK;
 }
 
-HQReturnVal HQShaderManagerD3D9::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut)
+HQReturnVal HQShaderManagerD3D9::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut)
 {
-	HQShaderConstBufferD3D9* pNewBuffer = HQ_NEW HQShaderConstBufferD3D9(isDynamic, size); 
+	HQShaderConstBufferD3D9* pNewBuffer = HQ_NEW HQShaderConstBufferD3D9(this, isDynamic, size); 
 	if (initData != NULL)
-		memcpy(pNewBuffer->pRawBuffer, initData, size);
+		pNewBuffer->Update(0, size, initData);
 	if(!shaderConstBuffers.AddItem(pNewBuffer , pBufferIDOut))
 	{
 		HQ_DELETE (pNewBuffer);
@@ -1903,7 +1876,7 @@ HQReturnVal HQShaderManagerD3D9::CreateUniformBuffer(hq_uint32 size , void *init
 	}
 	return HQ_OK;
 }
-HQReturnVal HQShaderManagerD3D9::DestroyUniformBuffer(hq_uint32 bufferID)
+HQReturnVal HQShaderManagerD3D9::DestroyUniformBuffer(HQUniformBuffer* bufferID)
 {
 	return (HQReturnVal)shaderConstBuffers.Remove(bufferID);
 }
@@ -1976,19 +1949,20 @@ void HQShaderManagerD3D9::Commit()
 			if (bufferSlot.dirtyFlags == 1 && constBuffer != NULL)
 			{
 				//this slot is dirty. need to update constant data
-				hqubyte8 * pData = (hqubyte8*)constBuffer->pRawBuffer;
+				const hqubyte8 * pData = (const hqubyte8*)constBuffer->GetRawBuffer();
+				hquint32 totalSize = constBuffer->GetSize();
 				hquint32 offset = 0;
 				//for each constant
 				HQLinkedList<HQConstantTableD3D9::ConstInfo>::Iterator const_ite;
 				for (slot_ite->constants.GetIterator(const_ite); 
-					!const_ite.IsAtEnd() && offset < constBuffer->size;
+					!const_ite.IsAtEnd() && offset < totalSize;
 					++const_ite)
 				{
 					//for now, each element consumes one vector
 					if (const_ite->isInteger)
-						this->SetD3DVShaderConstantI<4>(const_ite->regIndex, (hqint32*)(pData + offset), const_ite->numVectors);
+						this->SetD3DVShaderConstantI<4>(const_ite->regIndex, (const hqint32*)(pData + offset), const_ite->numVectors);
 					else
-						this->SetD3DVShaderConstantF<4>(const_ite->regIndex, (hqfloat32*)(pData + offset), const_ite->numVectors);
+						this->SetD3DVShaderConstantF<4>(const_ite->regIndex, (const hqfloat32*)(pData + offset), const_ite->numVectors);
 
 					offset += 4 * sizeof(hqfloat32)* const_ite->numVectors;
 				}
@@ -2013,19 +1987,20 @@ void HQShaderManagerD3D9::Commit()
 			if (bufferSlot.dirtyFlags == 1 && constBuffer != NULL)
 			{
 				//this slot is dirty. need to update constant data
-				hqubyte8 * pData = (hqubyte8*)constBuffer->pRawBuffer;
+				const hqubyte8 * pData = (const hqubyte8*)constBuffer->GetRawBuffer();
+				hquint32 totalSize = constBuffer->GetSize();
 				hquint32 offset = 0;
 				//for each constant
 				HQLinkedList<HQConstantTableD3D9::ConstInfo>::Iterator const_ite;
 				for (slot_ite->constants.GetIterator(const_ite);
-					!const_ite.IsAtEnd() && offset < constBuffer->size;
+					!const_ite.IsAtEnd() && offset < totalSize;
 					++const_ite)
 				{
 					//for now, each element consumes one vector
 					if (const_ite->isInteger)
-						this->SetD3DPShaderConstantI<4>(const_ite->regIndex, (hqint32*)(pData + offset), const_ite->numVectors);
+						this->SetD3DPShaderConstantI<4>(const_ite->regIndex, (const hqint32*)(pData + offset), const_ite->numVectors);
 					else
-						this->SetD3DPShaderConstantF<4>(const_ite->regIndex, (hqfloat32*)(pData + offset), const_ite->numVectors);
+						this->SetD3DPShaderConstantF<4>(const_ite->regIndex, (const hqfloat32*)(pData + offset), const_ite->numVectors);
 
 					offset += 4 * sizeof(hqfloat32)* const_ite->numVectors;
 				}
@@ -2038,7 +2013,7 @@ void HQShaderManagerD3D9::Commit()
 }
 
 
-HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 bufferID )
+HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  HQUniformBuffer* bufferID )
 {
 	HQSharedPtr<HQShaderConstBufferD3D9> pBuffer = shaderConstBuffers.GetItemPointer(bufferID);
 	
@@ -2091,59 +2066,14 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  hq_uint32 b
 
 	return HQ_OK;
 }
-HQReturnVal HQShaderManagerD3D9::MapUniformBuffer(hq_uint32 bufferID , void **ppData)
+
+void HQShaderManagerD3D9:: BufferChangeEnded(HQSysMemBuffer* pConstBuffer)
 {
-	HQShaderConstBufferD3D9* pBuffer = shaderConstBuffers.GetItemRawPointer(bufferID);
-
-#if defined _DEBUG || defined DEBUG
-
-	if(pBuffer == NULL)
-		return HQ_FAILED;
-	
-	if (!ppData)
-		return HQ_FAILED;
-#endif
-
-	*ppData = pBuffer->pRawBuffer;
-
-	return HQ_OK;
-}
-HQReturnVal HQShaderManagerD3D9::UnmapUniformBuffer(hq_uint32 bufferID)
-{
-	HQShaderConstBufferD3D9* pBuffer = shaderConstBuffers.GetItemRawPointer(bufferID);
-#if defined _DEBUG || defined DEBUG	
-
-	if(pBuffer == NULL)
-		return HQ_FAILED;
-#endif
+	HQShaderConstBufferD3D9* pBuffer = static_cast<HQShaderConstBufferD3D9*>(pConstBuffer);
 
 	HQShaderConstBufferD3D9::BufferSlotList::Iterator ite;
 	for (pBuffer->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 		this->MarkBufferSlotDirty(*ite);
-
-	return HQ_OK;
-}
-
-HQReturnVal HQShaderManagerD3D9::UpdateUniformBuffer(hq_uint32 bufferID, const void * pData)
-{
-	HQShaderConstBufferD3D9* pBuffer = shaderConstBuffers.GetItemRawPointer(bufferID);
-#if defined _DEBUG || defined DEBUG	
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-	if (pBuffer->isDynamic == true)
-	{
-		this->Log("Error : dynamic buffer can't be updated using UpdateUniformBuffer method!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-
-	memcpy(pBuffer->pRawBuffer, pData, pBuffer->size);
-
-	HQShaderConstBufferD3D9::BufferSlotList::Iterator ite;
-	for (pBuffer->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
-		this->MarkBufferSlotDirty(*ite);
-
-	return HQ_OK;
 }
 
 

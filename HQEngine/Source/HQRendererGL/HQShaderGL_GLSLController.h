@@ -48,8 +48,7 @@ protected:
 							  HQSharedPtr<HQShaderObjectGL>& pVShader,
 							  HQSharedPtr<HQShaderObjectGL>& pGShader,
 							  HQSharedPtr<HQShaderObjectGL>& pFShader,
-							  const char** uniformParameterNames,
-							  hq_uint32 *pID);
+							  const char** uniformParameterNames);
 	
 	
 
@@ -132,14 +131,10 @@ public:
 									 HQShaderObjectGL **ppShaderObjectOut);
 
 	HQReturnVal CreateProgram(  HQBaseShaderProgramGL *pNewProgramObj,
-								hq_uint32 vertexShaderID,
-								hq_uint32 geometryShaderID,
-								hq_uint32 pixelShaderID,
 								HQSharedPtr<HQShaderObjectGL>& pVShader,
 								HQSharedPtr<HQShaderObjectGL>& pGShader,
 								HQSharedPtr<HQShaderObjectGL>& pFShader,
-								const char** uniformParameterNames,
-								hq_uint32 *pID);
+								const char** uniformParameterNames);
 
 	
 	HQ_FORCE_INLINE HQReturnVal SetUniformInt(bool isGLSL,

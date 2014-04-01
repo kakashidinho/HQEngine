@@ -184,6 +184,79 @@ HQShaderConstBufferD3D11::~HQShaderConstBufferD3D11()
 {
 	SafeRelease(pD3DBuffer);
 }
+
+HQReturnVal HQShaderConstBufferD3D11::Unmap()
+{
+	pD3DContext->Unmap(this->pD3DBuffer, 0);
+	return HQ_OK;
+}
+
+HQReturnVal HQShaderConstBufferD3D11::Update(hq_uint32 offset, hq_uint32 size, const void * pData)
+{
+#if defined _DEBUG || defined DEBUG	
+	if (offset != 0 || size != this->size)
+	{
+		pLog->Log("Error : uniform buffer can't be updated partially!");
+		return HQ_FAILED;
+	}
+#endif
+
+	if (this->isDynamic == true)
+	{
+		//update entire buffer
+		D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+		if (SUCCEEDED(pD3DContext->Map(this->pD3DBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
+		{
+			//copy
+			memcpy(mappedSubResource.pData, pData, this->size);
+
+			pD3DContext->Unmap(this->pD3DBuffer, 0);
+		}
+	}
+	else
+	{
+		//update entire buffer
+		pD3DContext->UpdateSubresource(this->pD3DBuffer, 0, NULL, pData, 0, 0);
+	}
+
+	return HQ_OK;
+}
+HQReturnVal HQShaderConstBufferD3D11::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
+{
+#if defined DEBUG || defined _DEBUG
+	if (!ppData)
+		return HQ_FAILED;
+	if (mapType != HQ_MAP_DISCARD)
+		this->pLog->Log("Warning : uniform buffer can only be mapped discard");
+	if (offset != 0 || (size != this->size && size != 0))
+	{
+		pLog->Log("Error : uniform buffer can't be updated partially!");
+		return HQ_FAILED;
+	}
+#endif
+	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+	pD3DContext->Map(this->pD3DBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+	*ppData = mappedSubResource.pData;
+
+	return HQ_OK;
+}
+
+/*------------------shader program ---------------*/
+HQShaderObject * HQShaderProgramD3D11::GetShader(HQShaderType type)
+{
+	switch (type)
+	{
+	case HQ_VERTEX_SHADER:
+		return vertexShader.GetRawPointer();
+	case HQ_PIXEL_SHADER:
+		return pixelShader.GetRawPointer();
+	case HQ_GEOMETRY_SHADER:
+		return geometryShader.GetRawPointer();
+	}
+
+	return NULL;
+}
+
 /*-----------------------------------------*/
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 void cgErrorCallBack(void)
@@ -304,7 +377,9 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 	SafeRelease(pBlob);
 	SafeRelease(pError);
 
-	this->CreateUniformBuffer(sizeof(ClearBufferParameters), NULL, true, &this->clearShaderParameters);
+	HQUniformBuffer * pBuffer = 0;
+	this->CreateUniformBuffer(sizeof(ClearBufferParameters), NULL, true, &pBuffer);
+	this->clearShaderParameters = static_cast<HQShaderConstBufferD3D11*>(pBuffer);
 #endif//#if HQ_D3D_CLEAR_VP_USE_GS
 
 	/*------------------------*/
@@ -353,9 +428,9 @@ bool HQShaderManagerD3D11::IsUsingPShader() //có đang dùng pixel/fragment sha
 	return activeProgram->isUsePS();
 }
 
-ID3DBlob *HQShaderManagerD3D11::GetCompiledVertexShader(hq_uint32 vertexShaderID)
+ID3DBlob *HQShaderManagerD3D11::GetCompiledVertexShader(HQShaderObject* pVShaderBase)
 {
-	HQSharedPtr<HQShaderObjectD3D11> pVShader = this->shaderObjects.GetItemPointer(vertexShaderID);
+	HQShaderObjectD3D11 * pVShader = static_cast<HQShaderObjectD3D11*>(pVShaderBase);
 	if (pVShader == NULL || pVShader->type != HQ_VERTEX_SHADER)
 		return NULL;
 
@@ -367,9 +442,9 @@ ID3DBlob *HQShaderManagerD3D11::GetCompiledClearVShader()
 }
 
 /*------------------------*/
-HQReturnVal HQShaderManagerD3D11::ActiveProgram(hq_uint32 programID)
+HQReturnVal HQShaderManagerD3D11::ActiveProgram(HQShaderProgram* programID)
 {
-	if (programID == HQ_NOT_USE_SHADER)
+	if (programID == NULL)
 	{
 		ActiveFFEmu();//active fixed function shader
 	}
@@ -417,7 +492,7 @@ HQReturnVal HQShaderManagerD3D11::ActiveProgram(hq_uint32 programID)
 }
 
 /*------------------------*/
-HQReturnVal HQShaderManagerD3D11::DestroyProgram(hq_uint32 programID)
+HQReturnVal HQShaderManagerD3D11::DestroyProgram(HQShaderProgram* programID)
 {
 	HQSharedPtr<HQShaderProgramD3D11> pProgram = this->GetItemPointer(programID);
 	if(pProgram == NULL)
@@ -427,7 +502,7 @@ HQReturnVal HQShaderManagerD3D11::DestroyProgram(hq_uint32 programID)
 
 	if(pProgram==activeProgram)
 	{
-		this->ActiveProgram(HQ_NOT_USE_SHADER);
+		this->ActiveProgram(NULL);
 	}
 	this->Remove(programID);
 	return HQ_OK;
@@ -435,14 +510,14 @@ HQReturnVal HQShaderManagerD3D11::DestroyProgram(hq_uint32 programID)
 
 void HQShaderManagerD3D11::DestroyAllProgram()
 {
-	this->ActiveProgram(HQ_NOT_USE_SHADER);
+	this->ActiveProgram(NULL);
 	
 	HQItemManager<HQShaderProgramD3D11>::Iterator ite;
 	this->GetIterator(ite);
 
 	while (!ite.IsAtEnd())
 	{
-		this->DestroyProgram(ite.GetID());
+		this->DestroyProgram(ite.GetItemPointer().GetRawPointer());
 
 		++ite;
 	}
@@ -456,7 +531,7 @@ void HQShaderManagerD3D11::DestroyAllResource()
 }
 
 
-HQReturnVal HQShaderManagerD3D11::DestroyShader(hq_uint32 shaderID)
+HQReturnVal HQShaderManagerD3D11::DestroyShader(HQShaderObject* shaderID)
 {
 	if (IsFFShader(shaderID))
 		return HQ_FAILED;//prevent deletion of default fixed function shader
@@ -471,13 +546,13 @@ void HQShaderManagerD3D11::DestroyAllShader()
 
 	while (!ite.IsAtEnd())
 	{
-		this->DestroyShader(ite.GetID());
+		this->DestroyShader(ite.GetItemPointer().GetRawPointer());
 
 		++ite;
 	}
 }
 
-HQReturnVal HQShaderManagerD3D11::DestroyUniformBuffer(hq_uint32 bufferID)
+HQReturnVal HQShaderManagerD3D11::DestroyUniformBuffer(HQUniformBuffer* bufferID)
 {
 	if (IsFFConstBuffer(bufferID))//prevent deletion of fixed function's own const buffer
 		return HQ_FAILED;
@@ -490,7 +565,7 @@ void HQShaderManagerD3D11::DestroyAllUniformBuffers()
 
 	while (!ite.IsAtEnd())
 	{
-		this->DestroyUniformBuffer(ite.GetID());
+		this->DestroyUniformBuffer(ite.GetItemPointer().GetRawPointer());
 
 		++ite;
 	}
@@ -658,7 +733,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamCg(HQShaderType type,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
 									 bool debugMode , 
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 {
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	CGprofile profile;
@@ -723,7 +798,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemoryCg(HQShaderType type,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
 									 bool debugMode ,
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 {
 	
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
@@ -783,7 +858,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamHLSL(HQShaderType type,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
 									 bool debugMode,
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 {
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)	
 	char profile[] = "vs_4_0_level_9_3";
@@ -909,7 +984,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemoryHLSL(HQShaderType type,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 const char* entryFunctionName,
 									 bool debugMode ,
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 {
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)	
 	char profile[] = "vs_4_0_level_9_3";
@@ -990,7 +1065,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStream(HQShaderType type,
 										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										bool isPreCompiled,
 										const char* entryFunctionName,
-										hq_uint32 *pID)
+										HQShaderObject **pID)
 {
 	return this->CreateShaderFromStreamCg(type,dataStream,pDefines,isPreCompiled , entryFunctionName ,false , pID);
 }
@@ -1000,7 +1075,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemory(HQShaderType type,
 										  const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 										  bool isPreCompiled,
 										  const char* entryFunctionName,
-										  hq_uint32 *pID)
+										  HQShaderObject **pID)
 {
 	return this->CreateShaderFromMemoryCg(type , pSourceData,pDefines,isPreCompiled,entryFunctionName,false, pID);
 }
@@ -1010,7 +1085,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStream(HQShaderType type,
 								 HQDataReaderStream* dataStream,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
-								 hq_uint32 *pID)
+								 HQShaderObject **pID)
 {
 	switch (compileMode)
 	{
@@ -1032,7 +1107,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemory(HQShaderType type,
 								 const char* pSourceData,
 								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 								 const char* entryFunctionName,
-								 hq_uint32 *pID)
+								 HQShaderObject **pID)
 {
 	switch (compileMode)
 	{
@@ -1052,7 +1127,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemory(HQShaderType type,
 
 HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCodeStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 {
 	hqubyte8 *pData = NULL;
 	hquint32 dataSize = 0;
@@ -1069,7 +1144,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCodeStream(HQShaderType ty
 HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCode(HQShaderType type,
 									const hqubyte8* byteCodeData,
 									hq_uint32 byteCodeLength,
-									hq_uint32 *pID)
+									HQShaderObject **pID)
 {
 	//clone data buffer
 	hqubyte8 *cloneData = HQ_NEW hqubyte8[byteCodeLength];
@@ -1081,7 +1156,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCode(HQShaderType type,
 HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCode(HQShaderType type,
 									hqubyte8* byteCodeData,
 									hq_uint32 byteCodeLength,
-									hq_uint32 *pID)
+									HQShaderObject **pID)
 {
 	ID3DBlobImpl *pBlob = HQ_NEW ID3DBlobImpl(byteCodeData, byteCodeLength, true);
 
@@ -1105,22 +1180,22 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCode(HQShaderType type,
 	return HQ_OK;
 }
 
-HQReturnVal HQShaderManagerD3D11::CreateProgram(hq_uint32 vertexShaderID,
-							  hq_uint32 pixelShaderID,
-							  hq_uint32 geometryShaderID,
+HQReturnVal HQShaderManagerD3D11::CreateProgram(HQShaderObject *vertexShaderID,
+								HQShaderObject *pixelShaderID,
+								HQShaderObject * geometryShaderID,
 							  const char** uniformParameterNames,
-							  hq_uint32 *pID)
+							  HQShaderProgram** pID)
 {
-	if(vertexShaderID==HQ_NOT_USE_VSHADER && pixelShaderID==HQ_NOT_USE_PSHADER && geometryShaderID==HQ_NOT_USE_GSHADER)
+	if(vertexShaderID==NULL && pixelShaderID==NULL && geometryShaderID==NULL)
 		return HQ_FAILED_SHADER_PROGRAM_NEED_SHADEROBJECT;//tất cả đều là fixed function => báo lỗi
 	HQSharedPtr<HQShaderObjectD3D11> pVShader = HQSharedPtr<HQShaderObjectD3D11> :: null;
 	HQSharedPtr<HQShaderObjectD3D11> pPShader = HQSharedPtr<HQShaderObjectD3D11> :: null;
 	HQSharedPtr<HQShaderObjectD3D11> pGShader = HQSharedPtr<HQShaderObjectD3D11> :: null;
-	if (vertexShaderID != HQ_NOT_USE_VSHADER)
+	if (vertexShaderID != NULL)
 		pVShader = this->shaderObjects.GetItemPointer(vertexShaderID);
-	if (pixelShaderID != HQ_NOT_USE_PSHADER)
+	if (pixelShaderID != NULL)
 		pPShader = this->shaderObjects.GetItemPointer(pixelShaderID);
-	if (geometryShaderID != HQ_NOT_USE_GSHADER)
+	if (geometryShaderID != NULL)
 		pGShader = this->shaderObjects.GetItemPointer(geometryShaderID);
 	
 	if(pVShader == NULL && pPShader == NULL && pGShader == NULL)//tất cả đều null
@@ -1141,35 +1216,12 @@ HQReturnVal HQShaderManagerD3D11::CreateProgram(hq_uint32 vertexShaderID,
 	pProgram->pixelShader = pPShader;
 	pProgram->geometryShader = pGShader;
 
-	//store shaders' IDs
-	pProgram->vertexShaderID = pProgram->isUseVS()? vertexShaderID : HQ_NOT_USE_VSHADER;
-	pProgram->geometryShaderID = pProgram->isUseGS()? geometryShaderID : HQ_NOT_USE_GSHADER;
-	pProgram->pixelShaderID = pProgram->isUsePS()? pixelShaderID : HQ_NOT_USE_PSHADER;
-
 	if(!this->AddItem(pProgram,pID))
 	{
 		HQ_DELETE (pProgram);
 		return HQ_FAILED_MEM_ALLOC;
 	}
 	return HQ_OK;
-}
-
-
-hq_uint32 HQShaderManagerD3D11::GetShader(hq_uint32 programID, HQShaderType shaderType)
-{
-	HQSharedPtr<HQShaderProgramD3D11> pProgram = this->GetItemPointer(programID);
-
-	switch (shaderType)
-	{
-	case HQ_VERTEX_SHADER:
-		return (pProgram != NULL)? pProgram->vertexShaderID : HQ_NOT_USE_VSHADER;
-	case HQ_GEOMETRY_SHADER:
-		return (pProgram != NULL)? pProgram->geometryShaderID : HQ_NOT_USE_GSHADER;
-	case HQ_PIXEL_SHADER:
-		return (pProgram != NULL)? pProgram->pixelShaderID : HQ_NOT_USE_PSHADER;
-	}
-
-	return HQ_NOT_USE_VSHADER;
 }
 
 /*-----------------------*/
@@ -1247,7 +1299,7 @@ HQReturnVal HQShaderManagerD3D11::SetUniformMatrix(const char* parameterName,
 
 /*-------parameter index version---------------*/
 
-hq_uint32 HQShaderManagerD3D11::GetParameterIndex(hq_uint32 programID , 
+hq_uint32 HQShaderManagerD3D11::GetParameterIndex(HQShaderProgram* programID , 
 											const char *parameterName)
 {
 	return HQ_NOT_AVAIL_ID;
@@ -1328,7 +1380,7 @@ HQReturnVal HQShaderManagerD3D11::SetUniformMatrix(hq_uint32 parameterIndex,
 }
 
 /*------------------------*/
-HQReturnVal HQShaderManagerD3D11::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut)
+HQReturnVal HQShaderManagerD3D11::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut)
 {
 	D3D11_BUFFER_DESC cbDesc;
     cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -1366,6 +1418,8 @@ HQReturnVal HQShaderManagerD3D11::CreateUniformBuffer(hq_uint32 size , void *ini
 	if(FAILED(pD3DDevice->CreateBuffer(&cbDesc , (initData != NULL)? &d3dinitdata :  NULL , &pNewD3DBuffer)))
 		return HQ_FAILED;
 	HQShaderConstBufferD3D11 *pNewBuffer = HQ_NEW HQShaderConstBufferD3D11(pNewD3DBuffer, isDynamic, size);
+	pNewBuffer->pLog = this;
+	pNewBuffer->pD3DContext = this->pD3DContext;
 	if(!shaderConstBuffers.AddItem(pNewBuffer , pBufferIDOut))
 	{
 		HQ_DELETE (pNewBuffer);
@@ -1374,7 +1428,7 @@ HQReturnVal HQShaderManagerD3D11::CreateUniformBuffer(hq_uint32 size , void *ini
 
 	return HQ_OK;
 }
-HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(hq_uint32 index ,  hq_uint32 bufferID )
+HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(hq_uint32 index ,  HQUniformBuffer* bufferID )
 {
 	HQSharedPtr<HQShaderConstBufferD3D11> pBuffer = shaderConstBuffers.GetItemPointer(bufferID);
 	
@@ -1429,68 +1483,6 @@ HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(hq_uint32 index ,  hq_uint32 
 
 	return HQ_OK;
 }
-HQReturnVal HQShaderManagerD3D11::MapUniformBuffer(hq_uint32 bufferID , void **ppData)
-{
-	HQShaderConstBufferD3D11* pBuffer = shaderConstBuffers.GetItemRawPointer(bufferID);
-
-#if defined _DEBUG || defined DEBUG
-
-	if(pBuffer == NULL)
-		return HQ_FAILED;
-	
-	if (!ppData)
-		return HQ_FAILED;
-#endif
-	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-	pD3DContext->Map(pBuffer->pD3DBuffer , 0 , D3D11_MAP_WRITE_DISCARD , 0 , &mappedSubResource);
-	*ppData = mappedSubResource.pData;
-
-	return HQ_OK;
-}
-HQReturnVal HQShaderManagerD3D11::UnmapUniformBuffer(hq_uint32 bufferID)
-{
-	HQShaderConstBufferD3D11* pBuffer = shaderConstBuffers.GetItemRawPointer(bufferID);
-	
-#if defined _DEBUG || defined DEBUG	
-	if(pBuffer == NULL)
-		return HQ_FAILED;
-#endif
-
-	pD3DContext->Unmap(pBuffer->pD3DBuffer , 0);
-
-	return HQ_OK;
-}
-
-HQReturnVal HQShaderManagerD3D11::UpdateUniformBuffer(hq_uint32 bufferID, const void * pData)
-{
-	HQShaderConstBufferD3D11* pBuffer = shaderConstBuffers.GetItemRawPointer(bufferID);
-#if defined _DEBUG || defined DEBUG	
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-	if (pBuffer->isDynamic == true)
-	{
-		this->Log("Error : dynamic buffer can't be updated using UpdateUniformBuffer method!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-
-#if !HQ_NON_DYNAMIC_U_BUFFER_CAN_BE_UPDATED
-	//update entire buffer
-	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-	if (SUCCEEDED(pD3DContext->Map(pBuffer->pD3DBuffer , 0 , D3D11_MAP_WRITE_DISCARD , 0 , &mappedSubResource)))
-	{
-		//copy
-		memcpy(mappedSubResource.pData, pData, pBuffer->size);
-
-		pD3DContext->Unmap(pBuffer->pD3DBuffer , 0);
-	}
-#else
-	//update entire buffer
-	pD3DContext->UpdateSubresource(pBuffer->pD3DBuffer, 0, NULL, pData, 0, 0);
-#endif
-
-	return HQ_OK;
-}
 
 /*--------------------------------*/
 void HQShaderManagerD3D11::BeginClearViewport()
@@ -1509,10 +1501,10 @@ void HQShaderManagerD3D11::ChangeClearVPParams(HQColor clearColor, hqfloat32 cle
 {
 	ClearBufferParameters *parameters = NULL;
 
-	this->MapUniformBuffer(this->clearShaderParameters, (void**)&parameters);
+	this->clearShaderParameters->Map(&parameters);
 	parameters->color = clearColor;
 	parameters->depth = clearDepth;
-	this->UnmapUniformBuffer(this->clearShaderParameters);
+	this->clearShaderParameters->Unmap();
 }
 #endif
 

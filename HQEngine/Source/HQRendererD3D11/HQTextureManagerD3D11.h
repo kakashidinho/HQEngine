@@ -13,7 +13,7 @@ COPYING.txt included with this distribution for more information.
 #include "../BaseImpl/HQTextureManagerBaseImpl.h"
 #include <d3d11.h>
 
-
+//this is the type of HQBaseTexture::pData
 struct HQTextureResourceD3D11
 {
 	ID3D11Resource * pTexture;
@@ -33,10 +33,13 @@ struct HQTextureResourceD3D11
 };
 
 
-struct HQTextureD3D11 :public HQTexture
+struct HQTextureD3D11 :public HQBaseTexture
 {
 	HQTextureD3D11(HQTextureType type = HQ_TEXTURE_2D);
 	~HQTextureD3D11();
+
+	virtual hquint32 GetWidth() const;
+	virtual hquint32 GetHeight() const;
 
 	typedef HQLinkedList<hquint32, HQPoolMemoryManager> SlotList; //list of texture slots that this texture is bound to
 	SlotList boundSlots;
@@ -48,30 +51,27 @@ public:
 	HQTextureManagerD3D11(ID3D11Device* pDev , ID3D11DeviceContext* pContext,HQLogStream* logFileStream , bool flushLog);
 	~HQTextureManagerD3D11();
 
-	HQReturnVal GetTexture2DSize(hq_uint32 textureID, hquint32 &width, hquint32& height);
 	HQTextureCompressionSupport IsCompressionSupported(HQTextureType textureType, HQTextureCompressionFormat type);
 
-	HQReturnVal CreateShaderResourceView(HQTexture * pTex);
-	HQReturnVal SetTexture(hq_uint32 slot , hq_uint32 textureID);
-	HQReturnVal SetTextureForPixelShader(hq_uint32 slot , hq_uint32 textureID);
-	HQTexture * CreateNewTextureObject(HQTextureType type);
-	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex);
-	HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex);
-	HQReturnVal CreateSingleColorTexture(HQTexture *pTex,HQColorui color);
-	HQReturnVal CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQTexture * pTex);
-	HQReturnVal Create2DTexture(hq_uint32 numMipmaps,HQTexture * pTex);
-	HQReturnVal CreateCubeTexture(hq_uint32 numMipmaps,HQTexture * pTex);
+	HQReturnVal CreateShaderResourceView(HQBaseTexture * pTex);
+	HQReturnVal SetTexture(hq_uint32 slot , HQTexture* textureID);
+	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
+	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
+	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);
+	HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex);
+	HQReturnVal CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color);
+	HQReturnVal CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex);
+	HQReturnVal Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex);
+	HQReturnVal CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex);
 	HQReturnVal SetAlphaValue(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 B,hq_ubyte8 A);//set giá trị alpha của texel trong texture có giá trị RGB như tham số(hoặc R nến định dạng texture chỉ có kênh 8 bit greyscale) thành giá trị A.
 	HQReturnVal SetTransparency(hq_float32 alpha);//set giá trị alpha lớn nhất của toàn bộ texel thành alpha
 
-	HQReturnVal CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  ,void *initData, bool isDynamic);
-	HQReturnVal MapTextureBuffer(hq_uint32 textureID , void **ppData);
-	HQReturnVal UnmapTextureBuffer(hq_uint32 textureID) ;
+	HQReturnVal CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  ,void *initData, bool isDynamic);
 
 	HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
-	HQReturnVal CreateTexture(HQTexture *pTex, const HQBaseRawPixelBuffer* color);
+	HQReturnVal CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);
 
-	void UnbindTextureFromAllSlots(const HQSharedPtr<HQTexture> &pTexture);//unbind the given texture from every texture slots
+	void UnbindTextureFromAllSlots(const HQSharedPtr<HQBaseTexture> &pTexture);//unbind the given texture from every texture slots
 
 private:
 	ID3D11Device* pD3DDevice;
@@ -82,7 +82,7 @@ private:
 	struct TextureSlot
 	{
 		HQTextureD3D11::SlotList::LinkedListNodeType *textureLink;//for fast removal
-		HQSharedPtr<HQTexture> pTexture;
+		HQSharedPtr<HQBaseTexture> pTexture;
 	};
 	TextureSlot textureSlots[3][D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
 

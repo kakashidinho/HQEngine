@@ -42,21 +42,21 @@ static inline hquint32 UIntCastedHashCode(const T& key)
 
 /*---------------shader program------------*/
 HQEngineShaderProgramWrapper::HQEngineShaderProgramWrapper()
-: m_programID(HQ_NULL_ID)
+: m_programID(NULL)
 {
 }
 HQEngineShaderProgramWrapper::~HQEngineShaderProgramWrapper()
 {
-	if (m_programID != HQ_NULL_ID)
+	if (m_programID != NULL)
 		m_renderDevice->GetShaderManager()->DestroyProgram(m_programID);
 }
 
 HQReturnVal HQEngineShaderProgramWrapper::Init(const CreationParams& params)
 {
-	hquint32 vID, gID, pID;
-	vID = params.vertexShader != NULL? (params.vertexShader->GetShaderID() != HQ_NULL_ID?  params.vertexShader->GetShaderID(): HQ_NULL_VSHADER) : HQ_NULL_VSHADER;
-	gID = params.geometryShader != NULL? (params.geometryShader->GetShaderID() != HQ_NULL_ID?  params.geometryShader->GetShaderID(): HQ_NULL_GSHADER) : HQ_NULL_GSHADER;
-	pID = params.pixelShader != NULL? (params.pixelShader->GetShaderID() != HQ_NULL_ID?  params.pixelShader->GetShaderID(): HQ_NULL_PSHADER) : HQ_NULL_PSHADER;
+	HQShaderObject* vID, *gID, *pID;
+	vID = params.vertexShader != NULL ? (params.vertexShader->GetRawShader() != NULL ? params.vertexShader->GetRawShader() : NULL) : NULL;
+	gID = params.geometryShader != NULL ? (params.geometryShader->GetRawShader() != NULL ? params.geometryShader->GetRawShader() : NULL) : NULL;
+	pID = params.pixelShader != NULL ? (params.pixelShader->GetRawShader() != NULL ? params.pixelShader->GetRawShader() : NULL) : NULL;
 
 	HQReturnVal re = m_renderDevice->GetShaderManager()->CreateProgram(vID, pID, gID, NULL, &m_programID);
 
@@ -349,12 +349,12 @@ void HQEngineTextureUnit::InitGL(hquint32 textureIdx, const HQSharedPtr<HQEngine
 
 /*--------depth stencil buffer---------------*/
 HQEngineDSBufferWrapper::HQEngineDSBufferWrapper()
-: bufferID(HQ_NULL_ID)
+: bufferID(NULL)
 {
 }
 HQEngineDSBufferWrapper::~HQEngineDSBufferWrapper()
 {
-	if (bufferID != HQ_NULL_ID)
+	if (bufferID != NULL)
 		m_renderDevice->GetRenderTargetManager()->RemoveDepthStencilBuffer(bufferID);
 }
 
@@ -414,12 +414,12 @@ bool HQEngineRenderTargetWrapper::Equal(const HQEngineRenderTargetWrapper& rt2) 
 
 /*----------render targets group----------------*/
 HQEngineRTGroupWrapper::HQEngineRTGroupWrapper()
-:groupID(HQ_NULL_ID)
+:groupID(NULL)
 {
 }
 HQEngineRTGroupWrapper::~HQEngineRTGroupWrapper()
 {
-	if (groupID != HQ_NULL_ID)
+	if (groupID != NULL)
 	{
 		m_renderDevice->GetRenderTargetManager()->RemoveRenderTargetGroup(groupID);
 	}
@@ -432,13 +432,13 @@ HQReturnVal HQEngineRTGroupWrapper::Init(const CreationParams &params)
 	for (hquint32 i = 0; i < params.numOutputs; ++i)
 	{
 		if (params.outputs[i].outputTexture == NULL)
-			outputDescs[i].renderTargetID = HQ_NULL_ID;
+			outputDescs[i].renderTargetID = NULL;
 		else
 			outputDescs[i].renderTargetID = params.outputs[i].outputTexture->GetRenderTargetID();
 		outputDescs[i].cubeFace = params.outputs[i].cubeFace;
 	}
 
-	hquint32 depthstencilBufID = params.dsBuffer != NULL? params.dsBuffer->bufferID : HQ_NULL_ID;
+	HQDepthStencilBufferView* depthstencilBufID = params.dsBuffer != NULL ? params.dsBuffer->bufferID : NULL;
 
 	HQReturnVal re = m_renderDevice->GetRenderTargetManager()->CreateRenderTargetGroup(outputDescs, depthstencilBufID, params.numOutputs, &groupID);
 
@@ -544,7 +544,7 @@ HQReturnVal HQEngineRenderPassD3D::ApplyTextureStates()
 		//set sampler state
 		ite->samplerState->Apply(ite->unitIndex);
 		//set texture
-		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetTextureID());
+		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetRawTexture());
 	}
 	return HQ_OK;
 }
@@ -562,9 +562,9 @@ HQReturnVal HQEngineRenderPassGL::ApplyTextureStates()
 	for (; !ite.IsAtEnd(); ++ite) //for each controlled texture unit
 	{
 		//set texture's sampler state
-		ite->samplerState->Apply(ite->texture->GetTextureID());
+		ite->samplerState->Apply(ite->texture->GetRawTexture()->GetResourceIndex());
 		//set texture
-		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetTextureID());
+		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetRawTexture());
 	}
 	return HQ_OK;
 }
@@ -1826,10 +1826,10 @@ void HQEngineEffectManagerImpl::RemoveAllEffects()
  HQReturnVal HQEngineEffectManagerImpl::CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs , 
 												hq_uint32 numAttrib ,
 												HQEngineShaderResource* vertexShader , 
-												hq_uint32 *pInputLayoutID)
+												HQVertexLayout **pInputLayoutID)
  {
 	 HQEngineShaderResImpl * vshaderImpl = (HQEngineShaderResImpl*) vertexShader;
-	 hquint32 vid = vshaderImpl != NULL ? vshaderImpl->GetShaderID(): HQ_NOT_USE_VSHADER;
+	 HQShaderObject* vid = vshaderImpl != NULL ? vshaderImpl->GetRawShader(): NULL;
 
 	 return HQEngineApp::GetInstance()->GetRenderDevice()->GetVertexStreamManager()
 		 ->CreateVertexInputLayout(vAttribDescs, numAttrib, vid, pInputLayoutID);
@@ -1840,7 +1840,7 @@ void HQEngineEffectManagerImpl::RemoveAllEffects()
 HQReturnVal HQEngineEffectManagerImpl::SetTexture(hq_uint32 slot, HQEngineTextureResource* texture)
 {
 	HQEngineTextureResImpl* textureImpl = (HQEngineTextureResImpl*)texture;
-	hquint32 tid = textureImpl != NULL ? textureImpl->GetTextureID() : HQ_NULL_ID;
+	HQTexture* tid = textureImpl != NULL ? textureImpl->GetRawTexture() : NULL;
 
 	return HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
 		->SetTexture(slot, tid);
@@ -1849,7 +1849,7 @@ HQReturnVal HQEngineEffectManagerImpl::SetTexture(hq_uint32 slot, HQEngineTextur
 HQReturnVal HQEngineEffectManagerImpl::SetTextureForPixelShader(hq_uint32 slot, HQEngineTextureResource* texture)
 {
 	HQEngineTextureResImpl* textureImpl = (HQEngineTextureResImpl*)texture;
-	hquint32 tid = textureImpl != NULL ? textureImpl->GetTextureID() : HQ_NULL_ID;
+	HQTexture* tid = textureImpl != NULL ? textureImpl->GetRawTexture() : NULL;
 
 	return HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
 		->SetTextureForPixelShader(slot, tid);

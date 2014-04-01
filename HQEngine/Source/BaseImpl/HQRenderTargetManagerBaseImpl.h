@@ -18,7 +18,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQItemManager.h"
 #include "string.h"
 
-struct HQBaseCustomRenderBuffer
+struct HQBaseCustomRenderBuffer : public HQBaseIDObject
 {
 	HQBaseCustomRenderBuffer(hq_uint32 width ,hq_uint32 height ,
 		HQMultiSampleType multiSampleType)
@@ -32,7 +32,7 @@ struct HQBaseCustomRenderBuffer
 	virtual void OnLostDevice() {}
 	virtual void OnResetDevice() {}
 	bool IsTexture() {return this->GetTextureID() != HQ_NOT_AVAIL_ID;}
-	virtual HQSharedPtr<HQTexture> GetTexture() {return HQSharedPtr<HQTexture>::null;};
+	virtual HQSharedPtr<HQBaseTexture> GetTexture() {return HQSharedPtr<HQBaseTexture>::null;};
 	virtual hq_uint32 GetTextureID() {return HQ_NOT_AVAIL_ID;}
 	virtual void *GetData() = 0;
 	
@@ -41,42 +41,57 @@ struct HQBaseCustomRenderBuffer
 };
 
 
+struct HQBaseRenderTargetView : public HQRenderTargetView, public HQBaseCustomRenderBuffer
+{
+	HQBaseRenderTargetView(hq_uint32 width, hq_uint32 height,
+	HQMultiSampleType multiSampleType)
+	: HQBaseCustomRenderBuffer(width, height, multiSampleType)
+	{
+	}
+};
 
-struct HQBaseRenderTargetTexture : public HQBaseCustomRenderBuffer
+struct HQBaseDepthStencilBufferView : public HQDepthStencilBufferView, public HQBaseCustomRenderBuffer
+{
+	HQBaseDepthStencilBufferView(hq_uint32 width, hq_uint32 height,
+	HQMultiSampleType multiSampleType)
+	: HQBaseCustomRenderBuffer(width, height, multiSampleType)
+	{
+	}
+};
+
+
+struct HQBaseRenderTargetTexture : public HQBaseRenderTargetView
 {
 	HQBaseRenderTargetTexture(hq_uint32 _width ,hq_uint32 _height ,
 							  HQMultiSampleType _multiSampleType,
 							  hq_uint32 numMipmaps,
-							  hq_uint32 textureID , HQSharedPtr<HQTexture> pTex)
-		: HQBaseCustomRenderBuffer(_width , _height , 
+							  HQSharedPtr<HQBaseTexture> pTex)
+							  : HQBaseRenderTargetView(_width, _height,
 								_multiSampleType) ,
 		  pTexture(pTex)
 	{
 		this->numMipmaps = numMipmaps;
-		this->textureID = textureID;
 	}
 	~HQBaseRenderTargetTexture(){
 	}
-	HQSharedPtr<HQTexture> GetTexture() {return pTexture;}
-	hq_uint32 GetTextureID() {return textureID;}
+	HQSharedPtr<HQBaseTexture> GetTexture() {return pTexture;}
 
 	hq_uint32 numMipmaps;
-	hq_uint32 textureID;
-	HQSharedPtr<HQTexture> pTexture;
+	HQSharedPtr<HQBaseTexture> pTexture;
 };
 
 struct HQRenderTargetInfo
 {
 	HQRenderTargetInfo()
 	{
-		pRenderTarget = HQSharedPtr<HQBaseCustomRenderBuffer>::null;
+		pRenderTarget = HQSharedPtr<HQBaseRenderTargetView>::null;
 		cubeFace = HQ_CTF_POS_X;
 	};
-	HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget;
+	HQSharedPtr<HQBaseRenderTargetView> pRenderTarget;
 	HQCubeTextureFace cubeFace;
 };
 
-struct HQBaseRenderTargetGroup
+struct HQBaseRenderTargetGroup : public HQRenderTargetGroup, public HQBaseIDObject
 {
 	HQBaseRenderTargetGroup(hquint32 _numRenderTargets)
 		: numRenderTargets(_numRenderTargets),
@@ -100,7 +115,7 @@ struct HQBaseRenderTargetGroup
 	}
 
 	const hquint32			   numRenderTargets;
-	HQSharedPtr<HQBaseCustomRenderBuffer> pDepthStencilBuffer;
+	HQSharedPtr<HQBaseDepthStencilBufferView> pDepthStencilBuffer;
 	hquint32 commonWidth;//common width of render targets in group
 	hquint32 commonHeight;//common width of render targets in group
 
@@ -112,12 +127,12 @@ class HQBaseRenderTargetManager: public HQRenderTargetManager, public HQLoggable
 protected:
 	bool currentUseDefaultBuffer;//is currently using default back buffer and depth stencil buffer
 	
-	hquint32 currentActiveRTGroup;//current active render targets group
+	HQRenderTargetGroup* currentActiveRTGroup;//current active render targets group
 	hq_uint32 maxActiveRenderTargets;
 
-	HQItemManager<HQBaseCustomRenderBuffer> renderTargets;
-	HQItemManager<HQBaseCustomRenderBuffer> depthStencilBuffers;
-	HQItemManager<HQBaseRenderTargetGroup> rtGroups;
+	HQIDItemManager<HQBaseRenderTargetView> renderTargets;
+	HQIDItemManager<HQBaseDepthStencilBufferView> depthStencilBuffers;
+	HQIDItemManager<HQBaseRenderTargetGroup> rtGroups;
 	
 	
 	
@@ -194,7 +209,7 @@ public:
 		 :HQLoggableObject(logFileStream , logPrefix , flushLog)
 	{
 		this->currentUseDefaultBuffer = true;
-		this->currentActiveRTGroup = HQ_NULL_ID;
+		this->currentActiveRTGroup = NULL;
 		this->maxActiveRenderTargets = maxActiveRenderTargets;
 		this->pTextureManager = pTexMan;
 	}
@@ -229,35 +244,35 @@ public:
 	}
 
 
-	HQReturnVal RemoveRenderTarget(hq_uint32 renderTargetID)
+	HQReturnVal RemoveRenderTarget(HQRenderTargetView* renderTargetID)
 	{
-		HQSharedPtr<HQBaseCustomRenderBuffer> pRenderTarget = renderTargets.GetItemPointer(renderTargetID);
+		HQSharedPtr<HQBaseRenderTargetView> pRenderTarget = renderTargets.GetItemPointer(renderTargetID);
 		if(pRenderTarget == NULL)
 			return HQ_FAILED_INVALID_ID;
 		
 		//remove associated texture
-		pTextureManager->RemoveTexture(pRenderTarget->GetTextureID());
+		pTextureManager->RemoveTexture(pRenderTarget->GetTexture().GetRawPointer());
 		return (HQReturnVal)renderTargets.Remove(renderTargetID);
 	}
 
 	void RemoveAllRenderTarget()
 	{
-		this->ActiveRenderTargets(HQ_NOT_AVAIL_ID);
+		this->ActiveRenderTargets(NULL);
 		
-		HQItemManager<HQBaseCustomRenderBuffer>::Iterator ite;
+		HQItemManager<HQBaseRenderTargetView>::Iterator ite;
 
 		this->renderTargets.GetIterator(ite);
 
 		//remove associated textures
 		while (!ite.IsAtEnd())
 		{
-			this->pTextureManager->RemoveTexture(ite->GetTextureID());
+			this->pTextureManager->RemoveTexture(ite->GetTexture().GetRawPointer());
 			++ite;
 		}
 		this->renderTargets.RemoveAll();
 	}
 
-	HQReturnVal RemoveDepthStencilBuffer(hq_uint32 bufferID)
+	HQReturnVal RemoveDepthStencilBuffer(HQDepthStencilBufferView* bufferID)
 	{
 		return (HQReturnVal)depthStencilBuffers.Remove(bufferID);
 	}
@@ -266,20 +281,20 @@ public:
 		this->depthStencilBuffers.RemoveAll();
 	}
 
-	HQReturnVal RemoveRenderTargetGroup(hq_uint32 groupID){
+	HQReturnVal RemoveRenderTargetGroup(HQRenderTargetGroup* groupID){
 		if (groupID == this->currentActiveRTGroup)
-			this->ActiveRenderTargets(HQ_NULL_ID);
+			this->ActiveRenderTargets(NULL);
 		return (HQReturnVal)rtGroups.Remove(groupID);
 	}
 	void RemoveAllRenderTargetGroup() {
-		this->ActiveRenderTargets(HQ_NULL_ID);
+		this->ActiveRenderTargets(NULL);
 		rtGroups.RemoveAll();
 	}
 
 	HQReturnVal CreateRenderTargetGroup(const HQRenderTargetDesc *renderTargetDescs , 
-									hq_uint32 depthStencilBufferID ,
+									HQDepthStencilBufferView* depthStencilBufferID,
 									hq_uint32 numRenderTargets,//number of render targers
-									hq_uint32 *pRenderTargetGroupID_out
+									HQRenderTargetGroup **pRenderTargetGroupID_out
 									)
 	{
 		HQBaseRenderTargetGroup* newGroup = NULL;
@@ -302,14 +317,14 @@ public:
 	///
 	///Set the render targets in group {renderTargetGroupID} as main render targets	
 	///
-	HQReturnVal ActiveRenderTargets(hquint32 renderTargetGroupID) {
+	HQReturnVal ActiveRenderTargets(HQRenderTargetGroup* renderTargetGroupID) {
 		if (this->currentActiveRTGroup == renderTargetGroupID)
 			return HQ_OK;
 		HQSharedPtr<HQBaseRenderTargetGroup> group = this->rtGroups.GetItemPointer(renderTargetGroupID);
 
 		if (group == NULL)
 		{
-			this->currentActiveRTGroup = HQ_NULL_ID;
+			this->currentActiveRTGroup = NULL;
 		}
 		else
 			this->currentActiveRTGroup = renderTargetGroupID;
@@ -321,14 +336,14 @@ public:
 	///
 	///Get current render targets group
 	///
-	virtual hquint32 GetActiveRenderTargets() {
+	virtual HQRenderTargetGroup* GetActiveRenderTargets() {
 		return this->currentActiveRTGroup;
 	}
 
 	//implement dependent
 	virtual HQReturnVal ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& group) = 0;
 	virtual HQReturnVal CreateRenderTargetGroupImpl(const HQRenderTargetDesc *renderTargetDescs , 
-									hq_uint32 depthStencilBufferID ,
+									HQDepthStencilBufferView* depthStencilBufferID,
 									hq_uint32 numRenderTargets,//number of render targers
 									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
 									) = 0;
@@ -342,26 +357,26 @@ public:
 		:HQBaseRenderTargetManager(0 , NULL , NULL,"",false)
 	{
 	}
-	HQReturnVal GenerateMipmaps(hq_uint32 renderTargetTextureID)
+	HQReturnVal GenerateMipmaps(HQRenderTargetView* renderTargetTextureID)
 	{
 		return HQ_FAILED;
 	}
 
-	HQReturnVal CreateRenderTargetTexture(hq_uint32 width , hq_uint32 height,
-								  bool hasMipmaps,
-								  HQRenderTargetFormat format , 
-								  HQMultiSampleType multisampleType,
-								  HQTextureType textureType,
-								  hq_uint32 *pRenderTargetID_Out,
-								  hq_uint32 *pTextureID_Out)
+	HQReturnVal CreateRenderTargetTexture(hq_uint32 width, hq_uint32 height,
+		bool hasMipmaps,
+		HQRenderTargetFormat format,
+		HQMultiSampleType multisampleType,
+		HQTextureType textureType,
+		HQRenderTargetView** pRenderTargetID_Out,
+		HQTexture **pTextureID_Out)
 	{
 		return HQ_FAILED;
 	}
 	
-	HQReturnVal CreateDepthStencilBuffer(hq_uint32 width , hq_uint32 height,
-										HQDepthStencilFormat format,
-										HQMultiSampleType multisampleType,
-										hq_uint32 *pDepthStencilBufferID_Out)
+	HQReturnVal CreateDepthStencilBuffer(hq_uint32 width, hq_uint32 height,
+		HQDepthStencilFormat format,
+		HQMultiSampleType multisampleType,
+		HQDepthStencilBufferView **pDepthStencilBufferID_Out)
 	{
 		return HQ_FAILED;
 	}
@@ -372,7 +387,7 @@ public:
 	}
 
 	virtual HQReturnVal CreateRenderTargetGroupImpl(const HQRenderTargetDesc *renderTargetDescs , 
-									hq_uint32 depthStencilBufferID ,
+									HQDepthStencilBufferView* depthStencilBufferID,
 									hq_uint32 numRenderTargets,//number of render targers
 									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
 									)

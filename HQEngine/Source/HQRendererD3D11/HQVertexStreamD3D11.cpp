@@ -67,6 +67,85 @@ const char *semanticName[] =
 #endif//if HQ_DEFINE_SEMANTICS
 };
 
+/*-------------------HQBufferD3D11-------------------------*/
+HQReturnVal HQBufferD3D11::Unmap()
+{
+	pD3DContext->Unmap(this->pD3DBuffer, 0);
+	return HQ_OK;
+}
+
+HQReturnVal HQBufferD3D11::Update(hq_uint32 offset, hq_uint32 size, const void * pData)
+{
+#if defined _DEBUG || defined DEBUG	
+	if (this->isDynamic == false)
+	{
+		this->pLog->Log("Error : static buffer can't be updated!");
+		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
+	}
+#endif
+
+	hq_uint32 i = offset + size;
+	if (i > this->size)
+		return HQ_FAILED_INVALID_SIZE;
+	D3D11_MAP mapType = D3D11_MAP_WRITE_NO_OVERWRITE;
+	if (i == 0)//update toàn bộ buffer
+	{
+		size = this->size;
+		mapType = D3D11_MAP_WRITE_DISCARD;
+	}
+	else if (offset == 0 && size == this->size)
+		mapType = D3D11_MAP_WRITE_DISCARD;
+
+	D3D11_MAPPED_SUBRESOURCE mapped;
+
+	if (SUCCEEDED(pD3DContext->Map(this->pD3DBuffer, 0, mapType, 0, &mapped)))
+	{
+		memcpy((hq_ubyte8*)mapped.pData + offset, pData, size);
+
+		pD3DContext->Unmap(this->pD3DBuffer, 0);
+	}
+
+	return HQ_OK;
+}
+HQReturnVal HQBufferD3D11::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
+{
+#if defined _DEBUG || defined DEBUG	
+	if (this->pD3DBuffer == NULL)
+		return HQ_FAILED;
+	if (this->isDynamic == false)
+	{
+		this->pLog->Log("Error : static buffer can't be mapped!");
+		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
+	}
+#endif
+
+	D3D11_MAP d3dmapType = D3D11_MAP_WRITE;
+	switch (mapType)
+	{
+	case HQ_MAP_DISCARD:
+		d3dmapType = D3D11_MAP_WRITE_DISCARD;
+		break;
+	case HQ_MAP_NOOVERWRITE:
+		d3dmapType = D3D11_MAP_WRITE_NO_OVERWRITE;
+		break;
+	default:
+		d3dmapType = D3D11_MAP_WRITE_DISCARD;
+	}
+
+#if defined _DEBUG || defined DEBUG
+	if (ppData == NULL)
+		return HQ_FAILED;
+#endif
+	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+
+	if (FAILED(pD3DContext->Map(this->pD3DBuffer, 0, d3dmapType, 0, &mappedSubResource)))
+		return HQ_FAILED;
+
+	*ppData = (hqubyte8*)mappedSubResource.pData + offset;
+
+	return HQ_OK;
+}
+
 /*---------vertex stream manager-------*/
 
 HQVertexStreamManagerD3D11::HQVertexStreamManagerD3D11(ID3D11Device* pD3DDevice , 
@@ -157,9 +236,11 @@ HQVertexStreamManagerD3D11::~HQVertexStreamManagerD3D11()
 	Log("Released!");
 }
 
-HQReturnVal HQVertexStreamManagerD3D11::CreateVertexBuffer(const void *initData , hq_uint32 size , bool dynamic , bool isForPointSprites ,hq_uint32 *pID)
+HQReturnVal HQVertexStreamManagerD3D11::CreateVertexBuffer(const void *initData, hq_uint32 size, bool dynamic, bool isForPointSprites, HQVertexBuffer **pID)
 {
-	HQBufferD3D11* newVBuffer = HQ_NEW HQBufferD3D11(dynamic , size);
+	HQVertexBufferD3D11* newVBuffer = HQ_NEW HQVertexBufferD3D11(dynamic, size);
+	newVBuffer->pLog = this;
+	newVBuffer->pD3DContext = this->pD3DContext;
 	
 	//tạo vertex buffer
 	D3D11_BUFFER_DESC vbd;
@@ -193,9 +274,11 @@ HQReturnVal HQVertexStreamManagerD3D11::CreateVertexBuffer(const void *initData 
 	return HQ_OK;
 }
 
-HQReturnVal HQVertexStreamManagerD3D11::CreateIndexBuffer(const void *initData , hq_uint32 size , bool dynamic , HQIndexDataType dataType , hq_uint32 *pID)
+HQReturnVal HQVertexStreamManagerD3D11::CreateIndexBuffer(const void *initData , hq_uint32 size , bool dynamic , HQIndexDataType dataType , HQIndexBuffer **pID)
 {
 	HQIndexBufferD3D11* newIBuffer = HQ_NEW HQIndexBufferD3D11(dynamic , size , dataType);
+	newIBuffer->pLog = this;
+	newIBuffer->pD3DContext = this->pD3DContext;
 
 	//tạo index buffer
 	D3D11_BUFFER_DESC vbd;
@@ -230,15 +313,15 @@ HQReturnVal HQVertexStreamManagerD3D11::CreateIndexBuffer(const void *initData ,
 
 HQReturnVal HQVertexStreamManagerD3D11::CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDesc , 
 												hq_uint32 numAttrib ,
-												hq_uint32 vertexShaderID , 
-												hq_uint32 *pID)
+												HQShaderObject* vertexShaderID , 
+												HQVertexLayout **pID)
 {
 	if (vAttribDesc == NULL)
 		return HQ_FAILED;
 	if (numAttrib >= MAX_VERTEX_ATTRIBS)
 		return HQ_FAILED_TOO_MANY_ATTRIBUTES;
 
-	if (HQ_NOT_USE_VSHADER == vertexShaderID)
+	if (NULL == vertexShaderID)
 		vertexShaderID = pShaderMan->GetFFVertexShaderForInputLayoutCreation();//get fixed function vertex shader
 	
 	ID3DBlob * pBlob = pShaderMan->GetCompiledVertexShader(vertexShaderID);
@@ -386,11 +469,11 @@ void HQVertexStreamManagerD3D11::ConvertToElementDesc(const HQVertexAttribDesc &
 	}
 }
 
-HQReturnVal HQVertexStreamManagerD3D11::SetVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 streamIndex , hq_uint32 stride)
+HQReturnVal HQVertexStreamManagerD3D11::SetVertexBuffer(HQVertexBuffer* vertexBufferID , hq_uint32 streamIndex , hq_uint32 stride)
 {
 	if (streamIndex >= MAX_VERTEX_ATTRIBS)
 		return HQ_FAILED;
-	HQSharedPtr<HQBufferD3D11> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID);
+	HQSharedPtr<HQVertexBufferD3D11> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID);
 	if (vBuffer != this->streams[streamIndex].vertexBuffer || stride != this->streams[streamIndex].stride)
 	{
 		if (vBuffer == NULL)
@@ -404,7 +487,7 @@ HQReturnVal HQVertexStreamManagerD3D11::SetVertexBuffer(hq_uint32 vertexBufferID
 	return HQ_OK;
 }
 
-HQReturnVal  HQVertexStreamManagerD3D11::SetIndexBuffer(hq_uint32 indexBufferID)
+HQReturnVal  HQVertexStreamManagerD3D11::SetIndexBuffer(HQIndexBuffer* indexBufferID)
 {
 	HQSharedPtr<HQIndexBufferD3D11> iBuffer = this->indexBuffers.GetItemPointer(indexBufferID);
 	if (this->activeIndexBuffer != iBuffer)
@@ -419,7 +502,7 @@ HQReturnVal  HQVertexStreamManagerD3D11::SetIndexBuffer(hq_uint32 indexBufferID)
 	return HQ_OK;
 }
 
-HQReturnVal  HQVertexStreamManagerD3D11::SetVertexInputLayout(hq_uint32 inputLayoutID) 
+HQReturnVal  HQVertexStreamManagerD3D11::SetVertexInputLayout(HQVertexLayout* inputLayoutID) 
 {
 	HQSharedPtr<HQVertexInputLayoutD3D11> pVLayout = this->inputLayouts.GetItemPointer(inputLayoutID);
 	
@@ -437,200 +520,17 @@ HQReturnVal  HQVertexStreamManagerD3D11::SetVertexInputLayout(hq_uint32 inputLay
 
 }
 
-HQReturnVal HQVertexStreamManagerD3D11::MapVertexBuffer(hq_uint32 vertexBufferID , HQMapType mapType , void **ppData) 
-{
-	HQBufferD3D11* vBuffer = this->vertexBuffers.GetItemRawPointer(vertexBufferID);
-
-#if defined _DEBUG || defined DEBUG	
-	if (vBuffer == NULL)
-		return HQ_FAILED_INVALID_ID;
-	if (vBuffer->pD3DBuffer == NULL)
-		return HQ_FAILED;
-	if (vBuffer->isDynamic == false)
-	{
-		this->Log("Error : static buffer can't be mapped!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-
-	D3D11_MAP d3dmapType = D3D11_MAP_WRITE;
-	switch (mapType)
-	{
-	case HQ_MAP_DISCARD:
-		d3dmapType = D3D11_MAP_WRITE_DISCARD;
-		break;
-	case HQ_MAP_NOOVERWRITE:
-		d3dmapType = D3D11_MAP_WRITE_NO_OVERWRITE;
-		break;
-	default:
-		d3dmapType = D3D11_MAP_WRITE_DISCARD;
-	}
-	
-#if defined _DEBUG || defined DEBUG
-	if (ppData == NULL)
-		return HQ_FAILED;
-#endif
-	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-
-	if (FAILED(pD3DContext->Map(vBuffer->pD3DBuffer , 0 , d3dmapType , 0 , &mappedSubResource)))
-		return HQ_FAILED;
-
-	*ppData = mappedSubResource.pData;
-
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerD3D11::UnmapVertexBuffer(hq_uint32 vertexBufferID) 
-{
-	HQBufferD3D11* vBuffer = this->vertexBuffers.GetItemRawPointer(vertexBufferID);
-
-#if defined _DEBUG || defined DEBUG
-	if (vBuffer == NULL)
-		return HQ_FAILED_INVALID_ID;
-	if (vBuffer->pD3DBuffer == NULL)
-		return HQ_FAILED;
-#endif
-	pD3DContext->Unmap(vBuffer->pD3DBuffer , 0);
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerD3D11::MapIndexBuffer(hq_uint32 bufferID, HQMapType mapType, void **ppData)
-{
-	HQSharedPtr<HQIndexBufferD3D11> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-	if (pBuffer->pD3DBuffer == NULL)
-		return HQ_FAILED;
-	if (pBuffer->isDynamic == false)
-	{
-		this->Log("Error : static buffer can't be mapped!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-
-	D3D11_MAP d3dmapType = D3D11_MAP_WRITE ;
-	switch (mapType)
-	{
-	case HQ_MAP_DISCARD:
-		d3dmapType = D3D11_MAP_WRITE_DISCARD;
-		break;
-	case HQ_MAP_NOOVERWRITE:
-		d3dmapType = D3D11_MAP_WRITE_NO_OVERWRITE;
-		break;
-	default:
-		d3dmapType = D3D11_MAP_WRITE_DISCARD;
-	}
-	
-#if defined _DEBUG || defined DEBUG
-	if (ppData == NULL)
-		return HQ_FAILED;
-#endif
-	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-
-	if (FAILED(pD3DContext->Map(pBuffer->pD3DBuffer, 0, d3dmapType, 0, &mappedSubResource)))
-		return HQ_FAILED;
-
-	*ppData = mappedSubResource.pData;
-
-	return HQ_OK;
-}
-HQReturnVal HQVertexStreamManagerD3D11::UnmapIndexBuffer(hq_uint32 bufferID)
-{
-	HQSharedPtr<HQIndexBufferD3D11> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-
-	if (pBuffer->pD3DBuffer == NULL)
-		return HQ_FAILED;
-#endif
-	pD3DContext->Unmap(pBuffer->pD3DBuffer, 0);
-	return HQ_OK;
-}
-
-HQReturnVal HQVertexStreamManagerD3D11::UpdateVertexBuffer(hq_uint32 vertexBufferID , hq_uint32 offset , hq_uint32 size , const void * pData)
-{
-	HQBufferD3D11* vBuffer = this->vertexBuffers.GetItemRawPointer(vertexBufferID);
-#if defined _DEBUG || defined DEBUG	
-	if (vBuffer == NULL)
-		return HQ_FAILED_INVALID_ID;
-	if (vBuffer->isDynamic == false)
-	{
-		this->Log("Error : static buffer can't be updated!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-	
-	hq_uint32 i = offset + size;
-	if (i > vBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-	D3D11_MAP mapType = D3D11_MAP_WRITE_NO_OVERWRITE;
-	if (i == 0 )//update toàn bộ buffer
-	{
-		size = vBuffer->size; 
-		mapType = D3D11_MAP_WRITE_DISCARD;
-	}
-	else if (offset == 0 && size == vBuffer->size)
-		mapType = D3D11_MAP_WRITE_DISCARD;
-
-	D3D11_MAPPED_SUBRESOURCE mapped;
-
-	if(SUCCEEDED(pD3DContext->Map(vBuffer->pD3DBuffer , 0 , mapType , 0 , &mapped)))
-	{
-		memcpy((hq_ubyte8*)mapped.pData + offset , pData , size);
-
-		pD3DContext->Unmap(vBuffer->pD3DBuffer , 0);
-	}
-	
-	return HQ_OK;
-}
-
-HQReturnVal HQVertexStreamManagerD3D11::UpdateIndexBuffer(hquint32 bufferID, hq_uint32 offset , hq_uint32 size , const void * pData)
-{
-	HQSharedPtr<HQIndexBufferD3D11> pBuffer = this->indexBuffers.GetItemPointer(bufferID);
-#if defined _DEBUG || defined DEBUG	
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-	if (pBuffer->isDynamic == false)
-	{
-		this->Log("Error : static buffer can't be updated!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-
-	hq_uint32 i = offset + size;
-	if (i > pBuffer->size)
-		return HQ_FAILED_INVALID_SIZE;
-	D3D11_MAP mapType = D3D11_MAP_WRITE_NO_OVERWRITE;
-	if (i == 0 )//update toàn bộ buffer
-	{
-		size = pBuffer->size; 
-		mapType = D3D11_MAP_WRITE_DISCARD;
-	}
-	else if (offset == 0 && size == pBuffer->size)
-		mapType = D3D11_MAP_WRITE_DISCARD;
-
-	D3D11_MAPPED_SUBRESOURCE mapped;
-
-	if(SUCCEEDED(pD3DContext->Map(pBuffer->pD3DBuffer , 0 , mapType , 0 , &mapped)))
-	{
-		memcpy((hq_ubyte8*)mapped.pData + offset , pData , size);
-
-		pD3DContext->Unmap(pBuffer->pD3DBuffer , 0);
-	}
-
-	return HQ_OK;
-}
 
 
-HQReturnVal HQVertexStreamManagerD3D11::RemoveVertexBuffer(hq_uint32 ID) 
+HQReturnVal HQVertexStreamManagerD3D11::RemoveVertexBuffer(HQVertexBuffer* ID)
 {
 	return (HQReturnVal)this->vertexBuffers.Remove(ID);
 }
-HQReturnVal HQVertexStreamManagerD3D11::RemoveIndexBuffer(hq_uint32 ID) 
+HQReturnVal HQVertexStreamManagerD3D11::RemoveIndexBuffer(HQIndexBuffer* ID) 
 {
 	return (HQReturnVal)this->indexBuffers.Remove(ID);
 }
-HQReturnVal HQVertexStreamManagerD3D11::RemoveVertexInputLayout(hq_uint32 ID) 
+HQReturnVal HQVertexStreamManagerD3D11::RemoveVertexInputLayout(HQVertexLayout* ID) 
 {
 	return (HQReturnVal)this->inputLayouts.Remove(ID);
 }

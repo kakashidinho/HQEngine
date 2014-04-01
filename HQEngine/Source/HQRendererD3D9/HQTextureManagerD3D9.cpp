@@ -32,9 +32,9 @@ inline hq_uint32 GetShaderStageIndex(HQShaderType type)
 	return type >> 29;
 }
 
-struct HQTextureD3D9:public HQTexture
+struct HQTextureD3D9:public HQBaseTexture
 {
-	HQTextureD3D9(HQTextureType type = HQ_TEXTURE_2D) : HQTexture()
+	HQTextureD3D9(HQTextureType type = HQ_TEXTURE_2D) : HQBaseTexture()
 	{
 		this->type = type;
 	}
@@ -46,7 +46,61 @@ struct HQTextureD3D9:public HQTexture
 			pTex->Release();
 		}
 	}
+
+	virtual hquint32 GetWidth() const ;
+	virtual hquint32 GetHeight() const ;
 };
+
+
+hquint32 HQTextureD3D9::GetWidth() const
+{
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D:
+	{
+			IDirect3DTexture9 *textureD3D = (IDirect3DTexture9 *)this->pData;
+			D3DSURFACE_DESC desc;
+			textureD3D->GetLevelDesc(0, &desc);
+			return desc.Width;
+	}
+		break;
+	case HQ_TEXTURE_CUBE:
+	{
+			IDirect3DCubeTexture9 *textureD3D = (IDirect3DCubeTexture9 *)this->pData;
+			D3DSURFACE_DESC desc;
+			textureD3D->GetLevelDesc(0, &desc);
+			return desc.Width;
+	}
+		break;
+	default:
+		return 0;
+	}
+}
+hquint32 HQTextureD3D9::GetHeight() const
+{
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D:
+	{
+		IDirect3DTexture9 *textureD3D = (IDirect3DTexture9 *)this->pData;
+		D3DSURFACE_DESC desc;
+		textureD3D->GetLevelDesc(0, &desc);
+		return desc.Height;
+	}
+		break;
+	case HQ_TEXTURE_CUBE:
+	{
+		IDirect3DCubeTexture9 *textureD3D = (IDirect3DCubeTexture9 *)this->pData;
+		D3DSURFACE_DESC desc;
+		textureD3D->GetLevelDesc(0, &desc);
+		return desc.Height;
+	}
+		break;
+	default:
+		return 0;
+	}
+}
+
 //************************************************************
 //định dạng của texture tương ứng với định dạng của pixel ảnh
 //************************************************************
@@ -108,9 +162,9 @@ HQTextureManagerD3D9::HQTextureManagerD3D9(LPDIRECT3DDEVICE9 pDev, DWORD texture
 	this->shaderStage[pixelShaderStageIndex].maxSamplers = maxPixelShaderSamplers;
 	this->shaderStage[pixelShaderStageIndex].samplerOffset = 0;
 
-	this->shaderStage[pixelShaderStageIndex].samplerSlots = new HQSharedPtr<HQTexture> [maxPixelShaderSamplers];
+	this->shaderStage[pixelShaderStageIndex].samplerSlots = new HQSharedPtr<HQBaseTexture> [maxPixelShaderSamplers];
 	if (maxVertexShaderSamplers > 0)
-		this->shaderStage[vertexShaderStageIndex].samplerSlots = new HQSharedPtr<HQTexture> [maxVertexShaderSamplers];
+		this->shaderStage[vertexShaderStageIndex].samplerSlots = new HQSharedPtr<HQBaseTexture> [maxVertexShaderSamplers];
 	else 
 		this->shaderStage[vertexShaderStageIndex].samplerSlots = NULL;
 
@@ -142,14 +196,14 @@ void HQTextureManagerD3D9::OnResetDevice()
 }
 
 /*-------create new texture object---------*/
-HQTexture * HQTextureManagerD3D9::CreateNewTextureObject(HQTextureType type)
+HQBaseTexture * HQTextureManagerD3D9::CreateNewTextureObject(HQTextureType type)
 {
 	return new HQTextureD3D9(type);
 }
 /*-------set texture ---------------------*/
-HQReturnVal HQTextureManagerD3D9::SetTexture(hq_uint32 slot , hq_uint32 textureID)
+HQReturnVal HQTextureManagerD3D9::SetTexture(hq_uint32 slot , HQTexture* textureID)
 {
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 
 	hq_uint32 samplerSlot = slot & 0x0fffffff;
 	hq_uint32 shaderStageIndex = GetShaderStageIndex( (HQShaderType)(slot & 0xf0000000) );
@@ -180,9 +234,9 @@ HQReturnVal HQTextureManagerD3D9::SetTexture(hq_uint32 slot , hq_uint32 textureI
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D9::SetTextureForPixelShader(hq_uint32 samplerSlot , hq_uint32 textureID)
+HQReturnVal HQTextureManagerD3D9::SetTextureForPixelShader(hq_uint32 samplerSlot, HQTexture* textureID)
 {
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 
 	hq_uint32 shaderStageIndex = GetShaderStageIndex( HQ_PIXEL_SHADER );
 
@@ -210,7 +264,7 @@ HQReturnVal HQTextureManagerD3D9::SetTextureForPixelShader(hq_uint32 samplerSlot
 /*
 Load texture from file
 */
-HQReturnVal HQTextureManagerD3D9::LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D9::LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex)
 {
 	if(!pD3DDevice)
 		return HQ_FAILED;
@@ -469,7 +523,7 @@ HQReturnVal HQTextureManagerD3D9::LoadTextureFromStream(HQDataReaderStream* data
 /*
 Load cube texture from 6 files
 */
-HQReturnVal HQTextureManagerD3D9::LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D9::LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex)
 {
 	if(!pD3DDevice)
 		return HQ_FAILED;
@@ -586,7 +640,7 @@ HQReturnVal HQTextureManagerD3D9::LoadCubeTextureFromStreams(HQDataReaderStream*
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D9::CreateSingleColorTexture(HQTexture *pTex,HQColorui color)
+HQReturnVal HQTextureManagerD3D9::CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
 {
 	if(FAILED(pD3DDevice->CreateTexture(1,1,1,
 		0,D3DFMT_X8R8G8B8,D3DPOOL_MANAGED,(LPDIRECT3DTEXTURE9*)&(pTex->pData),0)))
@@ -618,7 +672,7 @@ HQReturnVal HQTextureManagerD3D9::CreateSingleColorTexture(HQTexture *pTex,HQCol
 /*
 create texture object from pixel data
 */
-HQReturnVal HQTextureManagerD3D9::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal HQTextureManagerD3D9::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	SurfaceFormat format=bitmap.GetSurfaceFormat();
@@ -668,7 +722,7 @@ HQReturnVal HQTextureManagerD3D9::CreateTexture(bool changeAlpha,hq_uint32 numMi
 	return HQ_FAILED;
 }
 
-HQReturnVal  HQTextureManagerD3D9::Create2DTexture(hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal  HQTextureManagerD3D9::Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	//định dạng của texture lấy tương ứng theo định dạng của pixel data
@@ -873,7 +927,7 @@ HQReturnVal  HQTextureManagerD3D9::Create2DTexture(hq_uint32 numMipmaps,HQTextur
 	return HQ_OK;
 }
 
-HQReturnVal  HQTextureManagerD3D9::CreateCubeTexture(hq_uint32 numMipmaps,HQTexture * pTex)
+HQReturnVal  HQTextureManagerD3D9::CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	if((complex.dwComplexFlags & SURFACE_COMPLEX_CUBE) != 0 && 
@@ -1165,38 +1219,6 @@ HQReturnVal HQTextureManagerD3D9::SetTransparency(hq_float32 alpha)
 }
 
 
-HQReturnVal HQTextureManagerD3D9::GetTexture2DSize(hq_uint32 textureID, hquint32 &width, hquint32& height)
-{
-	HQSharedPtr<HQTexture> pTexture = this->textures.GetItemPointer(textureID);
-	if (pTexture == NULL)
-		return HQ_FAILED_INVALID_ID;
-
-	switch (pTexture->type)
-	{
-	case HQ_TEXTURE_2D:
-		{
-			IDirect3DTexture9 *textureD3D = (IDirect3DTexture9 *)pTexture->pData;
-			D3DSURFACE_DESC desc;
-			textureD3D->GetLevelDesc(0, &desc);
-			width = desc.Width;
-			height = desc.Height;
-		}
-		break;
-	case HQ_TEXTURE_CUBE:
-		{
-			IDirect3DCubeTexture9 *textureD3D = (IDirect3DCubeTexture9 *)pTexture->pData;
-			D3DSURFACE_DESC desc;
-			textureD3D->GetLevelDesc(0, &desc);
-			width = desc.Width;
-			height = desc.Height;
-		}
-		break;
-	default:
-		return HQ_FAILED;
-	}
-	return HQ_OK;
-}
-
 HQTextureCompressionSupport HQTextureManagerD3D9::IsCompressionSupported(HQTextureType textureType, HQTextureCompressionFormat type)
 {
 	switch (type)
@@ -1266,7 +1288,7 @@ HQBaseRawPixelBuffer* HQTextureManagerD3D9::CreatePixelBufferImpl(HQRawPixelForm
 	}
 }
 
-HQReturnVal HQTextureManagerD3D9::CreateTexture(HQTexture *pTex, const HQBaseRawPixelBuffer* color)
+HQReturnVal HQTextureManagerD3D9::CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
 {
 
 	color->MakeWrapperBitmap(bitmap);

@@ -39,9 +39,9 @@ public:
 	
 	///
 	///active shader program với id là {programID} ,
-	///nếu programID là HQ_NOT_USE_SHADER => không dùng shader 
+	///nếu programID là NULL => không dùng shader 
 	///
-	virtual HQReturnVal ActiveProgram(hq_uint32 programID)=0;
+	virtual HQReturnVal ActiveProgram(HQShaderProgram* programID) = 0;
 	
 	//4 method sau chỉ dùng để tạo shader từ mã nguồn ngôn ngữ Cg (ngoại trừ openGL ES device hoặc openGL device với option "GLSL-only" là ngôn ngữ HQEngine extended HQ_OPENGLES )
 	
@@ -53,7 +53,7 @@ public:
 									 const HQShaderMacro * pDefines,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID)=0;
+									 HQShaderObject **pID) = 0;
 	
 	///
 	///{pDefines} - pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần {name} và {definition} là NULL để chỉ kết thúc dãy
@@ -63,13 +63,13 @@ public:
 									 const HQShaderMacro * pDefines,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID)=0;
+									 HQShaderObject **pID) = 0;
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 	{
 		return CreateShaderFromStream(type,
 									 dataStream,
@@ -83,7 +83,7 @@ public:
 									 const char* pSourceData,//null terminated string
 									 bool isPreCompiled,
 									 const char* entryFunctionName,
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 	{
 		return CreateShaderFromMemory(type,
 									 pSourceData,
@@ -103,7 +103,7 @@ public:
 									 HQDataReaderStream* dataStream,
 									 const HQShaderMacro * pDefines,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
-									 hq_uint32 *pID)=0;
+									 HQShaderObject **pID) = 0;
 	
 	///
 	///{pDefines} - pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần {name} và {definition} là NULL để chỉ kết thúc dãy
@@ -113,12 +113,12 @@ public:
 									 const char* pSourceData,//nul terminated string
 									 const HQShaderMacro * pDefines,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
-									 hq_uint32 *pID)=0;
+									 HQShaderObject **pID) = 0;
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQShaderCompileMode compileMode,
 									 HQDataReaderStream* dataStream,
 									 const char* entryFunctionName,//should be "main" if language is GLSL
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 	{
 		return CreateShaderFromStream(type,
 									compileMode,
@@ -132,7 +132,7 @@ public:
 									 HQShaderCompileMode compileMode,
 									 const char* pSourceData,//nul terminated string
 									 const char* entryFunctionName,//should be "main" if language is GLSL
-									 hq_uint32 *pID)
+									 HQShaderObject **pID)
 	{
 		return CreateShaderFromMemory(type,
 									compileMode,
@@ -147,7 +147,7 @@ public:
 	///
 	virtual HQReturnVal CreateShaderFromByteCodeStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,
-									 hq_uint32 *pID)=0;
+									 HQShaderObject **pID) = 0;
 
 	///
 	///tạo shader từ mã đã compile
@@ -155,14 +155,14 @@ public:
 	virtual HQReturnVal CreateShaderFromByteCode(HQShaderType type,
 									 const hqubyte8* byteCodeData,
 									 hq_uint32 byteCodeLength,
-									 hq_uint32 *pID) =0;
+									 HQShaderObject **pID) = 0;
 
 	///
 	///tạo shader program bằng cách kết hợp các shader object:
-	///-{vertexShaderID} - id của vertexshader object ,có thể là HQ_NOT_USE_VSHADER nếu không dùng vertex shader. 
-	///-{pixelShaderID} - id của pixelshader/fragment object ,có thể là HQ_NOT_USE_PSHADER nếu không dùng pixel/fragment shader. 
-	///-{geometryShaderID} - id của geometryshader object ,có thể là HQ_NOT_USE_GSHADER nếu không dùng geometry shader. 
-	///Ít nhất 1 trong 3 id phải là id của 1 shader object ,không phải NOT_USE_*SHADER. 
+	///-{vertexShaderID} - id của vertexshader object ,có thể là NULL nếu không dùng vertex shader. 
+	///-{pixelShaderID} - id của pixelshader/fragment object ,có thể là NULL nếu không dùng pixel/fragment shader. 
+	///-{geometryShaderID} - id của geometryshader object ,có thể là NULL nếu không dùng geometry shader. 
+	///Ít nhất 1 trong 3 id phải là id của 1 shader object ,không phải NULL. 
 	///Để tránh không tương thích, tốt nhất mỗi shader program phải có ít nhất vertexshader object và pixelshader object.
 	///Các shader object có thể không tương thích nếu tạo từ các mã nguồn ngôn ngữ khác nhau ví dụ vertex shader tạo từ Cg, pixel shader tạo từ Glsl ,v.v.v.v.. 
 	///-{unifromParameterNames} là con trỏ đến danh sách các chuỗi tên của các biến uniform trong shader program,
@@ -171,28 +171,23 @@ public:
 	///biến mà sau này dùng đến trong các method SetUniform* , shader manager sẽ cố thử thêm biến vào danh sách biến uniform của shader program
 	///nếu biến này thật sự tồn tại.
 	///
-	virtual HQReturnVal CreateProgram(hq_uint32 vertexShaderID,
-							  hq_uint32 pixelShaderID,
-							  hq_uint32 geometryShaderID,
-							  const char** uniformParameterNames,
-							  hq_uint32 *pID)=0;
+	virtual HQReturnVal CreateProgram(HQShaderObject* vertexShaderID,
+								HQShaderObject* pixelShaderID,
+								HQShaderObject* geometryShaderID,
+								const char** uniformParameterNames,
+								HQShaderProgram **pID)=0;
 
-	virtual HQReturnVal DestroyProgram(hq_uint32 programID)=0;
-	virtual HQReturnVal DestroyShader(hq_uint32 shaderID) = 0;
+	virtual HQReturnVal DestroyProgram(HQShaderProgram* programID) = 0;
+	virtual HQReturnVal DestroyShader(HQShaderObject* shaderID) = 0;
 	virtual void DestroyAllProgram()=0;
 	virtual void DestroyAllShader() = 0;
 	virtual void DestroyAllResource()=0;//destroy both programs & shader objects
-	
-	///
-	///return ID of shader used to create program. 
-	///Be careful, if shader object is destroyed, returned shader ID is invalid
-	///
-	virtual hq_uint32 GetShader(hq_uint32 programID, HQShaderType shaderType) = 0;
+
 
 	///
 	///return HQ_NOT_AVAIL_ID if parameter doesn't exist
 	///
-	virtual hq_uint32 GetParameterIndex(hq_uint32 programID , 
+	virtual hq_uint32 GetParameterIndex(HQShaderProgram* programID,
 											const char *parameterName)=0; 
 
 	
@@ -315,23 +310,15 @@ public:
 	///
 	///Dynamic buffer can be updated by calling Map and Unmap methods
 	///
-	virtual HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , hq_uint32 *pBufferIDOut) = 0;
-	virtual HQReturnVal DestroyUniformBuffer(hq_uint32 bufferID) = 0;
+	virtual HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut) = 0;
+	virtual HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID) = 0;
 	virtual void DestroyAllUniformBuffers() = 0;
 	///
 	///Direct3d : {slot} = {buffer slot} bitwise OR với enum HQShaderType để chỉ  {buffer slot} thuộc shader stage nào. 
 	///			Ví dụ muốn gắn uniform buffer vào buffer slot 3 của vertex shader , ta truyền tham số {slot} = (3 | HQ_VERTEX_SHADER).
 	///
-	virtual HQReturnVal SetUniformBuffer(hq_uint32 slot ,  hq_uint32 bufferID ) = 0;
-	///direct3d 10/11 : chỉ có thể dùng với dynamic buffer
-	virtual HQReturnVal MapUniformBuffer(hq_uint32 bufferID , void **ppData) = 0;
-	///direct3d 10/11 : chỉ có thể dùng với dynamic buffer
-	virtual HQReturnVal UnmapUniformBuffer(hq_uint32 bufferID) = 0;
-
-	///
-	///Copy {pData} vào uniform buffer. Toàn bộ buffer sẽ được update. Lưu ý không nên update trên dynamic buffer, nên dùng map và unmap trên dynamic buffer
-	///
-	virtual HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData)= 0;
+	virtual HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID) = 0;
+	
 #endif
 };
 

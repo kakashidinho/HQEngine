@@ -13,14 +13,16 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQShaderGL_Common.h"
 
+#ifdef WIN32
+#	pragma warning( push )
+#	pragma warning( disable : 4250 )//dominance inheritance of HQSysMemBuffer
+#endif
 
-struct HQFakeUniformBufferGL
+struct HQFakeUniformBufferGL: public HQSysMemBuffer, public HQUniformBuffer, public HQBaseIDObject
 {
-	HQFakeUniformBufferGL(hq_uint32 size, bool isDynamic);
+	HQFakeUniformBufferGL(HQSysMemBuffer::Listener *listener, hq_uint32 size, bool isDynamic);
 	~HQFakeUniformBufferGL();
 
-	void * pRawBuffer;
-	hq_uint32 size;//size requested
 	hquint32 actualSize;//actual size allocated
 	bool isDynamic;
 
@@ -28,23 +30,25 @@ struct HQFakeUniformBufferGL
 	BufferSlotList boundSlots;//list of slots that this buffer bound to
 };
 
+#ifdef WIN32
+#	pragma warning( pop )
+#endif
+
 //for opengl version that doesn't support UBO
-class HQBaseShaderManagerGL_FakeUBO : public HQBaseCommonShaderManagerGL
+class HQBaseShaderManagerGL_FakeUBO : public HQBaseCommonShaderManagerGL, public HQSysMemBuffer::Listener
 {
 
 public:
 	HQBaseShaderManagerGL_FakeUBO(HQLogStream* logFileStream, const char * logPrefix, bool flushLog);
 	~HQBaseShaderManagerGL_FakeUBO();
 
-	HQReturnVal CreateUniformBuffer(hq_uint32 size, void *initData, bool isDynamic, hq_uint32 *pBufferIDOut);
-	HQReturnVal DestroyUniformBuffer(hq_uint32 bufferID);
+	HQReturnVal CreateUniformBuffer(hq_uint32 size, void *initData, bool isDynamic, HQUniformBuffer **pBufferIDOut);
+	HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID);
 	void DestroyAllUniformBuffers();
-	HQReturnVal SetUniformBuffer(hq_uint32 slot, hq_uint32 bufferID);
-	HQReturnVal MapUniformBuffer(hq_uint32 bufferID, void **ppData);
-	HQReturnVal UnmapUniformBuffer(hq_uint32 bufferID);
-	HQReturnVal UpdateUniformBuffer(hq_uint32 bufferID, const void * pData);
+	HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID);
 
 protected:
+	virtual void BufferChangeEnded(HQSysMemBuffer* pConstBuffer);//implement HQSysMemBuffer::Listener
 	//implement HQBaseCommonShaderManagerGL
 	virtual HQBaseShaderProgramGL * CreateNewProgramObject();
 	virtual void OnProgramCreated(HQBaseShaderProgramGL *program);
@@ -52,7 +56,7 @@ protected:
 	//implement HQBaseShaderManagerGL
 	virtual void Commit();//this is called before drawing
 
-	HQItemManager<HQFakeUniformBufferGL> uniformBuffers;
+	HQIDItemManager<HQFakeUniformBufferGL> uniformBuffers;
 
 	struct BufferSlotInfo;
 	BufferSlotInfo* uBufferSlots;

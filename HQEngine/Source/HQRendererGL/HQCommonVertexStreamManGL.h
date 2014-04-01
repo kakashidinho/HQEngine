@@ -12,6 +12,8 @@ COPYING.txt included with this distribution for more information.
 #define HQ_COMMON_VERTEX_STREAM_GL_H
 
 #include "glHeaders.h"
+#include "../BaseImpl/HQBaseImplCommon.h"
+#include "../HQRendererCoreType.h"
 #include "../HQSharedPointer.h"
 
 class HQVertexStreamManagerGL;
@@ -21,14 +23,11 @@ struct HQBufferGL
 	HQBufferGL(hq_uint32 size , GLenum usage);
 	virtual ~HQBufferGL();
 	
-	virtual void OnCreated(HQVertexStreamManagerGL *manager, const void *initData) {};
+	virtual void OnCreated(const void *initData) {};
 
 	GLenum usage;//GL_STATIC_DRAW or GL_DYNAMIC_DRAW
 	hq_uint32 size;
 	GLuint bufferName;
-#if defined HQ_OPENGLES
-	void *cacheData;//use when oes_map_buffer not supported
-#endif
 };
 
 
@@ -43,7 +42,7 @@ struct HQVertexAttribInfoGL
 };
 
 
-struct HQVertexInputLayoutGL
+struct HQVertexInputLayoutGL : public HQVertexLayout, public HQBaseIDObject
 {
 	HQVertexInputLayoutGL();
 	~HQVertexInputLayoutGL();

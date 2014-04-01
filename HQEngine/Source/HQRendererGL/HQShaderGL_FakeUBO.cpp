@@ -24,22 +24,23 @@ COPYING.txt included with this distribution for more information.
 
 
 /*---------HQFakeUniformBufferGL--------------*/
-HQFakeUniformBufferGL::HQFakeUniformBufferGL(hq_uint32 size, bool isDynamic)
-: boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(BufferSlotList::LinkedListNodeType), MAX_UNIFORM_BUFFER_SLOTS))
+HQFakeUniformBufferGL::HQFakeUniformBufferGL(HQSysMemBuffer::Listener *listener, hq_uint32 size, bool isDynamic)
+: HQSysMemBuffer(listener),
+boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(BufferSlotList::LinkedListNodeType), MAX_UNIFORM_BUFFER_SLOTS))
 {
 	//must allocate a buffer with size is multiple of 16 byte
 	this->actualSize = size;
 	size_t remain = size % 16;
 	if (remain > 0)
 		this->actualSize += (16 - remain);
-	this->pRawBuffer = HQ_NEW hqubyte8[this->actualSize]; 
+	
+	this->AllocRawBuffer(this->actualSize);
 
-	this->size = size;
+	this->size = size;//mappable size
 	this->isDynamic = isDynamic;
 }
 HQFakeUniformBufferGL::~HQFakeUniformBufferGL()
 {
-	delete[] (hqubyte8*)pRawBuffer;
 }
 
 /*----------------------HQFakeUniformBlkElem----------------------*/
@@ -48,7 +49,7 @@ struct HQFakeUniformBlkElem {
 	HQFakeUniformBlkElem(GLuint program, const HQUniformBlkElemInfoGL& parsed_info);
 	~HQFakeUniformBlkElem();
 
-	size_t ConsumeData(void *data, size_t dataSize);//return number of bytes consumed
+	size_t ConsumeData(const void *data, size_t dataSize);//return number of bytes consumed
 private:
 	GLint *index;//index of each element in array
 	GLuint arraySize; 
@@ -214,7 +215,7 @@ HQFakeUniformBlkElem::~HQFakeUniformBlkElem()
 	SafeDeleteArray(index);
 }
 
-inline size_t HQFakeUniformBlkElem::ConsumeData(void *data, size_t dataSize)
+inline size_t HQFakeUniformBlkElem::ConsumeData(const void *data, size_t dataSize)
 {
 
 	GLuint numElems;
@@ -494,11 +495,11 @@ void HQBaseShaderManagerGL_FakeUBO::OnProgramCreated(HQBaseShaderProgramGL *prog
 	HQClosedStringHashTable<bool> uniformTable;//this table ensures no duplicated uniform variables
 
 	const int numShaders = 3;
-	HQSharedPtr<HQShaderObjectGL> shaderObs[numShaders];
+	HQShaderObjectGL* shaderObs[numShaders];
 
-	shaderObs[0] = this->shaderObjects.GetItemPointer(program->vertexShaderID);
-	shaderObs[1] = this->shaderObjects.GetItemPointer(program->geometryShaderID);
-	shaderObs[2] = this->shaderObjects.GetItemPointer(program->pixelShaderID);
+	shaderObs[0] = program->vertexShader;
+	shaderObs[1] = program->geometryShader;
+	shaderObs[2] = program->pixelShader;
 
 	for (int i = 0; i < numShaders; ++i)
 	{
@@ -556,7 +557,7 @@ void HQBaseShaderManagerGL_FakeUBO::OnProgramActivated(HQBaseShaderProgramGL* pr
 
 void HQBaseShaderManagerGL_FakeUBO::Commit()
 {
-	HQShaderProgramFakeUBO * program = static_cast<HQShaderProgramFakeUBO*> (this->GetItemRawPointer(this->activeProgram));
+	HQShaderProgramFakeUBO * program = static_cast<HQShaderProgramFakeUBO*> (activeProgram.GetRawPointer());
 	if (program != NULL)
 	{
 		//check for dirty constant buffer slot
@@ -570,7 +571,7 @@ void HQBaseShaderManagerGL_FakeUBO::Commit()
 			if (bufferSlot.dirtyFlags == 1 && constBuffer != NULL)
 			{
 				//this slot is dirty. need to update constant data
-				hqubyte8 * pData = (hqubyte8*)constBuffer->pRawBuffer;
+				const hqubyte8 * pData = (const hqubyte8*)constBuffer->GetRawBuffer();
 				hquint32 offset = 0;
 				//for each constant
 				HQLinkedList<HQSharedPtr<HQFakeUniformBlkElem> >::Iterator const_ite;
@@ -588,11 +589,11 @@ void HQBaseShaderManagerGL_FakeUBO::Commit()
 	}//if (program != NULL)
 }
 
-HQReturnVal HQBaseShaderManagerGL_FakeUBO::CreateUniformBuffer(hq_uint32 size, void *initData, bool isDynamic, hq_uint32 *pBufferIDOut)
+HQReturnVal HQBaseShaderManagerGL_FakeUBO::CreateUniformBuffer(hq_uint32 size, void *initData, bool isDynamic, HQUniformBuffer **pBufferIDOut)
 {
-	HQFakeUniformBufferGL* pNewBuffer = HQ_NEW HQFakeUniformBufferGL(size, isDynamic);
+	HQFakeUniformBufferGL* pNewBuffer = HQ_NEW HQFakeUniformBufferGL(this, size, isDynamic);
 	if (initData != NULL)
-		memcpy(pNewBuffer->pRawBuffer, initData, size);
+		pNewBuffer->Update(0, size, initData);
 	if (!this->uniformBuffers.AddItem(pNewBuffer, pBufferIDOut))
 	{
 		HQ_DELETE(pNewBuffer);
@@ -600,7 +601,7 @@ HQReturnVal HQBaseShaderManagerGL_FakeUBO::CreateUniformBuffer(hq_uint32 size, v
 	}
 	return HQ_OK;
 }
-HQReturnVal HQBaseShaderManagerGL_FakeUBO::DestroyUniformBuffer(hq_uint32 bufferID)
+HQReturnVal HQBaseShaderManagerGL_FakeUBO::DestroyUniformBuffer(HQUniformBuffer* bufferID)
 {
 	return (HQReturnVal)this->uniformBuffers.Remove(bufferID);
 }
@@ -608,7 +609,7 @@ void HQBaseShaderManagerGL_FakeUBO::DestroyAllUniformBuffers()
 {
 	this->uniformBuffers.RemoveAll();
 }
-HQReturnVal HQBaseShaderManagerGL_FakeUBO::SetUniformBuffer(hq_uint32 slot, hq_uint32 bufferID)
+HQReturnVal HQBaseShaderManagerGL_FakeUBO::SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID)
 {
 	if (slot >= MAX_UNIFORM_BUFFER_SLOTS)
 		return HQ_FAILED;
@@ -628,31 +629,11 @@ HQReturnVal HQBaseShaderManagerGL_FakeUBO::SetUniformBuffer(hq_uint32 slot, hq_u
 
 	return HQ_FAILED;
 }
-HQReturnVal HQBaseShaderManagerGL_FakeUBO::MapUniformBuffer(hq_uint32 bufferID, void **ppData)
+
+//uniform buffer's data has been changed
+void HQBaseShaderManagerGL_FakeUBO::BufferChangeEnded(HQSysMemBuffer* pConstBuffer)
 {
-	HQFakeUniformBufferGL* pBuffer = uniformBuffers.GetItemRawPointer(bufferID);
-
-#if defined _DEBUG || defined DEBUG
-
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-
-	if (!ppData)
-		return HQ_FAILED;
-#endif
-
-	*ppData = pBuffer->pRawBuffer;
-
-	return HQ_OK;
-}
-HQReturnVal HQBaseShaderManagerGL_FakeUBO::UnmapUniformBuffer(hq_uint32 bufferID)
-{
-	HQFakeUniformBufferGL* pBuffer = uniformBuffers.GetItemRawPointer(bufferID);
-#if defined _DEBUG || defined DEBUG	
-
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-#endif
+	HQFakeUniformBufferGL* pBuffer = static_cast<HQFakeUniformBufferGL*>(pConstBuffer);
 
 	HQFakeUniformBufferGL::BufferSlotList::Iterator ite;
 	for (pBuffer->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
@@ -660,31 +641,5 @@ HQReturnVal HQBaseShaderManagerGL_FakeUBO::UnmapUniformBuffer(hq_uint32 bufferID
 		BufferSlotInfo *pBufferSlot = this->uBufferSlots + (*ite);
 		pBufferSlot->dirtyFlags = 1;//mark buffer slot as dirty
 	}
-
-	return HQ_OK;
 }
 
-HQReturnVal HQBaseShaderManagerGL_FakeUBO::UpdateUniformBuffer(hq_uint32 bufferID, const void * pData)
-{
-	HQFakeUniformBufferGL* pBuffer = this->uniformBuffers.GetItemRawPointer(bufferID);
-#if defined _DEBUG || defined DEBUG	
-	if (pBuffer == NULL)
-		return HQ_FAILED;
-	if (pBuffer->isDynamic == true)
-	{
-		this->Log("Error : dynamic buffer can't be updated using UpdateUniformBuffer method!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-
-	memcpy(pBuffer->pRawBuffer, pData, pBuffer->size);
-
-	HQFakeUniformBufferGL::BufferSlotList::Iterator ite;
-	for (pBuffer->boundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
-	{
-		BufferSlotInfo *pBufferSlot = this->uBufferSlots + (*ite);
-		pBufferSlot->dirtyFlags = 1;//mark buffer slot as dirty
-	}
-
-	return HQ_OK;
-}

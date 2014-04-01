@@ -69,7 +69,7 @@ protected:
 };
 
 /*----------base texture class---------------*/
-typedef struct HQBaseTexture
+struct HQBaseTexture : public HQTextureBuffer, public HQBaseIDObject
 {
 	HQBaseTexture()
 	{
@@ -84,13 +84,22 @@ typedef struct HQBaseTexture
 		delete[] colorKey;
 	}
 
+	virtual hquint32 GetResourceIndex() const { return GetID(); }
+
+	virtual HQTextureType GetType() const { return type; }
+
+	virtual hquint32 GetSize() const { return 0; }
+	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData) { return HQ_FAILED; }
+	virtual HQReturnVal Unmap() { return HQ_FAILED; }
+	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size) { return HQ_FAILED; }
+
 	HQTextureType type;
 
 	void *pData;//con trỏ đến đối tượng texture của direct3D hoặc openGL
 	hq_float32 alpha;//overall/max alpha (range 0.0f->1.0f)
 	HQColor* colorKey;//colorkey chứa các giá trị pixel đã thay đổi giá trị alpha so với giá trị ban đầu load từ file ảnh
 	hq_uint32 nColorKey;//số color key
-} HQTexture , _HQTexture;
+};
 
 /*--------base texture manager class---------*/
 
@@ -102,7 +111,7 @@ public:
 	{
 	}
 
-	HQReturnVal RemoveTexture(hq_uint32 ID);
+	HQReturnVal RemoveTexture(HQTexture* ID);
 	void RemoveAllTexture();
 
 	HQReturnVal AddTexture(HQDataReaderStream* dataStream,
@@ -111,30 +120,29 @@ public:
 						   hq_uint32 numColorKey,
 						   bool generateMipmap,
 						   HQTextureType textureType,
-						   hq_uint32 *pTextureID);
+						   HQTexture** pTextureID);
 	HQReturnVal AddCubeTexture(HQDataReaderStream* dataStreams[6] ,
 							   hq_float32 maxAlpha,
 							   const HQColor *colorKey,
 							   hq_uint32 numColorKey,
 							   bool generateMipmap,
-							   hq_uint32 *pTextureID);
+							   HQTexture** pTextureID);
 
 	//tạo texture mà chỉ chứa 1 màu
-	HQReturnVal AddSingleColorTexture(HQColorui color , hq_uint32 *pTextureID);
+	HQReturnVal AddSingleColorTexture(HQColorui color, HQTexture** pTextureID);
 
 #ifndef HQ_OPENGLES
-	HQReturnVal AddTextureBuffer(HQTextureBufferFormat format , hq_uint32 size , void *initData , bool isDynamic ,hq_uint32 *pTextureID);
+	HQReturnVal AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID);
 
-	HQReturnVal MapTextureBuffer(hq_uint32 textureID , void **ppData) { return HQ_FAILED ;}
-	HQReturnVal UnmapTextureBuffer(hq_uint32 textureID) { return HQ_FAILED ;}
 #endif
-	const HQSharedPtr<HQTexture> GetTexture(hq_uint32 ID);
-	HQSharedPtr<HQTexture> CreateEmptyTexture(HQTextureType textureType , hq_uint32 *pTextureID);
+	const HQSharedPtr<HQBaseTexture> GetTextureSharedPtr(HQTexture* ID);
+	const HQSharedPtr<HQBaseTexture> GetTextureSharedPtrAt(hquint32 resourceIndex);
+	HQSharedPtr<HQBaseTexture> CreateEmptyTexture(HQTextureType textureType, HQTexture** pTextureID);
 
 
 	HQRawPixelBuffer* CreatePixelBuffer(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
 
-	HQReturnVal AddTexture(const HQRawPixelBuffer* color , bool generateMipmap, hq_uint32 *pTextureID);
+	HQReturnVal AddTexture(const HQRawPixelBuffer* color, bool generateMipmap, HQTexture** pTextureID);
 
 
 	static bool HasFace(SurfaceComplexity complex , int face);
@@ -150,25 +158,25 @@ protected:
 
 	void LogTextureCompressionSupportInfo();
 
-	virtual void ChangePixelData( HQTexture *pTex );
+	virtual void ChangePixelData( HQBaseTexture *pTex );
 	virtual HQReturnVal SetAlphaValue(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 B,hq_ubyte8 A) = 0;//set giá trị alpha của pixel ảnh vừa load có giá trị RGB như tham số(hoặc R nến định dạng texture chỉ có kênh 8 bit greyscale) thành giá trị <A>.
 	virtual HQReturnVal SetTransparency(hq_float32 alpha) = 0;//set giá trị alpha lớn nhất của toàn bộ pixel ảnh vừa load thành <alpha>
 
 
 	/*--------implement dependent----------*/
-	virtual HQTexture * CreateNewTextureObject(HQTextureType type) = 0;
+	virtual HQBaseTexture * CreateNewTextureObject(HQTextureType type) = 0;
 
-	virtual HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQTexture * pTex) = 0;
-	virtual HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQTexture * pTex) = 0;
-	virtual HQReturnVal CreateSingleColorTexture(HQTexture *pTex,HQColorui color) = 0;
+	virtual HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex) = 0;
+	virtual HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex) = 0;
+	virtual HQReturnVal CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color) = 0;
 #ifndef HQ_OPENGLES
-	virtual HQReturnVal CreateTextureBuffer(HQTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  , void *initData,bool isDynamic) { return HQ_FAILED ;}
+	virtual HQReturnVal CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  , void *initData,bool isDynamic) { return HQ_FAILED ;}
 #endif
 	virtual HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height) = 0;
-	virtual HQReturnVal CreateTexture(HQTexture *pTex, const HQBaseRawPixelBuffer* color) = 0;
+	virtual HQReturnVal CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color) = 0;
 	/*--------attributes-------------------*/
 
-	HQItemManager<HQTexture> textures;//danh sách texture
+	HQIDItemManager<HQBaseTexture> textures;//danh sách texture
 
 	Bitmap bitmap;//dùng để load file ảnh
 	bool generateMipmap;

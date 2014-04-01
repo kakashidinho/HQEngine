@@ -36,7 +36,7 @@ public:
 	HQMeshNode(const char *name,
 		const char *hqMeshFileName, 
 		HQRenderDevice *pDevice, 
-		hquint32 vertexShaderID,
+		HQShaderObject* vertexShaderID,
 		HQLogStream *pLogStream = NULL);
 	///
 	///{vertexShaderName} is name of shader resource used for creating vertex input layout
@@ -75,14 +75,14 @@ public:
 private:
 	void Init(const char *name,
 		const char *hqMeshFileName ,
-		hquint32 vertexShaderID,
+		HQShaderObject* vertexShaderID,
 		HQLogStream *pLogStream); 
 
 	struct MeshFileHeader;
 	struct GeometricInfo;
 	struct AnimationInfo;
 
-	bool LoadGeometricInfo(void *f, MeshFileHeader &header, hquint32 vertexShaderID);
+	bool LoadGeometricInfo(void *f, MeshFileHeader &header, HQShaderObject* vertexShaderID);
 	bool LoadAnimationInfo(const char *fileName);
 	
 
