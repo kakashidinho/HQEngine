@@ -163,13 +163,9 @@ public:
 		return usingCoreProfile;
 	}
 
-#ifndef HQ_OPENGLES
-	void GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions)
-	{
-		pEnum->GetAllDisplayResolution(resolutionList , numResolutions);
-	}
+	void GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions);
 	HQReturnVal SetDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed);//thay đổi chế độ hiển thị màn hình
-#endif
+
 	HQReturnVal OnWindowSizeChanged(hq_uint32 width,hq_uint32 height);
 	HQReturnVal ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool windowed, bool resizeWindow);
 

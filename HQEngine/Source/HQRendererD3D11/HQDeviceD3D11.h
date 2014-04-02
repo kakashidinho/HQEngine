@@ -170,14 +170,9 @@ public:
 		return clearStencil;
 	}
 
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-	void GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions)
-	{
-		pEnum->GetAllDisplayResolution(resolutionList , numResolutions);
-	}
-	
+	void GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions);
 	HQReturnVal SetDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed);//thay đổi chế độ hiển thị màn hình
-#else
+#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	void OnOrientationChanged();
 #endif
 	HQReturnVal ChangeDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed, bool resizeWindow);

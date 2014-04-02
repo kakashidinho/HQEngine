@@ -937,17 +937,34 @@ void HQDeviceD3D11::SetClearStencilVal(hq_uint32 val){
 	clearStencil=val & 0xff;
 }
 
+void HQDeviceD3D11::GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions)
+{
+#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+	numResolutions = 1;
+	if (resolutionList != NULL)
+	{	
+		resolutionList[0].width = this->sWidth;
+		resolutionList[0].height = this->sHeight;
+	}
+#else
+	pEnum->GetAllDisplayResolution(resolutionList , numResolutions);
+#endif
+}
 
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+
 
 HQReturnVal HQDeviceD3D11::SetDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed)
 {
+#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+	return HQ_FAILED;
+#else
 	HQReturnVal re = ChangeDisplayMode(width,height,windowed, true);
 	ShowWindow(winfo.hwind, SW_SHOW);
 	return re;
+#endif
 }
 
-#else//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 void HQDeviceD3D11::OnOrientationChanged()
 {
@@ -982,7 +999,7 @@ void HQDeviceD3D11::OnOrientationChanged()
 #endif//#if defined HQ_WIN_STORE_PLATFORM
 }
 
-#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#endif//#if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 
 HQReturnVal HQDeviceD3D11::OnWindowSizeChanged(hq_uint32 width,hq_uint32 height)

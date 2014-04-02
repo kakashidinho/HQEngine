@@ -132,8 +132,6 @@ void HQRenderDeviceDebugLayer::SetClearStencilVal(hq_uint32 val)
 	m_pDevice->SetClearStencilVal(val);
 }
 
-#if !defined HQ_OPENGLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-
 HQReturnVal HQRenderDeviceDebugLayer::SetDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed)
 {
 	HQReturnVal re = m_pDevice->SetDisplayMode(width, height ,windowed);
@@ -146,8 +144,6 @@ HQReturnVal HQRenderDeviceDebugLayer::SetDisplayMode(hq_uint32 width,hq_uint32 h
 	}
 	return re;
 }//thay đổi chế độ hiển thị màn hình
-
-#endif//#if !defined HQ_OPENGLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 
 HQReturnVal HQRenderDeviceDebugLayer::OnWindowSizeChanged(hq_uint32 width,hq_uint32 height)

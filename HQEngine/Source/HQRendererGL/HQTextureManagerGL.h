@@ -103,16 +103,14 @@ public:
 	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
 	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);
 	HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex);
-	HQReturnVal CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color);
-	HQReturnVal CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex);
-	HQReturnVal Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex);
-	HQReturnVal CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex);
+	HQReturnVal InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color);
+	HQReturnVal InitTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex);
+	HQReturnVal Init2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex);
+	HQReturnVal InitCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex);
 	HQReturnVal SetAlphaValue(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 B,hq_ubyte8 A);//set giá trị alpha của texel trong texture có giá trị RGB như tham số(hoặc R nến định dạng texture chỉ có kênh 8 bit greyscale) thành giá trị A.
 	HQReturnVal SetTransparency(hq_float32 alpha);//set giá trị alpha lớn nhất của toàn bộ texel thành alpha
 	
-#ifndef HQ_OPENGLES
-	HQReturnVal CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic);
-#endif
+	HQReturnVal InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic);
 
 	HQReturnVal RemoveTexture(HQTexture* ID);
 	void RemoveAllTexture();
@@ -122,7 +120,7 @@ public:
 #endif
 
 	HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
-	HQReturnVal CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);
+	HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);
 
 private:
 	UINT activeTexture;//current active texture unit

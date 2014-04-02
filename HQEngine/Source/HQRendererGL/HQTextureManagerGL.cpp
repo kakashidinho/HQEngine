@@ -541,7 +541,7 @@ HQBaseTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 		return NULL;
 	}
 
-	HQTextureGL *newTex;
+	HQTextureGL *newTex = NULL;
 
 #ifndef HQ_OPENGLES
 	if (type == HQ_TEXTURE_BUFFER)
@@ -900,7 +900,7 @@ HQReturnVal HQTextureManagerGL::LoadTextureFromStream(HQDataReaderStream* dataSt
 		}
 	}
 
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),
 					 nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
@@ -1035,7 +1035,7 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* d
 		bitmap.FlipRGBA();//đưa alpha byte lên thành byte có trọng số lớn nhất
 
 
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),
 					 nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
@@ -1045,7 +1045,7 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* d
 }
 
 
-HQReturnVal HQTextureManagerGL::CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
+HQReturnVal HQTextureManagerGL::InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
 {
 	GLuint *pTextureName = (GLuint*)pTex->pData;
 	glBindTexture(GL_TEXTURE_2D , *pTextureName);
@@ -1064,7 +1064,7 @@ HQReturnVal HQTextureManagerGL::CreateSingleColorTexture(HQBaseTexture *pTex,HQC
 /*
 create texture object from pixel data
 */
-HQReturnVal HQTextureManagerGL::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal HQTextureManagerGL::InitTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	SurfaceFormat format=bitmap.GetSurfaceFormat();
@@ -1134,13 +1134,13 @@ HQReturnVal HQTextureManagerGL::CreateTexture(bool changeAlpha,hq_uint32 numMipm
 	switch(pTex->type)
 	{
 	case HQ_TEXTURE_2D:
-		return this->Create2DTexture(numMipmaps , pTex);
+		return this->Init2DTexture(numMipmaps , pTex);
 	case HQ_TEXTURE_CUBE:
-		return this->CreateCubeTexture(numMipmaps , pTex);
+		return this->InitCubeTexture(numMipmaps , pTex);
 	}
 	return HQ_FAILED;
 }
-HQReturnVal HQTextureManagerGL::Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal HQTextureManagerGL::Init2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	bool onlyFirstLevel = false;
 
@@ -1220,7 +1220,7 @@ HQReturnVal HQTextureManagerGL::Create2DTexture(hq_uint32 numMipmaps,HQBaseTextu
 
 	return HQ_OK;
 }
-HQReturnVal HQTextureManagerGL::CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal HQTextureManagerGL::InitCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	bool onlyFirstLevel = false;
 
@@ -1383,10 +1383,13 @@ HQReturnVal HQTextureManagerGL::SetTransparency(hq_float32 alpha)
 	}
 	return HQ_OK;
 }
-#ifndef HQ_OPENGLES
 
-HQReturnVal HQTextureManagerGL::CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
+HQReturnVal HQTextureManagerGL::InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
 {
+#ifdef HQ_OPENGLES
+	//TO DO: later version will support texture buffer?
+	return HQ_FAILED_FORMAT_NOT_SUPPORT;
+#else
 	if (!g_pOGLDev->IsTextureBufferFormatSupported(format))
 		return HQ_FAILED_FORMAT_NOT_SUPPORT;
 	GLenum glFormat = GetTextureBufferFormat(format);
@@ -1415,9 +1418,8 @@ HQReturnVal HQTextureManagerGL::CreateTextureBuffer(HQBaseTexture *pTex ,HQTextu
 	glBindTexture(GL_TEXTURE_BUFFER , this->texUnits[activeTexture].GetTextureBufferGL()); //re-bind old texture
 
 	return HQ_OK;
+#endif//#ifdef HQ_OPENGLES
 }
-
-#endif
 
 //define the size for texture. useful for textures created outside texture manager, such as those created by render target manager
 void HQTextureManagerGL::DefineTexture2DSize(HQBaseTexture* pTex, hquint32 width, hquint32 height)
@@ -1538,7 +1540,7 @@ HQBaseRawPixelBuffer* HQTextureManagerGL::CreatePixelBufferImpl(HQRawPixelFormat
 	}
 }
 
-HQReturnVal HQTextureManagerGL::CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
+HQReturnVal HQTextureManagerGL::InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
 {
 
 	color->MakeWrapperBitmap(bitmap);
@@ -1626,7 +1628,7 @@ HQReturnVal HQTextureManagerGL::CreateTexture(HQBaseTexture *pTex, const HQBaseR
 	}
 
 	
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
 	}

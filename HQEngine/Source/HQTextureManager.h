@@ -83,14 +83,11 @@ public:
 	///add thêm 1 texture mà nó chỉ chứa 1 màu {color}
 	///
 	virtual HQReturnVal AddSingleColorTexture(HQColorui color, HQTexture** pTextureID) = 0;
-#ifndef HQ_OPENGLES	
+
 	///
 	///tạo texture buffer
 	///
 	virtual HQReturnVal AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID) = 0;
-	
-	
-#endif
 	
 	
 	virtual HQTextureCompressionSupport IsCompressionSupported(HQTextureType textureType, HQTextureCompressionFormat compressionType) = 0;

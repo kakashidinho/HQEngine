@@ -616,7 +616,7 @@ HQReturnVal HQTextureManagerD3D11::LoadTextureFromStream(HQDataReaderStream* dat
 		}
 	}
 	
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
 	}
@@ -691,7 +691,7 @@ HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromStreams(HQDataReaderStream
 		}
 	}
 	
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
 	}
@@ -699,7 +699,7 @@ HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromStreams(HQDataReaderStream
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D11::CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
+HQReturnVal HQTextureManagerD3D11::InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
 {
 	t2DDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	t2DDesc.Width = 1;
@@ -726,7 +726,7 @@ HQReturnVal HQTextureManagerD3D11::CreateSingleColorTexture(HQBaseTexture *pTex,
 /*
 create texture object from pixel data
 */
-HQReturnVal HQTextureManagerD3D11::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::InitTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	SurfaceFormat format=bitmap.GetSurfaceFormat();
@@ -862,17 +862,17 @@ HQReturnVal HQTextureManagerD3D11::CreateTexture(bool changeAlpha,hq_uint32 numM
 	switch(pTex->type)
 	{
 	case HQ_TEXTURE_2D:
-		re = this->Create2DTexture(numMipmaps , pTex);
+		re = this->Init2DTexture(numMipmaps , pTex);
 		break;
 	case HQ_TEXTURE_CUBE:
-		re = this->CreateCubeTexture(numMipmaps , pTex);
+		re = this->InitCubeTexture(numMipmaps , pTex);
 		break;
 	}
 	if (HQFailed(re))
 		return re;
 	return this->CreateShaderResourceView(pTex);
 }
-HQReturnVal HQTextureManagerD3D11::Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::Init2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	unsigned long rowSize;//độ lớn 1 hàng của 1 mipmap level trong dữ liệu ảnh
@@ -984,7 +984,7 @@ HQReturnVal HQTextureManagerD3D11::Create2DTexture(hq_uint32 numMipmaps,HQBaseTe
 
 	return HQ_OK;
 }
-HQReturnVal HQTextureManagerD3D11::CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal HQTextureManagerD3D11::InitCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	unsigned long rowSize;//độ lớn 1 hàng của 1 mipmap level trong dữ liệu ảnh
@@ -1209,7 +1209,7 @@ HQReturnVal HQTextureManagerD3D11::CreateShaderResourceView(HQBaseTexture * pTex
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D11::CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
+HQReturnVal HQTextureManagerD3D11::InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData, bool isDynamic)
 {
 	HQTextureBufferD3D11 *pTexBufD3D = static_cast<HQTextureBufferD3D11*> (pTex);
 	pTexBufD3D->isDynamic = isDynamic;
@@ -1288,7 +1288,7 @@ HQBaseRawPixelBuffer* HQTextureManagerD3D11::CreatePixelBufferImpl(HQRawPixelFor
 	return HQ_NEW HQBaseRawPixelBuffer(HQ_RPFMT_R8G8B8A8, width, height);//only 32 bit pixel buffer is supported
 }
 
-HQReturnVal HQTextureManagerD3D11::CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
+HQReturnVal HQTextureManagerD3D11::InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
 {
 
 	color->MakeWrapperBitmap(bitmap);
@@ -1315,7 +1315,7 @@ HQReturnVal HQTextureManagerD3D11::CreateTexture(HQBaseTexture *pTex, const HQBa
 	}
 
 	
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
 	}

@@ -195,19 +195,22 @@ Game::Game()
 	pDevice = HQEngineApp::GetInstance()->GetRenderDevice();	
 	pDevice->EndRender();
 
-#if !(defined HQ_OPENGLES || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM))
 	HQResolution* resolutionList;
 	hquint32 numRes;
 	pDevice->GetAllDisplayResolution(NULL , numRes);
 	resolutionList = HQ_NEW HQResolution[numRes];
 	pDevice->GetAllDisplayResolution(resolutionList , numRes);
 
-	for(hquint32 i = 0 ; i < numRes ; ++i)
 	{
-	    printf("%u x %u\n" , resolutionList[i].width , resolutionList[i].height);
+		char msgBuffer[256];
+		for(hquint32 i = 0 ; i < numRes ; ++i)
+		{
+			sprintf(msgBuffer, "%u x %u\n" , resolutionList[i].width , resolutionList[i].height);
+			OutputDebugStringA(msgBuffer);
+		}
 	}
 	delete[] resolutionList;
-#endif
+
 	/*--------viewproj matrix-----------*/
 	HQA16ByteMatrix4Ptr view , proj;
 	HQMatrix4rLookAtLH(HQA16ByteVector4Ptr(0,0,-2) , HQA16ByteVector4Ptr(0,0,0) , HQA16ByteVector4Ptr(0,1,0) , view);

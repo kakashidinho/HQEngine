@@ -31,6 +31,9 @@ namespace HQWinStoreFileSystem
 		unsigned int dataSize;
 	};
 
+#	pragma warning( push )
+#	pragma warning( disable : 4275 )//non-dll interface
+
 #if USE_WIN32_HANDLE
 	class HQENGINE_API BufferedDataReader: public HQDataReaderStream
 	{
@@ -104,6 +107,8 @@ namespace HQWinStoreFileSystem
 		char * name;//file name
 	};
 #endif
+
+#	pragma warning( pop )
 
 	//this will search file in installed folder, local folder, roaming folder, temp folder of the app
 	HQENGINE_API Windows::Storage::StorageFile ^ OpenFile(const char *file);

@@ -286,7 +286,7 @@ HQReturnVal HQBaseTextureManager::AddSingleColorTexture(HQColorui color, HQTextu
 	pNewTex->alpha=1.0f;
 
 
-	HQReturnVal result=this->CreateSingleColorTexture(pNewTex,color);
+	HQReturnVal result=this->InitSingleColorTexture(pNewTex,color);
 	if(result!=HQ_OK)
 	{
 		//giải phóng bộ nhớ
@@ -304,13 +304,11 @@ HQReturnVal HQBaseTextureManager::AddSingleColorTexture(HQColorui color, HQTextu
 	return HQ_OK;
 }
 
-#ifndef HQ_OPENGLES
-
 HQReturnVal HQBaseTextureManager::AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID)
 {
 	HQBaseTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_BUFFER);
 
-	HQReturnVal result=this->CreateTextureBuffer(pNewTex , format , size , initData, isDynamic);
+	HQReturnVal result=this->InitTextureBuffer(pNewTex , format , size , initData, isDynamic);
 	if(result!=HQ_OK)
 	{
 		//giải phóng bộ nhớ
@@ -325,7 +323,6 @@ HQReturnVal HQBaseTextureManager::AddTextureBuffer(HQTextureBufferFormat format,
 
 	return HQ_OK;
 }
-#endif
 
 
 HQRawPixelBuffer* HQBaseTextureManager::CreatePixelBuffer(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height)
@@ -342,7 +339,7 @@ HQReturnVal HQBaseTextureManager::AddTexture(const HQRawPixelBuffer* color, bool
 
 	HQBaseTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_2D);
 
-	HQReturnVal result=this->CreateTexture(pNewTex , static_cast<const HQBaseRawPixelBuffer*> (color));
+	HQReturnVal result=this->InitTexture(pNewTex , static_cast<const HQBaseRawPixelBuffer*> (color));
 	if(result!=HQ_OK)
 	{
 		//giải phóng bộ nhớ

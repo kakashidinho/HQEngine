@@ -131,10 +131,8 @@ public:
 	//tạo texture mà chỉ chứa 1 màu
 	HQReturnVal AddSingleColorTexture(HQColorui color, HQTexture** pTextureID);
 
-#ifndef HQ_OPENGLES
 	HQReturnVal AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID);
 
-#endif
 	const HQSharedPtr<HQBaseTexture> GetTextureSharedPtr(HQTexture* ID);
 	const HQSharedPtr<HQBaseTexture> GetTextureSharedPtrAt(hquint32 resourceIndex);
 	HQSharedPtr<HQBaseTexture> CreateEmptyTexture(HQTextureType textureType, HQTexture** pTextureID);
@@ -168,12 +166,12 @@ protected:
 
 	virtual HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex) = 0;
 	virtual HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex) = 0;
-	virtual HQReturnVal CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color) = 0;
-#ifndef HQ_OPENGLES
-	virtual HQReturnVal CreateTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  , void *initData,bool isDynamic) { return HQ_FAILED ;}
-#endif
+	virtual HQReturnVal InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color) = 0;
+
+	virtual HQReturnVal InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  , void *initData,bool isDynamic) { return HQ_FAILED ;}
+
 	virtual HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height) = 0;
-	virtual HQReturnVal CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color) = 0;
+	virtual HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color) = 0;
 	/*--------attributes-------------------*/
 
 	HQIDItemManager<HQBaseTexture> textures;//danh sách texture

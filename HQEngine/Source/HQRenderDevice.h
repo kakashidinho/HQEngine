@@ -213,9 +213,6 @@ public:
 	virtual hqfloat32 GetClearDepthVal() const = 0;
 
 	virtual hquint32 GetClearStencilVal() const = 0;
-
-#if !defined HQ_OPENGLES && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-#define HQ_RENDER_RESOLUTION_CHANGEABLE 1
 	///
 	///nếu {resolutionList} = NULL, số độ phân giải sẽ được lưu vào {numResolutions}, 
 	///ngược lại , dãy {resolutionList} với tối đa {numResolutions} phần tử sẽ được lưu các độ phân giản hỗ trợ của device
@@ -226,7 +223,6 @@ public:
 	///Nếu dùng direct3d 9 device , cần reset lại dữ liệu trong các buffer và render target
 	///
 	virtual HQReturnVal SetDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed)=0;
-#endif
 
 	///
 	///Gọi method này để resize back buffer khi render window thay đổi kích thước

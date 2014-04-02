@@ -512,7 +512,7 @@ HQReturnVal HQTextureManagerD3D9::LoadTextureFromStream(HQDataReaderStream* data
 		}
 	}
 	
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
 	}
@@ -632,7 +632,7 @@ HQReturnVal HQTextureManagerD3D9::LoadCubeTextureFromStreams(HQDataReaderStream*
 		bitmap.FlipRGBA();//đưa alpha byte lên thành byte có trọng số lớn nhất
 	
 	
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
 	}
@@ -640,7 +640,7 @@ HQReturnVal HQTextureManagerD3D9::LoadCubeTextureFromStreams(HQDataReaderStream*
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D9::CreateSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
+HQReturnVal HQTextureManagerD3D9::InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
 {
 	if(FAILED(pD3DDevice->CreateTexture(1,1,1,
 		0,D3DFMT_X8R8G8B8,D3DPOOL_MANAGED,(LPDIRECT3DTEXTURE9*)&(pTex->pData),0)))
@@ -672,7 +672,7 @@ HQReturnVal HQTextureManagerD3D9::CreateSingleColorTexture(HQBaseTexture *pTex,H
 /*
 create texture object from pixel data
 */
-HQReturnVal HQTextureManagerD3D9::CreateTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal HQTextureManagerD3D9::InitTexture(bool changeAlpha,hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	SurfaceFormat format=bitmap.GetSurfaceFormat();
@@ -715,14 +715,14 @@ HQReturnVal HQTextureManagerD3D9::CreateTexture(bool changeAlpha,hq_uint32 numMi
 	switch(pTex->type)
 	{
 	case HQ_TEXTURE_2D:
-		return this->Create2DTexture(numMipmaps , pTex);
+		return this->Init2DTexture(numMipmaps , pTex);
 	case HQ_TEXTURE_CUBE:
-		return this->CreateCubeTexture(numMipmaps , pTex);
+		return this->InitCubeTexture(numMipmaps , pTex);
 	}
 	return HQ_FAILED;
 }
 
-HQReturnVal  HQTextureManagerD3D9::Create2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal  HQTextureManagerD3D9::Init2DTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	//định dạng của texture lấy tương ứng theo định dạng của pixel data
@@ -927,7 +927,7 @@ HQReturnVal  HQTextureManagerD3D9::Create2DTexture(hq_uint32 numMipmaps,HQBaseTe
 	return HQ_OK;
 }
 
-HQReturnVal  HQTextureManagerD3D9::CreateCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
+HQReturnVal  HQTextureManagerD3D9::InitCubeTexture(hq_uint32 numMipmaps,HQBaseTexture * pTex)
 {
 	SurfaceComplexity complex=bitmap.GetSurfaceComplex();
 	if((complex.dwComplexFlags & SURFACE_COMPLEX_CUBE) != 0 && 
@@ -1288,7 +1288,7 @@ HQBaseRawPixelBuffer* HQTextureManagerD3D9::CreatePixelBufferImpl(HQRawPixelForm
 	}
 }
 
-HQReturnVal HQTextureManagerD3D9::CreateTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
+HQReturnVal HQTextureManagerD3D9::InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
 {
 
 	color->MakeWrapperBitmap(bitmap);
@@ -1429,7 +1429,7 @@ HQReturnVal HQTextureManagerD3D9::CreateTexture(HQBaseTexture *pTex, const HQBas
 	}
 
 	
-	if(CreateTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
+	if(InitTexture((pTex->alpha<1.0f || (pTex->colorKey!=NULL && pTex->nColorKey>0)),nMips,pTex)!=HQ_OK)
 	{
 		return HQ_FAILED;
 	}

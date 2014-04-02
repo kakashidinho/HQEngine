@@ -1283,14 +1283,28 @@ int HQDeviceGL::CreateContext( HQRenderDeviceInitInput input, const char* corePr
 	return 0;
 }
 
+void HQDeviceGL::GetAllDisplayResolution(HQResolution *resolutionList , hq_uint32& numResolutions)
+{
+#ifdef HQ_OPENGLES
+	numResolutions = 1;
+	if (resolutionList != NULL)
+	{	
+		resolutionList[0].width = this->sWidth;
+		resolutionList[0].height = this->sHeight;
+	}
+#else
+	pEnum->GetAllDisplayResolution(resolutionList , numResolutions);
+#endif
+}
 
-
-#ifndef HQ_OPENGLES
 HQReturnVal HQDeviceGL::SetDisplayMode(hq_uint32 width,hq_uint32 height,bool windowed)
 {
+#ifdef HQ_OPENGLES
+	return HQ_FAILED;
+#else
 	return ResizeBackBuffer(width, height, windowed, true);
-}
 #endif
+}
 HQReturnVal HQDeviceGL::OnWindowSizeChanged(hq_uint32 width,hq_uint32 height)
 {
 	if (!this->IsWindowed())
