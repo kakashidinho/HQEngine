@@ -411,6 +411,10 @@ void HQRenderTargetManagerFBO::GetGLImageFormat(HQRenderTargetFormat hqformat, G
 			internalFormat = GL_LUMINANCE8UI_EXT;//this is deprecated
 			format = GL_LUMINANCE_INTEGER_EXT ; type = GL_UNSIGNED_BYTE;
 		}
+		else{
+			internalFormat = GL_RGBA8;
+			format = GL_RGBA; type = GL_UNSIGNED_BYTE;
+		}
 		break;
 	case HQ_RTFMT_RGBA_FLOAT64:
 		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
