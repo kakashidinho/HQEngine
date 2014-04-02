@@ -148,6 +148,7 @@ public:
 	int AL16ToRGBA(bool flipRGB = false);//chuyển dạng 8 bit greyscale và 8 bit alpha thành A8R8G8B8 hoặc A8B8G8R8 nếu flipRGB = true
 	int L8ToRGB(bool flipRGB = false);//chuyển dạng 8 bit greyscale thành R8G8B8 hoặc B8G8R8 nếu flipRGB
 	int L8ToRGBA(bool flipRGB = false);//chuyển dạng 8 bit greyscale thành A8R8G8B8 hoặc A8B8G8R8 nếu flipRGB
+	int A8ToRGBA(bool flipRGB = false);//chuyển dạng 8 bit alpha thành A8R8G8B8 hoặc A8B8G8R8 nếu flipRGB
 	int GenerateMipmaps();//tạo bộ mipmap
 
 private:

@@ -2270,7 +2270,7 @@ int Bitmap::L8ToRGB(bool flipRGB)//chuyển dạng 8 bit greyscale thành R8G8B8
 	return IMG_OK;
 }
 
-int Bitmap::L8ToRGBA(bool flipRGB)//chuyển dạng 8 bit greyscale thành R8G8B8
+int Bitmap::L8ToRGBA(bool flipRGB)//chuyển dạng 8 bit greyscale thành A8R8G8B8
 {
 	if(!pData)
 		return IMG_FAIL_FILE_NOT_EXIST;
@@ -2299,6 +2299,44 @@ int Bitmap::L8ToRGBA(bool flipRGB)//chuyển dạng 8 bit greyscale thành R8G8B
 		pPixel[redChannel]=*pCur;
 		//alpha
 		pPixel[3] = 0xff;
+	}
+	
+	ftype=IMG_UNKNOWN;
+	
+	DeletePixelData();
+	pData=newData;
+	bits=32;
+	format=flipRGB? FMT_A8B8G8R8 : FMT_A8R8G8B8;
+	imgSize=newSize;
+	return IMG_OK;
+}
+
+int Bitmap::A8ToRGBA(bool flipRGB)//chuyển dạng 8 bit alpha thành A8R8G8B8
+{
+	if(!pData)
+		return IMG_FAIL_FILE_NOT_EXIST;
+	if(format!=FMT_A8)
+		return IMG_FAIL_NOT_SUPPORTED;
+
+	hq_uint32 newSize=imgSize*4;//8 bit => 32 bit
+	hq_ubyte8* newData=new hq_ubyte8[newSize];
+
+	if(!newData)
+		return IMG_FAIL_MEM_ALLOC;
+	hq_ubyte8 *pEnd=pData+imgSize;
+	hq_ubyte8 *pCur=pData;
+	hq_ubyte8 *pPixel=newData;
+
+	for (;pCur<pEnd;++pCur,pPixel += 4)
+	{
+		//blue
+		pPixel[0] = 0xff;
+		//green
+		pPixel[1] = 0xff;
+		//red
+		pPixel[2] = 0xff;
+		//alpha
+		pPixel[3] = *pCur;
 	}
 	
 	ftype=IMG_UNKNOWN;

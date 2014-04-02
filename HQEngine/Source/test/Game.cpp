@@ -106,7 +106,7 @@ Game::Game()
 #if USE_CORE_OPENGL_3_1
 	params.rendererAdditionalSetting = "Core-GL3.1";
 #else
-	params.rendererAdditionalSetting = "";// "Core-GL4.2";
+	params.rendererAdditionalSetting = "";//"Core-GL4.2";
 #endif
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	params.rendererSettingFileDir = "Assets/Setting.txt";
@@ -152,7 +152,9 @@ Game::Game()
 #if defined HQ_OPENGLES
 		sprintf(apiResFile, "resourcesGLES.script");
 #else
-	if (HQEngineApp::GetInstance()->GetRenderDevice()->IsShaderSupport(HQ_VERTEX_SHADER, "1.4"))
+	if (HQEngineApp::GetInstance()->GetRenderDevice()->IsShaderSupport(HQ_VERTEX_SHADER, "4.2"))
+		sprintf(apiResFile, "resourcesGL4.2.script");
+	else if (HQEngineApp::GetInstance()->GetRenderDevice()->IsShaderSupport(HQ_VERTEX_SHADER, "1.4"))
 		sprintf(apiResFile, "resourcesGL3.1.script");
 	else
 		sprintf(apiResFile, "resourcesGL.script");

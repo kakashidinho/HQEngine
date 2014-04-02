@@ -1106,6 +1106,18 @@ HQReturnVal HQTextureManagerGL::CreateTexture(bool changeAlpha,hq_uint32 numMipm
 	}
 
 	format=bitmap.GetSurfaceFormat();
+#if !defined HQ_OPENGLES
+	if (GLEW_VERSION_3_0)
+#endif
+	{
+		//deprecated formats
+		if(format==FMT_A8L8)
+			bitmap.AL16ToRGBA(true);
+		else if (format == FMT_L8)
+			bitmap.L8ToRGB(true);
+		else if (format == FMT_A8)
+			bitmap.A8ToRGBA(true);
+	}
 
 	if(format==FMT_A8R8G8B8 || format==FMT_X8R8G8B8 || format==FMT_R8G8B8 || format==FMT_B5G6R5)
 		bitmap.FlipRGB();//BGR->RGB
@@ -1503,6 +1515,18 @@ void HQTextureManagerGL::OnLost()
 
 HQBaseRawPixelBuffer* HQTextureManagerGL::CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height)
 {
+#if !defined HQ_OPENGLES
+	if (GLEW_VERSION_3_0)
+#endif
+	{
+		//deprecated formats
+		switch (intendedFormat)
+		{
+		case HQ_RPFMT_A8:
+		case HQ_RPFMT_L8A8:
+			return HQ_NEW HQBaseRawPixelBuffer(HQ_RPFMT_R8G8B8A8, width, height);
+		}
+	}
 	switch (intendedFormat)
 	{
 	case HQ_RPFMT_R8G8B8A8:
