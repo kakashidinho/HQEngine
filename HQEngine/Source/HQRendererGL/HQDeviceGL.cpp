@@ -548,7 +548,7 @@ HQReturnVal HQDeviceGL::Init(HQRenderDeviceInitInput input ,const char* settingF
 	if(pEnum->selectedMulSampleType > 0)
 	{
 		glEnable(GL_MULTISAMPLE_ARB);
-		if(GLEW_NV_multisample_filter_hint)
+		if(!GLEW_VERSION_3_0 && GLEW_NV_multisample_filter_hint)
 			glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 	}
 	else glDisable(GL_MULTISAMPLE_ARB);
@@ -612,7 +612,8 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 
 #ifndef HQ_OPENGLES
 
-	glEnable(GL_POINT_SPRITE);
+	if (!GLEW_VERSION_3_0)
+		glEnable(GL_POINT_SPRITE);//always enable in v3.0 and above
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 	if (!GLEW_VERSION_3_0)
