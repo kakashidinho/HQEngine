@@ -405,8 +405,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 							HQBaseShaderProgramGL *pNewProgramObj,
 							  HQSharedPtr<HQShaderObjectGL>& pVShader,
 							  HQSharedPtr<HQShaderObjectGL>& pGShader,
-							  HQSharedPtr<HQShaderObjectGL>& pFShader,
-							  const char** uniformParameterNames)
+							  HQSharedPtr<HQShaderObjectGL>& pFShader)
 {
 
 	hq_uint32 flags=0;//cờ thể hiện trong program có những loại shader nào
@@ -473,18 +472,6 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 	        free(infoLog);
 	    }
 		return HQ_FAILED;
-	}
-
-	//create paramters list
-	if(uniformParameterNames!=NULL)
-	{
-		int i=0;
-		while(uniformParameterNames[i]!=NULL)
-		{
-			pNewProgramObj->GetParameter(uniformParameterNames[i]);
-
-			i++;
-		}
 	}
 
 
@@ -638,13 +625,12 @@ HQReturnVal HQGLSLShaderController::CreateProgram(
 							    HQBaseShaderProgramGL *pNewProgramObj,
 								HQSharedPtr<HQShaderObjectGL>& pVShader,
 								HQSharedPtr<HQShaderObjectGL>& pGShader,
-								HQSharedPtr<HQShaderObjectGL>& pFShader,
-								const char** uniformParameterNames)
+								HQSharedPtr<HQShaderObjectGL>& pFShader)
 {
 	if (pNewProgramObj->isGLSL == false)
 		return HQ_FAILED;
 	
-	HQReturnVal re = this->CreateProgramGLSL(pNewProgramObj, pVShader, pGShader, pFShader, uniformParameterNames);
+	HQReturnVal re = this->CreateProgramGLSL(pNewProgramObj, pVShader, pGShader, pFShader);
 
 	//store shaders' IDs
 	if (!HQFailed(re))

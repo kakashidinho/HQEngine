@@ -411,7 +411,6 @@ void HQShaderManagerD3D11::InitFFEmu()
 					pFFEmu->GetVertexShaderSlot(useLighting, useSpecular,  useTexture),
 					pFFEmu->GetPixelShaderSlot(useTexture), 
 					NULL, 
-					NULL, 
 					&pFFEmu->GetProgramSlot(useLighting, useSpecular,  useTexture));
 			}//for (int texture = 0; texture < 2; ++texture)
 		}//for (int specular = 0; specular < 2; ++specular)

@@ -165,16 +165,10 @@ public:
 	///Ít nhất 1 trong 3 id phải là id của 1 shader object ,không phải NULL. 
 	///Để tránh không tương thích, tốt nhất mỗi shader program phải có ít nhất vertexshader object và pixelshader object.
 	///Các shader object có thể không tương thích nếu tạo từ các mã nguồn ngôn ngữ khác nhau ví dụ vertex shader tạo từ Cg, pixel shader tạo từ Glsl ,v.v.v.v.. 
-	///-{unifromParameterNames} là con trỏ đến danh sách các chuỗi tên của các biến uniform trong shader program,
-	///danh sách kết thúc bằng phần tử NULL,con trỏ danh sách này có thể NULL (coi như rỗng). 
-	///Danh sách này nhằm khởi tạo danh sách các biến uniform dc dùng trong shader program. Nếu trong danh sách này không chứa
-	///biến mà sau này dùng đến trong các method SetUniform* , shader manager sẽ cố thử thêm biến vào danh sách biến uniform của shader program
-	///nếu biến này thật sự tồn tại.
 	///
 	virtual HQReturnVal CreateProgram(HQShaderObject* vertexShaderID,
 								HQShaderObject* pixelShaderID,
 								HQShaderObject* geometryShaderID,
-								const char** uniformParameterNames,
 								HQShaderProgram **pID)=0;
 
 	virtual HQReturnVal DestroyProgram(HQShaderProgram* programID) = 0;

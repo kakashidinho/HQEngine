@@ -58,7 +58,7 @@ HQReturnVal HQEngineShaderProgramWrapper::Init(const CreationParams& params)
 	gID = params.geometryShader != NULL ? (params.geometryShader->GetRawShader() != NULL ? params.geometryShader->GetRawShader() : NULL) : NULL;
 	pID = params.pixelShader != NULL ? (params.pixelShader->GetRawShader() != NULL ? params.pixelShader->GetRawShader() : NULL) : NULL;
 
-	HQReturnVal re = m_renderDevice->GetShaderManager()->CreateProgram(vID, pID, gID, NULL, &m_programID);
+	HQReturnVal re = m_renderDevice->GetShaderManager()->CreateProgram(vID, pID, gID, &m_programID);
 
 	if (!HQFailed(re))
 	{

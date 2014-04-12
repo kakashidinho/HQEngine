@@ -168,7 +168,6 @@ public:
 	HQReturnVal CreateProgram(HQShaderObject * vertexShaderID,
 								HQShaderObject * pixelShaderID,
 								HQShaderObject * geometryShaderID,
-								const char** uniformParameterNames,
 								HQShaderProgram **pID);
 
 	HQReturnVal DestroyProgram(HQShaderProgram* programID);

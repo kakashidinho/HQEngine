@@ -184,7 +184,6 @@ template <class ShaderController , class BaseShaderManagerClass>
 HQReturnVal HQShaderManagerGL<ShaderController, BaseShaderManagerClass>::CreateProgram(HQShaderObject* vertexShaderID,
 								HQShaderObject* pixelShaderID,
 								HQShaderObject* geometryShaderID,
-								const char** uniformParameterNames,
 								HQShaderProgram **pID)
 {
 	HQSharedPtr<HQShaderObjectGL> pVShader = HQSharedPtr<HQShaderObjectGL> :: null;
@@ -227,8 +226,7 @@ HQReturnVal HQShaderManagerGL<ShaderController, BaseShaderManagerClass>::CreateP
 
 	HQReturnVal re = this->shaderController.CreateProgram(
 		pNewProgram,
-		pVShader , pGShader ,pFShader ,
-		uniformParameterNames);
+		pVShader , pGShader ,pFShader );
 
 	if (HQFailed(re))
 		delete pNewProgram;

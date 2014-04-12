@@ -1183,7 +1183,6 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromByteCode(HQShaderType type,
 HQReturnVal HQShaderManagerD3D11::CreateProgram(HQShaderObject *vertexShaderID,
 								HQShaderObject *pixelShaderID,
 								HQShaderObject * geometryShaderID,
-							  const char** uniformParameterNames,
 							  HQShaderProgram** pID)
 {
 	if(vertexShaderID==NULL && pixelShaderID==NULL && geometryShaderID==NULL)

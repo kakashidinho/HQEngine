@@ -1071,7 +1071,6 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemory(HQShaderType type,
 HQReturnVal HQShaderManagerD3D9::CreateProgram(HQShaderObject * vertexShaderID,
 	HQShaderObject * pixelShaderID,
 	HQShaderObject * geometryShaderID,
-	const char** uniformParameterNames,
 	HQShaderProgram **pID)
 {
 	if(vertexShaderID==NULL && pixelShaderID==NULL && geometryShaderID==NULL)
@@ -1102,18 +1101,6 @@ HQReturnVal HQShaderManagerD3D9::CreateProgram(HQShaderObject * vertexShaderID,
 	{
 		delete pShader;
 		return HQ_FAILED_MEM_ALLOC;
-	}
-	//create paramters list
-	if(uniformParameterNames!=NULL)
-	{
-		int i=0;
-		while(uniformParameterNames[i]!=NULL)
-		{
-			GetUniformParam(this->GetItemPointerNonCheck(newProgramID) , 
-				uniformParameterNames[i]);
-
-			i++;
-		}
 	}
 	if(pID != NULL)
 		*pID = newProgramID;
