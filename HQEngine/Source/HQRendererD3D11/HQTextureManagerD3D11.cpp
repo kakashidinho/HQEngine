@@ -1244,7 +1244,7 @@ HQReturnVal HQTextureManagerD3D11::InitTextureBuffer(HQBaseTexture *pTex ,HQText
 	else
 	{
 		bd.CPUAccessFlags = 0;
-		bd.Usage = D3D11_USAGE_IMMUTABLE;
+		bd.Usage = D3D11_USAGE_DEFAULT;
 	}
 
 	D3D11_SUBRESOURCE_DATA d3dinitData;

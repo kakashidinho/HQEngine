@@ -251,7 +251,7 @@ HQReturnVal HQVertexStreamManagerD3D11::CreateVertexBuffer(const void *initData,
 	}
 	else
 	{
-		vbd.Usage = D3D11_USAGE_IMMUTABLE;
+		vbd.Usage = D3D11_USAGE_DEFAULT;
 		vbd.CPUAccessFlags = 0;
 	}
 	vbd.ByteWidth = size;
@@ -289,7 +289,7 @@ HQReturnVal HQVertexStreamManagerD3D11::CreateIndexBuffer(const void *initData ,
 	}
 	else
 	{
-		vbd.Usage = D3D11_USAGE_IMMUTABLE;
+		vbd.Usage = D3D11_USAGE_DEFAULT;
 		vbd.CPUAccessFlags = 0;
 	}
 	vbd.ByteWidth = size;
