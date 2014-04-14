@@ -132,8 +132,8 @@ COPYING.txt included with this distribution for more information.
 
 #	endif
 
-typedef __m128 float4;
-typedef __m128i int4;
+typedef __m128 hq_sse_float4;
+typedef __m128i hq_sse_int4;
 
 #define hq_mm_copy_ps(src , imm) ( _mm_castsi128_ps (_mm_shuffle_epi32(_mm_castps_si128(src) , imm ) ) )
 

@@ -29,9 +29,9 @@ COPYING.txt included with this distribution for more information.
 
 #ifdef HQ_SSE_MATH
 
-const float4 _4Halves= {.5f,.5f,.5f,.5f};
-const float4 _4Quarts= {.25f,.25f,.25f,.25f};
-const float4 _1One_3Zeros = {1.0f , 0.0f , 0.0f , 0.0f};
+const hq_sse_float4 _4Halves= {.5f,.5f,.5f,.5f};
+const hq_sse_float4 _4Quarts= {.25f,.25f,.25f,.25f};
+const hq_sse_float4 _1One_3Zeros = {1.0f , 0.0f , 0.0f , 0.0f};
 const HQ_ALIGN16 hq_uint32 NotMask[]={0xffffffff,0xffffffff,0xffffffff,0xffffffff};
 const HQ_ALIGN16 hq_uint32 QuatMask1[]={0x00000000,0x80000000,0x00000000,0x80000000};//+ - + -
 const HQ_ALIGN16 hq_uint32 QuatMask2[]={0x00000000,0x00000000,0x80000000,0x80000000};//+ + - -
@@ -99,7 +99,7 @@ void HQQuaternion::QuatUnitToMatrix4r(HQMatrix4 *matOut)const{
 
 #else
 	/*SSE*/
-	float4 m0,m1,m2,m3,m4,m5,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m7;
 	m0 = _mm_load_ps(this->q);// x y z w
 	m1 = _mm_add_ps(m0 , m0); //2x 2y 2z 2w
 	
@@ -183,7 +183,7 @@ void HQQuaternion::QuatUnitToMatrix3x4c(HQMatrix3x4 *matOut)const{
 
 #else
 	/*SSE*/
-	float4 m0,m1,m2,m3,m4,m5,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m7;
 	m0 = _mm_load_ps(this->q);// x y z w
 	m1 = _mm_add_ps(m0 , m0); //2x 2y 2z 2w
 	
@@ -315,7 +315,7 @@ void HQQuaternion::QuatFromMatrix4r(const HQMatrix4 &m)
 	
 #else
 	/*SSE*/
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 
 	m5 = _mm_load_ps1(&m(0,0));// 11 11 11 11
 	m6 = _mm_load_ps1(&m(1,1));// 22 22 22 22
@@ -355,7 +355,7 @@ void HQQuaternion::QuatFromMatrix4r(const HQMatrix4 &m)
 	m2 = _mm_or_ps(m2,m1);//(max = 11 || max = 22) && sum < 0
 	m1 = _mm_or_ps(m1,m3);//(max = 11 || max = 33) && sum < 0
 	
-	float4 mmNegSignMask = _mm_load_ps((hq_float32*) NegSignMask);
+	hq_sse_float4 mmNegSignMask = _mm_load_ps((hq_float32*) NegSignMask);
 
 	m0 = _mm_and_ps(m0, mmNegSignMask);//s0
 	m1 = _mm_and_ps(m1, mmNegSignMask);//s1
@@ -460,7 +460,7 @@ void HQQuaternion::QuatFromMatrix3x4c(const HQMatrix3x4 &m)
 	/*SSE*/
 	TRACE("HERE %s, %d", __FILE__, __LINE__);
 
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 
 	m5 = _mm_load_ps1(&m(0,0));// 11 11 11 11
 	m6 = _mm_load_ps1(&m(1,1));// 22 22 22 22
@@ -504,7 +504,7 @@ void HQQuaternion::QuatFromMatrix3x4c(const HQMatrix3x4 &m)
 	m2 = _mm_or_ps(m2,m1);//(max = 11 || max = 22) && sum < 0
 	m1 = _mm_or_ps(m1,m3);//(max = 11 || max = 33) && sum < 0
 	
-	float4 mmNegSignMask = _mm_load_ps((hq_float32*) NegSignMask);
+	hq_sse_float4 mmNegSignMask = _mm_load_ps((hq_float32*) NegSignMask);
 	m0 = _mm_and_ps(m0, mmNegSignMask);//s0
 	m1 = _mm_and_ps(m1, mmNegSignMask);//s1
 	m2 = _mm_and_ps(m2, mmNegSignMask);//s2
@@ -813,7 +813,7 @@ void HQQuaternion::QuatToRotAxis(hq_float32* pAngle,HQVector4* pAxis){
 	HQDXQuatUnitToRotAxis(this->q, pAxis->v);
 
 #else
-	float4 m0,m1,m2,m3;
+	hq_sse_float4 m0,m1,m2,m3;
 	m0=_mm_load_ps(q);//copy quat data to 16 bytes(128 bit) xmm register
 	m2=m0;
 	m0=_mm_mul_ps(m0,m0);//nhân quat data với chính nó x^2 y^2 z^2 w^2
@@ -824,7 +824,7 @@ void HQQuaternion::QuatToRotAxis(hq_float32* pAngle,HQVector4* pAxis){
 	m0=_mm_add_ps(m0,m1);//x^2+y^2		y^2+x^2		z^2+x^2		x^2+x^2
 	m0=_mm_add_ps(m0,m3);//x^2+y^2+z^2		x^2+y^2+z^2		x^2+y^2+z^2		x^2+x^2+x^2   
 
-	float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
+	hq_sse_float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
 	
 	//Newton Raphson iteration y(n+1)=1/2 *(y(n)*(3-x*y(n)^2)); //phương pháp giảm sai số
 	m0=_mm_mul_ps(_mm_mul_ps(_4Halves,temp),_mm_sub_ps(_4Threes,_mm_mul_ps(m0,_mm_mul_ps(temp,temp))));
@@ -857,7 +857,7 @@ void HQQuaternion::QuatUnitToRotAxis(hq_float32* pAngle,HQVector4* pAxis)const{
 	HQDXQuatUnitToRotAxis(this->q, pAxis->v);
 
 #else
-	float4 m0,m1,m2,m3;
+	hq_sse_float4 m0,m1,m2,m3;
 	m0=_mm_load_ps(q);//copy quat data to 16 bytes(128 bit) xmm register
 	m2=m0;
 	m0=_mm_mul_ps(m0,m0);//nhân quat data với chính nó x^2 y^2 z^2 w^2
@@ -868,7 +868,7 @@ void HQQuaternion::QuatUnitToRotAxis(hq_float32* pAngle,HQVector4* pAxis)const{
 	m0=_mm_add_ps(m0,m1);//x^2+y^2		y^2+x^2		z^2+x^2		x^2+x^2
 	m0=_mm_add_ps(m0,m3);//x^2+y^2+z^2		x^2+y^2+z^2		x^2+y^2+z^2		x^2+x^2+x^2   
 
-	float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
+	hq_sse_float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
 	
 	//Newton Raphson iteration y(n+1)=1/2 *(y(n)*(3-x*y(n)^2)); //phương pháp giảm sai số
 	m0=_mm_mul_ps(_mm_mul_ps(_4Halves,temp),_mm_sub_ps(_4Threes,_mm_mul_ps(m0,_mm_mul_ps(temp,temp))));
@@ -896,9 +896,9 @@ hq_float32 HQQuaternion::GetMagnitude(){
 	return HQDXQuatMagnitude(this->q);
 
 #else
-	float4 m0=_mm_load_ps(q);//copy quat data to 128 bit xmm register
+	hq_sse_float4 m0=_mm_load_ps(q);//copy quat data to 128 bit xmm register
 	m0=_mm_mul_ps(m0,m0);//nhân quat data với chính nó=> x*x y*y z*z w*w
-	float4 m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(2,3,0,1));//z*z w*w x*x y*y
+	hq_sse_float4 m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(2,3,0,1));//z*z w*w x*x y*y
 	m0=_mm_add_ps(m0,m1);//=> x*x+z*z, y*y+w*w, z*z+x*x, w*w+y*y
 	m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(1,0,1,0));//y*y+w*w, x*x+z*z, y*y+w*w, x*x+z*z
 	m0=_mm_add_ps(m0,m1);//=> x*x+z*z+y*y+z*z+w*w, _, _, _
@@ -924,9 +924,9 @@ hq_float32 HQQuaternion::GetSumSquares(){
 	return HQDXQuatSumSquares(this->q);
 
 #else
-	float4 m0=_mm_load_ps(q);//copy quat data to 128 bit xmm register
+	hq_sse_float4 m0=_mm_load_ps(q);//copy quat data to 128 bit xmm register
 	m0=_mm_mul_ps(m0,m0);//nhân quat data với chính nó=> x*x y*y z*z w*w
-	float4 m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(2,3,0,1));//z*z w*w x*x y*y
+	hq_sse_float4 m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(2,3,0,1));//z*z w*w x*x y*y
 	m0=_mm_add_ps(m0,m1);//=> x*x+z*z, y*y+w*w, z*z+x*x, w*w+y*y
 	m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(1,0,1,0));//y*y+w*w, x*x+z*z, y*y+w*w, x*x+z*z
 	m0=_mm_add_ps(m0,m1);//=> x*x+z*z+y*y+z*z+w*w, _, _, _
@@ -963,7 +963,7 @@ HQQuaternion& HQQuaternion::operator *=(const HQQuaternion &quat){
 #else	
 	/*SSE*/
 
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 	m0=_mm_load_ps(q);//x1 y1 z1 w1
 	m4=_mm_load_ps(quat.q);//x2 y2 z2 w2
 
@@ -1017,7 +1017,7 @@ HQQuaternion HQQuaternion::operator *(const HQQuaternion &quat) const{
 #else
 	/*SSE*/
 
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 	m0=_mm_load_ps(q);//x1 y1 z1 w1
 	m4=_mm_load_ps(quat.q);//x2 y2 z2 w2
 
@@ -1078,7 +1078,7 @@ HQQuaternion* HQQuatMultiply(const HQQuaternion* q1,const HQQuaternion* q2 , HQQ
 #else	
 	/*SSE*/
 
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 	m0=_mm_load_ps(q1->q);//x1 y1 z1 w1
 	m4=_mm_load_ps(q2->q);//x2 y2 z2 w2
 
@@ -1142,7 +1142,7 @@ HQQuaternion& HQQuaternion::Normalize(){
 	HQDXQuatNormalize(this->q, this->q);	
 #else
 	/*SSE*/
-	float4 m0,m1,m2;
+	hq_sse_float4 m0,m1,m2;
 	m0=_mm_load_ps(this->q);//copy quat data to 16 bytes(128 bit) xmm register
 	m2=m0;//copy m0 vào m2
 	m0=_mm_mul_ps(m0,m0);//nhân quat với chính nó x^2 y^2 z^2 w^2
@@ -1166,7 +1166,7 @@ HQQuaternion& HQQuaternion::Normalize(){
 	}
 #	endif
 
-	float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
+	hq_sse_float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
 
 	//Newton Raphson iteration y(n+1)=1/2 *(y(n)*(3-x*y(n)^2)); //phương pháp giảm sai số
 	m0=_mm_mul_ps(_mm_mul_ps(_4Halves,temp),_mm_sub_ps(_4Threes,_mm_mul_ps(m0,_mm_mul_ps(temp,temp))));
@@ -1207,7 +1207,7 @@ HQQuaternion* HQQuatNormalize(const HQQuaternion* in,HQQuaternion* out)
 	HQDXQuatNormalize(in->q, out->q);
 #else
 	/*SSE*/
-	float4 m0,m1,m2;
+	hq_sse_float4 m0,m1,m2;
 	m0=_mm_load_ps(in->q);//copy quat data to 16 bytes(128 bit) xmm register
 	m2=m0;//copy m0 vào m2
 	m0=_mm_mul_ps(m0,m0);//nhân quat với chính nó x^2 y^2 z^2 w^2
@@ -1234,7 +1234,7 @@ HQQuaternion* HQQuatNormalize(const HQQuaternion* in,HQQuaternion* out)
 		return out;
 	}
 #	endif
-	float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
+	hq_sse_float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
 	
 	//Newton Raphson iteration y(n+1)=1/2 *(y(n)*(3-x*y(n)^2)); //phương pháp giảm sai số
 	m0=_mm_mul_ps(_mm_mul_ps(_4Halves,temp),_mm_sub_ps(_4Threes,_mm_mul_ps(m0,_mm_mul_ps(temp,temp))));
@@ -1259,8 +1259,8 @@ hq_float32 HQQuaternion::Dot(const HQQuaternion& q2)const{
 	return HQDXQuatDot(this->q, q2.q);
 #else /*SSE*/
 	hq_float32 result;
-	float4 m0=_mm_load_ps(q);
-	float4 m1=_mm_load_ps(q2.q);
+	hq_sse_float4 m0=_mm_load_ps(q);
+	hq_sse_float4 m1=_mm_load_ps(q2.q);
 
 	m0=_mm_mul_ps(m0,m1);//x1*x2 y1*y2 z1*z2 w1*w2
 
@@ -1298,10 +1298,10 @@ HQQuaternion& HQQuaternion::Inverse(){
 
 	HQDXQuatInverse(this->q, this->q);
 #else /*SSE*/
-	float4 m0=_mm_load_ps(this->q);
-	float4 m1=_mm_load_ps((hq_float32*)Quatmask);
+	hq_sse_float4 m0=_mm_load_ps(this->q);
+	hq_sse_float4 m1=_mm_load_ps((hq_float32*)Quatmask);
 
-	float4 m2=_mm_xor_ps(m0,m1);//-x,-y,-z,w
+	hq_sse_float4 m2=_mm_xor_ps(m0,m1);//-x,-y,-z,w
 	m0=_mm_mul_ps(m0,m0);//nhân quat với chính nó x^2 y^2 z^2 w^2
 
 	m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(2,3,0,1));//	z^2 w^2 x^2 y^2
@@ -1312,7 +1312,7 @@ HQQuaternion& HQQuaternion::Inverse(){
 
 	m0=_mm_add_ps(m0,m1);//x^2+y^2+z^2+w^2		x^2+y^2+z^2+w^2		x^2+y^2+z^2+w^2		x^2+x^2+x^2+w^2
 
-	float4 tmp = _mm_rcp_ps(m0);//tính gần đúng 1/m0
+	hq_sse_float4 tmp = _mm_rcp_ps(m0);//tính gần đúng 1/m0
 	//Newton_Raphson iteration Y(n+1)=2*Y(n)-x*Y(n)^2 - giảm sai số
 	m0  = _mm_sub_ps(_mm_add_ps(tmp, tmp), _mm_mul_ps(m0, _mm_mul_ps(tmp, tmp)));
 
@@ -1337,10 +1337,10 @@ HQQuaternion* HQQuatInverse(const HQQuaternion* in,HQQuaternion* out){
 
 	HQDXQuatInverse(in->q, out->q);
 #else /*SSE*/
-	float4 m0=_mm_load_ps(in->q);
-	float4 m1=_mm_load_ps((hq_float32*)Quatmask);
+	hq_sse_float4 m0=_mm_load_ps(in->q);
+	hq_sse_float4 m1=_mm_load_ps((hq_float32*)Quatmask);
 	
-	float4 m2=_mm_xor_ps(m0,m1);//-x,-y,-z,w
+	hq_sse_float4 m2=_mm_xor_ps(m0,m1);//-x,-y,-z,w
 	m0=_mm_mul_ps(m0,m0);//nhân quat với chính nó x^2 y^2 z^2 w^2
 
 	m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(2,3,0,1));//	z^2 w^2 x^2 y^2
@@ -1351,7 +1351,7 @@ HQQuaternion* HQQuatInverse(const HQQuaternion* in,HQQuaternion* out){
 
 	m0=_mm_add_ps(m0,m1);//x^2+y^2+z^2+w^2		x^2+y^2+z^2+w^2		x^2+y^2+z^2+w^2		x^2+x^2+x^2+w^2 
 
-	float4 tmp = _mm_rcp_ps(m0);//tính gần đúng 1/m0
+	hq_sse_float4 tmp = _mm_rcp_ps(m0);//tính gần đúng 1/m0
 	//Newton_Raphson iteration Y(n+1)=2*Y(n)-x*Y(n)^2 - giảm sai số
 	m0  = _mm_sub_ps(_mm_add_ps(tmp, tmp), _mm_mul_ps(m0, _mm_mul_ps(tmp, tmp)));
 

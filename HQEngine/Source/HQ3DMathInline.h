@@ -187,7 +187,7 @@ HQ_FORCE_INLINE hq_float32 HQVector4::operator *(const HQVector4 &v2) const{
 	
 #elif defined HQ_SSE4_MATH
 	hq_float32 f;//kết quả cần trả về
-	float4 m0 , m1;
+	hq_sse_float4 m0 , m1;
 	m0 = _mm_load_ps(this->v);//copy vector data to 128 bit xmm register
 	m1 = _mm_load_ps(v2.v);//copy vector 2 data to 128 bit xmm register
 
@@ -197,7 +197,7 @@ HQ_FORCE_INLINE hq_float32 HQVector4::operator *(const HQVector4 &v2) const{
 	return f;//trả về f
 #else/*SSE*/
 	hq_float32 f;//kết quả cần trả về
-	float4 m0,m1,m2;
+	hq_sse_float4 m0,m1,m2;
 	m0=_mm_load_ps(this->v);//copy vector data to 128 bit xmm register
 	m1=_mm_load_ps(v2.v);//copy vector2 data to 128 bit xmm register
 	m0=_mm_mul_ps(m0,m1);//x1*x2 y1*y2 z1*z2 w1*w2
@@ -219,7 +219,7 @@ HQ_FORCE_INLINE hq_float32 HQVector4::LengthSqr()const{
 	return x*x+y*y+z*z;
 #elif defined HQ_SSE4_MATH
 	hq_float32 f;//kết quả cần trả về
-	float4 m0;
+	hq_sse_float4 m0;
 	m0 = _mm_load_ps(this->v);//copy vector data to 128 bit xmm register
 	m0 = _mm_dp_ps(m0 , m0 , SSE4_DP_MASK(0,1,1,1,0,0,0,1)) ;//binary format 01110001
 	
@@ -227,7 +227,7 @@ HQ_FORCE_INLINE hq_float32 HQVector4::LengthSqr()const{
 	return f;//trả về f
 #else/*SSE*/
 	hq_float32 f;//kết quả cần trả về
-	float4 m0,m1,m2;
+	hq_sse_float4 m0,m1,m2;
 	m0=_mm_load_ps(this->v);//copy vector data to 128 bit xmm register
 	m0=_mm_mul_ps(m0,m0);//nhân vector với chính nó x^2 y^2 z^2 w^2
 	m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(1,0,0,3));//	y^2 x^2 x^2 w^2
@@ -249,7 +249,7 @@ HQ_FORCE_INLINE hq_float32 HQVector4::Length() const{
 	return sqrtf(x * x + y * y + z * z);
 #elif defined HQ_SSE4_MATH
 	hq_float32 f;//kết quả cần trả về
-	float4 m0;
+	hq_sse_float4 m0;
 	m0 = _mm_load_ps(this->v);//copy vector data to 128 bit xmm register
 	m0 = _mm_dp_ps(m0 , m0 , SSE4_DP_MASK(0,1,1,1,0,0,0,1)) ;//binary format 01110001
 	
@@ -259,7 +259,7 @@ HQ_FORCE_INLINE hq_float32 HQVector4::Length() const{
 	return f;//trả về f
 #else/*SSE*/
 	hq_float32 f;//kết quả cần trả về
-	float4 m0,m1,m2;
+	hq_sse_float4 m0,m1,m2;
 	m0=_mm_load_ps(this->v);//copy vector data to 128 bit xmm register
 	m0=_mm_mul_ps(m0,m0);//nhân vector với chính nó x^2 y^2 z^2 w^2
 	m1 = hq_mm_copy_ps(m0,SSE_SHUFFLEL(1,0,0,3));//	y^2 x^2 x^2 w^2
@@ -351,7 +351,7 @@ HQ_FORCE_INLINE HQMatrix4& HQMatrix4::Transpose(){
 #elif defined HQ_DIRECTX_MATH
 	HQDXMatrix4Transpose(this->m, this->m);
 #else/*SSE*/
-	float4 m0 , m1 , m2 , m3 , m4 , m5 , m6 , m7;
+	hq_sse_float4 m0 , m1 , m2 , m3 , m4 , m5 , m6 , m7;
 
 	m0 = _mm_load_ps(&this->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&this->m[4]);//21 22 23 24
@@ -409,7 +409,7 @@ HQ_FORCE_INLINE HQMatrix4* HQMatrix4Transpose(const HQMatrix4 *in, HQMatrix4 *ou
 	HQDXMatrix4Transpose(in->m, out->m);
 	
 #else/*SSE*/
-	float4 m0 , m1 , m2 , m3 , m4 , m5 , m6 , m7;
+	hq_sse_float4 m0 , m1 , m2 , m3 , m4 , m5 , m6 , m7;
 
 	m0 = _mm_load_ps(&in->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&in->m[4]);//21 22 23 24
@@ -715,7 +715,7 @@ HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator +=(const HQQuaternion &quat
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatAdd(this->q, quat.q, this->q);
 #else /*SSE*/
-	float4 m0 , m1;
+	hq_sse_float4 m0 , m1;
 	m0 = _mm_load_ps(this->q);
 	m1 = _mm_load_ps(quat.q);
 
@@ -741,7 +741,7 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator +(const HQQuaternion &quat) 
 #else /*SSE*/
 	HQQuaternion result;
 
-	float4 m0 , m1;
+	hq_sse_float4 m0 , m1;
 	m0 = _mm_load_ps(this->q);
 	m1 = _mm_load_ps(quat.q);
 
@@ -763,7 +763,7 @@ HQ_FORCE_INLINE HQQuaternion* HQQuatAdd(const HQQuaternion *quat1, const HQQuate
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatAdd(quat1->q, quat2->q, out->q);
 #else /*SSE*/
-	float4 m0 , m1;
+	hq_sse_float4 m0 , m1;
 	m0 = _mm_load_ps(quat1->q);
 	m1 = _mm_load_ps(quat2->q);
 
@@ -789,7 +789,7 @@ HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator -=(const HQQuaternion &quat
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatSub(this->q, quat.q, this->q);
 #else /*SSE*/
-	float4 m0 , m1;
+	hq_sse_float4 m0 , m1;
 	m0 = _mm_load_ps(this->q);
 	m1 = _mm_load_ps(quat.q);
 
@@ -816,7 +816,7 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator -(const HQQuaternion &quat) 
 #else /*SSE*/
 	HQQuaternion result;
 
-	float4 m0 , m1;
+	hq_sse_float4 m0 , m1;
 	m0 = _mm_load_ps(this->q);
 	m1 = _mm_load_ps(quat.q);
 
@@ -838,7 +838,7 @@ HQ_FORCE_INLINE HQQuaternion* HQQuatSub(const HQQuaternion *quat1, const HQQuate
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatSub(quat1->q, quat2->q, out->q);
 #else /*SSE*/
-	float4 m0 , m1;
+	hq_sse_float4 m0 , m1;
 	m0 = _mm_load_ps(quat1->q);
 	m1 = _mm_load_ps(quat2->q);
 
@@ -862,8 +862,8 @@ HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator *=(const hq_float32 f){
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatMultiplyScalar(this->q, f, this->q);
 #else
-	float4 m0=_mm_load_ps(q);
-	float4 m1=_mm_load_ps1(&f);
+	hq_sse_float4 m0=_mm_load_ps(q);
+	hq_sse_float4 m1=_mm_load_ps1(&f);
 	m0=_mm_mul_ps(m0,m1);
 	_mm_store_ps(q,m0);
 #endif
@@ -893,8 +893,8 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator *(const hq_float32 f)const{
 	return result;
 #else
 	HQQuaternion result;
-	float4 m0=_mm_load_ps(q);
-	float4 m1=_mm_load_ps1(&f);
+	hq_sse_float4 m0=_mm_load_ps(q);
+	hq_sse_float4 m1=_mm_load_ps1(&f);
 	m0=_mm_mul_ps(m0,m1);
 	_mm_store_ps(result.q,m0);
 
@@ -912,7 +912,7 @@ HQ_FORCE_INLINE HQQuaternion* HQQuatMultiply(const HQQuaternion *quat1, hq_float
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatMultiplyScalar(quat1->q, f, out->q);
 #else /*SSE*/
-	float4 m0 , m1;
+	hq_sse_float4 m0 , m1;
 	m0 = _mm_load_ps(quat1->q);
 	m1=_mm_load_ps1(&f);
 
@@ -941,8 +941,8 @@ HQ_FORCE_INLINE HQQuaternion& HQQuaternion::operator /=(const hq_float32 f){
 #elif defined HQ_DIRECTX_MATH
 	HQDXQuatMultiplyScalar(this->q, rF, this->q);
 #else
-	float4 m0=_mm_load_ps(q);
-	float4 m1=_mm_load_ps1(&rF);
+	hq_sse_float4 m0=_mm_load_ps(q);
+	hq_sse_float4 m1=_mm_load_ps1(&rF);
 	m0=_mm_mul_ps(m0,m1);
 	_mm_store_ps(q,m0);
 #endif
@@ -974,8 +974,8 @@ HQ_FORCE_INLINE HQQuaternion HQQuaternion::operator /(const hq_float32 f)const{
 #else
 	HQQuaternion result;
 
-	float4 m0=_mm_load_ps(q);
-	float4 m1=_mm_load_ps1(&rF);
+	hq_sse_float4 m0=_mm_load_ps(q);
+	hq_sse_float4 m1=_mm_load_ps1(&rF);
 	m0=_mm_mul_ps(m0,m1);
 	_mm_store_ps(result.q,m0);
 
@@ -1009,8 +1009,8 @@ HQ_FORCE_INLINE HQ_UTIL_MATH_API HQQuaternion operator *(const hq_float32 f,cons
 #else
 	HQQuaternion result;
 
-	float4 m0=_mm_load_ps(quat.q);
-	float4 m1=_mm_load_ps1(&f);
+	hq_sse_float4 m0=_mm_load_ps(quat.q);
+	hq_sse_float4 m1=_mm_load_ps1(&f);
 	m0=_mm_mul_ps(m0,m1);
 	_mm_store_ps(result.q,m0);
 

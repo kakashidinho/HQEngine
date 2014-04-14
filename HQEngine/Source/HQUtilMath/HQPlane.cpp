@@ -68,7 +68,7 @@ HQPlane& HQPlane::Normalize()
 #else/*SSE*/
 	hq_float32 _1_over_length;
 	
-	float4 m0,m1,m2,m3;
+	hq_sse_float4 m0,m1,m2,m3;
 	m0=_mm_load_ps(N.v);//copy vector data to 16 bytes(128 bit) aligned memory
 	m2=m0;//copy m0 vào m2
 	m0=_mm_mul_ps(m0,m0);//nhân vector với chính nó x^2 y^2 z^2 w^2
@@ -79,7 +79,7 @@ HQPlane& HQPlane::Normalize()
 	m0=_mm_add_ps(m1,m0);//x^2+y^2		y^2+x^2		z^2+x^2		x^2+x^2
 	m0=_mm_add_ps(m3,m0);//x^2+y^2+z^2		x^2+y^2+z^2		x^2+y^2+z^2		x^2+x^2+x^2
 
-	float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
+	hq_sse_float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
 
 	
 	//Newton Raphson iteration y(n+1)=1/2 *(y(n)*(3-x*y(n)^2)); //phương pháp giảm sai số

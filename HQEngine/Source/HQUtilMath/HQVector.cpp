@@ -21,11 +21,11 @@ COPYING.txt included with this distribution for more information.
 
 #ifdef HQ_SSE_MATH
 
-const float4 _3Halves_1Zero = {0.5f , 0.5f ,0.5f ,0.0f};
-const float4 _4Threes = {3.0f , 3.0f ,3.0f ,3.0f};
-const float4 _4Zeros = {0.0f , 0.0f , 0.0f , 0.0f};
-const float4 _4Ones = {1.0f , 1.0f , 1.0f , 1.0f};
-const float4 _3Zeros_1One = {0.0f , 0.0f ,0.0f , 1.0f};
+const hq_sse_float4 _3Halves_1Zero = {0.5f , 0.5f ,0.5f ,0.0f};
+const hq_sse_float4 _4Threes = {3.0f , 3.0f ,3.0f ,3.0f};
+const hq_sse_float4 _4Zeros = {0.0f , 0.0f , 0.0f , 0.0f};
+const hq_sse_float4 _4Ones = {1.0f , 1.0f , 1.0f , 1.0f};
+const hq_sse_float4 _3Zeros_1One = {0.0f , 0.0f ,0.0f , 1.0f};
 const HQ_ALIGN16 hq_uint32 Mask[4]={0xffffffff,0xffffffff,0xffffffff,0x00000000};
 const HQ_ALIGN16 hq_uint32 Mask2[4]={0x00000000,0x00000000,0x00000000,0xffffffff};
 
@@ -56,7 +56,7 @@ HQVector4 HQVector4::Cross(const HQVector4& v2)const{
 	HQDXVector4Cross(this->v, v2, result);
 #else
 	HQVector4 result;
-	float4 m0,m1,m2,m3;
+	hq_sse_float4 m0,m1,m2,m3;
 	/*
 	hq_float32 oldW1=v1->w;
 	hq_float32 oldW2=v2->w;
@@ -96,7 +96,7 @@ HQVector4& HQVector4::Cross(const HQVector4 &v1, const HQVector4 &v2){
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4Cross(v1, v2, this->v);
 #else
-	float4 m0,m1,m2,m3;
+	hq_sse_float4 m0,m1,m2,m3;
 	/*
 	hq_float32 oldW1=v1->w;
 	hq_float32 oldW2=v2->w;
@@ -139,7 +139,7 @@ HQVector4* HQVector4Cross(const HQVector4 *v1,const HQVector4 *v2,HQVector4* out
 #elif defined HQ_DIRECTX_MATH
 	HQDXVector4Cross(v1->v, v2->v, out->v);
 #else
-	float4 m0,m1,m2,m3;
+	hq_sse_float4 m0,m1,m2,m3;
 	/*
 	hq_float32 oldW1=v1->w;
 	hq_float32 oldW2=v2->w;
@@ -185,7 +185,7 @@ HQVector4& HQVector4::Normalize(){
 	HQDXVector4Normalize(this->v, this->v);
 #else
 	/* SSE intrinsics version*/
-	float4 m0,m1,m2,m3;
+	hq_sse_float4 m0,m1,m2,m3;
 	m0=_mm_load_ps(this->v);//copy vector data to xmm register
 	m2=m0;//copy m0 vào m2
 	m0=_mm_mul_ps(m0,m0);//nhân vector với chính nó x^2 y^2 z^2 w^2
@@ -197,7 +197,7 @@ HQVector4& HQVector4::Normalize(){
 	m0=_mm_add_ps(m3,m0);//x^2+y^2+z^2		x^2+y^2+z^2		x^2+y^2+z^2		w^2+w^2+w^2 
 
 
-	float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
+	hq_sse_float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
 	
 	temp = _mm_and_ps(temp,_mm_load_ps((hq_float32*)Mask));// rsqrt(length) ,rsqrt(length) ,rsqrt(length)  ,0
 
@@ -224,7 +224,7 @@ HQVector4* HQVector4Normalize(const HQVector4* in,HQVector4* out){
 	HQDXVector4Normalize(in->v , out->v);
 #else
 	/* SSE intrinsics version*/
-	float4 m0,m1,m2,m3;
+	hq_sse_float4 m0,m1,m2,m3;
 	m0=_mm_load_ps(in->v);//copy vector data to xmm register
 	m2=m0;//copy m0 vào m2
 	m0=_mm_mul_ps(m0,m0);//nhân vector với chính nó x^2 y^2 z^2 w^2
@@ -235,7 +235,7 @@ HQVector4* HQVector4Normalize(const HQVector4* in,HQVector4* out){
 	m0=_mm_add_ps(m1,m0);//x^2+y^2		y^2+x^2		z^2+x^2		w^2+w^2
 	m0=_mm_add_ps(m3,m0);//x^2+y^2+z^2		x^2+y^2+z^2		x^2+y^2+z^2		w^2+w^2+w^2   
 	
-	float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
+	hq_sse_float4 temp=_mm_rsqrt_ps(m0);//	tính gần đúng 1/căn ,nhanh hơn tính căn rồi lấy 1 chia cho căn
 	
 	temp = _mm_and_ps(temp,_mm_load_ps((hq_float32*)Mask));// rsqrt(length) ,rsqrt(length) ,rsqrt(length)  ,0
 
@@ -268,7 +268,7 @@ HQVector4& HQVector4::operator *=(const HQMatrix4 &m){
 	HQDXVector4MultiplyMatrix4(this->v, m, this->v);
 #else
 	/*SSE version*/
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 	//hq_float32 oldW=this->w;
 	m0=_mm_load_ps(this->v);//x y z w
 	
@@ -316,7 +316,7 @@ HQVector4 HQVector4::operator *(const HQMatrix4 &m)const{
 #else
 	HQVector4 result;
 	/*SSE version*/
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 	m0=_mm_load_ps(this->v);
 	
 	m1 = hq_mm_copy_ps(m0,0x55);//y y y y
@@ -362,7 +362,7 @@ HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix4* mat,HQVector4
 	HQDXVector4MultiplyMatrix4(v1->v, mat->m, out->v);	
 #else
 	//hq_float32 oldW=v1->w;
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 	
 	m4=_mm_load_ps(mat->m);
 	m5=_mm_load_ps(mat->m+4);
@@ -417,7 +417,7 @@ HQVector4* HQVector4MultiTransform(const HQVector4* v, hq_uint32 numVec, const H
 	HQDXMultiVector4MultiplyMatrix4(v->v, numVec, mat->m, out->v);
 #else
 	//hq_float32 oldW=v1->w;
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 	
 	m4=_mm_load_ps(mat->m);
 	m5=_mm_load_ps(mat->m+4);
@@ -475,7 +475,7 @@ HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix4* mat,HQVe
 #else
 	//hq_float32 oldW=v1->w;
 	
-	float4 m0,m1,m2,m3,m4,m5,m6;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6;
 	
 	m4=_mm_load_ps(mat->m);
 	m5=_mm_load_ps(mat->m+4);
@@ -535,7 +535,7 @@ HQVector4* HQVector4MultiTransformCoord(const HQVector4* v, hq_uint32 numVec, co
 	HQDXMultiVector4TransformCoord(v->v, numVec, mat->m, out->v);
 #else
 	//hq_float32 oldW=v1->w;
-	float4 m0,m1,m2,m3,m4,m5,m6;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6;
 	
 	m4=_mm_load_ps(mat->m);
 	m5=_mm_load_ps(mat->m+4);
@@ -591,7 +591,7 @@ HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix4* mat,HQV
 #else
 	//hq_float32 oldW=v1->w;
 
-	float4 m0,m1,m2,m4,m5,m6;
+	hq_sse_float4 m0,m1,m2,m4,m5,m6;
 
 	m4=_mm_load_ps(mat->m);
 	m5=_mm_load_ps(mat->m+4);
@@ -649,7 +649,7 @@ HQVector4* HQVector4MultiTransformNormal(const HQVector4* v, hq_uint32 numVec, c
 	HQDXMultiVector4TransformNormal(v->v, numVec, mat->m, out->v);
 #else
 	//hq_float32 oldW=v1->w;
-	float4 m0,m1,m2,m4,m5,m6;
+	hq_sse_float4 m0,m1,m2,m4,m5,m6;
 	
 	m4=_mm_load_ps(mat->m);
 	m5=_mm_load_ps(mat->m+4);
@@ -701,7 +701,7 @@ HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix3x4* mat,HQVecto
 	HQDXMatrix3x4MultiplyVector4(mat->m, v1->v, out->v);
 #elif defined HQ_SSE4_MATH
 	//load matrix
-	float4 m0 , m1 , m2 , m3 ;
+	hq_sse_float4 m0 , m1 , m2 , m3 ;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -720,7 +720,7 @@ HQVector4* HQVector4Transform(const HQVector4* v1,const HQMatrix3x4* mat,HQVecto
 #else
 	//hq_float32 oldW=v1->w;
 	//load matrix
-	float4 m0 , m1 , m2 , m3 , m4 , m5 , m6 , m7;
+	hq_sse_float4 m0 , m1 , m2 , m3 , m4 , m5 , m6 , m7;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -795,7 +795,7 @@ HQVector4* HQVector4MultiTransform(const HQVector4* v,hquint32 numVec , const HQ
 	HQDXMatrix3x4MultiplyMultiVector4(mat->m, v->v, numVec, out->v);
 	
 #elif defined HQ_SSE4_MATH
-	float4 m0 , m1 , m2 , m3 , m4;
+	hq_sse_float4 m0 , m1 , m2 , m3 , m4;
 
 	m1 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m2 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -818,7 +818,7 @@ HQVector4* HQVector4MultiTransform(const HQVector4* v,hquint32 numVec , const HQ
 #else
 	//hq_float32 oldW=v1->w;
 	//load matrix
-	float4 m0 , m1 , m2 , m3 , m4 , m5 , m6 , m7;
+	hq_sse_float4 m0 , m1 , m2 , m3 , m4 , m5 , m6 , m7;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -892,7 +892,7 @@ HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix3x4* mat,HQ
 	
 #elif defined HQ_SSE4_MATH
 	//load matrix
-	float4 m0 , m1 , m2 , m3;
+	hq_sse_float4 m0 , m1 , m2 , m3;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -913,7 +913,7 @@ HQVector4* HQVector4TransformCoord(const HQVector4* v1,const HQMatrix3x4* mat,HQ
 #else
 	//hq_float32 oldW=v1->w;
 	//load matrix
-	float4 m0 , m1 , m2 , m4 , m5 , m6 , m7;
+	hq_sse_float4 m0 , m1 , m2 , m4 , m5 , m6 , m7;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -986,7 +986,7 @@ HQVector4* HQVector4MultiTransformCoord(const HQVector4* v ,hquint32 numVec ,con
 	HQDXMultiVector4TransformCoordMatrix3x4(v->v, numVec, mat->m, out->v);
 	
 #elif defined HQ_SSE4_MATH
-	float4 m0 , m1 , m2 , m3 , m4;
+	hq_sse_float4 m0 , m1 , m2 , m3 , m4;
 
 	m1 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m2 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -1011,7 +1011,7 @@ HQVector4* HQVector4MultiTransformCoord(const HQVector4* v ,hquint32 numVec ,con
 #else
 	//hq_float32 oldW=v1->w;
 	//load matrix
-	float4 m0 , m1 , m2 , m4 , m5 , m6 , m7;
+	hq_sse_float4 m0 , m1 , m2 , m4 , m5 , m6 , m7;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -1081,7 +1081,7 @@ HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix3x4* mat,H
 	
 #elif defined HQ_SSE4_MATH
 	//load matrix
-	float4 m0 , m1 , m2 , m3 ;
+	hq_sse_float4 m0 , m1 , m2 , m3 ;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -1099,7 +1099,7 @@ HQVector4* HQVector4TransformNormal(const HQVector4* v1,const HQMatrix3x4* mat,H
 #else
 	//hq_float32 oldW=v1->w;
 	//load matrix
-	float4 m0 , m1 , m2 , m4 , m5 , m6 , m7;
+	hq_sse_float4 m0 , m1 , m2 , m4 , m5 , m6 , m7;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -1170,7 +1170,7 @@ HQVector4* HQVector4MultiTransformNormal(const HQVector4* v , hquint32 numVec ,c
 	HQDXMultiVector4TransformNormalMatrix3x4(v->v, numVec, mat->m, out->v);
 	
 #elif defined HQ_SSE4_MATH
-	float4 m0 , m1 , m2 , m3 , m4;
+	hq_sse_float4 m0 , m1 , m2 , m3 , m4;
 
 	m1 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m2 = _mm_load_ps(&mat->m[4]);//21 22 23 24
@@ -1192,7 +1192,7 @@ HQVector4* HQVector4MultiTransformNormal(const HQVector4* v , hquint32 numVec ,c
 #else
 	//hq_float32 oldW=v1->w;
 	//load matrix
-	float4 m0 , m1 , m2 , m4 , m5 , m6 , m7;
+	hq_sse_float4 m0 , m1 , m2 , m4 , m5 , m6 , m7;
 
 	m0 = _mm_load_ps(&mat->m[0]);//11 12 13 14
 	m1 = _mm_load_ps(&mat->m[4]);//21 22 23 24

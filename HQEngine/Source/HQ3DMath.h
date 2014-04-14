@@ -1387,10 +1387,10 @@ public:
 //========================================================
 //constants
 #ifdef HQ_SSE_MATH
-extern const float4 _3Halves_1Zero;//{0.5 , 0.5 ,0.5 ,0}
-extern const float4 _4Threes;// {3.0f , 3.0f ,3.0f ,3.0f};
-extern const float4 _4Zeros;// { 0 , 0 , 0 , 0}
-extern const float4 _4Ones;// { 1 , 1 , 1 , 1}
+extern const hq_sse_float4 _3Halves_1Zero;//{0.5 , 0.5 ,0.5 ,0}
+extern const hq_sse_float4 _4Threes;// {3.0f , 3.0f ,3.0f ,3.0f};
+extern const hq_sse_float4 _4Zeros;// { 0 , 0 , 0 , 0}
+extern const hq_sse_float4 _4Ones;// { 1 , 1 , 1 , 1}
 #endif
 //========================================================
 

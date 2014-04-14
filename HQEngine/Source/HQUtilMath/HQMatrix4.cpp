@@ -43,7 +43,7 @@ HQVector4 HQMatrix4::operator *(const HQVector4 &v) const{
 #else
 	/* SSE version*/
 
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 
 	m0=_mm_load_ps(m); 
 	m1=_mm_load_ps(m+4);
@@ -114,7 +114,7 @@ HQVector4* HQMatrix4rMulVec(const HQMatrix4* mat,const HQVector4* v1,HQVector4* 
 	HQDXMatrix4MultiplyVector4(mat->m, v1->v , out->v);
 
 #else
-	float4 m0,m1,m2,m3,m4,m5,m6,m7;
+	hq_sse_float4 m0,m1,m2,m3,m4,m5,m6,m7;
 
 	m0=_mm_load_ps(mat->m); 
 	m1=_mm_load_ps(mat->m+4);
@@ -348,7 +348,7 @@ HQMatrix4& HQMatrix4::operator *=(const HQMatrix4 &m){
 	HQDXMatrix4Multiply(this->m, m, this->m);
 
 #else
-	float4 xmm[4],re,row,e;
+	hq_sse_float4 xmm[4],re,row,e;
 
 	//load 4 hàng của matix m
 	xmm[0]=_mm_load_ps(&m.m[0]);
@@ -457,7 +457,7 @@ HQMatrix4 HQMatrix4::operator *(const HQMatrix4 &m) const{
 
 	HQMatrix4  result(NULL);
 
-	float4 xmm[4],re,row,e;
+	hq_sse_float4 xmm[4],re,row,e;
 
 	//load 4 hàng của matix m
 	xmm[0]=_mm_load_ps(&m.m[0]);
@@ -555,7 +555,7 @@ HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix4* pM2,HQMatrix4
 	HQDXMatrix4Multiply(pM1->m, pM2->m, pOut->m);
 
 #else
-	float4 xmm[4],re,row,e;
+	hq_sse_float4 xmm[4],re,row,e;
 
 	//load 4 hàng của matix 2
 	xmm[0]=_mm_load_ps(&pM2->m[0]);
@@ -654,7 +654,7 @@ HQMatrix4* HQMatrix4Multiply(const HQMatrix4* pM1,const HQMatrix3x4* pM2,HQMatri
 #else
 	static const HQ_ALIGN16 hq_uint32 _3Zeros_1One_Masks[4]={0x00000000,0x00000000,0x00000000,0xffffffff};
 
-	float4 xmm[3],re,row , e,masks;
+	hq_sse_float4 xmm[3],re,row , e,masks;
 	
 	masks = _mm_load_ps((hq_float32*)_3Zeros_1One_Masks);
 	//load 3 hàng của matix 2
@@ -749,7 +749,7 @@ HQ_UTIL_MATH_API HQMatrix4* HQMatrix4MultiMultiply(const HQMatrix4* pM, hq_uint3
 		HQDXMultiMatrix4Multiply(pM->m, numMatrices, pOut->m);
 
 #else/*SSE*/
-		float4 xmm[4] , reRow[4] , row , e;
+		hq_sse_float4 xmm[4] , reRow[4] , row , e;
 
 		//load 4 hàng của matix 0
 		reRow[0]=_mm_load_ps(&pM[0].m[0]);
@@ -1105,20 +1105,20 @@ HQMatrix4* HQMatrix4Inverse(const HQMatrix4* pM,hq_float32* Determinant,HQMatrix
 	HQDXMatrix4Inverse(pM->m, pOut->m, Determinant);
 
 #else /*SSE version*/
-	float4 temp1;
-	float4 det;
-	float4 f0 , f1 , f2;
-	float4 m0 , m1 , m2 , m3;
+	hq_sse_float4 temp1;
+	hq_sse_float4 det;
+	hq_sse_float4 f0 , f1 , f2;
+	hq_sse_float4 m0 , m1 , m2 , m3;
 
 	m0 = _mm_load_ps(pM->m);//row0		m11 m12 m13 m14
 	m1 = _mm_load_ps(pM->m + 4);//row1  m21 m22 m23 m24
 	m2 = _mm_load_ps(pM->m + 8);//row2  m31 m32 m33 m34
 	m3 = _mm_load_ps(pM->m + 12);//row3 m41 m42 m43 m44
 
-	float4 s0 = _mm_unpackhi_ps(m3 , m2);//m43 m33 m44 m34
-	float4 s1 = _mm_unpackhi_ps(m1 , m0);//m23 m13 m24 m14
-	float4 s2 = _mm_unpacklo_ps(m2 , m3);//m31 m41 m32 m42
-	float4 s3 = _mm_unpacklo_ps(m0 , m1);//m11 m21 m12 m22
+	hq_sse_float4 s0 = _mm_unpackhi_ps(m3 , m2);//m43 m33 m44 m34
+	hq_sse_float4 s1 = _mm_unpackhi_ps(m1 , m0);//m23 m13 m24 m14
+	hq_sse_float4 s2 = _mm_unpacklo_ps(m2 , m3);//m31 m41 m32 m42
+	hq_sse_float4 s3 = _mm_unpacklo_ps(m0 , m1);//m11 m21 m12 m22
 	
 	m0 = _mm_movelh_ps(s2 , s3);//m31 m41 m11 m21==>13  14 11 12  	
 	m1 = _mm_movehl_ps(s3 , s2);//m32 m42 m12 m22==>23  24 21 22

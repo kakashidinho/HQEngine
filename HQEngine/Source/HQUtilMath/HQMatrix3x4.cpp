@@ -121,7 +121,7 @@ HQMatrix3x4& HQMatrix3x4::operator *=(const HQMatrix3x4 &m){
 	HQDXMatrix3x4Multiply(this->m, m, this->m);
 
 #else
-	float4 xmm[3],re,row , e ,masks;
+	hq_sse_float4 xmm[3],re,row , e ,masks;
 	
 	masks = _mm_load_ps((hq_float32*)_3Zeros_1One_Masks);
 	//load 3 hàng của matix m
@@ -211,7 +211,7 @@ HQMatrix3x4 HQMatrix3x4::operator *(const HQMatrix3x4 &m) const{
 
 	HQMatrix3x4 result( NULL);
 
-	float4 xmm[3],re,row ,e,masks;
+	hq_sse_float4 xmm[3],re,row ,e,masks;
 	
 	masks = _mm_load_ps((hq_float32*)_3Zeros_1One_Masks);
 	//load 3 hàng của matix m
@@ -313,7 +313,7 @@ HQMatrix3x4* HQMatrix3x4Multiply(const HQMatrix3x4* pM1,const HQMatrix3x4* pM2,H
 	HQDXMatrix3x4Multiply(pM1->m, pM2->m, pOut->m);
 
 #else
-	float4 xmm[3],re,row , e,masks;
+	hq_sse_float4 xmm[3],re,row , e,masks;
 	
 	masks = _mm_load_ps((hq_float32*)_3Zeros_1One_Masks);
 	//load 3 hàng của matix 2
@@ -392,7 +392,7 @@ HQ_UTIL_MATH_API HQMatrix3x4* HQMatrix3x4MultiMultiply(const HQMatrix3x4* pM, hq
 		HQDXMultiMatrix3x4Multiply(pM->m, numMatrices, pOut->m);
 		
 #else/*SSE*/
-		float4 xmm[3] , reRow[3] , row , e , masks;
+		hq_sse_float4 xmm[3] , reRow[3] , row , e , masks;
 		masks = _mm_load_ps((hq_float32*)_3Zeros_1One_Masks);
 
 		//load 3 hàng của matix 0
@@ -628,11 +628,11 @@ HQMatrix4* HQMatrix3x4Inverse(const HQMatrix3x4* pM,hq_float32* Determinant,HQMa
 	HQDXMatrix3x4InverseToMatrix4(pM->m, pOut->m, Determinant);
 
 #else /*SSE version*/
-	float4 temp1;
-	float4 det;
-	float4 f0 , f1 , f2;
-	float4 m0 , m1 , m2 , m3;
-	static const float4 _3Zeros_1One = {0.0f , 0.0f ,0.0f , 1.0f};
+	hq_sse_float4 temp1;
+	hq_sse_float4 det;
+	hq_sse_float4 f0 , f1 , f2;
+	hq_sse_float4 m0 , m1 , m2 , m3;
+	static const hq_sse_float4 _3Zeros_1One = {0.0f , 0.0f ,0.0f , 1.0f};
 
 	m0 = _mm_load_ps(pM->m);//row0		m11 m12 m13 m14
 	m1 = _mm_load_ps(pM->m + 4);//row1  m21 m22 m23 m24
@@ -640,10 +640,10 @@ HQMatrix4* HQMatrix3x4Inverse(const HQMatrix3x4* pM,hq_float32* Determinant,HQMa
 	m3 = _3Zeros_1One;//{0  0  0  1}	m41 m42 m43 m44
 
 
-	float4 s0 = _mm_unpackhi_ps(m3 , m2);//m43 m33 m44 m34
-	float4 s1 = _mm_unpackhi_ps(m1 , m0);//m23 m13 m24 m14
-	float4 s2 = _mm_unpacklo_ps(m2 , m3);//m31 m41 m32 m42
-	float4 s3 = _mm_unpacklo_ps(m0 , m1);//m11 m21 m12 m22
+	hq_sse_float4 s0 = _mm_unpackhi_ps(m3 , m2);//m43 m33 m44 m34
+	hq_sse_float4 s1 = _mm_unpackhi_ps(m1 , m0);//m23 m13 m24 m14
+	hq_sse_float4 s2 = _mm_unpacklo_ps(m2 , m3);//m31 m41 m32 m42
+	hq_sse_float4 s3 = _mm_unpacklo_ps(m0 , m1);//m11 m21 m12 m22
 	
 	m0 = _mm_movelh_ps(s2 , s3);//m31 m41 m11 m21==>13  14 11 12  	
 	m1 = _mm_movehl_ps(s3 , s2);//m32 m42 m12 m22==>23  24 21 22
