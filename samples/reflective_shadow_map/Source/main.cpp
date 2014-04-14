@@ -46,11 +46,11 @@ int HQEngineMain(int argc, char **argv)
 		);
 	HQEngineApp::GetInstance()->CreateInstanceAndWindow(&params, false, NULL);
 	HQEngineApp::GetInstance()->AddFileSearchPath("../Data");
-#if HQ_RENDER_RESOLUTION_CHANGEABLE 
+
 	HQEngineApp::GetInstance()->GetRenderDevice()->SetDisplayMode(600, 600, true);
 	HQViewPort viewport = {0, 0, 600, 600};
 	HQEngineApp::GetInstance()->GetRenderDevice()->SetViewPort(viewport);
-#endif
+
 
 
 	//create rendering loop
