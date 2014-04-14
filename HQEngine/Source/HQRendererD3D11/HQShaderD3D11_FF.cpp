@@ -481,14 +481,32 @@ HQReturnVal HQShaderManagerD3D11::DeActiveFFEmu()
 	{
 		if ((pFFEmu->m_flags & PROGRAM_SWITCHING) == 0)//if it is not zero then this method must be called when the fixed function controller is trying to switch the shader program
 		{
-			//restore previous buffers
-			if (pFFEmu->m_prevVConstBufferPtr != NULL)
-				pD3DContext->VSSetConstantBuffers(0 , 1 , &pFFEmu->m_prevVConstBufferPtr->pD3DBuffer);
-			if (pFFEmu->m_prevPConstBufferPtr != NULL)
-				pD3DContext->PSSetConstantBuffers(0 , 1 , &pFFEmu->m_prevPConstBufferPtr->pD3DBuffer);
+			//vertex shader buffer
+			if (this->uBufferSlots[0][0] != pFFEmu->m_constantBufferPtr)//this may be a change outside since last caching
+			{
+				pFFEmu->m_prevVConstBufferPtr = this->uBufferSlots[0][0];//save vertex shader's previous bound const buffer
+			}
+			else {
+				//restore previous buffer
+				if (pFFEmu->m_prevVConstBufferPtr != NULL)
+					pD3DContext->VSSetConstantBuffers(0, 1, &pFFEmu->m_prevVConstBufferPtr->pD3DBuffer);
 
-			this->uBufferSlots[0][0] = pFFEmu->m_prevVConstBufferPtr;
-			this->uBufferSlots[2][0] = pFFEmu->m_prevPConstBufferPtr;
+				this->uBufferSlots[0][0] = pFFEmu->m_prevVConstBufferPtr;
+			}
+
+			//pixel shader buffer
+			if (this->uBufferSlots[2][0] != pFFEmu->m_constantBufferPtr)//this may be a change outside since last caching
+			{
+				pFFEmu->m_prevPConstBufferPtr = this->uBufferSlots[2][0];//save pixel shader's previous bound const buffer
+
+			}
+			else
+			{   //restore previous buffer
+				if (pFFEmu->m_prevPConstBufferPtr != NULL)
+					pD3DContext->PSSetConstantBuffers(0, 1, &pFFEmu->m_prevPConstBufferPtr->pD3DBuffer);
+
+				this->uBufferSlots[2][0] = pFFEmu->m_prevPConstBufferPtr;
+			}
 
 			pFFEmu->SetActive(false);
 		}
@@ -654,7 +672,7 @@ void HQShaderManagerD3D11::NotifyFFRenderIfNeeded()// notify shader manager that
 	//vertex shader buffer
 	if (this->uBufferSlots[0][0] != pFFEmu->m_constantBufferPtr)//this may be a change outside since last draw call
 	{
-		pFFEmu->m_prevVConstBufferPtr = this->uBufferSlots[0][0];//save previous set vertex shader buffer
+		pFFEmu->m_prevVConstBufferPtr = this->uBufferSlots[0][0];//save vertex shader's previous bound const buffer
 
 		this->SetUniformBuffer(HQ_VERTEX_SHADER| 0, pFFEmu->m_constantBuffer);//set the fixed function shader's own buffer
 	}
@@ -662,7 +680,7 @@ void HQShaderManagerD3D11::NotifyFFRenderIfNeeded()// notify shader manager that
 	//pixel shader buffer
 	if (this->uBufferSlots[2][0] != pFFEmu->m_constantBufferPtr)//this may be a change outside since last draw call
 	{
-		pFFEmu->m_prevPConstBufferPtr = this->uBufferSlots[2][0];//save previous set pixel shader buffer
+		pFFEmu->m_prevPConstBufferPtr = this->uBufferSlots[2][0];//save pixel shader's previous bound const buffer
 
 		this->SetUniformBuffer(HQ_PIXEL_SHADER| 0, pFFEmu->m_constantBuffer);//set the fixed function shader's own buffer
 	}
