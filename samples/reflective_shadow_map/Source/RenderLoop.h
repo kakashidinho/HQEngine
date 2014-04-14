@@ -18,6 +18,16 @@ COPYING.txt included with this distribution for more information.
 #include "../../../ThirdParty-mod/MyGUI/include/MyGUI.h"
 #include "../../../ThirdParty-mod/MyGUI/include/MyGUI_HQEnginePlatform.h"
 
+#if defined HQ_USE_CUDA
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+#if defined _MSC_VER
+#include <cuda_d3d11_interop.h>
+#include <cuda_d3d9_interop.h>
+#endif
+#include <cuda_gl_interop.h>
+#endif//#if defined HQ_USE_CUDA
+
 #define DEPTH_PASS_RT_WIDTH 512 //offscreen render target size
 #define DEPTH_PASS_RT_HEIGHT 512 //offscreen render target size
 #define LOWRES_RT_WIDTH 128 //offscreen render target size
@@ -98,7 +108,11 @@ public:
 	void Render(HQTime dt);
 
 private:
+#ifdef HQ_USE_CUDA
+	void CudaGenerateNoiseMap();//generate noise map using CUDA
+#else
 	void DecodeNoiseMap();//decode noise map from RGBA image to float texture
+#endif
 
 	void DepthPassRender(HQTime dt);//render depth pass
 	void LowresPassRender(HQTime dt);

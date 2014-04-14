@@ -18,6 +18,7 @@ resources {
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="depth-pass-compiled-cg.hlslv" 			/* source file */
+		debug=true
 	}
 	
 	shader "depth-pass_ps" { 			/* name will be default to source file name */
@@ -25,6 +26,7 @@ resources {
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="depth-pass-compiled-cg.hlslf" 			/* source file */
+		debug=true
 	}
 	
 	shader "lowres-pass_vs" { 			/* name will be default to source file name */
@@ -32,6 +34,7 @@ resources {
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="lowres-pass-compiled-cg.hlslv" 			/* source file */
+		debug = true
 	}
 	
 	shader "lowres-pass_ps" { 			/* name will be default to source file name */
@@ -39,6 +42,7 @@ resources {
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="lowres-pass-compiled-cg.hlslf" 			/* source file */
+		debug = true
 	}
 	
 	
@@ -47,6 +51,7 @@ resources {
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="final-gathering-compiled-cg.hlslv" 			/* source file */
+		debug = true
 	}
 	
 	shader "final-gathering_ps" { 			/* name will be default to source file name */

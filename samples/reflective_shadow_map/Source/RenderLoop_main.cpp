@@ -135,8 +135,12 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	m_scene->AddChild(m_model);
 	m_scene->AddChild(m_camera);
 
+#ifdef HQ_USE_CUDA
+	CudaGenerateNoiseMap();
+#else
 	//decode noise map from RGBA image to float texture
 	DecodeNoiseMap();
+#endif
 
 	//init render device
 	m_pRDevice->SetClearColorf(1, 1, 1, 1);
@@ -163,6 +167,7 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER | 3, m_uniformLightProtBuffer);
 	}
 
+
 }
 
 //destructor
@@ -180,7 +185,66 @@ RenderLoop::~RenderLoop()
 	delete m_scene;
 }
 
+#ifdef HQ_USE_CUDA
+extern "C" void cudaGenerateNoiseMapKernel(cudaArray_t outputArray, unsigned int width, unsigned int height);
 
+void RenderLoop::CudaGenerateNoiseMap() //generate noise map using cuda
+{
+	HQEngineTextureResource* hqNoiseMapRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("decoded_random_factors_img");
+	hquint32 width, height;
+	hqNoiseMapRes->GetTexture2DSize(width, height);
+
+	//setup cuda
+	cudaError_t err;
+	cudaGraphicsResource_t cudaNoiseMapRes;
+
+	cudaArray_t cudaNoiseMapArray;
+	//set device and read properties
+	{
+		cudaDeviceProp prop;
+		err = cudaSetDevice(0);
+		err = cudaGetDeviceProperties(&prop, 0);
+
+		char buffer[512];
+		sprintf(buffer, "cuda device '%s'\n\tcompute capability = %d.%d\n", prop.name, prop.major, prop.minor);
+#ifdef _MSC_VER
+		OutputDebugStringA(buffer);
+#else
+		printf(buffer);
+#endif
+	}
+
+	if (strcmp(m_renderAPI_name, "GL") == 0)
+	{
+		err = cudaGraphicsGLRegisterImage(&cudaNoiseMapRes, (GLuint)hqNoiseMapRes->GetRawHandle(), GL_TEXTURE_2D, cudaGraphicsRegisterFlagsSurfaceLoadStore);
+	}
+	else if (strcmp(m_renderAPI_name, "D3D11") == 0)
+	{
+		err = cudaD3D11SetDirect3DDevice((ID3D11Device*)m_pRDevice->GetRawHandle());
+		err = cudaGraphicsD3D11RegisterResource(&cudaNoiseMapRes, (ID3D11Resource*)hqNoiseMapRes->GetRawHandle(), cudaGraphicsRegisterFlagsSurfaceLoadStore);
+	}
+	else
+	{
+		err = cudaD3D9SetDirect3DDevice((IDirect3DDevice9*)m_pRDevice->GetRawHandle());
+		err = cudaGraphicsD3D9RegisterResource(&cudaNoiseMapRes, (IDirect3DResource9*)hqNoiseMapRes->GetRawHandle(), cudaGraphicsRegisterFlagsSurfaceLoadStore);
+	}
+
+	//map cuda resource
+	err = cudaGraphicsMapResources(1, &cudaNoiseMapRes);
+	//get cuda resource arrray
+	err = cudaGraphicsSubResourceGetMappedArray(&cudaNoiseMapArray, cudaNoiseMapRes, 0, 0);
+	
+	//now run cuda kernel
+	cudaGenerateNoiseMapKernel(cudaNoiseMapArray, width, height);
+
+	err = cudaGraphicsUnmapResources(1, &cudaNoiseMapRes);
+
+	//clean up
+	err = cudaGraphicsUnregisterResource(cudaNoiseMapRes);
+
+	err = cudaDeviceReset();
+}
+#else
 void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float texture
 {
 	hquint32 width, height;//encoded noise map's size
@@ -232,6 +296,7 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(NULL);
 	m_pRDevice->DisplayBackBuffer();
 }
+#endif//#ifdef HQ_USE_CUDA
 
 //rendering loop
 void RenderLoop::Render(HQTime dt){

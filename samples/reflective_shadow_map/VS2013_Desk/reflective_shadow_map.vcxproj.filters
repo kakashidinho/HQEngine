@@ -16,6 +16,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Source Files\cuda">
+      <UniqueIdentifier>{0d5bf953-66de-4577-99d2-2900cccc5a6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\scripts">
+      <UniqueIdentifier>{2dcfb962-2234-4fb1-9160-e95010f83152}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\main.cpp">
@@ -52,5 +58,25 @@
     <CustomBuild Include="..\Data\noise_decoding.cg">
       <Filter>Source Files\shaders</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\Data\noise_generator.cu">
+      <Filter>Source Files\cuda</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Data\rsm_resourcesCommon.script">
+      <Filter>Source Files\scripts</Filter>
+    </None>
+    <None Include="..\Data\rsm_resourcesD3D9.script">
+      <Filter>Source Files\scripts</Filter>
+    </None>
+    <None Include="..\Data\rsm_resourcesD3D11.script">
+      <Filter>Source Files\scripts</Filter>
+    </None>
+    <None Include="..\Data\rsm_resourcesGL.script">
+      <Filter>Source Files\scripts</Filter>
+    </None>
+    <None Include="..\Data\rsm_effects.script">
+      <Filter>Source Files\scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>
