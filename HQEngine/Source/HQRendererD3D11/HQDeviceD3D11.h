@@ -247,6 +247,8 @@ public:
 		return true;
 	}
 
+	void * GetRawHandle() { return pDevice; }
+
 };
 extern HQDeviceD3D11* g_pD3DDev;
 #endif

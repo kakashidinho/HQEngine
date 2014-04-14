@@ -47,6 +47,9 @@ struct HQTextureD3D9:public HQBaseTexture
 		}
 	}
 
+	//implement HQGraphicsResourceRawRetrievable
+	virtual void * GetRawHandle() { return pData; }
+
 	virtual hquint32 GetWidth() const ;
 	virtual hquint32 GetHeight() const ;
 };

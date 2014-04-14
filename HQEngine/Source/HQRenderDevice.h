@@ -377,6 +377,11 @@ public:
 	///
 	virtual const char * GetDeviceDesc() = 0;
 
+	///
+	///D3D: return IDirect3DDevice9 or ID3D11Device pointer. Use with caution
+	///
+	virtual void * GetRawHandle() = 0;
+
 protected:
 	virtual ~HQRenderDevice(){};
 	

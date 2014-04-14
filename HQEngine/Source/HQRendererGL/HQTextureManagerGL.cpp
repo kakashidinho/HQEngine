@@ -105,6 +105,17 @@ hquint32 HQTextureGL::GetHeight() const
 	}
 }
 
+//implement HQGraphicsResourceRawRetrievable
+void * HQTextureGL::GetRawHandle()
+{
+	if (this->pData == NULL)
+		return NULL;
+	GLuint textureName = *((GLuint*)this->pData);
+
+	return (void*)textureName;
+}
+
+/*-----------------------HQTextureBufferGL----------------------*/
 #ifndef HQ_OPENGLES
 struct HQTextureBufferGL : public HQTextureGL
 {

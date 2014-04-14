@@ -20,7 +20,7 @@ COPYING.txt included with this distribution for more information.
 
 #define MAX_VERTEX_ATTRIBS 16
 
-struct HQBufferD3D11: public virtual HQMappableResource, public HQBaseIDObject
+struct HQBufferD3D11 : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable, public HQBaseIDObject
 {
 	HQBufferD3D11(bool isDynamic , hq_uint32 size)
 	{
@@ -38,6 +38,8 @@ struct HQBufferD3D11: public virtual HQMappableResource, public HQBaseIDObject
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
 
+	//implement HQGraphicsResourceRawRetrievable
+	virtual void * GetRawHandle() { return pD3DBuffer; }
 
 	ID3D11DeviceContext* pD3DContext;
 	ID3D11Buffer *pD3DBuffer;

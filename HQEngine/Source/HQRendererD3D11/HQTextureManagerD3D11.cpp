@@ -84,6 +84,13 @@ hquint32 HQTextureD3D11::GetHeight() const
 	}
 }
 
+//implement HQGraphicsResourceRawRetrievable
+void * HQTextureD3D11::GetRawHandle()
+{
+	if (this->pData == NULL)
+		return NULL;
+	return ((HQTextureResourceD3D11*)this->pData)->pTexture;
+}
 
 
 /*---------HQTextureBufferD3D11-----------------*/

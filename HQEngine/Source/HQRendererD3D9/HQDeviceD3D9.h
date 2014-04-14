@@ -167,6 +167,8 @@ public:
 
 	void OnLostDevice();
 	void OnResetDevice();
+
+	void * GetRawHandle() { return pDevice; }
 };
 extern HQDeviceD3D9* g_pD3DDev;
 #endif

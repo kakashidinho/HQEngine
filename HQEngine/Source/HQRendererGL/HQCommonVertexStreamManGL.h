@@ -18,12 +18,15 @@ COPYING.txt included with this distribution for more information.
 
 class HQVertexStreamManagerGL;
 
-struct HQBufferGL
+struct HQBufferGL: public virtual HQGraphicsResourceRawRetrievable
 {
 	HQBufferGL(hq_uint32 size , GLenum usage);
 	virtual ~HQBufferGL();
 	
 	virtual void OnCreated(const void *initData) {};
+
+	//implement HQGraphicsResourceRawRetrievable
+	virtual void * GetRawHandle() { return (void*)bufferName; }
 
 	GLenum usage;//GL_STATIC_DRAW or GL_DYNAMIC_DRAW
 	hq_uint32 size;

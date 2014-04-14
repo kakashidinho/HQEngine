@@ -41,6 +41,9 @@ struct HQTextureD3D11 :public HQBaseTexture
 	virtual hquint32 GetWidth() const;
 	virtual hquint32 GetHeight() const;
 
+	//implement HQGraphicsResourceRawRetrievable
+	virtual void * GetRawHandle();
+
 	typedef HQLinkedList<hquint32, HQPoolMemoryManager> SlotList; //list of texture slots that this texture is bound to
 	SlotList boundSlots;
 };

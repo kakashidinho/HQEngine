@@ -235,6 +235,8 @@ public:
 	{
 		return GLEW_VERSION_3_0 || GLEW_EXT_framebuffer_object;
 	}
+
+	void * GetRawHandle();
 };
 
 

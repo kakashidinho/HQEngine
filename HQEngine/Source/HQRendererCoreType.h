@@ -516,19 +516,29 @@ protected:
 	virtual ~HQRawPixelBuffer() {}
 };
 
-class HQGraphicsRestrictedObj {
+class HQRestrictedObj {
 protected:
-	virtual ~HQGraphicsRestrictedObj() {};
+	virtual ~HQRestrictedObj() {};
 };
 
-class HQMappableResource : public virtual HQGraphicsRestrictedObj {
+class HQGraphicsResourceRawRetrievable : public HQRestrictedObj{
+public:
+	///
+	///D3D: return IDirect3DResource9 or ID3D11Resource pointer. 
+	///GL: return OpenGL handle (GLuint).
+	///Use with caution
+	///
+	virtual void* GetRawHandle() = 0;
+};
+
+class HQMappableResource : public virtual HQRestrictedObj {
 public:
 	template <class T>
 	inline HQReturnVal Map(T** ppData, HQMapType mapType = HQ_MAP_DISCARD, hquint32 offset = 0, hquint32 size = 0) {
 		return GenericMap((void**)ppData, mapType, offset, size);
 	}
 	virtual hquint32 GetSize() const = 0;///mappable size
-	virtual inline HQReturnVal Update(const void * pData)///update entire resource
+	inline HQReturnVal Update(const void * pData)///update entire resource
 	{
 		return Update(0, GetSize(), pData);
 	}
@@ -538,7 +548,7 @@ protected:
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType = HQ_MAP_DISCARD, hquint32 offset = 0, hquint32 size = 0) = 0;
 };
 
-class HQTexture : public virtual HQGraphicsRestrictedObj {
+class HQTexture : public virtual HQGraphicsResourceRawRetrievable {
 public:
 	virtual hquint32 GetResourceIndex() const = 0;///return assigned index for resource
 
@@ -562,11 +572,11 @@ class HQUpdatableTexture : public HQTexture, public HQMappableResource {
 class HQTextureBuffer : public HQUpdatableTexture {
 };
 
-class HQVertexBuffer : public virtual HQMappableResource {
+class HQVertexBuffer : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable {
 
 };
 
-class HQIndexBuffer : public virtual HQMappableResource {
+class HQIndexBuffer : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable {
 
 };
 
@@ -574,28 +584,28 @@ class HQUniformBuffer : public virtual HQMappableResource {
 
 };
 
-class HQRenderTargetView : public virtual HQGraphicsRestrictedObj {
+class HQRenderTargetView : public virtual HQRestrictedObj {
 
 };
 
-class HQDepthStencilBufferView : public virtual HQGraphicsRestrictedObj {
+class HQDepthStencilBufferView : public virtual HQRestrictedObj {
 
 };
 
-class HQRenderTargetGroup : public virtual HQGraphicsRestrictedObj {
+class HQRenderTargetGroup : public virtual HQRestrictedObj {
 
 };
 
-class HQVertexLayout : public virtual HQGraphicsRestrictedObj {
+class HQVertexLayout : public virtual HQRestrictedObj {
 
 };
 
-class HQShaderObject : public virtual HQGraphicsRestrictedObj {
+class HQShaderObject : public virtual HQRestrictedObj {
 public:
 	virtual HQShaderType GetType() const = 0;
 };
 
-class HQShaderProgram : public virtual HQGraphicsRestrictedObj {
+class HQShaderProgram : public virtual HQRestrictedObj {
 public:
 	virtual bool HasShaderStage(HQShaderType type) {
 		return GetShader(type) == NULL;

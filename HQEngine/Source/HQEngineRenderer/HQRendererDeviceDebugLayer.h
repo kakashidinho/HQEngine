@@ -196,6 +196,8 @@ public:
 	{
 		return m_pDevice->GetDeviceDesc();
 	}
+
+	void* GetRawHandle() { return m_pDevice->GetRawHandle(); }
 };
 
 #endif

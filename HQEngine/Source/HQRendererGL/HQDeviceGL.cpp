@@ -1568,3 +1568,8 @@ HQReturnVal HQDeviceGL::SetViewPort(const HQViewPort &viewport)
 	return re;
 }
 
+
+void * HQDeviceGL::GetRawHandle()
+{ 
+	return NULL; 
+}
