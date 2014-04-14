@@ -29,20 +29,22 @@ extern void hqengine_res_parser_clean_up();
 /*------------texture resource----------*/
 HQEngineTextureResImpl::HQEngineTextureResImpl(const char* name)
 : HQNamedGraphicsRelatedObj(name),
-m_textureID(NULL)
+m_texture(NULL), m_renderTarget(NULL)
 {
 }
 
 HQEngineTextureResImpl::~HQEngineTextureResImpl()
 {
-	if (m_textureID != NULL)
-		m_renderDevice->GetTextureManager()->RemoveTexture(m_textureID);
+	if (m_texture != NULL)
+		m_renderDevice->GetTextureManager()->RemoveTexture(m_texture);
+	if (m_renderTarget != NULL)
+		m_renderDevice->GetRenderTargetManager()->RemoveRenderTarget(m_renderTarget);
 }
 
 void HQEngineTextureResImpl::GetTexture2DSize(hquint32 &width, hquint32 &height) const
 {
-	width = m_textureID->GetWidth();
-	height = m_textureID->GetHeight();
+	width = m_texture->GetWidth();
+	height = m_texture->GetHeight();
 }
 
 
