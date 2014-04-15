@@ -544,7 +544,7 @@ HQReturnVal HQEngineRenderPassD3D::ApplyTextureStates()
 		//set sampler state
 		ite->samplerState->Apply(ite->unitIndex);
 		//set texture
-		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetRawTexture());
+		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetTexture());
 	}
 	return HQ_OK;
 }
@@ -562,9 +562,9 @@ HQReturnVal HQEngineRenderPassGL::ApplyTextureStates()
 	for (; !ite.IsAtEnd(); ++ite) //for each controlled texture unit
 	{
 		//set texture's sampler state
-		ite->samplerState->Apply(ite->texture->GetRawTexture()->GetResourceIndex());
+		ite->samplerState->Apply(ite->texture->GetTexture()->GetResourceIndex());
 		//set texture
-		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetRawTexture());
+		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetTexture());
 	}
 	return HQ_OK;
 }
@@ -1840,7 +1840,7 @@ void HQEngineEffectManagerImpl::RemoveAllEffects()
 HQReturnVal HQEngineEffectManagerImpl::SetTexture(hq_uint32 slot, HQEngineTextureResource* texture)
 {
 	HQEngineTextureResImpl* textureImpl = (HQEngineTextureResImpl*)texture;
-	HQTexture* tid = textureImpl != NULL ? textureImpl->GetRawTexture() : NULL;
+	HQTexture* tid = textureImpl != NULL ? textureImpl->GetTexture() : NULL;
 
 	return HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
 		->SetTexture(slot, tid);
@@ -1849,7 +1849,7 @@ HQReturnVal HQEngineEffectManagerImpl::SetTexture(hq_uint32 slot, HQEngineTextur
 HQReturnVal HQEngineEffectManagerImpl::SetTextureForPixelShader(hq_uint32 slot, HQEngineTextureResource* texture)
 {
 	HQEngineTextureResImpl* textureImpl = (HQEngineTextureResImpl*)texture;
-	HQTexture* tid = textureImpl != NULL ? textureImpl->GetRawTexture() : NULL;
+	HQTexture* tid = textureImpl != NULL ? textureImpl->GetTexture() : NULL;
 
 	return HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
 		->SetTextureForPixelShader(slot, tid);

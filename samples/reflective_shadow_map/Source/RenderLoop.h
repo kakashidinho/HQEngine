@@ -19,13 +19,7 @@ COPYING.txt included with this distribution for more information.
 #include "../../../ThirdParty-mod/MyGUI/include/MyGUI_HQEnginePlatform.h"
 
 #if defined HQ_USE_CUDA
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-#if defined _MSC_VER
-#include <cuda_d3d11_interop.h>
-#include <cuda_d3d9_interop.h>
-#endif
-#include <cuda_gl_interop.h>
+#include "../../../utilities/CUDA/src/HQCudaBinding.h"
 #endif//#if defined HQ_USE_CUDA
 
 #define DEPTH_PASS_RT_WIDTH 512 //offscreen render target size

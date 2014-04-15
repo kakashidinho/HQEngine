@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;xcopy /q /y &quot;$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32\bin\$(ConfigurationName)\*.dll&quot;  $(OutDir)\"
+				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;xcopy /q /y &quot;$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32\bin\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -166,7 +166,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;xcopy /q /y &quot;$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32\bin\$(ConfigurationName)\*.dll&quot;  $(OutDir)\"
+				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;xcopy /q /y &quot;$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32\bin\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -244,7 +244,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;xcopy /q /y &quot;$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32\bin\$(ConfigurationName)\*.dll&quot;  $(OutDir)\"
+				CommandLine="xcopy /q /y &quot;$(SolutionDir)\..\..\..\HQEngine\VS2008\Output\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;xcopy /q /y &quot;$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32\bin\$(ConfigurationName)\*.dll&quot;  $(OutDir)\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

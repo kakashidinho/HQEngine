@@ -186,6 +186,7 @@ RenderLoop::~RenderLoop()
 }
 
 #ifdef HQ_USE_CUDA
+
 extern "C" void cudaGenerateNoiseMapKernel(cudaArray_t outputArray, unsigned int width, unsigned int height);
 
 void RenderLoop::CudaGenerateNoiseMap() //generate noise map using cuda
@@ -214,20 +215,8 @@ void RenderLoop::CudaGenerateNoiseMap() //generate noise map using cuda
 #endif
 	}
 
-	if (strcmp(m_renderAPI_name, "GL") == 0)
-	{
-		err = cudaGraphicsGLRegisterImage(&cudaNoiseMapRes, (GLuint)hqNoiseMapRes->GetRawHandle(), GL_TEXTURE_2D, cudaGraphicsRegisterFlagsSurfaceLoadStore);
-	}
-	else if (strcmp(m_renderAPI_name, "D3D11") == 0)
-	{
-		err = cudaD3D11SetDirect3DDevice((ID3D11Device*)m_pRDevice->GetRawHandle());
-		err = cudaGraphicsD3D11RegisterResource(&cudaNoiseMapRes, (ID3D11Resource*)hqNoiseMapRes->GetRawHandle(), cudaGraphicsRegisterFlagsSurfaceLoadStore);
-	}
-	else
-	{
-		err = cudaD3D9SetDirect3DDevice((IDirect3DDevice9*)m_pRDevice->GetRawHandle());
-		err = cudaGraphicsD3D9RegisterResource(&cudaNoiseMapRes, (IDirect3DResource9*)hqNoiseMapRes->GetRawHandle(), cudaGraphicsRegisterFlagsSurfaceLoadStore);
-	}
+	err = HQCudaBinding::cudaGraphicsSetDevice(m_pRDevice);
+	err = HQCudaBinding::cudaGraphicsRegisterResource(&cudaNoiseMapRes, hqNoiseMapRes, cudaGraphicsRegisterFlagsSurfaceLoadStore);
 
 	//map cuda resource
 	err = cudaGraphicsMapResources(1, &cudaNoiseMapRes);

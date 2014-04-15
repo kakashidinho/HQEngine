@@ -231,6 +231,7 @@ xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\b
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\utilities\CUDA\src\HQCudaBinding.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
     <ClCompile Include="..\Source\RenderLoop_depth_pass.cpp" />
     <ClCompile Include="..\Source\RenderLoop_final_pass.cpp" />
@@ -308,6 +309,10 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaBinding.h" />
+    <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaD3D11Binding.h" />
+    <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaD3D9Binding.h" />
+    <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaGLBinding.h" />
     <ClInclude Include="..\Source\RenderLoop.h" />
   </ItemGroup>
   <ItemGroup>

@@ -26,7 +26,7 @@ public:
 	virtual void GetTexture2DSize(hquint32 &width, hquint32 &height) const = 0;
 	virtual bool IsRenderTarget() const = 0;
 
-	virtual void* GetRawHandle() = 0;///see HQGraphicsResourceRawRetrievable::GetRawHandle()
+	virtual HQTexture* GetTexture() = 0;///caution: don't release this returned pointer
 protected:
 	virtual ~HQEngineTextureResource() {}
 };

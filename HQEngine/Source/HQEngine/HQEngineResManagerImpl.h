@@ -29,7 +29,7 @@ public:
 	virtual ~HQEngineTextureResImpl();
 
 	void Init(HQTexture* texture, HQRenderTargetView* renderTarget = NULL) {m_texture = texture; m_renderTarget = renderTarget;}
-	HQTexture* GetRawTexture() const { return m_texture; }
+	virtual HQTexture* GetTexture() { return m_texture; }
 	HQRenderTargetView* GetRenderTargetID() const { return m_renderTarget; }
 	virtual void GetTexture2DSize(hquint32 &width, hquint32 &height) const;
 	virtual bool IsRenderTarget() const {return m_renderTarget != NULL;}

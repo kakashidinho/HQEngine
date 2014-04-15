@@ -370,8 +370,8 @@ public:
 	///
 	///truy vấn tên mô tả của device.
 	///Các giá trị có thể trả về:
-	///-"Direct3D 9".
-	///-"Direct3D 11".
+	///-"Direct3D9".
+	///-"Direct3D11".
 	///-"OpenGL".
 	///-"OpenGL ES".
 	///

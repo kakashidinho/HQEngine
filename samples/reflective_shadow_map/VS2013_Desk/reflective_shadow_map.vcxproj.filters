@@ -39,10 +39,25 @@
     <ClCompile Include="..\Source\RenderLoop_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\utilities\CUDA\src\HQCudaBinding.cpp">
+      <Filter>Source Files\cuda</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\RenderLoop.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaBinding.h">
+      <Filter>Source Files\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaD3D9Binding.h">
+      <Filter>Source Files\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaD3D11Binding.h">
+      <Filter>Source Files\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaGLBinding.h">
+      <Filter>Source Files\cuda</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
