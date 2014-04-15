@@ -87,6 +87,7 @@ namespace MyGUI
 		void setViewSize(int _width, int _height);
 
 		bool isOpenGL() const {return mIsOpenGL;}
+		bool isD3D9() const { return mIsD3D9; }
 
 		void onDeviceLost();
 		void onDeviceReset();
@@ -106,6 +107,7 @@ namespace MyGUI
 		VertexColourType         mVertexFormat;
 		RenderTargetInfo         mInfo;
 		bool					 mIsOpenGL;
+		bool					 mIsD3D9;
 		bool                     mUpdate;
 
 		typedef std::map<std::string, HQEngineTexture*> MapTexture;
