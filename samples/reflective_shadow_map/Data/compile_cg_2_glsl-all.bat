@@ -1,6 +1,6 @@
 @echo off
 
-set TOOLS_FOLDER=%~dp0..\..\..\tools\HQShaderCompiler\Netbeans\HQEngineShaderCompiler
+set TOOLS_FOLDER=%~dp0..\..\..\utilities\HQShaderCompiler\Netbeans\HQEngineShaderCompiler
  
 pushd %~dp0 
 call :Compile depth-pass.cg

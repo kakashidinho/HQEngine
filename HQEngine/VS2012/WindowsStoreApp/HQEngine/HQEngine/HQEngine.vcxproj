@@ -3141,15 +3141,15 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_effect_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(Command)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(Command)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(Command)</Message>
@@ -3171,15 +3171,15 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_effect_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
@@ -3252,15 +3252,15 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\bison.exe  -d  -v -p hqengine_res_parser_ -o %(RelativeDir)gen_%(Filename).cpp %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(Command)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(Command)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(Command)</Message>
@@ -3282,15 +3282,15 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)..\..\..\tools\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)..\..\..\utilities\Third-Party\GnuWin32\bin\flex.exe   -Phqengine_res_parser_ -o%(RootDir)%(Directory)gen_%(Filename).cpp %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">%(RelativeDir)gen_%(Filename).cpp</Outputs>

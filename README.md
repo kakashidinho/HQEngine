@@ -70,7 +70,7 @@ Folder structure
 		* HQEngineIOS. (IOS 5.0+ version)
 	* Linux. (linux's build scripts)
 - samples. (sample codes)
-- tools. (contains supporting tools' code (incomplete) as well as third party tools)
+- utilities. (contains utilities and tools' code (incomplete) as well as third party tools)
 	* HQShaderCompiler. (has some utility projects for compiling shader in HQEngine format)
 - ThirdParty-mod. (contains code/libraries from third parties)
 	* Android-OpenAL-soft. (OpenAL library for Android)

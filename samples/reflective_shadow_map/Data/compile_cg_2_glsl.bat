@@ -1,6 +1,6 @@
 @echo off
 
-set TOOLS_FOLDER=%~dp0..\..\..\tools\HQShaderCompiler\Netbeans\HQEngineShaderCompiler
+set TOOLS_FOLDER=%~dp0..\..\..\utilities\HQShaderCompiler\Netbeans\HQEngineShaderCompiler
  
 set cmd=%TOOLS_FOLDER%\HQEXT_cg2glsl -profile glslv -entry VS -o %2 -version 120 %1
 echo.

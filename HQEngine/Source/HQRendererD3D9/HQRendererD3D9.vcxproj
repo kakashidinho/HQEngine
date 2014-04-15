@@ -350,15 +350,15 @@
     <None Include="HQRendererD3D9Def.def" />
     <CustomBuild Include="HQShaderD3D9_Lexer.l">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(Filename)_Gen.cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(Filename)_Gen.cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)_Gen.cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename)_Gen.cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">%(RootDir)%(Directory)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o%(Filename)_Gen.cpp  %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">%(Filename)_Gen.cpp</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(Command)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(Command)</Message>

@@ -550,7 +550,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="flex $(InputPath)"
-						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						CommandLine="$(InputDir)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
 						Outputs="$(InputName)_Gen.cpp"
 					/>
 				</FileConfiguration>
@@ -560,7 +560,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="flex $(InputPath)"
-						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						CommandLine="$(InputDir)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
 						Outputs="$(InputName)_Gen.cpp"
 					/>
 				</FileConfiguration>
@@ -570,7 +570,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="flex $(InputPath)"
-						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						CommandLine="$(InputDir)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
 						Outputs="$(InputName)_Gen.cpp"
 					/>
 				</FileConfiguration>
@@ -580,7 +580,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="flex $(InputPath)"
-						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						CommandLine="$(InputDir)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
 						Outputs="$(InputName)_Gen.cpp"
 					/>
 				</FileConfiguration>
@@ -590,7 +590,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="flex $(InputPath)"
-						CommandLine="$(InputDir)../../../tools/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+						CommandLine="$(InputDir)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
 						Outputs="$(InputName)_Gen.cpp"
 					/>
 				</FileConfiguration>

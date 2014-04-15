@@ -76,7 +76,7 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 11 "effect_script_parser.y"
+#line 11 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
 
 	#include "HQEngineCommonInternal.h"
 
@@ -107,7 +107,7 @@
 
 
 /* Line 189 of yacc.c  */
-#line 111 "gen_effect_script_parser.cpp"
+#line 111 "..\\..\\..\\..\\Source\\HQEngine\\gen_effect_script_parser.cpp"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -162,7 +162,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 42 "effect_script_parser.y"
+#line 42 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
 
 	struct {
 		int line;
@@ -179,7 +179,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 183 "gen_effect_script_parser.cpp"
+#line 183 "..\\..\\..\\..\\Source\\HQEngine\\gen_effect_script_parser.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -191,7 +191,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 195 "gen_effect_script_parser.cpp"
+#line 195 "..\\..\\..\\..\\Source\\HQEngine\\gen_effect_script_parser.cpp"
 
 #ifdef short
 # undef short
@@ -1425,14 +1425,14 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 71 "effect_script_parser.y"
+#line 71 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     { hqengine_effect_parser_root_result = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 75 "effect_script_parser.y"
+#line 75 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     { 
 		(yyval.node) = yynew_node("technique_blocks", (yyvsp[(1) - (1)].node)->GetSourceLine());
 		(yyval.node)->AddChild((yyvsp[(1) - (1)].node));
@@ -1442,7 +1442,7 @@ yyreduce:
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 79 "effect_script_parser.y"
+#line 79 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node)->AddChild((yyvsp[(1) - (2)].node));
 	;}
@@ -1451,7 +1451,7 @@ yyreduce:
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 84 "effect_script_parser.y"
+#line 84 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (2)].node);
 		(yyval.node)->SetType("techniques");
@@ -1462,7 +1462,7 @@ yyreduce:
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 91 "effect_script_parser.y"
+#line 91 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (3)].node);
 	;}
@@ -1471,7 +1471,7 @@ yyreduce:
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 97 "effect_script_parser.y"
+#line 97 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     { 
 		(yyval.node) = yynew_node();
 		(yyval.node)->AddChild((yyvsp[(1) - (1)].node));
@@ -1481,7 +1481,7 @@ yyreduce:
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 101 "effect_script_parser.y"
+#line 101 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node)->AddChild((yyvsp[(2) - (2)].node));
 	;}
@@ -1490,7 +1490,7 @@ yyreduce:
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 107 "effect_script_parser.y"
+#line 107 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(3) - (3)].node);
 		(yyval.node)->SetType("technique");
@@ -1502,7 +1502,7 @@ yyreduce:
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 113 "effect_script_parser.y"
+#line 113 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(3) - (3)].node);
 		(yyval.node)->SetType("pass");
@@ -1514,7 +1514,7 @@ yyreduce:
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 119 "effect_script_parser.y"
+#line 119 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (2)].node);
 		(yyval.node)->SetType("blend");
@@ -1525,7 +1525,7 @@ yyreduce:
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 124 "effect_script_parser.y"
+#line 124 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (2)].node);
 		(yyval.node)->SetType("stencil");
@@ -1536,7 +1536,7 @@ yyreduce:
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 129 "effect_script_parser.y"
+#line 129 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (2)].node);
 		(yyval.node)->SetType("custom_targets");
@@ -1547,35 +1547,35 @@ yyreduce:
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 134 "effect_script_parser.y"
+#line 134 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 138 "effect_script_parser.y"
+#line 138 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 139 "effect_script_parser.y"
+#line 139 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 140 "effect_script_parser.y"
+#line 140 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 141 "effect_script_parser.y"
+#line 141 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = yynew_node((yyvsp[(1) - (3)].lex).string, (yyvsp[(1) - (3)].lex).line);
 		(yyval.node)->SetAttribute("value", (yyvsp[(3) - (3)].value));	
@@ -1585,7 +1585,7 @@ yyreduce:
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 148 "effect_script_parser.y"
+#line 148 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = (yyvsp[(2) - (2)].node);
 		(yyval.node)->SetType((yyvsp[(1) - (2)].lex).string);
@@ -1596,7 +1596,7 @@ yyreduce:
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 153 "effect_script_parser.y"
+#line 153 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = yynew_node((yyvsp[(1) - (3)].lex).string, (yyvsp[(1) - (3)].lex).line);
 		HQEngineEffectParserNode * source_elem = yynew_node("source", (yyvsp[(3) - (3)].lex).line);
@@ -1608,7 +1608,7 @@ yyreduce:
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 162 "effect_script_parser.y"
+#line 162 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = yynew_node("border_color", (yyvsp[(1) - (6)].lex).line);
 		hquint32 color = (((hquint32)(yyvsp[(3) - (6)].lex).iconst) & 0xff) << 24;
@@ -1623,7 +1623,7 @@ yyreduce:
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 174 "effect_script_parser.y"
+#line 174 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = yynew_node((yyvsp[(1) - (3)].lex).string, (yyvsp[(1) - (3)].lex).line);
 		(yyval.node)->SetAttribute("value", (yyvsp[(3) - (3)].lex).string);
@@ -1633,7 +1633,7 @@ yyreduce:
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 178 "effect_script_parser.y"
+#line 178 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {
 		(yyval.node) = yynew_node((yyvsp[(1) - (4)].lex).string, (yyvsp[(1) - (4)].lex).line);
 		(yyval.node)->SetAttribute("value", (yyvsp[(3) - (4)].lex).string);
@@ -1644,56 +1644,56 @@ yyreduce:
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 186 "effect_script_parser.y"
+#line 186 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.value) = (yyvsp[(1) - (1)].value);;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 187 "effect_script_parser.y"
+#line 187 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.value).type = HQEngineCommonResParserNode::ValueType::STRING_TYPE;  (yyval.value).string = (yyvsp[(1) - (1)].lex).string;;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 191 "effect_script_parser.y"
+#line 191 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.value).type = HQEngineCommonResParserNode::ValueType::STRING_TYPE;  (yyval.value).string = (yyvsp[(1) - (1)].lex).string;;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 192 "effect_script_parser.y"
+#line 192 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.value).type = HQEngineCommonResParserNode::ValueType::FLOAT_TYPE;  (yyval.value).fvalue = (yyvsp[(1) - (1)].lex).fconst;;}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 193 "effect_script_parser.y"
+#line 193 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.value).type = HQEngineCommonResParserNode::ValueType::INTEGER_TYPE;  (yyval.value).ivalue = (yyvsp[(1) - (1)].lex).iconst;;}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 197 "effect_script_parser.y"
+#line 197 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.lex) = (yyvsp[(1) - (1)].lex);;}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 198 "effect_script_parser.y"
+#line 198 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
     {(yyval.lex) = (yyvsp[(1) - (1)].lex);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1697 "gen_effect_script_parser.cpp"
+#line 1697 "..\\..\\..\\..\\Source\\HQEngine\\gen_effect_script_parser.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1905,7 +1905,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 201 "effect_script_parser.y"
+#line 201 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\effect_script_parser.y"
 
 
 void yyerror(const char *s) { 
