@@ -54,9 +54,9 @@ HQEngineShaderProgramWrapper::~HQEngineShaderProgramWrapper()
 HQReturnVal HQEngineShaderProgramWrapper::Init(const CreationParams& params)
 {
 	HQShaderObject* vID, *gID, *pID;
-	vID = params.vertexShader != NULL ? (params.vertexShader->GetRawShader() != NULL ? params.vertexShader->GetRawShader() : NULL) : NULL;
-	gID = params.geometryShader != NULL ? (params.geometryShader->GetRawShader() != NULL ? params.geometryShader->GetRawShader() : NULL) : NULL;
-	pID = params.pixelShader != NULL ? (params.pixelShader->GetRawShader() != NULL ? params.pixelShader->GetRawShader() : NULL) : NULL;
+	vID = params.vertexShader != NULL ? (params.vertexShader->GetShader() != NULL ? params.vertexShader->GetShader() : NULL) : NULL;
+	gID = params.geometryShader != NULL ? (params.geometryShader->GetShader() != NULL ? params.geometryShader->GetShader() : NULL) : NULL;
+	pID = params.pixelShader != NULL ? (params.pixelShader->GetShader() != NULL ? params.pixelShader->GetShader() : NULL) : NULL;
 
 	HQReturnVal re = m_renderDevice->GetShaderManager()->CreateProgram(vID, pID, gID, &m_programID);
 
@@ -1829,7 +1829,7 @@ void HQEngineEffectManagerImpl::RemoveAllEffects()
 												HQVertexLayout **pInputLayoutID)
  {
 	 HQEngineShaderResImpl * vshaderImpl = (HQEngineShaderResImpl*) vertexShader;
-	 HQShaderObject* vid = vshaderImpl != NULL ? vshaderImpl->GetRawShader(): NULL;
+	 HQShaderObject* vid = vshaderImpl != NULL ? vshaderImpl->GetShader(): NULL;
 
 	 return HQEngineApp::GetInstance()->GetRenderDevice()->GetVertexStreamManager()
 		 ->CreateVertexInputLayout(vAttribDescs, numAttrib, vid, pInputLayoutID);

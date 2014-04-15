@@ -26,7 +26,7 @@ public:
 	virtual void GetTexture2DSize(hquint32 &width, hquint32 &height) const = 0;
 	virtual bool IsRenderTarget() const = 0;
 
-	virtual HQTexture* GetTexture() = 0;///caution: don't release this returned pointer
+	virtual HQTexture* GetTexture() const = 0;///caution: don't release this returned pointer by HQTextureManager interface
 protected:
 	virtual ~HQEngineTextureResource() {}
 };
@@ -35,6 +35,7 @@ protected:
 class HQEngineShaderResource: public virtual HQEngineNamedObj {
 public:
 	virtual HQShaderType GetShaderType() const = 0;
+	virtual HQShaderObject* GetShader() const = 0;///caution: don't release this returned pointer by HQShaderManager interface
 protected:
 	virtual ~HQEngineShaderResource() {}
 };

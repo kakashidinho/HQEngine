@@ -75,7 +75,7 @@ HQMeshNode::HQMeshNode(const char *name,
 
 	HQEngineShaderResource* shaderRes = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource(vertexShaderName);
 	HQEngineShaderResImpl* shaderResImpl = (HQEngineShaderResImpl*) shaderRes;
-	HQShaderObject* vertexShaderID = shaderResImpl != NULL ? shaderResImpl->GetRawShader() : NULL;
+	HQShaderObject* vertexShaderID = shaderResImpl != NULL ? shaderResImpl->GetShader() : NULL;
 
 
 	this->Init(name, hqMeshFileName, vertexShaderID, pLogStream);

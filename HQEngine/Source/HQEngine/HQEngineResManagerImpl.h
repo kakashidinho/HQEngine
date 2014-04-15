@@ -29,7 +29,7 @@ public:
 	virtual ~HQEngineTextureResImpl();
 
 	void Init(HQTexture* texture, HQRenderTargetView* renderTarget = NULL) {m_texture = texture; m_renderTarget = renderTarget;}
-	virtual HQTexture* GetTexture() { return m_texture; }
+	virtual HQTexture* GetTexture() const  { return m_texture; }
 	HQRenderTargetView* GetRenderTargetID() const { return m_renderTarget; }
 	virtual void GetTexture2DSize(hquint32 &width, hquint32 &height) const;
 	virtual bool IsRenderTarget() const {return m_renderTarget != NULL;}
@@ -48,7 +48,7 @@ public:
 	virtual ~HQEngineShaderResImpl();
 
 	void Init(HQShaderType type, HQShaderObject* shaderID) { m_shader = shaderID; }
-	virtual HQShaderObject* GetRawShader() const { return m_shader; }
+	virtual HQShaderObject* GetShader() const { return m_shader; }
 	virtual HQShaderType GetShaderType() const { return m_shader->GetType(); }
 
 private:
