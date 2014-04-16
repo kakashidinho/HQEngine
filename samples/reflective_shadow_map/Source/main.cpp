@@ -30,8 +30,18 @@ int HQEngineMain(int argc, char **argv)
 #	endif
 #endif
 	
+#if defined WIN32
+#	if defined USE_D3D9 
+	const char renderAPI[] = "D3D9";//"D3D9" or "GL"
+#	elif defined USE_D3D11
+	const char renderAPI[] = "D3D11";//"D3D9" or "GL"
+#	else
 	const char renderAPI[] = "GL";//"D3D9" or "GL"
-
+#	endif
+#else
+	const char renderAPI[] = "GL";//"D3D9" or "GL"
+#endif
+	
 	//create log stream
 	HQLogStream *logStream = HQCreateFileLogStream("log.txt");
 

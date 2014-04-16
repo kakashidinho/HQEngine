@@ -1,0 +1,32 @@
+/*-----------compute shader------------*/
+#define PI 3.141592654
+#define WIDTH 20
+#define HEIGHT 20
+
+RWTexture2D<float4> decoded_noise_map : register(u0);
+Texture2D<float4> encoded_noise_map : register(t0);
+
+[numthreads(WIDTH, HEIGHT, 1)]
+void CS (uint3 threadIdx : SV_GroupThreadID)
+{
+	if (threadIdx.x >= WIDTH || threadIdx.y >= HEIGHT)
+		return;
+	float4 encoded = encoded_noise_map.Load(threadIdx);
+	
+	//pixel layout S2 = {A, R}, S1 = {G, B} 
+	float S1, S2;
+	
+	S1 = encoded.b + encoded.g * 256.0;
+	S1 /= 257.0;//scale down to [0..1]
+	
+	S2 = encoded.r + encoded.a * 256.0;
+	S2 /= 257.0;//scale down to [0..1]
+	
+	float4 output;
+	output.x = S1;
+	output.y = 0.5 * sin(2.0 * PI * S2) + 0.5; //scale down to between [0..1]
+	output.z = 0.5 * cos(2.0 * PI * S2) + 0.5; //scale down to between [0..1]
+	output.w = S1 * S1;
+	
+	decoded_noise_map[threadIdx.xy] = output;
+}

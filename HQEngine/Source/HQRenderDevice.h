@@ -299,6 +299,12 @@ public:
 	///truy vấn số texture nhiều nhất có thể dùng trong shader stage {shaderStage}
 	///
 	virtual hq_uint32 GetMaxShaderStageTextures(HQShaderType shaderStage) = 0;
+
+	///
+	///query max UAV textures for shader
+	///
+	virtual hq_uint32 GetMaxShaderTextureUAVs() = 0;
+	virtual hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage) = 0;
 	///
 	///is two sided stencil supported
 	///
@@ -308,6 +314,8 @@ public:
 	///
 	virtual bool IsBlendStateExSupported() = 0 ;
 	virtual bool IsTextureBufferFormatSupported(HQTextureBufferFormat format) = 0;
+
+	virtual bool IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextureType textureType, bool hasMipmap) = 0;
 
 	///
 	///are non power of 2 textures fully supported. That means it is not needed to use HQ_TAM_CLAMP address mode 

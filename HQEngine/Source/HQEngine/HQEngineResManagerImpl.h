@@ -104,6 +104,13 @@ public:
 											const char * image_files[6],
 											bool generateMipmap
 											);
+
+	virtual HQReturnVal AddTextureUAVResource(const char *name,
+		HQTextureUAVFormat format,
+		hquint32 width, hquint32 height,
+		bool hasMipmap
+		);
+
 	virtual HQReturnVal AddRenderTargetTextureResource(
 								  const char *name,
 								  hq_uint32 width , hq_uint32 height,
@@ -137,6 +144,7 @@ public:
 	virtual void RemoveAllResources();
 private:
 	HQReturnVal LoadResource(const HQEngineResParserNode* resource);
+	HQReturnVal LoadTextureUAV(const HQEngineResParserNode* textureItem);
 	HQReturnVal LoadTexture(const HQEngineResParserNode* textureItem, bool renderTarget = false);
 	HQReturnVal LoadShader(const HQEngineResParserNode* shaderItem);
 

@@ -491,6 +491,38 @@ HQReturnVal HQShaderManagerD3D11::ActiveProgram(HQShaderProgram* programID)
 	return HQ_OK;
 }
 
+HQReturnVal HQShaderManagerD3D11::ActiveComputeShader(HQShaderObject *shader)
+{
+	HQSharedPtr<HQShaderObjectD3D11> pShader = this->shaderObjects.GetItemPointer(shader);
+
+	if (this->activeCShader != pShader)
+	{
+		if (pShader == NULL)
+			pD3DContext->CSSetShader(0, 0, 0);
+		else
+		{
+			if (pShader->type != HQ_COMPUTE_SHADER)
+			{
+				Log("Error : invalid compute shader!");
+				return HQ_FAILED_INVALID_ID;
+			}
+
+			pD3DContext->CSSetShader(static_cast<ID3D11ComputeShader*> (pShader->pD3DShader), 0, 0);
+		}
+
+		this->activeCShader = pShader;
+	}
+
+	return HQ_OK;
+}
+
+HQReturnVal HQShaderManagerD3D11::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
+{
+	pD3DContext->Dispatch(numGroupX, numGroupY, numGroupZ);
+
+	return HQ_OK;
+}
+
 /*------------------------*/
 HQReturnVal HQShaderManagerD3D11::DestroyProgram(HQShaderProgram* programID)
 {
@@ -541,6 +573,8 @@ HQReturnVal HQShaderManagerD3D11::DestroyShader(HQShaderObject* shaderID)
 
 void HQShaderManagerD3D11::DestroyAllShader()
 {
+	this->ActiveComputeShader(NULL);
+
 	HQItemManager<HQShaderObjectD3D11>::Iterator ite;
 	this->shaderObjects.GetIterator(ite);
 
@@ -594,6 +628,10 @@ HQReturnVal HQShaderManagerD3D11::CreateShader(HQShaderType type , ID3D10Blob *p
 		case HQ_GEOMETRY_SHADER:
 			hr = pD3DDevice->CreateGeometryShader(pBlob->GetBufferPointer() , pBlob->GetBufferSize() , 
 				NULL ,(ID3D11GeometryShader **)&sobject->pD3DShader);
+			break;
+		case HQ_COMPUTE_SHADER:
+			hr = pD3DDevice->CreateComputeShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(),
+				NULL, (ID3D11ComputeShader **)&sobject->pD3DShader);
 			break;
 		}
 	}
@@ -741,9 +779,14 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamCg(HQShaderType type,
 		profile=this->cgVertexProfile;
 	else if (type==HQ_PIXEL_SHADER)
 		profile=this->cgPixelProfile;
-	else
+	else if (type == HQ_GEOMETRY_SHADER)
 	{
 		profile=this->cgGeometryProfile;
+	}
+	else
+	{
+		this->Log("Error : Unsupported Cg shader type=%x", (hquint32)type);
+		return HQ_FAILED;
 	}
 
 	char * streamContent = new char [dataStream->TotalSize() + 1];
@@ -807,9 +850,14 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemoryCg(HQShaderType type,
 		profile=this->cgVertexProfile;
 	else if (type==HQ_PIXEL_SHADER)
 		profile=this->cgPixelProfile;
-	else
+	else if (type == HQ_GEOMETRY_SHADER)
 	{
 		profile=this->cgGeometryProfile;
+	}
+	else
+	{
+		this->Log("Error : Unsupported Cg shader type=%x", (hquint32)type);
+		return HQ_FAILED;
 	}
 
 	char ** predefineMacroArgs = this->GetPredefineMacroArgumentsCg(pDefines);
@@ -872,23 +920,36 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamHLSL(HQShaderType type,
 		profile[3] = '5';
 		profile[6] = '\0';//remove "_level_9_3"
 		break;
-	case D3D_FEATURE_LEVEL_9_3:
-		if (type == HQ_GEOMETRY_SHADER)
-		{
-			Log("Error : geometry shader is not supported");
-			return HQ_FAILED;
-		}
-		break;
 	}
+
 
 	switch(type)
 	{
+	case HQ_VERTEX_SHADER:
+		profile[0] = 'v';
+		break;
 	case HQ_PIXEL_SHADER:
 		profile[0] = 'p';
 		break;
 	case HQ_GEOMETRY_SHADER:
+		if (this->featureLevel < D3D_FEATURE_LEVEL_10_0)
+		{
+			Log("Error : geometry shader is not supported");
+			return HQ_FAILED;
+		}
 		profile[0] = 'g';
 		break;
+	case HQ_COMPUTE_SHADER:
+		if (this->featureLevel < D3D_FEATURE_LEVEL_11_0)
+		{
+			Log("Error : compute shader is not supported");
+			return HQ_FAILED;
+		}
+		profile[0] = 'c';
+		break;
+	default:
+		this->Log("Error : Unsupported HLSL shader type=%x", (hquint32)type);
+		return HQ_FAILED;
 	}
 
 	const char nullStreamName[] = "";
@@ -912,8 +973,8 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamHLSL(HQShaderType type,
 	D3D10_SHADER_MACRO *macros = this->GetPredefineMacroArgumentsHLSL(pDefines);	
 
 	HRESULT hr;
-#if defined DEBUG || defined _DEBUG
-	bool writeToTemp = debugMode && WRITE_DEBUG_SHADER_TO_TEMP_FILE;
+#if (defined DEBUG || defined _DEBUG) && WRITE_DEBUG_SHADER_TO_TEMP_FILE
+	bool writeToTemp = debugMode;
 	if (debugMode && dataStream->GetName() != NULL)
 	{
 		//write translated code to temp file
@@ -998,23 +1059,36 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemoryHLSL(HQShaderType type,
 		profile[3] = '5';
 		profile[6] = '\0';//remove "_level_9_3"
 		break;
-	case D3D_FEATURE_LEVEL_9_3:
-		if (type == HQ_GEOMETRY_SHADER)
-		{
-			Log("Error : geometry shader is not supported");
-			return HQ_FAILED;
-		}
-		break;
 	}
 
-	switch(type)
+
+	switch (type)
 	{
+	case HQ_VERTEX_SHADER:
+		profile[0] = 'v';
+		break;
 	case HQ_PIXEL_SHADER:
 		profile[0] = 'p';
 		break;
 	case HQ_GEOMETRY_SHADER:
+		if (this->featureLevel < D3D_FEATURE_LEVEL_10_0)
+		{
+			Log("Error : geometry shader is not supported");
+			return HQ_FAILED;
+		}
 		profile[0] = 'g';
 		break;
+	case HQ_COMPUTE_SHADER:
+		if (this->featureLevel < D3D_FEATURE_LEVEL_11_0)
+		{
+			Log("Error : compute shader is not supported");
+			return HQ_FAILED;
+		}
+		profile[0] = 'c';
+		break;
+	default:
+		this->Log("Error : Unsupported HLSL shader type=%x", (hquint32)type);
+		return HQ_FAILED;
 	}
 
 	ID3D10Blob *pBlob = 0;
@@ -1475,6 +1549,18 @@ HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(hq_uint32 index ,  HQUniformB
 			/*TO DO: crash
 			else
 				pD3DContext->PSSetConstantBuffers(slot , 1 , NULL)*/;
+			*ppCurrentBuffer = pBuffer;
+		}
+		break;
+	case HQ_COMPUTE_SHADER:
+		ppCurrentBuffer = this->uBufferSlots[3] + slot;
+		if (pBuffer != *ppCurrentBuffer)
+		{
+			if (pBuffer != NULL)
+				pD3DContext->CSSetConstantBuffers(slot, 1, &pBuffer->pD3DBuffer);
+			/*TO DO: crash
+			else
+				pD3DContext->CSSetConstantBuffers(slot , 1 , NULL);*/
 			*ppCurrentBuffer = pBuffer;
 		}
 		break;

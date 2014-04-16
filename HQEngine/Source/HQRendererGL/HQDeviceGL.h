@@ -195,9 +195,13 @@ public:
 	hq_uint32 GetMaxShaderSamplers() {return pEnum->caps.nShaderSamplerUnits;}//truy vấn số texture sampler unit nhiều nhất có thể dùng trong shader
 	hq_uint32 GetMaxShaderStageSamplers(HQShaderType shaderStage) ;//truy vấn số texture sampler nhiều nhất có thể dùng trong shader stage <shaderStage>
 
+	hq_uint32 GetMaxShaderTextureUAVs();
+	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage);
+
 	bool IsTwoSideStencilSupported() {return true;};//is two sided stencil supported 
 	bool IsBlendStateExSupported() {return true;};//is extended blend state supported
 	bool IsTextureBufferFormatSupported(HQTextureBufferFormat format);
+	bool IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextureType textureType, bool hasMipmap);
 	bool IsNpotTextureFullySupported(HQTextureType textureType);
 	bool IsNpotTextureSupported(HQTextureType textureType);
 	/*

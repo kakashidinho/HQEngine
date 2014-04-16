@@ -108,6 +108,14 @@ public:
 		return m_pDevice->GetMaxShaderStageTextures(shaderStage);
 	}
 
+	hq_uint32 GetMaxShaderTextureUAVs() {
+		return m_pDevice->GetMaxShaderTextureUAVs();
+	}
+	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
+	{
+		return m_pDevice->GetMaxShaderStageTextureUAVs(shaderStage);
+	}
+
 	bool IsTwoSideStencilSupported() //is two sided stencil supported 
 	{
 		return m_pDevice->IsTwoSideStencilSupported();
@@ -120,6 +128,12 @@ public:
 	{
 		return m_pDevice->IsTextureBufferFormatSupported(format);
 	}
+
+	bool IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextureType textureType, bool hasMipmap)
+	{
+		return m_pDevice->IsUAVTextureFormatSupported(format, textureType, hasMipmap);
+	}
+
 	bool IsNpotTextureFullySupported(HQTextureType textureType)
 	{
 		return m_pDevice->IsNpotTextureFullySupported(textureType);

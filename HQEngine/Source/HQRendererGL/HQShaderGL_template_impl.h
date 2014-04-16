@@ -62,6 +62,21 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Active
 	return re;
 }
 
+/*-----------------------------*/
+template <class ShaderController, class BaseShaderManagerClass>
+HQReturnVal HQShaderManagerGL<ShaderController, BaseShaderManagerClass>::ActiveComputeShader(HQShaderObject *shader)
+{
+	//TO DO
+	return HQ_FAILED;
+}
+
+template <class ShaderController, class BaseShaderManagerClass>
+HQReturnVal HQShaderManagerGL<ShaderController, BaseShaderManagerClass>::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
+{
+	//TO DO
+	return HQ_FAILED;
+}
+
 /*--------------------------*/
 template <class ShaderController , class BaseShaderManagerClass>
 HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::CreateShaderFromStream(HQShaderType type,

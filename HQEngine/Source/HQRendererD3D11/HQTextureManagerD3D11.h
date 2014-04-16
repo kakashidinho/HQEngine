@@ -11,7 +11,14 @@ COPYING.txt included with this distribution for more information.
 #ifndef _MATERIALMAN_
 #define _MATERIALMAN_
 #include "../BaseImpl/HQTextureManagerBaseImpl.h"
+#include "../BaseImpl/HQBaseImplCommon.h"
+
 #include <d3d11.h>
+
+#ifndef D3D11_1_UAV_SLOT_COUNT
+#	define D3D11_1_UAV_SLOT_COUNT 64
+#endif
+#define HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER 0
 
 //this is the type of HQBaseTexture::pData
 struct HQTextureResourceD3D11
@@ -24,12 +31,23 @@ struct HQTextureResourceD3D11
 		pTexture = 0;
 		pResourceView = 0;
 	}
-	~HQTextureResourceD3D11()
+	virtual ~HQTextureResourceD3D11()
 	{
 		SafeRelease(pResourceView);
 		SafeRelease(pTexture);
 	}
 
+};
+
+struct HQUAVTextureResourceD3D11 : public HQTextureResourceD3D11
+{
+	HQUAVTextureResourceD3D11()
+	{
+	}
+	~HQUAVTextureResourceD3D11();
+
+	typedef HQClosedPrimeHashTable<UINT, ID3D11UnorderedAccessView*> LayeredViewTableType;
+	LayeredViewTableType layeredViews;
 };
 
 
@@ -57,8 +75,12 @@ public:
 	HQTextureCompressionSupport IsCompressionSupported(HQTextureType textureType, HQTextureCompressionFormat type);
 
 	HQReturnVal CreateShaderResourceView(HQBaseTexture * pTex);
+
 	HQReturnVal SetTexture(hq_uint32 slot , HQTexture* textureID);
 	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
+
+	HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel);
+
 	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
 	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);
 	HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex);
@@ -71,12 +93,19 @@ public:
 
 	HQReturnVal InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  ,void *initData, bool isDynamic);
 
+	HQReturnVal InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap);
+
 	HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
 	HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);
 
 	void UnbindTextureFromAllSlots(const HQSharedPtr<HQBaseTexture> &pTexture);//unbind the given texture from every texture slots
 
+
+	static DXGI_FORMAT GetD3DFormat(HQTextureUAVFormat format);
 private:
+	//create UAV for a certain mip level or get existing one
+	ID3D11UnorderedAccessView * GetOrCreateNewUAV(HQTextureType type, HQUAVTextureResourceD3D11 * pTexResD3D, hquint32 mipLevel);
+
 	ID3D11Device* pD3DDevice;
 	ID3D11DeviceContext* pD3DContext;
 
@@ -87,7 +116,9 @@ private:
 		HQTextureD3D11::SlotList::LinkedListNodeType *textureLink;//for fast removal
 		HQSharedPtr<HQBaseTexture> pTexture;
 	};
-	TextureSlot textureSlots[3][D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
+	TextureSlot textureSlots[4][D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
+
+	HQSharedPtr<HQBaseTexture> textureUAVSlots[2][D3D11_1_UAV_SLOT_COUNT];
 
 };
 #endif

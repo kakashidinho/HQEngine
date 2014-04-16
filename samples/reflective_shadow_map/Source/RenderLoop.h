@@ -106,6 +106,7 @@ private:
 	void CudaGenerateNoiseMap();//generate noise map using CUDA
 #else
 	void DecodeNoiseMap();//decode noise map from RGBA image to float texture
+	void ComputeShaderDecodeNoiseMap();//decode noise map from RGBA image to float texture using compute shader
 #endif
 
 	void DepthPassRender(HQTime dt);//render depth pass

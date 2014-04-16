@@ -10,6 +10,14 @@ COPYING.txt included with this distribution for more information.
 
 #include "RenderLoop.h"
 
+#if _MSC_VER >= 1800 && defined _DEBUG
+#	define DONT_SAVE_VSGLOG_TO_TEMP
+#	define VSG_DEFAULT_RUN_FILENAME L"graphics-capture.vsglog"
+//#	define VSG_NODEFAULT_INSTANCE
+#	include <vsgcapture.h> 
+#	define DX_FRAME_CAPTURE
+#endif
+
 /*--------SpotLight----------*/
 SpotLight::SpotLight(
 					 const HQColor& diffuse,
@@ -52,6 +60,10 @@ SpotLight::~SpotLight()
 //constructor
 RenderLoop::RenderLoop(const char* _renderAPI)
 {
+	bool use_compute_shader = false;
+
+	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
+
 	//prepare GUI engine
 	m_guiPlatform = new MyGUI::HQEnginePlatform();
 
@@ -77,7 +89,15 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	else if (strcmp(m_renderAPI_name, "D3D11") == 0)
 	{
 		this->m_renderAPI_type = HQ_RA_D3D;
-		strcpy(apiResNamXML, "rsm_resourcesD3D11.script");
+#ifndef HQ_USE_CUDA
+		if (this->m_pRDevice->IsShaderSupport(HQ_COMPUTE_SHADER, "5.0"))
+		{
+			use_compute_shader = true;
+			strcpy(apiResNamXML, "rsm_resourcesD3D11_compute_shader.script");
+		}
+		else
+#endif
+			strcpy(apiResNamXML, "rsm_resourcesD3D11.script");
 	}
 	else
 	{
@@ -93,9 +113,6 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 
 	//retrieve main effect
 	rsm_effect = HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("rsm");
-
-
-	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
 
 
 	//create scene container
@@ -139,7 +156,10 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	CudaGenerateNoiseMap();
 #else
 	//decode noise map from RGBA image to float texture
-	DecodeNoiseMap();
+	if (use_compute_shader)
+		ComputeShaderDecodeNoiseMap();
+	else
+		DecodeNoiseMap();
 #endif
 
 	//init render device
@@ -285,6 +305,40 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(NULL);
 	m_pRDevice->DisplayBackBuffer();
 }
+void RenderLoop::ComputeShaderDecodeNoiseMap()
+{
+#ifdef DX_FRAME_CAPTURE
+	VsgDbg vsgDbg(true);
+	vsgDbg.BeginCapture();
+#endif
+	
+	HQEngineTextureResource * encoded = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("random_factors_img");
+	HQEngineTextureResource * decoded = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("decoded_random_factors_img");
+	HQEngineShaderResource* computeShader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("noise_decoding_cs");
+	
+	//set encoded texture
+	m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER | 0, encoded->GetTexture());
+	//set decoded texture UAV
+	m_pRDevice->GetTextureManager()->SetTextureUAV(HQ_COMPUTE_SHADER | 0, decoded->GetTexture());
+
+	//active compute shader
+	m_pRDevice->GetShaderManager()->ActiveComputeShader(computeShader->GetShader());
+
+	//run compute shader
+	m_pRDevice->GetShaderManager()->DispatchCompute(1, 1, 1);
+
+	//clean up
+	m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER | 0, NULL);
+	m_pRDevice->GetTextureManager()->SetTextureUAV(HQ_COMPUTE_SHADER | 0, NULL);
+	m_pRDevice->GetShaderManager()->ActiveComputeShader(NULL);
+	HQEngineApp::GetInstance()->GetResourceManager()->RemoveTextureResource(encoded);
+	HQEngineApp::GetInstance()->GetResourceManager()->RemoveShaderResource(computeShader);
+
+#ifdef DX_FRAME_CAPTURE
+	vsgDbg.EndCapture();
+#endif
+}
+
 #endif//#ifdef HQ_USE_CUDA
 
 //rendering loop

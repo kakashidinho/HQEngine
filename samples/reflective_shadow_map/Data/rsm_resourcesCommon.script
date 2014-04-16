@@ -2,14 +2,6 @@ resources {
 	texture "random_factors_img" {
 		image="random_factors_20x20.tga"
 	}
-	/* render targets */
-	render_target "decoded_random_factors_img" {
-		width=20
-		height=20
-			
-		format=rgba16f
-		
-	}
 	
 	/*---------------- for depth pass -------------------------*/
 	render_target "depth_img" {

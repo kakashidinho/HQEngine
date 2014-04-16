@@ -1,4 +1,13 @@
 resources {
+	/* render targets */
+	render_target "decoded_random_factors_img" {
+		width=20
+		height=20
+			
+		format=rgba16f
+		
+	}
+
 	shader "noise_decoding_vs" { 			/* name will be default to source file name */
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=cg  			/* default is cg */

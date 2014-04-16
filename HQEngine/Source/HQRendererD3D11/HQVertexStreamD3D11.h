@@ -19,6 +19,9 @@ COPYING.txt included with this distribution for more information.
 #include "../HQItemManager.h"
 
 #define MAX_VERTEX_ATTRIBS 16
+#ifndef D3D11_1_UAV_SLOT_COUNT
+#	define D3D11_1_UAV_SLOT_COUNT 64
+#endif
 
 struct HQBufferD3D11 : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable, public HQBaseIDObject
 {

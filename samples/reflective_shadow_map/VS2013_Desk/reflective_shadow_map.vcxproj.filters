@@ -93,5 +93,11 @@
     <None Include="..\Data\rsm_effects.script">
       <Filter>Source Files\scripts</Filter>
     </None>
+    <None Include="..\Data\rsm_resourcesD3D11_compute_shader.script">
+      <Filter>Source Files\scripts</Filter>
+    </None>
+    <None Include="..\Data\noise_decoding.hlslcs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

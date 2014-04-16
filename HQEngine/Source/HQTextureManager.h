@@ -47,6 +47,15 @@ public:
 	virtual HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID) = 0;
 	
 	///
+	///Direct3d : {slot} = {texture slot} bitwise OR với enum HQShaderType để chỉ  {texture slot} thuộc shader stage nào. 
+	///			Ví dụ muốn gắn texture vào texture slot 3 của compute shader , ta truyền tham số {slot} = (3 | HQ_COMPUTE_SHADER). 
+	///			Trong direct3d 11 : {texture slot} là slot uav. Mỗi shader stage có 64 slot.  
+	///OpenGL : {slot} là slot của image unit.{slot} nằm trong khoảng từ 0 đến số trả về từ method GetMaxShaderTextureUAVs() của render device trừ đi 1.
+	///
+	virtual HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel = 0) = 0;
+
+
+	///
 	///2 biến maxAlpha và colorKey sẽ dùng để chuyển tất cả giá trị alpha của texel trong texture này thành (< hay = maxAlpha) 
 	///và các texel có giá trị rgb trùng các giá trị rgb trong danh sách colorKey sẽ chuyển giá trị alpha thành alpha tương ứng trong colorKey. 
 	///Lưu ý :	-nếu textureType = HQ_TEXTURE_CUBE và file ảnh không chứa đủ 6 mặt của cube map 
@@ -90,6 +99,11 @@ public:
 	virtual HQReturnVal AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID) = 0;
 	
 	
+	///
+	///create UAV 2d texture
+	///
+	virtual HQReturnVal AddTextureUAV(HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap, HQTexture ** ppTexture) = 0;
+
 	virtual HQTextureCompressionSupport IsCompressionSupported(HQTextureType textureType, HQTextureCompressionFormat compressionType) = 0;
 	
 	///

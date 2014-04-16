@@ -42,6 +42,16 @@ public:
 	///nếu programID là NULL => không dùng shader 
 	///
 	virtual HQReturnVal ActiveProgram(HQShaderProgram* programID) = 0;
+
+	///
+	///active compute shader. If shader is NULL => deactive compute shader
+	///
+	virtual HQReturnVal ActiveComputeShader(HQShaderObject *shader) = 0;
+
+	///
+	///dispatch commands from compute shader
+	///
+	virtual HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ) = 0;
 	
 	//4 method sau chỉ dùng để tạo shader từ mã nguồn ngôn ngữ Cg (ngoại trừ openGL ES device hoặc openGL device với option "GLSL-only" là ngôn ngữ HQEngine extended HQ_OPENGLES )
 	

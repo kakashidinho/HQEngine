@@ -121,6 +121,9 @@ public:
 	hq_uint32 GetMaxShaderSamplers() {return pEnum->selectedDevice->numPixelShaderSamplers + pEnum->selectedDevice->numVertexShaderSamplers;}//truy vấn số texture sampler unit nhiều nhất có thể dùng trong shader
 	hq_uint32 GetMaxShaderStageSamplers(HQShaderType shaderStage) ;//truy vấn số texture sampler nhiều nhất có thể dùng trong shader stage <shaderStage>
 
+	hq_uint32 GetMaxShaderTextureUAVs() { return 0; }
+	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage) { return 0; }
+
 	bool IsTwoSideStencilSupported() //is two sided stencil supported 
 	{return (pEnum->selectedDevice->dCaps.StencilCaps & D3DSTENCILCAPS_TWOSIDED) != 0;};
 	bool IsBlendStateExSupported() //is extended blend state supported
@@ -128,6 +131,7 @@ public:
 			 (pEnum->selectedDevice->dCaps.PrimitiveMiscCaps & D3DPMISCCAPS_BLENDOP) != 0);}
 	
 	bool IsTextureBufferFormatSupported(HQTextureBufferFormat format) {return false;}
+	bool IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextureType textureType, bool hasMipmap) { return false; }
 	bool IsNpotTextureFullySupported(HQTextureType textureType);
 	bool IsNpotTextureSupported(HQTextureType textureType);
 	/*

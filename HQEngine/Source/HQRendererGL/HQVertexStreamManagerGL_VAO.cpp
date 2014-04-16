@@ -13,6 +13,11 @@ COPYING.txt included with this distribution for more information.
 
 #define VAO_IBO_DIRTY 0x1
 
+#ifdef WIN32
+#	pragma warning( push )
+#	pragma warning( disable : 4250 )//dominance inheritance of HQBufferGL
+#endif
+
 /*-----------------HQMappableVertexBufferGL_VAO --------------*/
 struct HQMappableVertexBufferGL_VAO : public HQMappableVertexBufferGL {
 	HQMappableVertexBufferGL_VAO(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage)
@@ -20,6 +25,7 @@ struct HQMappableVertexBufferGL_VAO : public HQMappableVertexBufferGL {
 
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
 };
+
 
 HQReturnVal HQMappableVertexBufferGL_VAO::GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size)
 {
@@ -102,6 +108,10 @@ HQReturnVal HQMappableIndexBufferGL_VAO::GenericMap(void ** ppData, HQMapType ma
 
 	return HQ_OK;
 }
+
+#ifdef WIN32
+#	pragma warning( pop )//dominance inheritance of HQBufferGL
+#endif
 
 /*-------------HQVertexStreamGL_VAO--------------------------------------*/
 HQVertexStreamGL_VAO::HQVertexStreamGL_VAO()

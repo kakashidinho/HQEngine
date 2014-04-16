@@ -223,6 +223,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 		shaderType = GL_GEOMETRY_SHADER_EXT;
 	else
 	{
+		g_pShaderMan->Log("Error : Unsupported GLSL shader type=%u", (hquint32)type);
 		return HQ_FAILED;
 	}
 

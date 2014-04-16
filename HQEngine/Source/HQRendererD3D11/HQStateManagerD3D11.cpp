@@ -732,9 +732,24 @@ HQReturnVal HQStateManagerD3D11::SetSamplerState(hq_uint32 index , hq_uint32 sam
 			*ppCurrentState = pState;
 		}
 		break;
+	case HQ_COMPUTE_SHADER:
+#if defined DEBUG || defined _DEBUG
+		if (samplerIndex >= g_pD3DDev->GetCaps().maxComputeSamplers)
+		{
+			Log("SetSamplerState() Error : sampler slot=%u is out of range!", samplerIndex);
+			return HQ_FAILED;
+		}
+#endif
+		ppCurrentState = &this->sState[3][samplerIndex];
+		if (*ppCurrentState != pState)
+		{
+			pD3DContext->CSSetSamplers(samplerIndex, 1, &pState->pD3DState);
+			*ppCurrentState = pState;
+		}
+		break;
 	default:
 #if defined _DEBUG || defined DEBUG
-		Log("Error : {index} parameter passing to SetSamplerState() method didn't bitwise OR with HQ_VERTEX_SHADER/HQ_PIXEL_SHADER/HQ_GEOMETRY_SHADER!");
+		Log("Error : {index} parameter passing to SetSamplerState() method didn't bitwise OR with HQShaderType enum value!");
 #endif
 		return HQ_FAILED;
 	}

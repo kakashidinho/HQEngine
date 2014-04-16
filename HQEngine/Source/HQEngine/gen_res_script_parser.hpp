@@ -47,11 +47,12 @@
      RBRACE = 263,
      RES_KEYWORD = 264,
      TEX_KEYWORD = 265,
-     RENDER_TARGET_KEYWORD = 266,
-     SHADER_KEYWORD = 267,
-     DEF = 268,
-     EQUAL = 269,
-     SEMI_COLON = 270
+     TEX_UAV_KEYWORD = 266,
+     RENDER_TARGET_KEYWORD = 267,
+     SHADER_KEYWORD = 268,
+     DEF = 269,
+     EQUAL = 270,
+     SEMI_COLON = 271
    };
 #endif
 
@@ -62,7 +63,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 40 "E:\\VS_Projects\\HQEngine_project_git\\HQEngine\\Source\\HQEngine\\res_script_parser.y"
+#line 40 "res_script_parser.y"
 
 	struct {
 		int line;
@@ -79,7 +80,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 83 "..\\..\\..\\..\\Source\\HQEngine\\gen_res_script_parser.hpp"
+#line 84 "gen_res_script_parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

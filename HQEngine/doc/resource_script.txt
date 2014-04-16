@@ -35,11 +35,20 @@ Texture resource format, can be one of the following:
 		negative_z="img6.bmp"
 	}
 	
+	//unordered access texture
+	texture_uav name
+	{
+		width=100
+		height=100
+		has_mipmap=true/false  //default is false
+		format=r32f/r16f/rgba32f/rgba16f/rg32f/rg16f/r32i/r32ui/rg32i/rg32ui/rgba32i/rgba32ui
+	}
+	
 Shader resource format:
 	//name will be source file name if not being specified.
 	shader name
 	{
-		type=vertex  // vertex/pixel/geometry shader. default is vertex 
+		type=vertex  // vertex/pixel/geometry/compute shader. default is vertex 
 		src_type=hlsl/glsl/cg/bytecode   default is cg 
 		entry=main			// entry function. default is 'main'. ignored in bytecode/glsl "src_type" 
 		src="file.txt" 		// source file 

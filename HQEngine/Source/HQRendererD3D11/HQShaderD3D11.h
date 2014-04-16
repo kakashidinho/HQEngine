@@ -88,9 +88,9 @@ class HQShaderManagerD3D11 :public HQShaderManager, private HQIDItemManager<HQSh
 {
 private:
 	HQSharedPtr<HQShaderProgramD3D11> activeProgram;
-	HQSharedPtr<HQShaderObjectD3D11> activeVShader,activeGShader,activePShader;
+	HQSharedPtr<HQShaderObjectD3D11> activeVShader,activeGShader,activePShader, activeCShader;
 	
-	HQSharedPtr<HQShaderConstBufferD3D11> uBufferSlots[3][D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
+	HQSharedPtr<HQShaderConstBufferD3D11> uBufferSlots[4][D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
 
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	CGcontext cgContext;
@@ -176,6 +176,8 @@ public:
 	ID3DBlob *GetCompiledVertexShader(HQShaderObject* vertexShaderID);
 
 	HQReturnVal ActiveProgram(HQShaderProgram* programID);
+	HQReturnVal ActiveComputeShader(HQShaderObject *shader);
+	HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ);
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,

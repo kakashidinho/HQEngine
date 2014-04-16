@@ -237,6 +237,12 @@ HQReturnVal HQEngineResManagerImpl::LoadResource(const HQEngineResParserNode* it
 		if (LoadTexture(item) != HQ_OK)
 			re = HQ_FAILED;
 	}
+	else if (strcmp(item->GetType(), "texture_uav") == 0)
+	{
+		//texture resource
+		if (LoadTextureUAV(item) != HQ_OK)
+			re = HQ_FAILED;
+	}
 	else if (strcmp(item->GetType(), "render_target") == 0)
 	{
 		//texture resource
@@ -459,6 +465,96 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 	return HQ_FAILED;
 }
 
+HQReturnVal HQEngineResManagerImpl::LoadTextureUAV(const HQEngineResParserNode* texture_info)
+{
+	typedef HQEngineResParserNode::ValueType NodeAttrType;
+
+	const char * res_Name = NULL;
+
+	res_Name = texture_info->GetStrAttribute("name");
+	if (res_Name == NULL)
+	{
+		Log("Error : %d : Cannot create UAV texture resource without name!", texture_info->GetSourceLine());
+		return HQ_FAILED;
+	}
+
+	hquint32 width, height;
+	HQTextureUAVFormat format;
+	bool hasMipmap;
+	const char* hasMipmapStr = texture_info->GetStrAttribute("has_mipmap");
+	hasMipmap = hasMipmapStr != NULL ? strcmp(hasMipmapStr, "true") == 0 : false;
+
+	//size
+	const HQEngineResParserNode* widthInfo = texture_info->GetFirstChild("width");
+	const HQEngineResParserNode* heightInfo = texture_info->GetFirstChild("height");
+	if (widthInfo == NULL || heightInfo == NULL)
+	{
+		Log("Error : %d : UAV texture missing size info!", texture_info->GetSourceLine());
+		return HQ_FAILED;
+	}
+	const hqint32 * wPtr = widthInfo->GetIntAttributePtr("value");
+	const hqint32 * hPtr = heightInfo->GetIntAttributePtr("value");
+
+	if (wPtr == NULL || hPtr == NULL)
+	{
+		Log("Error : %d : UAV texture has invalid size info!", texture_info->GetSourceLine());
+		return HQ_FAILED;
+	}
+
+	width = (hquint32)*wPtr;
+	height = (hquint32)*hPtr;
+
+	//format
+	const HQEngineResParserNode* formatInfo = texture_info->GetFirstChild("format");
+	if (formatInfo == NULL)
+	{
+		Log("Error : %d : UAV texture missing format info!", texture_info->GetSourceLine());
+		return HQ_FAILED;
+	}
+
+	const char *formatStr = formatInfo->GetStrAttribute("value");
+	if (formatStr == NULL)
+	{
+		Log("Error : %d : UAV texture has invalid format info!", texture_info->GetSourceLine());
+		return HQ_FAILED;
+	}
+
+	if (!strcmp(formatStr, "r32f"))
+		format = HQ_UAVTFMT_R32_FLOAT;
+	else if (!strcmp(formatStr, "r32i"))
+		format = HQ_UAVTFMT_R32_INT;
+	else if (!strcmp(formatStr, "r32ui"))
+		format = HQ_UAVTFMT_R32_UINT;
+	else if (!strcmp(formatStr, "r16f"))
+		format = HQ_UAVTFMT_R16_FLOAT;
+	else if (!strcmp(formatStr, "rg32f"))
+		format = HQ_UAVTFMT_R32G32_FLOAT;
+	else if (!strcmp(formatStr, "rg32i"))
+		format = HQ_UAVTFMT_R32G32_INT;
+	else if (!strcmp(formatStr, "rg32ui"))
+		format = HQ_UAVTFMT_R32G32_UINT;
+	else if (!strcmp(formatStr, "rg16f"))
+		format = HQ_UAVTFMT_R16G16_FLOAT;
+	else if (!strcmp(formatStr, "rgba32f"))
+		format = HQ_UAVTFMT_R32G32B32A32_FLOAT;
+	else if (!strcmp(formatStr, "rgba32i"))
+		format = HQ_UAVTFMT_R32G32B32A32_INT;
+	else if (!strcmp(formatStr, "rgba32ui"))
+		format = HQ_UAVTFMT_R32G32B32A32_UINT;
+	else if (!strcmp(formatStr, "rgba16f"))
+		format = HQ_UAVTFMT_R16G16B16A16_FLOAT;
+	else
+	{
+		Log("Error : %d : UAV texture has invalid format info!", texture_info->GetSourceLine());
+		return HQ_FAILED;
+	}
+
+	return this->AddTextureUAVResource(res_Name,
+		format,
+		width, height,
+		hasMipmap);
+}
+
 HQReturnVal HQEngineResManagerImpl::LoadShader(const HQEngineResParserNode* shaderItem)
 {
 	const char* res_name = shaderItem->GetStrAttribute("name");
@@ -490,6 +586,8 @@ HQReturnVal HQEngineResManagerImpl::LoadShader(const HQEngineResParserNode* shad
 				shaderType = HQ_PIXEL_SHADER;
 			else if (!strcmp(elemStr, "geometry"))
 				shaderType = HQ_GEOMETRY_SHADER;
+			else if (!strcmp(elemStr, "compute"))
+				shaderType = HQ_COMPUTE_SHADER;
 			else
 			{
 				Log("Error : %d : unknown shader type %s!", elemLine, elemStr);
@@ -667,6 +765,34 @@ HQReturnVal HQEngineResManagerImpl::AddCubeTextureResource(const char *name,
 	HQEngineTextureResImpl *newRes = (HQEngineTextureResImpl*) this->GetTextureResource(name);
 
 	newRes->Init(textureID);
+
+	return HQ_OK;
+}
+
+HQReturnVal HQEngineResManagerImpl::AddTextureUAVResource(const char *name,
+	HQTextureUAVFormat format,
+	hquint32 width, hquint32 height,
+	bool hasMipmap
+	)
+{
+	if (m_textures.GetItemPointer(name) != NULL)
+	{
+		this->Log("Error : could not create already existing texture resource named %s", name);
+		return HQ_FAILED_RESOURCE_EXISTS;
+	}
+	//create new one
+	HQTexture * texture;
+	HQReturnVal re = HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
+		->AddTextureUAV(format, width, height, hasMipmap, &texture);
+
+	if (HQFailed(re))
+		return re;
+
+	//succeeded, now create resource
+	m_textures.Add(name, HQ_NEW HQEngineTextureResImpl(name));
+	HQEngineTextureResImpl *newRes = (HQEngineTextureResImpl*) this->GetTextureResource(name);
+
+	newRes->Init(texture, NULL);
 
 	return HQ_OK;
 }

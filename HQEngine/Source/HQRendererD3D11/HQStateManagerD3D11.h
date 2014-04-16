@@ -18,7 +18,7 @@ COPYING.txt included with this distribution for more information.
 
 #define HQ_FILL_MODES 2
 #define HQ_CULL_MODES 3
-#define SHADER_STAGES 3
+#define SHADER_STAGES 4
 
 struct HQDepthStencilStateD3D11
 {

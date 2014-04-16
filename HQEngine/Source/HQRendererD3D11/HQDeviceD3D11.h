@@ -74,7 +74,12 @@ struct HQD3DFEATURE_CAPS
 	UINT maxGeometryTextures;
 	UINT maxPixelSamplers;
 	UINT maxPixelTextures;
+	UINT maxPixelTextureUAVs;
+	UINT maxComputeSamplers;
+	UINT maxComputeTextures;
+	UINT maxComputeTextureUAVs;
 	UINT maxTotalBoundTextures;//maximum number of textures that can be bound
+	UINT maxTotalBoundTextureUAVs;
 	UINT shaderModel;
 	UINT shaderModelMinor;
 	bool colorWriteMask;
@@ -205,11 +210,14 @@ public:
 	hq_uint32 GetMaxShaderStageSamplers(HQShaderType shaderStage);//truy vấn số texture sampler nhiều nhất có thể dùng trong shader stage <shaderStage>
 	hq_uint32 GetMaxShaderTextures();
 	hq_uint32 GetMaxShaderStageTextures(HQShaderType shaderStage);
+	hq_uint32 GetMaxShaderTextureUAVs();
+	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage);
 	bool IsTwoSideStencilSupported() //is two sided stencil supported 
 	{return true;};
 	bool IsBlendStateExSupported() //is extended blend state supported
 	{return true;}
 	bool IsTextureBufferFormatSupported(HQTextureBufferFormat format);
+	bool IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextureType textureType, bool hasMipmap);
 	bool IsNpotTextureFullySupported(HQTextureType textureType);
 	bool IsNpotTextureSupported(HQTextureType textureType);
 	/*

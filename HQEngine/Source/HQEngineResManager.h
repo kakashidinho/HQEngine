@@ -79,6 +79,17 @@ public:
 											const char * image_files[6],
 											bool generateMipmap
 											) = 0;
+
+	///
+	///Create unordered access 2d texture
+	///return HQ_FAILED_RESOURCE_EXISTS if there is an existing resource with the same name
+	///
+	virtual HQReturnVal AddTextureUAVResource(const char *name,
+		HQTextureUAVFormat format,
+		hquint32 width, hquint32 height,
+		bool hasMipmap
+		) = 0;
+
 	///
 	///create render target texture resource. 
 	///{pRenderTargetID_Out} - will store ID of newly created render target. 

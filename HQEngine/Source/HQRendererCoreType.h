@@ -79,6 +79,7 @@ typedef enum HQTextureType
 	HQ_TEXTURE_2D = 0,
 	HQ_TEXTURE_CUBE = 1,
 	HQ_TEXTURE_BUFFER = 2,
+	HQ_TEXTURE_2D_UAV = 3,///unordered access texture
 	HQ_TEXTURE_TYPE_FORCE_DWORD = 0xffffffff
 } _HQTextureType;
 
@@ -126,7 +127,8 @@ typedef enum HQShaderType
 {
 	HQ_VERTEX_SHADER = 0x10000000,
 	HQ_PIXEL_SHADER = 0x20000000,//also known as fragment shader
-	HQ_GEOMETRY_SHADER = 0x30000000
+	HQ_GEOMETRY_SHADER = 0x30000000,
+	HQ_COMPUTE_SHADER = 0x40000000
 } _HQShaderType;
 
 ///
@@ -463,7 +465,24 @@ typedef enum _HQTextureCompressionSupport
 	HQ_TCS_FORCE_DWORD = 0xffffffff
 }HQTextureCompressionSupport;
 
-
+///
+///format for UAV texture
+///
+typedef enum _HQTextureUAVFormat {
+	HQ_UAVTFMT_R16_FLOAT,
+	HQ_UAVTFMT_R16G16_FLOAT,
+	HQ_UAVTFMT_R16G16B16A16_FLOAT,
+	HQ_UAVTFMT_R32_FLOAT,
+	HQ_UAVTFMT_R32G32_FLOAT,
+	HQ_UAVTFMT_R32G32B32A32_FLOAT,
+	HQ_UAVTFMT_R32_INT,
+	HQ_UAVTFMT_R32G32_INT,
+	HQ_UAVTFMT_R32G32B32A32_INT,
+	HQ_UAVTFMT_R32_UINT,
+	HQ_UAVTFMT_R32G32_UINT,
+	HQ_UAVTFMT_R32G32B32A32_UINT,
+	HQ_UAVTFMT_FORCE_DWORD = 0xffffffff
+} HQTextureUAVFormat;
 
 ///
 ///the pixel at (0,0) is top left

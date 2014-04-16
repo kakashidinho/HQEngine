@@ -728,6 +728,12 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQText
 	return HQ_OK;
 }
 
+HQReturnVal HQTextureManagerGL::SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel)
+{
+	//TO DO
+	return HQ_FAILED;
+}
+
 /*
 Load texture from file
 */

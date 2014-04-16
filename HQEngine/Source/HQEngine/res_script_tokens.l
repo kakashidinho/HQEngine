@@ -64,6 +64,7 @@ I           [uUlL]
 
 "resources"			  {	SAVE_LINE; return (RES_KEYWORD);}
 "texture"			  {	SAVE_LINE; return (TEX_KEYWORD);}
+"texture_uav"		  {	SAVE_LINE; return (TEX_UAV_KEYWORD);}
 "render_target"		  {	SAVE_LINE; return (RENDER_TARGET_KEYWORD);}
 "shader"			  {	SAVE_LINE; return (SHADER_KEYWORD);}
 

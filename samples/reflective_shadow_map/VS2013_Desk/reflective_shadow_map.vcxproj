@@ -231,7 +231,11 @@ xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\b
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\utilities\CUDA\src\HQCudaBinding.cpp" />
+    <ClCompile Include="..\..\..\utilities\CUDA\src\HQCudaBinding.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Source\main.cpp" />
     <ClCompile Include="..\Source\RenderLoop_depth_pass.cpp" />
     <ClCompile Include="..\Source\RenderLoop_final_pass.cpp" />
@@ -335,10 +339,18 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Data\noise_decoding.hlslcs">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
     <None Include="..\Data\rsm_effects.script">
       <FileType>Document</FileType>
     </None>
     <None Include="..\Data\rsm_resourcesCommon.script" />
+    <None Include="..\Data\rsm_resourcesD3D11_compute_shader.script" />
     <None Include="..\Data\rsm_resourcesD3D11.script" />
     <None Include="..\Data\rsm_resourcesD3D9.script" />
     <None Include="..\Data\rsm_resourcesGL.script" />

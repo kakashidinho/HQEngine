@@ -27,6 +27,8 @@ public:
 	virtual bool IsUsingPShader(){return HQ_FAILED;}
 	
 	virtual HQReturnVal ActiveProgram(HQShaderProgram* programID){return HQ_FAILED;}
+	virtual HQReturnVal ActiveComputeShader(HQShaderObject *shader) { return HQ_FAILED; }
+	virtual HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ) { return HQ_FAILED; }
 	
 	
 	virtual HQReturnVal CreateShaderFromStream(HQShaderType type,

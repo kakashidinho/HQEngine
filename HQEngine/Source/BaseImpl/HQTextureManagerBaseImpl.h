@@ -133,6 +133,8 @@ public:
 
 	HQReturnVal AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID);
 
+	HQReturnVal AddTextureUAV(HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap, HQTexture ** ppTexture);
+
 	const HQSharedPtr<HQBaseTexture> GetTextureSharedPtr(HQTexture* ID);
 	const HQSharedPtr<HQBaseTexture> GetTextureSharedPtrAt(hquint32 resourceIndex);
 	HQSharedPtr<HQBaseTexture> CreateEmptyTexture(HQTextureType textureType, HQTexture** pTextureID);
@@ -169,6 +171,8 @@ protected:
 	virtual HQReturnVal InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color) = 0;
 
 	virtual HQReturnVal InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  , void *initData,bool isDynamic) { return HQ_FAILED ;}
+
+	virtual HQReturnVal InitTextureUAV(HQBaseTexture *pTex,  HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap) { return HQ_FAILED; }
 
 	virtual HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height) = 0;
 	virtual HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color) = 0;

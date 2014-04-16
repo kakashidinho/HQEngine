@@ -44,6 +44,12 @@ bool HQDeviceGL::IsTextureBufferFormatSupported(HQTextureBufferFormat format)
 	}
 	return false;
 }
+
+bool HQDeviceGL::IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextureType textureType, bool hasMipmap) {
+	//TO DO:
+	return false;
+}
+
 bool HQDeviceGL::IsNpotTextureFullySupported(HQTextureType textureType)
 {
 	//TO DO: GL_APPLE_texture_2D_limited_npot for HQ_OPENGLES
@@ -117,6 +123,17 @@ hq_uint32 HQDeviceGL::GetMaxShaderStageSamplers(HQShaderType shaderStage)
 	default:
 		return 0;
 	}
+}
+
+hq_uint32 HQDeviceGL::GetMaxShaderTextureUAVs()
+{
+	//TO DO
+	return 0;
+}
+hq_uint32 HQDeviceGL::GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
+{
+	//TO DO
+	return 0;
 }
 
 /*-----------render target caps--------------------*/

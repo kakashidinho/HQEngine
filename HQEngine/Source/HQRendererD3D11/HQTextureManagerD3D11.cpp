@@ -31,6 +31,16 @@ COPYING.txt included with this distribution for more information.
 using namespace pvrtexlib;
 #endif //#if HQ_USE_PVR_TEX_LIB
 
+/*------------HQUAVTextureResourceD3D11-----------*/
+HQUAVTextureResourceD3D11::~HQUAVTextureResourceD3D11()
+{
+	LayeredViewTableType::Iterator ite;
+	for (this->layeredViews.GetIterator(ite); !ite.IsAtEnd(); ++ite){
+		ID3D11UnorderedAccessView* view = (*ite);
+		SafeRelease(view);
+	}
+}
+
 /*---------HQTextureD3D11-----------------*/
 
 HQTextureD3D11::HQTextureD3D11(HQTextureType type)
@@ -38,7 +48,15 @@ HQTextureD3D11::HQTextureD3D11(HQTextureType type)
 boundSlots(HQ_NEW HQPoolMemoryManager(sizeof(SlotList::LinkedListNodeType), g_pD3DDev->GetCaps().maxTotalBoundTextures))
 {
 	this->type = type;
-	pData = HQ_NEW HQTextureResourceD3D11();
+	switch (type)
+	{
+	case HQ_TEXTURE_2D_UAV:
+		pData = HQ_NEW HQUAVTextureResourceD3D11();
+		break;
+		//TO DO: other UAV texture type
+	default:
+		pData = HQ_NEW HQTextureResourceD3D11();
+	}
 }
 HQTextureD3D11::~HQTextureD3D11()
 {
@@ -55,6 +73,7 @@ hquint32 HQTextureD3D11::GetWidth() const
 	{
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
+	case HQ_TEXTURE_2D_UAV:
 		{
 			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *)((HQTextureResourceD3D11*)this->pData)->pTexture;
 			D3D11_TEXTURE2D_DESC desc;
@@ -72,6 +91,7 @@ hquint32 HQTextureD3D11::GetHeight() const
 	{
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
+	case HQ_TEXTURE_2D_UAV:
 		{
 			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *)((HQTextureResourceD3D11*)this->pData)->pTexture;
 			D3D11_TEXTURE2D_DESC desc;
@@ -280,6 +300,40 @@ DXGI_FORMAT GetTextureBufferFormat(HQTextureBufferFormat format , hq_uint32 &tex
 	}
 }
 
+//translate from UAV texture format to DXGI format
+DXGI_FORMAT HQTextureManagerD3D11::GetD3DFormat(HQTextureUAVFormat format)
+{
+	switch (format)
+	{
+	case HQ_UAVTFMT_R16_FLOAT:
+		return DXGI_FORMAT_R16_FLOAT;
+	case HQ_UAVTFMT_R16G16_FLOAT:
+		return DXGI_FORMAT_R16G16_FLOAT;
+	case HQ_UAVTFMT_R16G16B16A16_FLOAT:
+		return DXGI_FORMAT_R16G16B16A16_FLOAT;
+	case HQ_UAVTFMT_R32_FLOAT:
+		return DXGI_FORMAT_R32_FLOAT;
+	case HQ_UAVTFMT_R32G32_FLOAT:
+		return DXGI_FORMAT_R32G32_FLOAT;
+	case HQ_UAVTFMT_R32G32B32A32_FLOAT:
+		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case HQ_UAVTFMT_R32_INT:
+		return DXGI_FORMAT_R32_SINT;
+	case HQ_UAVTFMT_R32G32_INT:
+		return DXGI_FORMAT_R32G32_SINT;
+	case HQ_UAVTFMT_R32G32B32A32_INT:
+		return DXGI_FORMAT_R32G32B32A32_SINT;
+	case HQ_UAVTFMT_R32_UINT:
+		return DXGI_FORMAT_R32_UINT;
+	case HQ_UAVTFMT_R32G32_UINT:
+		return DXGI_FORMAT_R32G32_UINT;
+	case HQ_UAVTFMT_R32G32B32A32_UINT:
+		return DXGI_FORMAT_R32G32B32A32_UINT;
+	default:
+		return DXGI_FORMAT_UNKNOWN;
+	}
+}
+
 /*
 //HQTextureManagerD3D11 class
 */
@@ -429,9 +483,40 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 			pTextureSlot->pTexture = pTexture;
 		}
 		break;
+	case HQ_COMPUTE_SHADER:
+#if defined _DEBUG || defined DEBUG
+		if (resourceSlot >= g_pD3DDev->GetCaps().maxComputeTextures)
+		{
+			Log("SetTexture() Error : texture slot=%u is out of range!", resourceSlot);
+			return HQ_FAILED;
+		}
+#endif
+		pTextureSlot = this->textureSlots[3] + resourceSlot;
+		pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureSlot->pTexture.GetRawPointer();
+		if (pTextureD3D11 != pCurrentTextureD3D11)
+		{
+			if (pCurrentTextureD3D11 != NULL)
+			{
+				//unlink old texture from texture slot
+				pCurrentTextureD3D11->boundSlots.RemoveAt(pTextureSlot->textureLink);
+			}
+
+			ID3D11ShaderResourceView *pSRV;
+			if (pTextureD3D11 != NULL)
+			{
+				pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
+				//link the texture with this slot
+				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(slot);
+			}
+			else
+				pSRV = NULL;
+			pD3DContext->CSSetShaderResources(resourceSlot, 1, &pSRV);
+			pTextureSlot->pTexture = pTexture;
+		}
+		break;
 	default:
 #if defined _DEBUG || defined DEBUG
-		Log("Error : {slot} parameter passing to SetTexture() method didn't bitwise OR with HQ_VERTEX_SHADER/HQ_PIXEL_SHADER/HQ_GEOMETRY_SHADER!");
+		Log("Error : {slot} parameter passing to SetTexture() method didn't bitwise OR with HQShaderType enum value!");
 #endif
 		return HQ_FAILED;
 	}
@@ -439,7 +524,6 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 
 	return HQ_OK;
 }
-
 
 HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSlot, HQTexture* textureID)
 {
@@ -486,6 +570,68 @@ HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSl
 	return HQ_OK;
 }
 
+HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel)
+{
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
+
+	hq_uint32 resourceSlot = slot & 0x0fffffff;
+
+	hq_uint32 shaderStage = slot & 0xf0000000;
+
+	HQSharedPtr<HQBaseTexture> *pTextureSlot;
+	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
+	ID3D11UnorderedAccessView *pUAV = NULL;
+	HQTextureD3D11* pCurrentTextureD3D11;
+
+	UINT uavInitialCount = -1;
+
+	//retrieve UAV
+	if (pTextureD3D11 != NULL)
+	{
+		HQUAVTextureResourceD3D11* pTextureUAVResD3D11 = (HQUAVTextureResourceD3D11 *)pTextureD3D11->pData;
+		pUAV = GetOrCreateNewUAV(pTextureD3D11->type, pTextureUAVResD3D11, mipLevel);
+	}
+
+	switch (shaderStage)
+	{
+#if HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER
+	case HQ_PIXEL_SHADER:
+		//TO DO
+		break;
+#endif//#if HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER
+	case HQ_COMPUTE_SHADER:
+#if defined _DEBUG || defined DEBUG
+		if (resourceSlot >= g_pD3DDev->GetCaps().maxComputeTextureUAVs)
+		{
+			Log("SetTextureUAV() Error : texture slot=%u is out of range!", resourceSlot);
+			return HQ_FAILED;
+		}
+#endif
+		pTextureSlot = this->textureUAVSlots[1] + resourceSlot;
+		pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureSlot->GetRawPointer();
+		if (pTextureD3D11 != pCurrentTextureD3D11)
+		{
+			*pTextureSlot = pTexture;
+		}
+
+		if (pUAV != NULL)
+			this->UnbindTextureFromAllSlots(pTexture);//first unbind texture from all shader resource view slots
+
+		//now set UAV
+		pD3DContext->CSSetUnorderedAccessViews(resourceSlot, 1, &pUAV, &uavInitialCount);
+
+		break;
+	default:
+#if defined _DEBUG || defined DEBUG
+		Log("Error : {slot} parameter passing to SetTextureUAV() method didn't bitwise OR with valid HQShaderType enum value!");
+#endif
+		return HQ_FAILED;
+	}
+
+
+	return HQ_OK;
+}
+
 void HQTextureManagerD3D11::UnbindTextureFromAllSlots(const HQSharedPtr<HQBaseTexture> &pTexture)
 {
 	HQTextureD3D11 *pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
@@ -514,6 +660,10 @@ void HQTextureManagerD3D11::UnbindTextureFromAllSlots(const HQSharedPtr<HQBaseTe
 		case HQ_PIXEL_SHADER:
 			pTextureSlot = this->textureSlots[2] + resourceSlot;
 			pD3DContext->PSSetShaderResources(resourceSlot, 1, &nullView);
+			break;
+		case HQ_COMPUTE_SHADER:
+			pTextureSlot = this->textureSlots[3] + resourceSlot;
+			pD3DContext->CSSetShaderResources(resourceSlot, 1, &nullView);
 			break;
 		}//switch (shaderStage)
 
@@ -1189,7 +1339,7 @@ HQReturnVal HQTextureManagerD3D11::CreateShaderResourceView(HQBaseTexture * pTex
 	vDesc.Format = this->t2DDesc.Format;
 	switch(pTex->type)
 	{
-	case HQ_TEXTURE_2D:
+	case HQ_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
 		vDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		vDesc.Texture2D.MipLevels = this->t2DDesc.MipLevels;
 		vDesc.Texture2D.MostDetailedMip = 0;
@@ -1267,6 +1417,102 @@ HQReturnVal HQTextureManagerD3D11::InitTextureBuffer(HQBaseTexture *pTex ,HQText
 	return this->CreateShaderResourceView(pTex);
 }
 
+
+HQReturnVal HQTextureManagerD3D11::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmaps)
+{
+	if (g_pD3DDev->IsUAVTextureFormatSupported(format, pTex->type, hasMipmaps) == false)
+	{
+		Log("Error : UAV Texture creation with format = %u is not supported", (hquint32)format);
+		return HQ_FAILED;
+	}
+
+	hq_uint32 numMipmaps = 1;
+	if (hasMipmaps)
+		numMipmaps = HQBaseTextureManager::CalculateFullNumMipmaps(width, height);//full range mipmap level
+
+	DXGI_FORMAT d3dformat = HQTextureManagerD3D11::GetD3DFormat(format);
+
+	//texture desc
+	this->t2DDesc.Width = width;
+	this->t2DDesc.Height = height;
+	this->t2DDesc.MipLevels = numMipmaps;
+	this->t2DDesc.Format = d3dformat;
+	this->t2DDesc.SampleDesc.Count = 1;
+	this->t2DDesc.SampleDesc.Quality = 0;
+	this->t2DDesc.Usage = D3D11_USAGE_DEFAULT;
+	this->t2DDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	this->t2DDesc.CPUAccessFlags = 0;
+	this->t2DDesc.MiscFlags = 0;
+
+	//create texture and UAV view
+	HQUAVTextureResourceD3D11* pTexResD3D = (HQUAVTextureResourceD3D11 *)pTex->pData;
+	HRESULT hr;
+	switch (pTex->type)
+	{
+	case HQ_TEXTURE_2D_UAV:
+		//texture desc
+		this->t2DDesc.ArraySize = 1;
+
+		//create texture
+		hr = pD3DDevice->CreateTexture2D(&this->t2DDesc, NULL, (ID3D11Texture2D**)&pTexResD3D->pTexture);
+		if (!FAILED(hr))
+		{
+			//create first level UAV view
+			if (GetOrCreateNewUAV(pTex->type, pTexResD3D, 0) == NULL)
+			{
+				return HQ_FAILED;
+			}
+		}
+		break;
+	default:
+		//TO DO: other type of texture
+		return HQ_FAILED;
+	}
+
+	if (FAILED(hr))
+		return HQ_FAILED;
+
+	return this->CreateShaderResourceView(pTex);
+}
+
+ID3D11UnorderedAccessView * HQTextureManagerD3D11::GetOrCreateNewUAV(HQTextureType type, HQUAVTextureResourceD3D11 * pTexResD3D, hquint32 mipLevel)
+{
+	bool found = false;
+	ID3D11UnorderedAccessView *view = pTexResD3D->layeredViews.GetItem(mipLevel, found);
+	if (found)
+		return view;
+
+	//not found, create new one
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+	switch (type)
+	{
+	case HQ_TEXTURE_2D_UAV:
+	{
+		//texture desc
+		D3D11_TEXTURE2D_DESC l_t2DDesc;
+		static_cast<ID3D11Texture2D*>(pTexResD3D->pTexture)->GetDesc(&l_t2DDesc);
+		//UAV desc
+		uavDesc.Format = l_t2DDesc.Format;
+		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+		if (mipLevel >= l_t2DDesc.MipLevels)
+			uavDesc.Texture2D.MipSlice = l_t2DDesc.MipLevels - 1;// level view
+		else
+			uavDesc.Texture2D.MipSlice = mipLevel;// level view
+
+		//create mip level UAV view
+		HRESULT hr = pD3DDevice->CreateUnorderedAccessView(pTexResD3D->pTexture, &uavDesc, &view);
+		if (FAILED(hr))
+			return NULL;
+
+		pTexResD3D->layeredViews.Add(mipLevel, view);//add to layered view table
+
+		return view;
+	}
+	default:
+		//TO DO: other type of texture
+		return NULL;
+	}
+}
 
 HQTextureCompressionSupport HQTextureManagerD3D11::IsCompressionSupported(HQTextureType textureType,HQTextureCompressionFormat type)
 {

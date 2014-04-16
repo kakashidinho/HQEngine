@@ -324,6 +324,26 @@ HQReturnVal HQBaseTextureManager::AddTextureBuffer(HQTextureBufferFormat format,
 	return HQ_OK;
 }
 
+HQReturnVal HQBaseTextureManager::AddTextureUAV(HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap, HQTexture ** ppTexture)
+{
+	HQBaseTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_2D_UAV);
+
+	HQReturnVal result = this->InitTextureUAV(pNewTex, format, width, height, hasMipmap);
+	if (result != HQ_OK)
+	{
+		//giải phóng bộ nhớ
+		delete pNewTex;
+		return result;
+	}
+	if (this->textures.AddItem(pNewTex, ppTexture) == false)
+	{
+		delete pNewTex;
+		return HQ_FAILED_MEM_ALLOC;
+	}
+
+	return HQ_OK;
+}
+
 
 HQRawPixelBuffer* HQBaseTextureManager::CreatePixelBuffer(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height)
 {

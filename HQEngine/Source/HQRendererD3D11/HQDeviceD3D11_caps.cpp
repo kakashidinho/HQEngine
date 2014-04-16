@@ -41,9 +41,17 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxVertexTextures = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
 		featureCaps.maxGeometryTextures = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
 		featureCaps.maxPixelTextures = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
+		featureCaps.maxComputeTextures = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
 		featureCaps.maxVertexSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 		featureCaps.maxGeometrySamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 		featureCaps.maxPixelSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
+		featureCaps.maxComputeSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
+#if HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER
+		featureCaps.maxPixelTextureUAVs = D3D11_1_UAV_SLOT_COUNT;
+#else
+		featureCaps.maxPixelTextureUAVs = 0;
+#endif
+		featureCaps.maxComputeTextureUAVs = D3D11_1_UAV_SLOT_COUNT;
 		featureCaps.shaderModel = 5;
 		featureCaps.shaderModelMinor = 0;
 		featureCaps.colorWriteMask = true;
@@ -63,6 +71,10 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxVertexSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 		featureCaps.maxGeometrySamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 		featureCaps.maxPixelSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
+		featureCaps.maxComputeTextures = 0;
+		featureCaps.maxComputeSamplers = 0;
+		featureCaps.maxPixelTextureUAVs = 0;
+		featureCaps.maxComputeTextureUAVs = 0;
 		featureCaps.shaderModel = 4;
 		featureCaps.shaderModelMinor = 0;
 		featureCaps.colorWriteMask = true;
@@ -86,6 +98,10 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxVertexSamplers = 0;
 		featureCaps.maxGeometrySamplers = 0;
 		featureCaps.maxPixelSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
+		featureCaps.maxComputeTextures = 0;
+		featureCaps.maxComputeSamplers = 0;
+		featureCaps.maxPixelTextureUAVs = 0;
+		featureCaps.maxComputeTextureUAVs = 0;
 		featureCaps.shaderModel = 2;
 		featureCaps.shaderModelMinor = 0;
 		featureCaps.colorWriteMask = true;
@@ -96,7 +112,10 @@ void HQDeviceD3D11::InitFeatureCaps()
 	}
 
 	//TO DO: add more shader stages
-	featureCaps.maxTotalBoundTextures = featureCaps.maxVertexTextures + featureCaps.maxGeometryTextures + featureCaps.maxPixelTextures;
+	featureCaps.maxTotalBoundTextures = featureCaps.maxVertexTextures + featureCaps.maxGeometryTextures + featureCaps.maxPixelTextures
+		+ featureCaps.maxComputeTextures;
+
+	featureCaps.maxTotalBoundTextureUAVs = featureCaps.maxComputeTextureUAVs + featureCaps.maxPixelTextureUAVs;
 }
 
 /*---------------------------*/
@@ -114,6 +133,8 @@ hq_uint32 HQDeviceD3D11::GetMaxShaderStageSamplers(HQShaderType shaderStage) //t
 		return featureCaps.maxGeometrySamplers;
 	case HQ_PIXEL_SHADER:
 		return featureCaps.maxPixelSamplers;
+	case HQ_COMPUTE_SHADER:
+		return featureCaps.maxComputeSamplers;
 	default:
 		//TO DO
 		return 0;
@@ -134,6 +155,26 @@ hq_uint32 HQDeviceD3D11::GetMaxShaderStageTextures(HQShaderType shaderStage) //t
 		return featureCaps.maxGeometryTextures;
 	case HQ_PIXEL_SHADER:
 		return featureCaps.maxPixelTextures;
+	case HQ_COMPUTE_SHADER:
+		return featureCaps.maxComputeTextures;
+	default:
+		//TO DO
+		return 0;
+	}
+}
+
+hq_uint32 HQDeviceD3D11::GetMaxShaderTextureUAVs()
+{
+	return this->featureCaps.maxTotalBoundTextureUAVs;
+}
+hq_uint32 HQDeviceD3D11::GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
+{
+	switch (shaderStage)
+	{
+	case HQ_PIXEL_SHADER:
+		return featureCaps.maxPixelTextureUAVs;
+	case HQ_COMPUTE_SHADER:
+		return featureCaps.maxComputeTextureUAVs;
 	default:
 		//TO DO
 		return 0;
@@ -143,6 +184,42 @@ hq_uint32 HQDeviceD3D11::GetMaxShaderStageTextures(HQShaderType shaderStage) //t
 bool HQDeviceD3D11::IsTextureBufferFormatSupported(HQTextureBufferFormat format)
 {
 	return this->featureLvl > D3D_FEATURE_LEVEL_9_3;
+}
+
+bool HQDeviceD3D11::IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextureType textureType, bool hasMipmaps)
+{
+	if (this->featureLvl < D3D_FEATURE_LEVEL_11_0)
+		return false;
+	DXGI_FORMAT d3dformat;
+
+	d3dformat = HQTextureManagerD3D11::GetD3DFormat(format);
+
+	UINT returnedMasks = 0;
+	//reference mask
+	UINT masks = D3D11_FORMAT_SUPPORT_TYPED_UNORDERED_ACCESS_VIEW;
+
+	if (hasMipmaps)
+		masks |= D3D11_FORMAT_SUPPORT_MIP;
+	switch (textureType)
+	{
+	case HQ_TEXTURE_2D_UAV:
+		masks |= D3D11_FORMAT_SUPPORT_TEXTURE2D;
+		break;
+	default:
+		//TO DO
+		return false;
+	}
+	if (d3dformat == DXGI_FORMAT_FORCE_UINT ||
+		FAILED(this->pDevice->CheckFormatSupport(d3dformat, &returnedMasks))
+		)
+	{
+		return false;
+	}
+
+	if ((returnedMasks & masks) != masks)
+		return false;
+
+	return true;
 }
 
 bool HQDeviceD3D11::IsNpotTextureFullySupported(HQTextureType textureType)
@@ -158,6 +235,8 @@ bool HQDeviceD3D11::IsNpotTextureSupported(HQTextureType textureType)
 
 bool HQDeviceD3D11::IsRTTFormatSupported(HQRenderTargetFormat format , HQTextureType textureType ,bool hasMipmaps)
 {
+	UINT returnedMasks = 0;
+	//reference masks
 	UINT masks = D3D11_FORMAT_SUPPORT_RENDER_TARGET;
 
 	if (hasMipmaps)
@@ -170,28 +249,39 @@ bool HQDeviceD3D11::IsRTTFormatSupported(HQRenderTargetFormat format , HQTexture
 	case HQ_TEXTURE_CUBE:
 		masks |= D3D11_FORMAT_SUPPORT_TEXTURECUBE;
 		break;
+	default:
+		//TO DO
+		return false;
 	}
 	DXGI_FORMAT D3Dformat = HQRenderTargetManagerD3D11::GetD3DFormat(format);
 	if (D3Dformat == DXGI_FORMAT_FORCE_UINT || 
-		FAILED(this->pDevice->CheckFormatSupport(D3Dformat , &masks))
+		FAILED(this->pDevice->CheckFormatSupport(D3Dformat, &returnedMasks))
 		)
 	{
 		return false;
 	}
 
+	if ((returnedMasks & masks) != masks)
+		return false;
+
 	return true;
 }
 bool HQDeviceD3D11::IsDSFormatSupported(HQDepthStencilFormat format)
 {
+	UINT returnedMasks = 0;
+	//reference mask
 	UINT masks = D3D11_FORMAT_SUPPORT_DEPTH_STENCIL;
 	
 	DXGI_FORMAT D3Dformat = HQRenderTargetManagerD3D11::GetD3DFormat(format);
 	if (D3Dformat == DXGI_FORMAT_FORCE_UINT || 
-		FAILED(this->pDevice->CheckFormatSupport(D3Dformat , &masks))
+		FAILED(this->pDevice->CheckFormatSupport(D3Dformat, &returnedMasks))
 		)
 	{
 		return false;
 	}
+
+	if ((returnedMasks & masks) != masks)
+		return false;
 
 	return true;
 }
