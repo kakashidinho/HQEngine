@@ -382,6 +382,17 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 											   HQRenderTargetView **pRenderTargetID_Out, 
 											   HQTexture **pTextureID_Out)
 {
+	switch (textureType)
+	{
+	case HQ_TEXTURE_2D:
+		break;
+	case HQ_TEXTURE_CUBE:
+		break;
+	default:
+		Log("CreateRenderTargetTexture() failed : unsuported texture type=%u!", (hquint32)textureType);
+		return HQ_FAILED;
+	}
+
 	char str[256];
 	if (!g_pD3DDev->IsRTTFormatSupported(format , textureType , hasMipmaps))
 	{

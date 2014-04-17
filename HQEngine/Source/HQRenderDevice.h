@@ -272,6 +272,19 @@ public:
 	///
 	virtual HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 primitiveCount , hq_uint32 firstIndex ) = 0;
 
+
+	///
+	///dispatch commands from compute shader
+	///
+	virtual HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ) = 0;
+
+	///
+	///Every UAV textures' memory access after this method returns will reflect data changed by shaders or other 
+	///commands issue before this method's calling. Additionally, every data modification of UAV texture after this method returns 
+	///will not execute until every prior memory access has finished
+	///
+	virtual void TextureUAVBarrier() = 0;
+
 	/*-------------------------------
 	device capabilities
 	-----------------------------*/
@@ -305,6 +318,13 @@ public:
 	///
 	virtual hq_uint32 GetMaxShaderTextureUAVs() = 0;
 	virtual hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage) = 0;
+
+
+	///
+	///Get maximum number of compute thread groups per dimension
+	///
+	virtual void GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ) = 0;
+
 	///
 	///is two sided stencil supported
 	///

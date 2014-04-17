@@ -95,7 +95,8 @@ public:
 
 	///
 	///Set the render targets in group {renderTargetGroupID} as main render targets	.
-	///Pass HQ_NOT_AVAIL_ID to switch to default render target
+	///Pass NULL to switch to default render target. 
+	///Note: D3D11: active render target texture will unset the corresponding texture from every texture slots
 	///
 	virtual HQReturnVal ActiveRenderTargets(HQRenderTargetGroup* renderTargetGroupID) = 0;
 

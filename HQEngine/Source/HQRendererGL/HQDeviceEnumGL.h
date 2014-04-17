@@ -74,25 +74,32 @@ struct Resolution : public HQResolution
 struct BufferInfo{
 	FORMAT pixelFmt;//pixel buffer format
 	FORMAT depthStencilFmt;//depth stenctil buffer format
-	DWORD maxMulSampleLevel;//kiểu siêu lấy mẫu tốt nhất có thể đạt dc  (0,2X,4X,8X..v.v.v.)
+	hquint32 maxMulSampleLevel;//kiểu siêu lấy mẫu tốt nhất có thể đạt dc  (0,2X,4X,8X..v.v.v.)
 };
 
 struct Caps//device capabilities
 {
-	DWORD maxVertexAttribs;
-	DWORD maxTextureSize;
-	DWORD maxCubeTextureSize;
-	DWORD maxAF;//max anisotropic level
-	DWORD nShaderSamplerUnits;//number of shader sampler units
-	DWORD nFragmentShaderSamplers;
-	DWORD nGeometryShaderSamplers;
-	DWORD nVertexShaderSamplers;
-	DWORD nFFTextureUnits;
+	hquint32 maxVertexAttribs;
+	hquint32 maxTextureSize;
+	hquint32 maxCubeTextureSize;
+	hquint32 maxAF;//max anisotropic level
+	hquint32 nFFTextureUnits;
+	hquint32 nShaderSamplerUnits;//number of shader sampler units
+	hquint32 nFragmentShaderSamplers;
+	hquint32 nGeometryShaderSamplers;
+	hquint32 nVertexShaderSamplers;
+	hquint32 nComputeShaderSamplers;
+	hquint32 nImageUnits;//image load store
+	hquint32 nFragmentImageUnits;//image load store
+	hquint32 nComputeImageUnits;//image load store
+	hquint32 nComputeGroupsX;
+	hquint32 nComputeGroupsY;
+	hquint32 nComputeGroupsZ;
 	bool rttInternalFormat[NUM_RTT_FORMAT];//list of supported render target texture 's internal format
 	bool dsFormat[NUM_DS_FORMAT];
 #ifndef HQ_OPENGLES
-	DWORD maxDrawBuffers;
-	DWORD maxUniformBufferSlots;
+	hquint32 maxDrawBuffers;
+	hquint32 maxUniformBufferSlots;
 #endif
 #if defined HQ_MAC_PLATFORM
 	bool hardwareAccel;
@@ -147,7 +154,7 @@ public:
 #endif
 	int vsync;//vsync enable or not
 	FORMAT selectedDepthStencilFmt;
-	DWORD selectedMulSampleType;//multisample level
+	hquint32 selectedMulSampleType;//multisample level
 
 #ifdef WIN32
 	DEVMODE currentScreenDisplayMode;

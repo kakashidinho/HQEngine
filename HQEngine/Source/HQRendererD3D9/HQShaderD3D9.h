@@ -117,8 +117,6 @@ public:
 	HQReturnVal ActiveProgram(HQShaderProgram* programID);
 	HQReturnVal ActiveComputeShader(HQShaderObject *shader) { return HQ_FAILED; }
 
-	HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ) { return HQ_FAILED; }
-
 	void Commit();//this method should be called before draw any thing
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,

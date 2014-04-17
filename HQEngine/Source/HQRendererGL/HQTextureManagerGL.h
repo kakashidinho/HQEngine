@@ -50,18 +50,22 @@ struct HQTextureGL:public HQBaseTexture
 
 struct HQTextureUnitInfoGL
 {
-	HQSharedPtr<HQBaseTexture> texture[3];//current bound textures (2d , cube , buffer)
+	static const hquint32 numTexUnitTargets = 3;
+
+	HQSharedPtr<HQBaseTexture> texture[numTexUnitTargets];//current bound textures (2d , cube , buffer)
 
 	GLuint GetTexture2DGL() const {if (texture[HQ_TEXTURE_2D] != NULL) return *(GLuint*)texture[HQ_TEXTURE_2D]->pData ; return 0;}
 	GLuint GetTextureCubeGL() const {if (texture[HQ_TEXTURE_CUBE] != NULL) return *(GLuint*)texture[HQ_TEXTURE_CUBE]->pData ; return 0;}
 	GLuint GetTextureBufferGL() const {if (texture[HQ_TEXTURE_BUFFER] != NULL) return *(GLuint*)texture[HQ_TEXTURE_BUFFER]->pData ; return 0;}
+	
 };
 
 class HQTextureManagerGL:public HQBaseTextureManager
 {
 public:
 	HQTextureManagerGL(
-					hq_uint32 maxTextureUnits,
+					hquint32 maxTextureUnits,
+					hquint32 maxImageUnits,
 					HQLogStream* logFileStream , 
 					bool flushLog);
 	~HQTextureManagerGL();
@@ -117,6 +121,7 @@ public:
 	HQReturnVal SetTransparency(hq_float32 alpha);//set giá trị alpha lớn nhất của toàn bộ texel thành alpha
 	
 	HQReturnVal InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic);
+	HQReturnVal InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap);
 
 	HQReturnVal RemoveTexture(HQTexture* ID);
 	void RemoveAllTexture();
@@ -129,11 +134,14 @@ public:
 	HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);
 
 private:
-	UINT activeTexture;//current active texture unit
+	GLuint activeTexture;//current active texture unit
 #ifndef HQ_OPENGLES
 	GLuint currentBoundTBuffer;
 #endif
 	HQTextureUnitInfoGL * texUnits;
+	HQSharedPtr<HQBaseTexture> * imageUnits;//image load store
 	hq_uint32 maxTextureUnits;
+
+	hq_uint32 maxImageUnits;//image load store
 };
 #endif

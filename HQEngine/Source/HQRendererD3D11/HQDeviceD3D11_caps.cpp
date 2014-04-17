@@ -52,6 +52,9 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxPixelTextureUAVs = 0;
 #endif
 		featureCaps.maxComputeTextureUAVs = D3D11_1_UAV_SLOT_COUNT;
+
+		featureCaps.maxComputeGroupsX = featureCaps.maxComputeGroupsY = featureCaps.maxComputeGroupsZ = D3D11_CS_DISPATCH_MAX_THREAD_GROUPS_PER_DIMENSION;
+
 		featureCaps.shaderModel = 5;
 		featureCaps.shaderModelMinor = 0;
 		featureCaps.colorWriteMask = true;
@@ -75,6 +78,7 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxComputeSamplers = 0;
 		featureCaps.maxPixelTextureUAVs = 0;
 		featureCaps.maxComputeTextureUAVs = 0;
+		featureCaps.maxComputeGroupsX = featureCaps.maxComputeGroupsY = featureCaps.maxComputeGroupsZ = 0;
 		featureCaps.shaderModel = 4;
 		featureCaps.shaderModelMinor = 0;
 		featureCaps.colorWriteMask = true;
@@ -102,6 +106,7 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxComputeSamplers = 0;
 		featureCaps.maxPixelTextureUAVs = 0;
 		featureCaps.maxComputeTextureUAVs = 0;
+		featureCaps.maxComputeGroupsX = featureCaps.maxComputeGroupsY = featureCaps.maxComputeGroupsZ = 0;
 		featureCaps.shaderModel = 2;
 		featureCaps.shaderModelMinor = 0;
 		featureCaps.colorWriteMask = true;
@@ -179,6 +184,13 @@ hq_uint32 HQDeviceD3D11::GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
 		//TO DO
 		return 0;
 	}
+}
+
+void HQDeviceD3D11::GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ)
+{
+	nGroupsX = featureCaps.maxComputeGroupsX;
+	nGroupsY = featureCaps.maxComputeGroupsY;
+	nGroupsZ = featureCaps.maxComputeGroupsZ;
 }
 
 bool HQDeviceD3D11::IsTextureBufferFormatSupported(HQTextureBufferFormat format)

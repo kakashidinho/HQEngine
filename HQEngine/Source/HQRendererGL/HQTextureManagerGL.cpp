@@ -32,18 +32,24 @@ struct HQTexture2DDesc
 #	error need implement
 #endif
 
-/*---------texture buffer------------------*/
+/*---------texture buffer function------------------*/
 typedef void (GLAPIENTRY * PFNGLTEXBUFFERPROC) (GLenum target, GLenum internalformat, GLuint buffer);
 void GLAPIENTRY glTexBufferDummy(GLenum target, GLenum internalformat, GLuint buffer){}
 PFNGLTEXBUFFERPROC glTexBufferWrapper ;
 
+/*--------image load store function----------------*/
+typedef void (GLAPIENTRY * PFNGLBINDIMAGETEXTURE) (GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format);
+void GLAPIENTRY glBindImageTextureDummy(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format) {}
+PFNGLBINDIMAGETEXTURE glBindImageTextureWrapper;
+
+/*-------------HQTextureGL---------------*/
 HQTextureGL::HQTextureGL(HQTextureType type ):HQBaseTexture()
 {
 	this->type = type;
 	
 	switch (type)
 	{
-	case HQ_TEXTURE_2D:
+	case HQ_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
 		this->textureTarget = GL_TEXTURE_2D;
 		break;
 	case HQ_TEXTURE_CUBE:
@@ -79,7 +85,7 @@ hquint32 HQTextureGL::GetWidth() const
 {
 	switch (this->type)
 	{
-	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:
+	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE: case HQ_TEXTURE_2D_UAV:
 	{
 		HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)this->textureDesc;
 		return l_textureDesc->width;
@@ -94,7 +100,7 @@ hquint32 HQTextureGL::GetHeight() const
 {
 	switch (this->type)
 	{
-	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:
+	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:  case HQ_TEXTURE_2D_UAV:
 	{
 		HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)this->textureDesc;
 		return l_textureDesc->height;
@@ -201,6 +207,16 @@ HQReturnVal HQTextureBufferGL::GenericMap(void ** ppData, HQMapType mapType, hqu
 }
 
 #endif
+
+/*--------HQTextureUAVGL-----*/
+struct HQTextureUAVGL : public HQTextureGL{
+	HQTextureUAVGL() : HQTextureGL(HQ_TEXTURE_2D_UAV)
+	{
+	}
+
+	GLenum internalFormat;
+};
+
 /*---------helper functions--------*/
 
 namespace helper
@@ -333,155 +349,214 @@ namespace helper
 		}
 	}
 
+	GLenum GetTextureBufferFormat(HQTextureBufferFormat format)
+	{
+#ifdef HQ_OPENGLES
+		return 0;
+#else
+		switch (format)
+		{
+		case HQ_TBFMT_R16_FLOAT:
+			//texelSize = 2 ;
+			if (GLEW_VERSION_3_0)
+				return GL_R16F;
+			if (GLEW_ARB_texture_float)
+			{
+				if (GLEW_ARB_texture_rg)
+					return GL_R16F;
+				return GL_LUMINANCE16F_ARB;
+			}
+		case HQ_TBFMT_R16G16B16A16_FLOAT:
+			//texelSize = 8;
+			if (GLEW_VERSION_3_0)
+				return GL_RGBA16F;
+			if (GLEW_ARB_texture_float)
+				return GL_RGBA16F_ARB;
+		case HQ_TBFMT_R32_FLOAT:
+			//texelSize = 4;
+			if (GLEW_VERSION_3_0)
+				return GL_R32F;
+			if (GLEW_ARB_texture_float)
+			{
+				if (GLEW_ARB_texture_rg)
+					return GL_R32F;
+				return GL_LUMINANCE32F_ARB;
+			}
+		case HQ_TBFMT_R32G32B32_FLOAT:
+			//texelSize = 12;
+			if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
+				return GL_RGB32F_ARB;
+		case HQ_TBFMT_R32G32B32A32_FLOAT:
+			//texelSize = 16;
+			if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
+				return GL_RGBA32F_ARB;
+		case HQ_TBFMT_R8_INT:
+			//texelSize = 1;
+			if (GLEW_VERSION_3_0)
+				return GL_R8I;
+			if (GLEW_EXT_texture_integer)
+			{
+				if (GLEW_ARB_texture_rg)
+					return GL_R8I;
+				return GL_LUMINANCE8I_EXT;
+			}
+		case HQ_TBFMT_R8G8B8A8_INT:
+			//texelSize = 4;
+			if (GLEW_VERSION_3_0)
+				return GL_RGBA8I;
+			if (GLEW_EXT_texture_integer)
+				return GL_RGBA8I_EXT;
+		case HQ_TBFMT_R8_UINT:
+			//texelSize = 1;
+			if (GLEW_VERSION_3_0)
+				return GL_R8UI;
+			if (GLEW_EXT_texture_integer)
+			{
+				if (GLEW_ARB_texture_rg)
+					return GL_R8UI;
+				return GL_LUMINANCE8UI_EXT;
+			}
+		case HQ_TBFMT_R8G8B8A8_UINT:
+			//texelSize = 4;
+			if (GLEW_VERSION_3_0)
+				return GL_RGBA8UI;
+			if (GLEW_EXT_texture_integer)
+				return GL_RGBA8UI_EXT;
+		case HQ_TBFMT_R16_INT:
+			//texelSize = 2;
+			if (GLEW_VERSION_3_0)
+				return GL_R16I;
+			if (GLEW_EXT_texture_integer)
+			{
+				if (GLEW_ARB_texture_rg)
+					return GL_R16I;
+				return GL_LUMINANCE16I_EXT;
+			}
+		case HQ_TBFMT_R16G16B16A16_INT:
+			//texelSize = 8;
+			if (GLEW_VERSION_3_0)
+				return GL_RGBA16I;
+			if (GLEW_EXT_texture_integer)
+				return GL_RGBA16I_EXT;
+		case HQ_TBFMT_R16_UINT:
+			//texelSize = 2;
+			if (GLEW_VERSION_3_0)
+				return GL_R16UI;
+			if (GLEW_EXT_texture_integer)
+			{
+				if (GLEW_ARB_texture_rg)
+					return GL_R16UI;
+				return GL_LUMINANCE16UI_EXT;
+			}
+		case HQ_TBFMT_R16G16B16A16_UINT:
+			//texelSize = 8;
+			if (GLEW_VERSION_3_0)
+				return GL_RGBA16UI;
+			if (GLEW_EXT_texture_integer)
+				return GL_RGBA16UI_EXT;
+		case HQ_TBFMT_R32_INT:
+			//texelSize = 4;
+			if (GLEW_VERSION_3_0)
+				return GL_R32I;
+			if (GLEW_EXT_texture_integer)
+			{
+				if (GLEW_ARB_texture_rg)
+					return GL_R32I;
+				return GL_LUMINANCE32I_EXT;
+			}
+		case HQ_TBFMT_R32G32B32A32_INT:
+			if (GLEW_VERSION_3_0)
+				return GL_RGBA32I;
+			//texelSize = 16;
+			if (GLEW_EXT_texture_integer)
+				return GL_RGBA32I;
+		case HQ_TBFMT_R32_UINT:
+			//texelSize = 4;
+			if (GLEW_VERSION_3_0)
+				return GL_R32UI;
+			if (GLEW_EXT_texture_integer)
+			{
+				if (GLEW_ARB_texture_rg)
+					return GL_R32UI;
+				return GL_LUMINANCE32UI_EXT;
+			}
+		case HQ_TBFMT_R32G32B32A32_UINT:
+			//texelSize = 16;
+			if (GLEW_EXT_texture_integer)
+				return GL_RGBA32UI_EXT;
+		case HQ_TBFMT_R8_UNORM:
+			//texelSize = 1;
+			if (GLEW_VERSION_3_0 || GLEW_ARB_texture_rg)
+				return GL_R8;
+			return GL_LUMINANCE8;
+		case HQ_TBFMT_R8G8B8A8_UNORM:
+			//texelSize = 4;
+			return GL_RGBA8;
+		case HQ_TBFMT_R16_UNORM:
+			//texelSize = 2;
+			if (GLEW_VERSION_3_0 || GLEW_ARB_texture_rg)
+				return GL_R16;
+			return GL_LUMINANCE16;
+		case HQ_TBFMT_R16G16B16A16_UNORM:
+			//texelSize = 8;
+			return GL_RGBA16;
+		default:
+			return 0;
+		}
+#endif
+	}
+
+	///return internal format
+	GLenum GetTextureUAVFormat(HQTextureUAVFormat hqformat, GLenum &format, GLenum &type)
+	{
+		if (!GLEW_VERSION_4_2)
+			return 0;
+
+		switch (hqformat)
+		{
+		case HQ_UAVTFMT_R16_FLOAT:
+			format = GL_RED; type = GL_FLOAT;
+			return GL_R16F;
+		case HQ_UAVTFMT_R16G16_FLOAT:
+			format = GL_RG; type = GL_FLOAT;
+			return GL_RG16F;
+		case HQ_UAVTFMT_R16G16B16A16_FLOAT:
+			format = GL_RGBA; type = GL_FLOAT;
+			return GL_RGBA16F;
+		case HQ_UAVTFMT_R32_FLOAT:
+			format = GL_RED; type = GL_FLOAT;
+			return GL_R32F;
+		case HQ_UAVTFMT_R32G32_FLOAT:
+			format = GL_RG; type = GL_FLOAT;
+			return GL_RG32F;
+		case HQ_UAVTFMT_R32G32B32A32_FLOAT:
+			format = GL_RGBA; type = GL_FLOAT;
+			return GL_RGBA32F;
+		case HQ_UAVTFMT_R32_INT:
+			format = GL_RED_INTEGER; type = GL_INT;
+			return GL_R32I;
+		case HQ_UAVTFMT_R32G32_INT:
+			format = GL_RG_INTEGER; type = GL_INT;
+			return GL_RG32I;
+		case HQ_UAVTFMT_R32G32B32A32_INT:
+			format = GL_RGBA_INTEGER; type = GL_INT;
+			return GL_RGBA32I;
+		case HQ_UAVTFMT_R32_UINT:
+			format = GL_RED_INTEGER; type = GL_UNSIGNED_INT;
+			return GL_R32UI;
+		case HQ_UAVTFMT_R32G32_UINT:
+			format = GL_RG_INTEGER; type = GL_UNSIGNED_INT;
+			return GL_RG32UI;
+		case HQ_UAVTFMT_R32G32B32A32_UINT:
+			format = GL_RGBA_INTEGER; type = GL_UNSIGNED_INT;
+			return GL_RGBA32UI;
+		default:
+			return 0;
+		}
+	}
+
 };
 
-
-GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
-{
-#ifdef HQ_OPENGLES
-	return 0;
-#else
-	switch (format)
-	{
-	case HQ_TBFMT_R16_FLOAT :
-		//texelSize = 2 ;
-		if (GLEW_VERSION_3_0)
-			return GL_R16F;
-		if (GLEW_ARB_texture_float)
-		{
-			if(GLEW_ARB_texture_rg)
-				return GL_R16F;
-			return GL_LUMINANCE16F_ARB;
-		}
-	case HQ_TBFMT_R16G16B16A16_FLOAT  :
-		//texelSize = 8;
-		if (GLEW_VERSION_3_0)
-			return GL_RGBA16F;
-		if (GLEW_ARB_texture_float)
-			return GL_RGBA16F_ARB;
-	case HQ_TBFMT_R32_FLOAT  :
-		//texelSize = 4;
-		if (GLEW_VERSION_3_0)
-			return GL_R32F;
-		if (GLEW_ARB_texture_float)
-		{
-			if(GLEW_ARB_texture_rg)
-				return GL_R32F;
-			return GL_LUMINANCE32F_ARB;
-		}
-	case HQ_TBFMT_R32G32B32_FLOAT:
-		//texelSize = 12;
-		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
-			return GL_RGB32F_ARB;
-	case HQ_TBFMT_R32G32B32A32_FLOAT  :
-		//texelSize = 16;
-		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
-			return GL_RGBA32F_ARB;
-	case HQ_TBFMT_R8_INT :
-		//texelSize = 1;
-		if (GLEW_VERSION_3_0)
-			return GL_R8I;
-		if (GLEW_EXT_texture_integer)
-		{
-			if(GLEW_ARB_texture_rg)
-				return GL_R8I;
-			return GL_LUMINANCE8I_EXT;
-		}
-	case HQ_TBFMT_R8G8B8A8_INT :
-		//texelSize = 4;
-		if (GLEW_EXT_texture_integer)
-			return GL_RGBA8I_EXT;
-	case HQ_TBFMT_R8_UINT  :
-		//texelSize = 1;
-		if (GLEW_VERSION_3_0)
-			return GL_R8UI;
-		if (GLEW_EXT_texture_integer)
-		{
-			if(GLEW_ARB_texture_rg)
-				return GL_R8UI;
-			return GL_LUMINANCE8UI_EXT;
-		}
-	case HQ_TBFMT_R8G8B8A8_UINT  :
-		//texelSize = 4;
-		if (GLEW_EXT_texture_integer)
-			return GL_RGBA8UI_EXT;
-	case HQ_TBFMT_R16_INT :
-		//texelSize = 2;
-		if (GLEW_VERSION_3_0)
-			return GL_R16I;
-		if (GLEW_EXT_texture_integer)
-		{
-			if(GLEW_ARB_texture_rg)
-				return GL_R16I;
-			return GL_LUMINANCE16I_EXT;
-		}
-	case HQ_TBFMT_R16G16B16A16_INT :
-		//texelSize = 8;
-		if (GLEW_EXT_texture_integer)
-			return GL_RGBA16UI_EXT;
-	case HQ_TBFMT_R16_UINT :
-		//texelSize = 2;
-		if (GLEW_VERSION_3_0)
-			return GL_R16UI;
-		if (GLEW_EXT_texture_integer)
-		{
-			if(GLEW_ARB_texture_rg)
-				return GL_R16UI;
-			return GL_LUMINANCE16UI_EXT;
-		}
-	case HQ_TBFMT_R16G16B16A16_UINT :
-		//texelSize = 8;
-		if (GLEW_EXT_texture_integer)
-			return GL_RGBA16UI_EXT;
-	case HQ_TBFMT_R32_INT :
-		//texelSize = 4;
-		if (GLEW_VERSION_3_0)
-			return GL_R32I;
-		if (GLEW_EXT_texture_integer)
-		{
-			if(GLEW_ARB_texture_rg)
-				return GL_R32I;
-			return GL_LUMINANCE32I_EXT;
-		}
-	case HQ_TBFMT_R32G32B32A32_INT :
-		//texelSize = 16;
-		if (GLEW_EXT_texture_integer)
-			return GL_RGBA32I_EXT;
-	case HQ_TBFMT_R32_UINT :
-		//texelSize = 4;
-		if (GLEW_VERSION_3_0)
-			return GL_R32UI;
-		if (GLEW_EXT_texture_integer)
-		{
-			if(GLEW_ARB_texture_rg)
-				return GL_R32UI;
-			return GL_LUMINANCE32UI_EXT;
-		}
-	case HQ_TBFMT_R32G32B32A32_UINT :
-		//texelSize = 16;
-		if (GLEW_EXT_texture_integer)
-			return GL_RGBA32UI_EXT;
-	case HQ_TBFMT_R8_UNORM  :
-		//texelSize = 1;
-		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_rg)
-			return GL_R8;
-		return GL_LUMINANCE8;
-	case HQ_TBFMT_R8G8B8A8_UNORM  :
-		//texelSize = 4;
-		return GL_RGBA8;
-	case HQ_TBFMT_R16_UNORM :
-		//texelSize = 2;
-		if (GLEW_VERSION_3_0 || GLEW_ARB_texture_rg)
-			return GL_R16;
-		return GL_LUMINANCE16;
-	case HQ_TBFMT_R16G16B16A16_UNORM :
-		//texelSize = 8;
-		return GL_RGBA16;
-	default:
-		return 0;
-	}
-#endif
-}
 
 /*
 //HQTextureManagerGL class
@@ -491,6 +566,7 @@ GLenum GetTextureBufferFormat(HQTextureBufferFormat format )
 */
 HQTextureManagerGL::HQTextureManagerGL(
 					hq_uint32 maxTextureUnits,
+					hq_uint32 maxImageUnits,
 					HQLogStream* logFileStream ,
 					bool flushLog)
 :HQBaseTextureManager(logFileStream  , "GL Texture Manager:" ,flushLog)
@@ -499,7 +575,9 @@ HQTextureManagerGL::HQTextureManagerGL(
 	this->bitmap.SetLoadedOutputRGB16Layout(LAYOUT_RGB);
 
 	this->maxTextureUnits = maxTextureUnits;
-	this->texUnits = new HQTextureUnitInfoGL[maxTextureUnits];
+	this->maxImageUnits = maxImageUnits;
+	this->texUnits = HQ_NEW HQTextureUnitInfoGL[maxTextureUnits];
+	this->imageUnits = HQ_NEW HQSharedPtr<HQBaseTexture>[maxImageUnits];
 	this->activeTexture = 0;
 
 #ifndef HQ_OPENGLES
@@ -514,6 +592,14 @@ HQTextureManagerGL::HQTextureManagerGL(
 	if (glTexBufferWrapper == NULL)
 		glTexBufferWrapper = &glTexBufferDummy;
 #endif
+
+#ifdef GL_MAX_IMAGE_UNITS
+	if (GLEW_VERSION_4_2)
+		glBindImageTextureWrapper = glBindImageTexture;
+	else
+#endif
+		glBindImageTextureWrapper = glBindImageTextureDummy;
+
 	Log("Init done!");
 	LogTextureCompressionSupportInfo();
 }
@@ -523,6 +609,7 @@ Destructor
 HQTextureManagerGL::~HQTextureManagerGL()
 {
 	SafeDeleteArray(this->texUnits);
+	SafeDeleteArray(this->imageUnits);
 }
 
 HQBaseTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
@@ -539,7 +626,7 @@ HQBaseTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 
 	switch (type)
 	{
-	case HQ_TEXTURE_2D:
+	case HQ_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
 		currentBoundTex = this->texUnits[this->activeTexture].GetTexture2DGL();
 		break;
 	case HQ_TEXTURE_CUBE:
@@ -556,11 +643,15 @@ HQBaseTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 
 #ifndef HQ_OPENGLES
 	if (type == HQ_TEXTURE_BUFFER)
-		newTex = new HQTextureBufferGL(this);
+		newTex = HQ_NEW HQTextureBufferGL(this);
 	else
 #endif
-		newTex = new HQTextureGL(type);
-
+	{
+		if (type == HQ_TEXTURE_2D_UAV)
+			newTex = HQ_NEW HQTextureUAVGL();
+		else
+			newTex = HQ_NEW HQTextureGL(type);
+	}
 
 	glBindTexture(newTex->textureTarget ,*(GLuint*)newTex->pData );
 
@@ -599,6 +690,9 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , HQTexture* textureID
 			case HQ_GEOMETRY_SHADER:
 				Log("SetTexture() Error : Did you mistakenly bitwise OR %u with HQ_GEOMETRY_SHADER!", textureSlot);
 				break;
+			case HQ_COMPUTE_SHADER:
+				Log("SetTexture() Error : Did you mistakenly bitwise OR %u with HQ_COMPUTE_SHADER!", textureSlot);
+				break;
 			default:
 				Log("SetTexture() Error : {slot=%u} out of range!", slot);
 		}
@@ -608,10 +702,19 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , HQTexture* textureID
 
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 	HQTextureGL* pTextureRawPtr = (HQTextureGL*)pTexture.GetRawPointer();
-	if (pTextureRawPtr == NULL)
-		return HQ_OK;
+	HQTextureUnitInfoGL &texUnitInfo = this->texUnits[slot];
 
-	HQTextureUnitInfoGL &texUnitInfo =  this->texUnits[slot];
+	if (pTextureRawPtr == NULL)
+	{
+		//unbind 2d/cube/ buffer texture out of the slot
+		this->ActiveTextureUnit(slot);
+		for (hquint32 i = 0; i < HQTextureUnitInfoGL::numTexUnitTargets; ++i)
+		{
+			texUnitInfo.texture[i].ToNull();
+		}
+		return HQ_OK;
+	}
+
 
 #if 1
 	HQSharedPtr<HQBaseTexture> &currentTexture = texUnitInfo.texture[ pTextureRawPtr->type ];
@@ -623,10 +726,10 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , HQTexture* textureID
 		currentTexture = pTexture;
 	}
 
-#else //switch version , last update : 23/6/11
+#else //switch version , last update : 18/4/14
 	switch (pTexture->type)
 	{
-	case GL_TEXTURE_2D:
+	case GL_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
 		if (pTexture != texUnitInfo.texture[HQ_TEXTURE_2D])
 		{
 			GLuint textureName = *((GLuint*)pTexture->pData);
@@ -672,6 +775,9 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQText
 			case HQ_GEOMETRY_SHADER:
 				Log("SetTextureForPixelShader() Error : Did you mistakenly bitwise OR %u with HQ_GEOMETRY_SHADER!", textureSlot);
 				break;
+			case HQ_COMPUTE_SHADER:
+				Log("SetTextureForPixelShader() Error : Did you mistakenly bitwise OR %u with HQ_COMPUTE_SHADER!", textureSlot);
+				break;
 			default:
 				Log("SetTextureForPixelShader() Error : {slot=%u} out of range!", slot);
 		}
@@ -681,10 +787,18 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQText
 
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 	HQTextureGL* pTextureRawPtr = (HQTextureGL*)pTexture.GetRawPointer();
-	if (pTextureRawPtr == NULL)
-		return HQ_OK;
-
 	HQTextureUnitInfoGL &texUnitInfo =  this->texUnits[slot];
+
+	if (pTextureRawPtr == NULL)
+	{
+		//unbind 2d/cube/ buffer texture out of the slot
+		this->ActiveTextureUnit(slot);
+		for (hquint32 i = 0; i < HQTextureUnitInfoGL::numTexUnitTargets; ++i)
+		{
+			texUnitInfo.texture[i].ToNull();
+		}
+		return HQ_OK;
+	}
 
 #if 1
 	HQSharedPtr<HQBaseTexture> &currentTexture = texUnitInfo.texture[ pTextureRawPtr->type ];
@@ -696,10 +810,10 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQText
 		currentTexture = pTexture;
 	}
 
-#else //switch version , last update : 23/6/11
+#else //switch version , last update : 18/4/14
 	switch (pTexture->type)
 	{
-	case GL_TEXTURE_2D:
+	case GL_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
 		if (pTexture != texUnitInfo.texture[HQ_TEXTURE_2D])
 		{
 			GLuint textureName = *((GLuint*)pTexture->pData);
@@ -730,8 +844,51 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQText
 
 HQReturnVal HQTextureManagerGL::SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel)
 {
-	//TO DO
-	return HQ_FAILED;
+#if defined _DEBUG || defined DEBUG
+	if (slot >= this->maxImageUnits)
+	{
+		hquint32 textureSlot = slot & 0xfffffff;
+		switch (slot & 0xf0000000){
+		case HQ_VERTEX_SHADER:
+			Log("SetTextureUAV() Error : Did you mistakenly bitwise OR %u with HQ_VERTEX_SHADER!", textureSlot);
+			break;
+		case HQ_PIXEL_SHADER:
+			Log("SetTextureUAV() Error : Did you mistakenly bitwise OR %u with HQ_PIXEL_SHADER!", textureSlot);
+			break;
+		case HQ_GEOMETRY_SHADER:
+			Log("SetTextureUAV() Error : Did you mistakenly bitwise OR %u with HQ_GEOMETRY_SHADER!", textureSlot);
+			break;
+		case HQ_COMPUTE_SHADER:
+			Log("SetTextureUAV() Error : Did you mistakenly bitwise OR %u with HQ_COMPUTE_SHADER!", textureSlot);
+			break;
+		default:
+			Log("SetTextureUAV() Error : {slot=%u} out of range!", slot);
+		}
+		return HQ_FAILED;
+	}
+#endif
+
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
+	HQTextureUAVGL* pTextureRawPtr = (HQTextureUAVGL*)pTexture.GetRawPointer();
+	HQSharedPtr<HQBaseTexture> & imageSlot = this->imageUnits[slot];
+	if (pTextureRawPtr == NULL)
+	{
+		if (imageSlot == NULL)
+		{
+			glBindImageTextureWrapper(slot, 0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
+			imageSlot.ToNull();
+		}
+		return HQ_OK;
+	}
+
+	if (imageSlot != pTexture)
+		imageSlot = pTexture;//hold the reference to texture
+
+	GLuint textureName = *((GLuint*)pTexture->pData);
+
+	glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, GL_READ_WRITE, pTextureRawPtr->internalFormat);
+
+	return HQ_OK;
 }
 
 /*
@@ -1324,7 +1481,7 @@ HQReturnVal HQTextureManagerGL::SetAlphaValue(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 
 {
 	hq_ubyte8* pData=bitmap.GetPixelData();
 	SurfaceFormat format=bitmap.GetSurfaceFormat();
-	DWORD color;
+	hquint32 color;
 
 	if(pData==NULL)
 		return HQ_FAILED;
@@ -1357,7 +1514,7 @@ HQReturnVal HQTextureManagerGL::SetAlphaValue(hq_ubyte8 R,hq_ubyte8 G,hq_ubyte8 
 				*((hq_ushort16*)pCur)=(hq_ushort16)(color >> 16);//(A,R) => (A,L)
 		}
 		else{
-			DWORD * pPixel=(DWORD*)pCur;
+			hquint32 * pPixel=(hquint32*)pCur;
 			if(((*pPixel) & 0xffffff )== (color & 0xffffff))//cùng giá trị RGB
 				*pPixel=color;
 		}
@@ -1409,7 +1566,7 @@ HQReturnVal HQTextureManagerGL::InitTextureBuffer(HQBaseTexture *pTex ,HQTexture
 #else
 	if (!g_pOGLDev->IsTextureBufferFormatSupported(format))
 		return HQ_FAILED_FORMAT_NOT_SUPPORT;
-	GLenum glFormat = GetTextureBufferFormat(format);
+	GLenum glFormat = helper::GetTextureBufferFormat(format);
 
 	HQTextureBufferGL * tbuffer = (HQTextureBufferGL *)pTex;
 	tbuffer->usage = _GL_DRAW_BUFFER_USAGE( isDynamic);
@@ -1436,6 +1593,43 @@ HQReturnVal HQTextureManagerGL::InitTextureBuffer(HQBaseTexture *pTex ,HQTexture
 
 	return HQ_OK;
 #endif//#ifdef HQ_OPENGLES
+}
+
+HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat hqformat, hquint32 width, hquint32 height, bool hasMipmaps)
+{
+	GLenum internalFmt, format, type;
+	internalFmt = helper::GetTextureUAVFormat(hqformat, format, type);
+
+	if (internalFmt == 0)
+	{
+		Log("Error : UAV Texture creation with format = %u is not supported", (hquint32)hqformat);
+		return HQ_FAILED;
+	}
+
+	hquint32 numMipmaps = 1;
+	if (hasMipmaps)
+		numMipmaps = HQBaseTextureManager::CalculateFullNumMipmaps(width, height);//full range mipmap level
+
+	HQTextureUAVGL *pTextureUAVGL = (HQTextureUAVGL*)pTex;
+	GLuint *pTextureName = (GLuint*)pTex->pData;
+	hquint32 w = width;
+	hquint32 h = height;
+
+	pTextureUAVGL->internalFormat = internalFmt;
+
+	glBindTexture(GL_TEXTURE_2D, *pTextureName);
+
+	for (hquint32 level = 0; level < numMipmaps; ++level)
+	{
+		glTexImage2D(GL_TEXTURE_2D, level, internalFmt, w, h, 0, format, type, NULL);
+
+		if (w > 1) w >>= 1; //w/=2
+		if (h > 1) h >>= 1; //h/=2
+	}
+
+	glBindTexture(GL_TEXTURE_2D, this->texUnits[this->activeTexture].GetTexture2DGL());//re-bind old texture
+
+	return HQ_OK;
 }
 
 //define the size for texture. useful for textures created outside texture manager, such as those created by render target manager

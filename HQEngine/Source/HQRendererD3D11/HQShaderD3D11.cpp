@@ -516,13 +516,6 @@ HQReturnVal HQShaderManagerD3D11::ActiveComputeShader(HQShaderObject *shader)
 	return HQ_OK;
 }
 
-HQReturnVal HQShaderManagerD3D11::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
-{
-	pD3DContext->Dispatch(numGroupX, numGroupY, numGroupZ);
-
-	return HQ_OK;
-}
-
 /*------------------------*/
 HQReturnVal HQShaderManagerD3D11::DestroyProgram(HQShaderProgram* programID)
 {

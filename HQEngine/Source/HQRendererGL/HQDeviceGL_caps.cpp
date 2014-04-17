@@ -46,7 +46,22 @@ bool HQDeviceGL::IsTextureBufferFormatSupported(HQTextureBufferFormat format)
 }
 
 bool HQDeviceGL::IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextureType textureType, bool hasMipmap) {
-	//TO DO:
+	switch (format)
+	{
+	case HQ_UAVTFMT_R16_FLOAT:
+	case HQ_UAVTFMT_R16G16_FLOAT:
+	case HQ_UAVTFMT_R16G16B16A16_FLOAT:
+	case HQ_UAVTFMT_R32_FLOAT:
+	case HQ_UAVTFMT_R32G32_FLOAT:
+	case HQ_UAVTFMT_R32G32B32A32_FLOAT:
+	case HQ_UAVTFMT_R32_INT:
+	case HQ_UAVTFMT_R32G32_INT:
+	case HQ_UAVTFMT_R32G32B32A32_INT:
+	case HQ_UAVTFMT_R32_UINT:
+	case HQ_UAVTFMT_R32G32_UINT:
+	case HQ_UAVTFMT_R32G32B32A32_UINT:
+		return GLEW_VERSION_4_2 == GL_TRUE;
+	}
 	return false;
 }
 
@@ -57,6 +72,7 @@ bool HQDeviceGL::IsNpotTextureFullySupported(HQTextureType textureType)
 	{
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
+	case HQ_TEXTURE_2D_UAV:
 #ifdef HQ_OPENGLES
 		return GLEW_OES_texture_non_power_of_two;
 #else
@@ -72,6 +88,7 @@ bool HQDeviceGL::IsNpotTextureSupported(HQTextureType textureType)
 	{
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
+	case HQ_TEXTURE_2D_UAV:
 #ifdef HQ_OPENGLES
 		return GLEW_OES_texture_non_power_of_two;
 #else
@@ -89,6 +106,9 @@ bool HQDeviceGL::IsShaderSupport(HQShaderType shaderType,const char* version)
 {
 	if (shaderType == HQ_GEOMETRY_SHADER &&
 		!GLEW_EXT_geometry_shader4 && !GLEW_VERSION_3_2)
+		return false;
+	if (shaderType == HQ_COMPUTE_SHADER &&
+		!GLEW_VERSION_4_3)
 		return false;
 	hq_float32 fversion , fversion2;
 
@@ -118,8 +138,9 @@ hq_uint32 HQDeviceGL::GetMaxShaderStageSamplers(HQShaderType shaderStage)
 	case HQ_PIXEL_SHADER:
 		return pEnum->caps.nFragmentShaderSamplers;
 	case HQ_GEOMETRY_SHADER:
-		if (GLEW_EXT_geometry_shader4 || GLEW_VERSION_3_2)
-			return pEnum->caps.nGeometryShaderSamplers;
+		return pEnum->caps.nGeometryShaderSamplers;
+	case HQ_COMPUTE_SHADER:
+		return pEnum->caps.nComputeShaderSamplers;
 	default:
 		return 0;
 	}
@@ -127,13 +148,25 @@ hq_uint32 HQDeviceGL::GetMaxShaderStageSamplers(HQShaderType shaderStage)
 
 hq_uint32 HQDeviceGL::GetMaxShaderTextureUAVs()
 {
-	//TO DO
-	return 0;
+	return pEnum->caps.nImageUnits;
 }
 hq_uint32 HQDeviceGL::GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
 {
-	//TO DO
+	switch (shaderStage)
+	{
+	case HQ_PIXEL_SHADER:
+		return pEnum->caps.nFragmentImageUnits;
+	case HQ_COMPUTE_SHADER:
+		return pEnum->caps.nComputeImageUnits;
+	}
 	return 0;
+}
+
+void HQDeviceGL::GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ)
+{
+	nGroupsX = pEnum->caps.nComputeGroupsX;
+	nGroupsY = pEnum->caps.nComputeGroupsY;
+	nGroupsZ = pEnum->caps.nComputeGroupsZ;
 }
 
 /*-----------render target caps--------------------*/

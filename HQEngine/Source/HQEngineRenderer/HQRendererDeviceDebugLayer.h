@@ -71,6 +71,10 @@ public:
 	HQReturnVal DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCount , hq_uint32 firstIndex );
 	HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 primitiveCount , hq_uint32 firstIndex );
 
+	HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ);
+
+	void TextureUAVBarrier() { m_pDevice->TextureUAVBarrier(); }
+
 	/*---------------------------------
 	device capabilities
 	----------------------------------*/
@@ -114,6 +118,11 @@ public:
 	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
 	{
 		return m_pDevice->GetMaxShaderStageTextureUAVs(shaderStage);
+	}
+
+	void GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ)
+	{
+		m_pDevice->GetMaxComputeGroups(nGroupsX, nGroupsY, nGroupsZ);
 	}
 
 	bool IsTwoSideStencilSupported() //is two sided stencil supported 

@@ -634,6 +634,9 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 				return HQ_FAILED;
 			}
 			break;
+		default:
+			Log("CreateRenderTargetTexture() failed : unsuported texture type=%u!", (hquint32)textureType);
+			return HQ_FAILED;
 	}
 
 	char str[256];

@@ -45,7 +45,7 @@ const FORMAT PixelFormat[]={
 };
 
 const int numMulSample=4;//số lượng kiểu siêu lấy mẫu hỗ trợ
-const DWORD MulSample[]=
+const hquint32 MulSample[]=
 {
 	0,
 	2,
@@ -958,7 +958,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	glGetIntegerv(GL_MAX_TEXTURE_UNITS , & maxVal);
 	caps.nFFTextureUnits = maxVal;
 
-	//get max sampler units in shader
+	/*-----------get max sampler units per shader-------------*/
 	glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS , & maxVal);
 	if (maxVal > 32)//openGL can't use more than 32 texture units , even if graphics card supports more than 32 texture image units
 		caps.nShaderSamplerUnits = 32;
@@ -974,9 +974,19 @@ void HQDeviceEnumGL::CheckCapabilities()
 
 	if (GLEW_EXT_geometry_shader4 || GLEW_VERSION_3_2)
 	{
-		glGetIntegerv(GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_EXT , &maxVal);
+		glGetIntegerv(GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS, &maxVal);
 		caps.nGeometryShaderSamplers = maxVal;
 	}
+	else
+		caps.nGeometryShaderSamplers = 0;
+
+	if (GLEW_VERSION_4_3)
+	{
+		glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &maxVal);
+		caps.nComputeShaderSamplers = maxVal;
+	}
+	else
+		caps.nComputeShaderSamplers = 0;
 
 	//get max vertex attributes
 	if(GLEW_VERSION_2_0)//shader support
@@ -987,6 +997,46 @@ void HQDeviceEnumGL::CheckCapabilities()
 	else//fixed function
 	{
 		caps.maxVertexAttribs = 3 + 1;//caps.nFFTextureUnits; only support 1 fixed function texture stage for now
+	}
+
+	/*----------get max image units------------*/
+	if (GLEW_VERSION_4_2)
+	{
+		glGetIntegerv(GL_MAX_IMAGE_UNITS, &maxVal);
+		caps.nImageUnits = maxVal;//image load store
+		glGetIntegerv(GL_MAX_FRAGMENT_IMAGE_UNIFORMS, &maxVal);
+		caps.nFragmentImageUnits = maxVal;//image load store
+
+	}
+	else{
+		caps.nImageUnits//image load store
+			= caps.nFragmentImageUnits//image load store
+			= 0;
+	}
+
+
+	if (GLEW_VERSION_4_3)
+	{
+		glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &maxVal);
+		caps.nComputeImageUnits = maxVal;
+	}
+	else
+		caps.nComputeImageUnits = 0;//image load store
+
+	//compute thread groups
+	if (GLEW_VERSION_4_3)
+	{
+		glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &maxVal);
+		caps.nComputeGroupsX = maxVal;
+		glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &maxVal);
+		caps.nComputeGroupsY = maxVal;
+		glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &maxVal);
+		caps.nComputeGroupsZ = maxVal;
+	}
+	else{
+		caps.nComputeGroupsX = 0;
+		caps.nComputeGroupsY = 0;
+		caps.nComputeGroupsZ = 0;
 	}
 
 	glGetError();//reset error flags
@@ -1290,7 +1340,7 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
 	//get current screen display mode
 	EnumDisplaySettings(NULL , ENUM_CURRENT_SETTINGS , &this->currentScreenDisplayMode);
 
-	DWORD mode = 0;
+	hquint32 mode = 0;
 	while(EnumDisplaySettings(NULL , mode , &myRes.w32DisplayMode))
 	{
 		if (myRes.w32DisplayMode.dmBitsPerPel == currentScreenDisplayMode.dmBitsPerPel &&

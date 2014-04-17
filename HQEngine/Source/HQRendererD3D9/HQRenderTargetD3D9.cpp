@@ -323,6 +323,17 @@ HQReturnVal HQRenderTargetManagerD3D9::CreateRenderTargetTexture(hq_uint32 width
 											   HQRenderTargetView **pRenderTargetID_Out, 
 											   HQTexture **pTextureID_Out)
 {
+	switch (textureType)
+	{
+	case HQ_TEXTURE_2D:
+		break;
+	case HQ_TEXTURE_CUBE:
+		break;
+	default:
+		Log("CreateRenderTargetTexture() failed : unsuported texture type=%u!", (hquint32)textureType);
+		return HQ_FAILED;
+	}
+
 	if (!g_pD3DDev->IsNpotTextureSupported(textureType))//texture size must be power of two
 	{
 		hq_uint32 exp;

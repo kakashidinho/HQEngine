@@ -176,7 +176,11 @@ public:
 	HQReturnVal Draw(hq_uint32 vertexCount , hq_uint32 firstVertex) ;
 	HQReturnVal DrawPrimitive(hq_uint32 primitiveCount , hq_uint32 firstVertex) ;
 	HQReturnVal DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCount , hq_uint32 firstIndex );
-	HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 primitiveCount , hq_uint32 firstIndex );
+	HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices, hq_uint32 primitiveCount, hq_uint32 firstIndex);
+
+	HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ);
+
+	void TextureUAVBarrier();
 
 	/*---------------------------------
 	device capabilities
@@ -197,6 +201,8 @@ public:
 
 	hq_uint32 GetMaxShaderTextureUAVs();
 	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage);
+
+	void GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ);
 
 	bool IsTwoSideStencilSupported() {return true;};//is two sided stencil supported 
 	bool IsBlendStateExSupported() {return true;};//is extended blend state supported

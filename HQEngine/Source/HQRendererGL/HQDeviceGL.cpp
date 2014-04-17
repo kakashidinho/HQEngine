@@ -62,6 +62,17 @@ glxFuncPointer gl_GetProcAddress(const char* procName)
 
 
 #endif
+
+/*-------------------memory barrier----------------------*/
+typedef void (GLAPIENTRY * PFNGLMEMORYBARRIER) (GLbitfield barriers);
+void GLAPIENTRY glMemoryBarrierDummy(GLbitfield barriers){}
+PFNGLMEMORYBARRIER glMemoryBarrierWrapper;
+
+/*--------------------dispatch compute----------*/
+typedef void(GLAPIENTRY * PFNGLDISPATCHCOMPUTE) (GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
+void GLAPIENTRY glDispatchComputeDummy(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z) {}
+PFNGLDISPATCHCOMPUTE glDispatchComputeWrapper;
+
 /*----------------------------------*/
 
 
@@ -607,7 +618,6 @@ void HQDeviceGL::OnReset()
 
 void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 {
-
 	this->EnableVSyncNonSave(pEnum->vsync != 0);
 
 #ifndef HQ_OPENGLES
@@ -634,7 +644,7 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 	this->currentVP.height = sHeight;
 
 	this->shaderMan = HQCreateShaderManager(shaderManagerType , this->m_pLogStream , this->m_flushLog);
-	this->textureMan = new HQTextureManagerGL(pEnum->caps.nShaderSamplerUnits , this->m_pLogStream , this->m_flushLog);
+	this->textureMan = new HQTextureManagerGL(pEnum->caps.nShaderSamplerUnits, pEnum->caps.nImageUnits, this->m_pLogStream, this->m_flushLog);
 	this->stateMan = new HQStateManagerGL(static_cast<HQTextureManagerGL*> (this->textureMan) , pEnum->caps.maxAF , this->m_pLogStream , this->m_flushLog);
 
 	//create vertex stream manager
@@ -666,6 +676,21 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 #else
 	this->renderTargetMan = new HQRenderTargetManagerFBO([glc getFrameBuffer] , 1 , static_cast<HQTextureManagerGL*> (this->textureMan) , this->m_pLogStream , this->m_flushLog);
 #endif
+
+	//assign appropriate function pointers
+#ifdef GL_SHADER_IMAGE_ACCESS_BARRIER_BIT
+	if (GLEW_VERSION_4_2)
+		glMemoryBarrierWrapper = glMemoryBarrier;
+	else
+#endif
+		glMemoryBarrierWrapper = glMemoryBarrierDummy;
+
+#ifdef GL_MAX_COMPUTE_WORK_GROUP_COUNT
+	if (GLEW_VERSION_4_3)
+		glDispatchComputeWrapper = glDispatchCompute;
+	else
+#endif
+		glDispatchComputeWrapper = glDispatchComputeDummy;
 }
 
 //***********************************
@@ -1572,4 +1597,18 @@ HQReturnVal HQDeviceGL::SetViewPort(const HQViewPort &viewport)
 void * HQDeviceGL::GetRawHandle()
 { 
 	return NULL; 
+}
+
+
+HQReturnVal HQDeviceGL::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
+{
+	glDispatchComputeWrapper(numGroupX, numGroupY, numGroupZ);
+	return HQ_OK;
+}
+
+void HQDeviceGL::TextureUAVBarrier()
+{
+#ifdef GL_SHADER_IMAGE_ACCESS_BARRIER_BIT
+	glMemoryBarrierWrapper(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
 }

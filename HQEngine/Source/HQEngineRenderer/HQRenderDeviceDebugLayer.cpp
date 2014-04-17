@@ -230,3 +230,17 @@ HQReturnVal HQRenderDeviceDebugLayer::DrawIndexedPrimitive(hq_uint32 numVertices
 	
 	return re;
 }
+
+HQReturnVal HQRenderDeviceDebugLayer::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
+{
+	HQReturnVal re = m_pDevice->DispatchCompute(numGroupX, numGroupY, numGroupZ);
+	if (HQFailed(re))
+	{
+		sprintf(debugString, 2048, "HQRenderDevice::DispatchCompute(%u , %u , %u) return %s\n",
+			numGroupX, numGroupY, numGroupZ, HQReturnValToString(re));
+
+		__OutputDebugString;
+	}
+
+	return re;
+}

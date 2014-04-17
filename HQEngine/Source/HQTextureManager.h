@@ -34,7 +34,8 @@ public:
 	///			Trong direct3d 9 {texture slot} là slot của sampler unit .Shader model 3.0 : pixel shader có 16 sampler. vertex shader có 4 sampler. Các model khác truy vấn bằng method GetMaxShaderStageSamplers() của render device. 
 	///			Trong direct3d 10/11 : {texture slot} là slot shader resource view.Mỗi shader stage có 128 slot.  
 	///OpenGL : {slot} là slot của sampler unit.{slot} nằm trong khoảng từ 0 đến số trả về từ method GetMaxShaderSamplers() của render device trừ đi 1.Các texture khác loại (ví dụ cube & 2d texture) có thể gắn cùng vào 1 slot.  
-	///Lưu ý : -pixel shader dùng trung sampler unit với fixed function.Với openGL , các slot đầu tiên trùng với các slot của fixed function sampler	
+	///Lưu ý : -pixel shader dùng trung sampler unit với fixed function.Với openGL , các slot đầu tiên trùng với các slot của fixed function sampler. 
+	///		   -pass NULL sẽ unset texture ra khỏi slot (Trong OpenGL, tất cả cube/2d/buffer texture đều bị unset)
 	///
 	virtual HQReturnVal SetTexture(hq_uint32 slot , HQTexture* textureID) = 0;
 	
@@ -42,15 +43,18 @@ public:
 	///Direct3d : Trong direct3d 9 {slot} là slot của sampler unit trong pixel shader.Shader model 3.0 : pixel shader có 16 sampler. Các model khác truy vấn bằng method GetMaxShaderStageSamplers(HQ_PIXEL_SHADER) của render device. 
 	///			Trong direct3d 10/11 : {slot} là slot pixel shader resource view.Mỗi shader stage có 128 slot.  
 	///OpenGL : {slot} là slot của sampler unit.{slot} nằm trong khoảng từ 0 đến số trả về từ method GetMaxShaderSamplers() của render device trừ đi 1.Các texture khác loại (ví dụ cube & 2d texture) có thể gắn cùng vào 1 slot.  
-	///Lưu ý : -pixel shader dùng trung sampler unit với fixed function.Với openGL , các slot đầu tiên trùng với các slot của fixed function sampler	
+	///Lưu ý : -pixel shader dùng trung sampler unit với fixed function.Với openGL , các slot đầu tiên trùng với các slot của fixed function sampler. 
+	///		   -pass NULL sẽ unset texture ra khỏi slot (Trong OpenGL, tất cả cube/2d/buffer texture đều bị unset)
 	///
 	virtual HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID) = 0;
 	
 	///
-	///Direct3d : {slot} = {texture slot} bitwise OR với enum HQShaderType để chỉ  {texture slot} thuộc shader stage nào. 
-	///			Ví dụ muốn gắn texture vào texture slot 3 của compute shader , ta truyền tham số {slot} = (3 | HQ_COMPUTE_SHADER). 
-	///			Trong direct3d 11 : {texture slot} là slot uav. Mỗi shader stage có 64 slot.  
-	///OpenGL : {slot} là slot của image unit.{slot} nằm trong khoảng từ 0 đến số trả về từ method GetMaxShaderTextureUAVs() của render device trừ đi 1.
+	///Direct3d : {slot} = {texture slot} bitwise OR with enum HQShaderType to specify  {texture slot} belongs to which shader stage. 
+	///			Eg. to set texture to texture slot 3 of compute shader , pass {slot} = (3 | HQ_COMPUTE_SHADER). 
+	///			Direct3d 11 : {texture slot} refers to UAV slot. Each shader stage has 64 slots.  It should be checked by calling HQRenderDevice::GetMaxShaderStageTextureUAVs(). 
+	///						  Note that set texture to UAV slot will unset it from every resource slots.  
+	///OpenGL : {slot} is slot of texture image unit.{slot} is between  0 and HQRenderDevice::GetMaxShaderTextureUAVs() minus 1. 
+	///Note : passing NULL will unset the current texture out of slot
 	///
 	virtual HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel = 0) = 0;
 

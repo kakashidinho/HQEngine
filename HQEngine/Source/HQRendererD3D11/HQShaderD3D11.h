@@ -177,7 +177,6 @@ public:
 
 	HQReturnVal ActiveProgram(HQShaderProgram* programID);
 	HQReturnVal ActiveComputeShader(HQShaderObject *shader);
-	HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ);
 
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
 									 HQDataReaderStream* dataStream,

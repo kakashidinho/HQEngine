@@ -1286,3 +1286,10 @@ HQReturnVal HQDeviceD3D11::SetViewPort(const HQViewPort &viewport)
 
 	return re;
 }
+
+HQReturnVal HQDeviceD3D11::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
+{
+	pDevContext->Dispatch(numGroupX, numGroupY, numGroupZ);
+
+	return HQ_OK;
+}
