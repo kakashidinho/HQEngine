@@ -175,6 +175,9 @@
     <None Include="..\BaseImpl\makeBaseImplShaderString.bat">
       <Filter>Header Files\BaseImpl</Filter>
     </None>
+    <None Include="..\BaseImpl\HQFFEmuShaderGL.glsl">
+      <Filter>Header Files\BaseImpl</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl">

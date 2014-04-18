@@ -25,6 +25,9 @@ public:
 	virtual bool IsUsingGShader(){return HQ_FAILED;}
 	
 	virtual bool IsUsingPShader(){return HQ_FAILED;}
+
+
+	virtual HQReturnVal SetIncludeFileManager(HQFileManager* fileManager) { return HQ_FAILED; }
 	
 	virtual HQReturnVal ActiveProgram(HQShaderProgram* programID){return HQ_FAILED;}
 	virtual HQReturnVal ActiveComputeShader(HQShaderObject *shader) { return HQ_FAILED; }

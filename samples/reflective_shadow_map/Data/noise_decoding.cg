@@ -9,6 +9,8 @@ COPYING.txt included with this distribution for more information.
 */
 
 #pragma pack_matrix(column_major)
+#include "common_shader_code.h"
+
 struct vOut{
 	float4 position: POSITION;
 	float2 texcoords: TEXCOORD0;
@@ -46,7 +48,6 @@ vs_2_0 vs_3_0 vOut VS(in vIn input){
 
 
 /*-----------pixel shader------------*/
-#define PI 3.141592654
 
 uniform sampler2D encoded_noise_map: TEXUNIT0;
 

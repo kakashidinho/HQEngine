@@ -19,7 +19,6 @@ COPYING.txt included with this distribution for more information.
 class HQFileManager{
 public:
 	virtual HQDataReaderStream * OpenFileForRead(const char* name) = 0;
-	virtual void Release() = 0;
 protected:
 	virtual ~HQFileManager(){}
 };

@@ -1,0 +1,53 @@
+resources {
+	texture_uav "decoded_random_factors_img" {
+		width=20
+		height=20
+			
+		format=rgba32f
+		
+	}
+
+	shader "noise_decoding_cs" // name will be default to source file name 
+	{
+		type="compute"
+		src_type="glsl"
+		src="noise_decoding.glslcs" 			/* source file */
+	}
+	
+	shader "depth-pass_vs" 	{		/* name will be default to source file name */
+		type="vertex"
+		src_type="glsl"
+		src="depth-pass-compiled-cg.glslv" 			/* source file */
+	}
+	
+	shader "depth-pass_ps" { 			/* name will be default to source file name */
+		type="pixel"
+		src_type="glsl"
+		src="depth-pass-compiled-cg.glslf" 			/* source file */
+	}
+	
+	shader "lowres-pass_vs" { 			/* name will be default to source file name */
+		type="vertex"
+		src_type="glsl"
+		src="lowres-pass-compiled-cg.glslv" 			/* source file */
+	}
+	
+	shader "lowres-pass_ps" { 			/* name will be default to source file name */
+		type="pixel"
+		src_type="glsl"
+		src="lowres-pass-compiled-cg.glslf" 			/* source file */
+	}
+	
+	
+	shader "final-gathering_vs" { 			/* name will be default to source file name */
+		type="vertex"
+		src_type="glsl"
+		src="final-gathering-compiled-cg.glslv" 			/* source file */
+	}
+	
+	shader "final-gathering_ps" { 			/* name will be default to source file name */
+		type="pixel"
+		src_type="glsl"
+		src="final-gathering-compiled-cg.glslf" 			/* source file */
+	}
+}

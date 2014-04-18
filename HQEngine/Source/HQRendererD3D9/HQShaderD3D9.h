@@ -114,6 +114,10 @@ public:
 	bool IsUsingPShader();//có đang dùng pixel/fragment shader không,hay đang dùng fixed function
 	bool IsUsingShader() {return this->activeProgram != NULL;}
 
+	HQFileManager* GetIncludeFileManager() const { return this->includeFileManager; }
+
+	HQReturnVal SetIncludeFileManager(HQFileManager* fileManager) { this->includeFileManager = fileManager; return HQ_OK; }
+
 	HQReturnVal ActiveProgram(HQShaderProgram* programID);
 	HQReturnVal ActiveComputeShader(HQShaderObject *shader) { return HQ_FAILED; }
 
@@ -272,6 +276,8 @@ private:
 
 	CGcontext cgContext;
 	CGprofile cgVertexProfile,cgPixelProfile;
+
+	HQFileManager* includeFileManager;
 
 	LPDIRECT3DDEVICE9 pD3DDevice;
 	HQIDItemManager<HQShaderObjectD3D9> shaderObjects;//danh sách shader object

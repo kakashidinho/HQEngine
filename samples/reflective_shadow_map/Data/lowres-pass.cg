@@ -9,6 +9,8 @@ COPYING.txt included with this distribution for more information.
 */
 
 #pragma pack_matrix(column_major)
+#include "common_shader_code.h"
+
 /*---------------vertex shader-------------*/
 uniform transform {
 	float4x3 worldMat;
@@ -69,8 +71,6 @@ vOut VS(in vIn input){
 #define V_SAMPLE_START (0.5 * V_SAMPLE_STEP)
 #define H_SAMPLE_START (0.5 * H_SAMPLE_STEP)
 #define SAMPLE_RADIUS 0.3 //sampling radius
-
-#define PI 3.141592654
 
 uniform sampler2D randomMap : TEXUNIT0;//texture containing random numbers
 uniform sampler2D posMap : TEXUNIT1;//position texture

@@ -84,6 +84,18 @@ struct HQShaderProgramD3D11 : public HQShaderProgram, public HQBaseIDObject
 
 struct HQFixedFunctionShaderD3D11;
 
+class HQShaderIncludeHandlerD3D11 : public ID3DInclude {
+public:
+	HQShaderIncludeHandlerD3D11();
+	void SetFileManager(HQFileManager* includeFileManager) { this->includeFileManager = includeFileManager; }
+	HQFileManager* GetFileManager() const { return includeFileManager; }
+
+	STDMETHOD(Open)(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes);
+	STDMETHOD(Close)(THIS_ LPCVOID pData);
+private:
+	HQFileManager* includeFileManager;
+};
+
 class HQShaderManagerD3D11 :public HQShaderManager, private HQIDItemManager<HQShaderProgramD3D11>, public HQLoggableObject
 {
 private:
@@ -111,6 +123,9 @@ private:
 	
 	// for fixed function emulation 
 	HQFixedFunctionShaderD3D11 * pFFEmu;
+
+	HQShaderIncludeHandlerD3D11 includeHandler;
+	
 
 	void InitFFEmu();
 	void ReleaseFFEmu();
@@ -174,6 +189,10 @@ public:
 	bool IsUsingShader() {return this->activeProgram != NULL;}
 	
 	ID3DBlob *GetCompiledVertexShader(HQShaderObject* vertexShaderID);
+
+	HQFileManager* GetIncludeFileManager() const { return this->includeHandler.GetFileManager(); }
+
+	HQReturnVal SetIncludeFileManager(HQFileManager* fileManager) { this->includeHandler.SetFileManager(fileManager); return HQ_OK; }
 
 	HQReturnVal ActiveProgram(HQShaderProgram* programID);
 	HQReturnVal ActiveComputeShader(HQShaderObject *shader);

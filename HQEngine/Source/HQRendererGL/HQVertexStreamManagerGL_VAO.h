@@ -56,7 +56,7 @@ public:
 	HQVertexStreamManagerGL_VAO(hq_uint32 maxVertexAttribs, HQLogStream *logFileStream, bool flushLog);
 	~HQVertexStreamManagerGL_VAO();
 
-	void Commit();
+	void OnDraw();
 
 	HQReturnVal SetVertexBuffer(HQVertexBuffer* vertexBufferID, hq_uint32 streamIndex, hq_uint32 stride);
 	HQReturnVal SetVertexInputLayout(HQVertexLayout* inputLayoutID);

@@ -46,11 +46,16 @@ int HQEngineMain(int argc, char **argv)
 	HQLogStream *logStream = HQCreateFileLogStream("log.txt");
 
 	//create engine instance and its render device
+#ifdef USE_GL3
+	const char additionalOptions[] = "Core-GL3.0";
+#else
+	const char additionalOptions[] = "";
+#endif
 	HQEngineApp::WindowInitParams params = HQEngineApp::WindowInitParams::Construct(
 			NULL,
 			renderAPI,
 			NULL,
-			"GLSL-only",
+			additionalOptions,
 			logStream,
 			true
 		);

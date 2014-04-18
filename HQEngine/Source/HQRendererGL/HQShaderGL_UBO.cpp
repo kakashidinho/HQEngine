@@ -9,10 +9,11 @@ COPYING.txt included with this distribution for more information.
 */
 
 #include "HQDeviceGLPCH.h"
-#ifndef HQ_OPENGLES
 
 #include "glHeaders.h"
 #include "HQShaderGL_UBO.h"
+
+#ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 
 /*---------HQUniformBufferGL--------------*/
 HQUniformBufferGL::HQUniformBufferGL(HQBaseShaderManagerGL_UBO *manager , hq_uint32 size ,GLenum usage) 
@@ -132,4 +133,4 @@ HQReturnVal HQBaseShaderManagerGL_UBO::SetUniformBuffer(hq_uint32 slot ,  HQUnif
 	return HQ_FAILED;
 }
 
-#endif//ifndef HQ_OPENGLES
+#endif//ifdef HQ_GL_UNIFORM_BUFFER_DEFINED

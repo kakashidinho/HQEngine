@@ -22,6 +22,64 @@ COPYING.txt included with this distribution for more information.
 
 #define HQ_NON_DYNAMIC_U_BUFFER_CAN_BE_UPDATED 1
 
+
+/*------------------------------------------------------*/
+static char *cgSemantics[] = {
+#if HQ_DEFINE_SEMANTICS
+	"-DVPOSITION=POSITION",
+	"-DVCOLOR=COLOR",
+	"-DVNORMAL=NORMAL",
+	"-DVTEXCOORD0=TEXCOORD0",
+	"-DVTEXCOORD1=TEXCOORD1",
+	"-DVTEXCOORD2=TEXCOORD2",
+	"-DVTEXCOORD3=TEXCOORD3",
+	"-DVTEXCOORD4=TEXCOORD4",
+	"-DVTEXCOORD5=TEXCOORD5",
+	"-DVTEXCOORD6=TEXCOORD6",
+	"-DVTEXCOORD7=TEXCOORD7",
+	"-DVTANGENT=TANGENT",
+	"-DVBINORMAL=BINORMAL",
+	"-DVBLENDWEIGHT=BLENDWEIGHT",
+	"-DVBLENDINDICES=BLENDINDICES",
+	"-DVPSIZE=PSIZE",
+#endif
+	NULL
+};
+
+static const size_t cgSemanticsSize = sizeof(cgSemantics) / sizeof(char*);
+static const size_t numCgPreDefined = cgSemanticsSize - 1;
+
+#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+static D3D10_SHADER_MACRO hlslSemantics[] =
+{
+#if HQ_DEFINE_SEMANTICS
+	"VPOSITION", "POSITION",
+	"VCOLOR", "COLOR",
+	"VNORMAL", "NORMAL",
+	"VTEXCOORD0", "TEXCOORD0",
+	"VTEXCOORD1", "TEXCOORD1",
+	"VTEXCOORD2", "TEXCOORD2",
+	"VTEXCOORD3", "TEXCOORD3",
+	"VTEXCOORD4", "TEXCOORD4",
+	"VTEXCOORD5", "TEXCOORD5",
+	"VTEXCOORD6", "TEXCOORD6",
+	"VTEXCOORD7", "TEXCOORD7",
+	"VTANGENT", "TANGENT",
+	"VBINORMAL", "BINORMAL",
+	"VBLENDWEIGHT", "BLENDWEIGHT",
+	"VBLENDINDICES", "BLENDINDICES",
+	"VPSIZE", "PSIZE",
+#endif
+	NULL, NULL
+};
+
+static const size_t hlslSemanticsSize = sizeof(hlslSemantics) / sizeof(D3D10_SHADER_MACRO);
+static const size_t numHlslPreDefined = hlslSemanticsSize - 1;
+
+#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+
+static HQShaderManagerD3D11* g_pShaderMan = NULL;
+
 #if !HQ_D3D_CLEAR_VP_USE_GS
 struct ClearBufferParameters
 {
@@ -31,6 +89,82 @@ struct ClearBufferParameters
 };
 #endif
 
+//returned pointer must be deleted manually. last character in returned data is zero
+static void * ReadFileData(HQFileManager* fileManager, const char * fileName, hquint32 &size){
+	HQDataReaderStream * stream = fileManager->OpenFileForRead(fileName);
+	if (!stream)
+		return NULL;
+	hqubyte8* pData;
+	pData = HQ_NEW hqubyte8[stream->TotalSize() + 1];
+
+	stream->ReadBytes(pData, stream->TotalSize(), 1);
+	pData[stream->TotalSize()] = '\0';
+
+
+	//return size
+	size = stream->TotalSize() + 1;
+
+	stream->Release();
+
+	//return data
+	return pData;
+}
+
+#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+/*---------------------cg include handler----------------*/
+static void cgIncludeCallback(CGcontext context, const char *filename)
+{
+	if (g_pShaderMan->GetIncludeFileManager() == NULL)
+		return;
+	hquint32 size;
+	void *pData = ReadFileData(g_pShaderMan->GetIncludeFileManager(), filename, size);
+
+	if (pData)
+	{
+		cgSetCompilerIncludeString(context, filename, (const char*) pData);
+		delete ((hqubyte8*)pData);
+	}
+}
+/*-----------------------cg error callback------------------*/
+void cgErrorCallBack(void)
+{
+	CGerror err = cgGetError();
+	HRESULT hr = cgD3D11GetLastError();
+	if (FAILED(hr))
+		g_pShaderMan->Log("D3D11 error %s", cgD3D11TranslateHRESULT(hr));
+	else
+		g_pShaderMan->Log("%s", cgGetErrorString(err));
+}
+#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+
+/*----------------------HQShaderIncludeHandlerD3D11------------------------*/
+HQShaderIncludeHandlerD3D11::HQShaderIncludeHandlerD3D11()
+: includeFileManager(NULL)
+{
+}
+
+HRESULT STDMETHODCALLTYPE HQShaderIncludeHandlerD3D11::Open(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
+{
+	if (includeFileManager == NULL)
+		return S_FALSE;
+
+	char *pData = (char*)ReadFileData(includeFileManager, pFileName, *pBytes);
+	if (pData == NULL)
+		return S_FALSE;
+
+	pData[*pBytes - 1] = '\n';//new line at the end of file
+
+	*ppData = pData;
+
+	return S_OK;
+}
+HRESULT STDMETHODCALLTYPE HQShaderIncludeHandlerD3D11::Close(THIS_ LPCVOID pData){
+	if (pData != NULL)
+		delete[] ((const hqubyte8*)pData);
+	return S_OK;
+}
+
+/*---------------------ID3DBlobImpl------------------------------------*/
 struct ID3DBlobImpl: public ID3DBlob
 {
 	ID3DBlobImpl()
@@ -101,62 +235,6 @@ struct ID3DBlobImpl: public ID3DBlob
 		return refCout;
 	}
 };
-
-static char *cgSemantics[]= {
-#if HQ_DEFINE_SEMANTICS
-	"-DVPOSITION=POSITION",
-	"-DVCOLOR=COLOR",
-	"-DVNORMAL=NORMAL",
-	"-DVTEXCOORD0=TEXCOORD0",
-	"-DVTEXCOORD1=TEXCOORD1",
-	"-DVTEXCOORD2=TEXCOORD2",
-	"-DVTEXCOORD3=TEXCOORD3",
-	"-DVTEXCOORD4=TEXCOORD4",
-	"-DVTEXCOORD5=TEXCOORD5",
-	"-DVTEXCOORD6=TEXCOORD6",
-	"-DVTEXCOORD7=TEXCOORD7",
-	"-DVTANGENT=TANGENT",
-	"-DVBINORMAL=BINORMAL",
-	"-DVBLENDWEIGHT=BLENDWEIGHT",
-	"-DVBLENDINDICES=BLENDINDICES",
-	"-DVPSIZE=PSIZE",
-#endif
-	NULL
-};
-
-static const size_t cgSemanticsSize = sizeof(cgSemantics)/ sizeof(char*);
-static const size_t numCgPreDefined = cgSemanticsSize - 1;
-
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-static D3D10_SHADER_MACRO hlslSemantics[] =
-{
-#if HQ_DEFINE_SEMANTICS
-	"VPOSITION","POSITION",
-	"VCOLOR","COLOR",
-	"VNORMAL","NORMAL",
-	"VTEXCOORD0","TEXCOORD0",
-	"VTEXCOORD1","TEXCOORD1",
-	"VTEXCOORD2","TEXCOORD2",
-	"VTEXCOORD3","TEXCOORD3",
-	"VTEXCOORD4","TEXCOORD4",
-	"VTEXCOORD5","TEXCOORD5",
-	"VTEXCOORD6","TEXCOORD6",
-	"VTEXCOORD7","TEXCOORD7",
-	"VTANGENT","TANGENT",
-	"VBINORMAL","BINORMAL",
-	"VBLENDWEIGHT","BLENDWEIGHT",
-	"VBLENDINDICES","BLENDINDICES",
-	"VPSIZE","PSIZE",
-#endif
-	NULL , NULL
-};
-
-static const size_t hlslSemanticsSize = sizeof(hlslSemantics)/ sizeof(D3D10_SHADER_MACRO);
-static const size_t numHlslPreDefined = hlslSemanticsSize - 1;
-
-#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-
-HQShaderManagerD3D11* pShaderMan=NULL;
 
 /*---------Shader object-------------------*/
 HQShaderObjectD3D11::HQShaderObjectD3D11()
@@ -257,18 +335,6 @@ HQShaderObject * HQShaderProgramD3D11::GetShader(HQShaderType type)
 	return NULL;
 }
 
-/*-----------------------------------------*/
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-void cgErrorCallBack(void)
-{
-	CGerror err=cgGetError();
-	HRESULT hr=cgD3D11GetLastError();
-	if(FAILED(hr))
-		pShaderMan->Log("D3D11 error %s",cgD3D11TranslateHRESULT(hr));
-	else
-		pShaderMan->Log("%s",cgGetErrorString(err));
-}
-#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 /*---------HQShaderManagerD3D11--------------*/
 HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 										   ID3D11DeviceContext* pD3DContext,
@@ -309,12 +375,14 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 
 #endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
-	pShaderMan=this;
+	g_pShaderMan=this;
 
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 #if defined(DEBUG)||defined(_DEBUG)
 	cgSetErrorCallback(cgErrorCallBack);
 #endif
+
+	cgSetCompilerIncludeCallback(this->cgContext, cgIncludeCallback);
 #endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
 /*------create shaders for clearing viewport------*/
@@ -402,7 +470,7 @@ HQShaderManagerD3D11::~HQShaderManagerD3D11()
 	this->ReleaseFFEmu();
 
 	Log("Released!");
-	pShaderMan=NULL;
+	g_pShaderMan=NULL;
 }
 /*------------------------*/
 
@@ -790,6 +858,9 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamCg(HQShaderType type,
 	CGprogram program=cgCreateProgram(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
 												 streamContent,profile,entryFunctionName,(const char **)predefineMacroArgs);
 
+	//clear include data
+	cgSetCompilerIncludeString(this->cgContext, NULL, NULL);
+
 	this->DeAllocArgsCg(predefineMacroArgs);
 	delete [] streamContent;
 
@@ -856,6 +927,9 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemoryCg(HQShaderType type,
 	char ** predefineMacroArgs = this->GetPredefineMacroArgumentsCg(pDefines);
 	CGprogram program=cgCreateProgram(this->cgContext,isPreCompiled? CG_OBJECT : CG_SOURCE ,
 												 pSourceData,profile,entryFunctionName,(const char **)predefineMacroArgs);
+
+	//clear include data
+	cgSetCompilerIncludeString(this->cgContext, NULL, NULL);
 
 	this->DeAllocArgsCg(predefineMacroArgs);
 
@@ -996,7 +1070,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromStreamHLSL(HQShaderType type,
 #endif
 		hr = D3DX11CompileFromMemory(streamContent, dataStream->TotalSize(), 
 			dataStream->GetName(), 
-			macros, NULL, 
+			macros, &this->includeHandler, 
 			entryFunctionName, profile,
 			flags, 0, NULL,
 			&pBlob, &pError, NULL);
@@ -1097,7 +1171,7 @@ HQReturnVal HQShaderManagerD3D11::CreateShaderFromMemoryHLSL(HQShaderType type,
 	
 	D3D10_SHADER_MACRO *macros = this->GetPredefineMacroArgumentsHLSL(pDefines);
 
-	if(FAILED(D3DX11CompileFromMemory(pSourceData , strlen(pSourceData),NULL , macros ,NULL,
+	if (FAILED(D3DX11CompileFromMemory(pSourceData, strlen(pSourceData), NULL, macros, &this->includeHandler,
 							entryFunctionName , profile , flags , 0 , NULL,
 							&pBlob , &pError , NULL)) || 
 		this->CreateShader(type , pBlob , sobject)!= HQ_OK)

@@ -18,6 +18,7 @@ COPYING.txt included with this distribution for more information.
 #include "hlsl2glsl.h"
 #include "glsl_optimizer.h"
 
+#include "../../../../HQEngine/Source/HQEngine/HQDefaultFileManager.h"
 #include "../../../../HQEngine/Source/HQRendererD3D9/HQShaderVarParserD3D9.h"
 #include "../../../../HQEngine/Source/HQClosedStringHashTable.h"
 
@@ -45,11 +46,13 @@ const char* gAttriSematics[][2] = {
 	"VPSIZE", "xlat_attrib_VPSIZE",
 };
 
+
 HQSharedPtr<HQShaderVarParserD3D9> g_preprocessor;
+HQSharedPtr<HQDefaultFileManager> g_includeFileManager = new HQDefaultFileManager();
 
 //transform the cg source to HQEngined version of glsl 
 bool compileSrc(const char* src_file, const char *entry, 
-				int version, bool esVersion,
+				int version, bool esVersion, bool separate_shader,
 				const char* profile,
 				const std::string & macros,
 				std::string & compiled_code_out);
@@ -61,7 +64,9 @@ bool optimizeGLSL(const char *source,
 							std::string & optimized_code_out);
 
 //final step
-bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader);
+bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader, bool separate_shader);
+
+void insertCode(std::string &inout, const std::string &code);
 
 void printUsage(FILE* outStream = stdout);
 
@@ -86,6 +91,7 @@ int main (int argc, char** argv){
 
 	const char* profile = NULL;
 	bool esVersion = false;
+	bool separate_shader = false;
 	int version = -1;
 
 	//parsing the command line arguments
@@ -115,6 +121,10 @@ int main (int argc, char** argv){
 		else if (strcmp(argv[i], "-glsles") == 0)//compile to GLSL es
 		{
 			esVersion = true;
+		}
+		else if (strcmp(argv[i], "-separate") == 0)//re-declare built-in blocks
+		{
+			separate_shader = true;
 		}
 		else if (strncmp(argv[i], "-version", 7) == 0)
 		{
@@ -152,6 +162,7 @@ int main (int argc, char** argv){
 			entryFunc,
 			version, 
 			esVersion, 
+			separate_shader,
 			profile, 
 			additional_definitions.str(), 
 			compiled_code);
@@ -221,6 +232,7 @@ void printUsage(FILE* outStream)
 	fprintf(outStream, "				-version <number>			: GLSL version number. Must be 100, 110, 120\n");
 	fprintf(outStream, "				-Dname[=value]				: Set a preprocessor macro\n");
 	fprintf(outStream, "				-p	<preprocessed file>		: output a preprocessed code\n");
+	fprintf(outStream, "				-separate					: insert built-in blocks' re-declaraion for separate shader object\n");
 }
 
 //initialize predefined macros
@@ -247,7 +259,7 @@ void initPredefinedMacros(std::stringstream & macros){
 
 //transform the cg source to HQEngined version of glsl 
 bool compileSrc(const char* src_file, const char *entry, 
-				int version, bool esVersion,
+				int version, bool esVersion, bool separate_shader,
 				const char* profile,
 				const std::string & macros,
 				std::string & compiled_code_out)
@@ -314,8 +326,33 @@ bool compileSrc(const char* src_file, const char *entry,
 
 	filestream.close();
 
-	//preprocess code
-	g_preprocessor = new HQShaderVarParserD3D9(source, NULL);
+	/*--------preprocess code-------------*/
+	//get containing directory of source file
+	{
+		std::string source_file_std_string = src_file;
+		std::string containingFoler;
+
+		//find last '/' or '\\'
+		size_t pos1 = source_file_std_string.find_last_of('/');
+		size_t pos2 = source_file_std_string.find_last_of('\\');
+		size_t last_slash;
+		if (pos1 != std::string::npos)
+		{
+			last_slash = pos1;
+			if (pos2 != std::string::npos && pos2 > pos1)
+				last_slash = pos2;
+		}
+		else
+			last_slash = pos2;
+
+		if (last_slash != std::string::npos)
+		{
+			containingFoler = source_file_std_string.substr(0, last_slash);
+			g_includeFileManager->AddFirstSearchPath(containingFoler.c_str());
+		}
+	}
+
+	g_preprocessor = new HQShaderVarParserD3D9(source, NULL, g_includeFileManager.GetRawPointer());
 
 	const char *codeToCompile = g_preprocessor->GetPreprocessedSrc();
 	if (codeToCompile == NULL)
@@ -358,7 +395,7 @@ bool compileSrc(const char* src_file, const char *entry,
 		else
 		{
 			compiled_code_out += opt_code;
-			if (!postProcess(parser, compiled_code_out, glShaderType == EShLangVertex))
+			if (!postProcess(parser, compiled_code_out, glShaderType == EShLangVertex, separate_shader))
 				success = false;
 		}
 	}
@@ -426,7 +463,7 @@ bool optimizeGLSL(const char *source,
 }
 
 //final step, add some HQEngine semantics
-bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader)
+bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader, bool separate_shader)
 {
 	if (vertexShader)
 	{
@@ -443,7 +480,23 @@ bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader
 				size_t nameLen = strlen(attribName);
 				inout.replace(pos1, nameLen, std::string(attribName) + " " + semantic);
 			}
-		}
+		}//for (int i = 0; i < gNumAttriSems ; ++i)
+
+		if (separate_shader)
+		{
+			std::string additionalCode = 
+"#ifdef HQEXT_GLSL_SEPARATE_SHADER\n\
+#if __VERSION__ > 140\n\
+out gl_PerVertex{\n\
+#endif\n\
+	vec4 gl_Position;\n\
+	float gl_PointSize;\n\
+#if __VERSION__ > 140\n\
+};\n\
+#endif\n\
+#endif\n";
+			insertCode(inout, additionalCode);
+		}//if (separate_shader)
 	}//if (vertexShader)
 
 	//now add semantics to uniforms
@@ -524,4 +577,76 @@ bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader
 	}//for (g_preprocessor->uniformBlocks.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 
 	return true;
+}
+
+#define IS_WHITE_SPACE(c) (c == ' ' || c == '\t' || c == '\r')
+
+void insertCode(std::string &inout, const std::string &code){
+	enum State {
+		LINE_START,
+		PREPROCESSOR_START,
+		IGNORE_LINE
+	};
+	//insert "statement" to the source code, but only after every #extension and #version lines since these lines must appear before any none preprocessor lines
+	size_t line = 1;
+	size_t insert_pos = 0;
+	size_t line_insert = 1;
+	State state = LINE_START;
+	
+	for (size_t i = 0; i < inout.size(); ++i)
+	{
+		char c = inout[i];
+		if (c == '\n')
+		{
+			line ++;
+			state = LINE_START;
+		}
+		else
+		{
+			switch (state)
+			{
+			case LINE_START:
+				if (c == '#')
+					state = PREPROCESSOR_START;
+				else if (!IS_WHITE_SPACE(c))//not white space
+					state = IGNORE_LINE;
+				break;
+			case PREPROCESSOR_START:
+				if (c == 'e' || c == 'v')//may be "extension" or "version"
+				{
+					if (inout.compare(i, 9, "extension") == 0 && i + 9 < inout.size() && IS_WHITE_SPACE(inout[i + 9]))
+					{
+						//found #extension
+						insert_pos = inout.find("\n", i + 9) + 1;
+						i = insert_pos - 1;
+						line ++;
+						line_insert = line;
+						state = LINE_START;
+					}
+					else if (inout.compare(i, 7, "version") == 0 && i + 7 < inout.size() && IS_WHITE_SPACE(inout[i + 7]))
+					{
+						//found #version
+						insert_pos = inout.find("\n", i + 7) + 1;
+						i = insert_pos - 1;
+						line ++;
+						line_insert = line;
+						state = LINE_START;
+					}
+				}
+				else if (!IS_WHITE_SPACE(c))//not white space
+				{
+					state = IGNORE_LINE;
+				}
+				break;
+		
+			}//switch (state)
+		}//else of if (c == '\n')
+			
+	}//for (size_t i = 0; i < inout.size(); ++i)
+
+	if (insert_pos < inout.size())
+	{
+		inout.insert(insert_pos, code);
+	}
+	
 }

@@ -1,13 +1,3 @@
-/*
-Copyright (C) 2010-2013  Le Hoang Quyen (lehoangq@gmail.com)
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the MIT license.  See the file
-COPYING.txt included with this distribution for more information.
-
-
-*/
-
 #ifndef BASEIMPLSHADERSTRING_HQCLEARVIEWPORTSHADERCODED3D1X_H_INCLUDED
 #define BASEIMPLSHADERSTRING_HQCLEARVIEWPORTSHADERCODED3D1X_H_INCLUDED
 const char HQClearViewportShaderCodeD3D1x[] = "\

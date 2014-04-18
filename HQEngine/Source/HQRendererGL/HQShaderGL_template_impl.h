@@ -38,11 +38,12 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Active
 	HQReturnVal re;
 	if (program == NULL)
 	{
-		re = this->shaderController.DeActiveProgram(this->activeProgram->isGLSL, this->activeProgram);
-
+		this->shaderController.DeactiveProgram(this->activeProgram);
 		this->activeProgram = HQSharedPtr<HQBaseShaderProgramGL>::null;
 
 		this->ActiveFFEmu();
+
+		re = HQ_OK;
 	}
 
 	else {
@@ -53,10 +54,9 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Active
 #endif
 		this->DeActiveFFEmu();
 
-		re = this->shaderController.ActiveProgram(pProgramSharedPtr->isGLSL, pProgramSharedPtr);
-		this->OnProgramActivated(pProgramSharedPtr.GetRawPointer());//tell parent class
+		re = this->shaderController.ActiveProgram(pProgramSharedPtr);
 		this->activeProgram = pProgramSharedPtr;
-
+		this->BaseShaderManagerClass::OnProgramActivated();//tell parent class
 	}
 
 	return re;
@@ -66,8 +66,29 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Active
 template <class ShaderController, class BaseShaderManagerClass>
 HQReturnVal HQShaderManagerGL<ShaderController, BaseShaderManagerClass>::ActiveComputeShader(HQShaderObject *shader)
 {
-	//TO DO
-	return HQ_FAILED;
+	HQSharedPtr<HQShaderObjectGL> pShader = this->shaderObjects.GetItemPointer(shader);
+
+	if (this->activeCShader != pShader)
+	{
+		if (pShader == NULL)
+		{
+			this->shaderController.DeactiveComputeShader(activeCShader);
+		}
+		else
+		{
+			if (pShader->type != HQ_COMPUTE_SHADER)
+			{
+				Log("Error : invalid compute shader!");
+				return HQ_FAILED_INVALID_ID;
+			}
+
+			this->shaderController.ActiveComputeShader(pShader);
+		}
+
+		this->activeCShader = pShader;
+	}
+
+	return HQ_OK;
 }
 
 /*--------------------------*/
@@ -770,14 +791,14 @@ HQReturnVal HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::SetUni
 
 
 template <class ShaderController , class BaseShaderManagerClass>
-void HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::Commit()
+void HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::OnDraw()
 {
 	if (this->IsFFEmuActive())
 	{
 		this->NotifyFFRender();
 	}
 	else
-		BaseShaderManagerClass::Commit();
+		BaseShaderManagerClass::OnDraw();
 }
 
 template <class ShaderController , class BaseShaderManagerClass>

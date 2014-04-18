@@ -1,0 +1,35 @@
+/*-----------compute shader------------*/
+#version 430
+#include "common_shader_code.h"
+#define WIDTH 20
+#define HEIGHT 20
+
+layout(binding  = 0) uniform writeonly image2D decoded_noise_map;
+layout(binding  = 0) uniform sampler2D encoded_noise_map;
+
+layout (local_size_x = WIDTH, local_size_y = HEIGHT) in;
+void main ()
+{
+	ivec3 threadIdx = ivec3(gl_LocalInvocationID);
+
+	if (threadIdx.x >= WIDTH || threadIdx.y >= HEIGHT)
+		return;
+	vec4 encoded = texelFetch(encoded_noise_map, threadIdx.xy, 0);
+	
+	//pixel layout S2 = {A, R}, S1 = {G, B} 
+	float S1, S2;
+	
+	S1 = encoded.b + encoded.g * 256.0;
+	S1 /= 257.0;//scale down to [0..1]
+	
+	S2 = encoded.r + encoded.a * 256.0;
+	S2 /= 257.0;//scale down to [0..1]
+	
+	vec4 _output;
+	_output.x = S1;
+	_output.y = 0.5 * sin(2.0 * PI * S2) + 0.5; //scale down to between [0..1]
+	_output.z = 0.5 * cos(2.0 * PI * S2) + 0.5; //scale down to between [0..1]
+	_output.w = S1 * S1;
+	
+	imageStore(decoded_noise_map, threadIdx.xy, _output);
+}

@@ -1,3 +1,8 @@
+/* GLSL's predefined macros */
+HQEXT_GLSL
+HQEXT_GLSL_ES				  --> this is GLSL ES version
+HQEXT_GLSL_SEPARATE_SHADER    --> use separate shaders, gl_PerVertex should be redeclared
+
 * vertex shader input's semantics:
 vertex attribute usage  	|		semantic		|
 ________________________________|_______________________________________|

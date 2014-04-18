@@ -47,8 +47,45 @@ static const char g_compileOption[] = "-d3d";
 
 static bool g_disableErrorCallback = false;
 
-HQShaderManagerD3D9* pShaderMan=NULL;
-void cgErrorCallBack(void)
+HQShaderManagerD3D9* g_pShaderMan=NULL;
+
+//returned pointer must be deleted manually. last character in returned data is zero
+static void * ReadFileData(HQFileManager* fileManager, const char * fileName, hquint32 &size){
+	HQDataReaderStream * stream = fileManager->OpenFileForRead(fileName);
+	if (!stream)
+		return NULL;
+	hqubyte8* pData;
+	pData = HQ_NEW hqubyte8[stream->TotalSize() + 1];
+
+	stream->ReadBytes(pData, stream->TotalSize(), 1);
+	pData[stream->TotalSize()] = '\0';
+
+
+	//return size
+	size = stream->TotalSize() + 1;
+
+	stream->Release();
+
+	//return data
+	return pData;
+}
+/*---------------------cg include handler----------------*/
+static void cgIncludeCallback(CGcontext context, const char *filename)
+{
+	if (g_pShaderMan->GetIncludeFileManager() == NULL)
+		return;
+	hquint32 size;
+	void *pData = ReadFileData(g_pShaderMan->GetIncludeFileManager(), filename, size);
+
+	if (pData)
+	{
+		cgSetCompilerIncludeString(context, filename, (const char*)pData);
+		delete ((hqubyte8*)pData);
+	}
+}
+
+/*----------------cg error callback----------------*/
+static void cgErrorCallBack(void)
 {
 	if (g_disableErrorCallback)
 		return;
@@ -56,10 +93,10 @@ void cgErrorCallBack(void)
 	if(err == cgD3D9Failed)
 	{
 		HRESULT hr=cgD3D9GetLastError();
-		pShaderMan->Log("D3D9 error %s",cgD3D9TranslateHRESULT(hr));
+		g_pShaderMan->Log("D3D9 error %s",cgD3D9TranslateHRESULT(hr));
 	}
 	else
-		pShaderMan->Log("%s",cgGetErrorString(err));
+		g_pShaderMan->Log("%s",cgGetErrorString(err));
 }
 
 
@@ -468,12 +505,16 @@ HQShaderManagerD3D9::HQShaderManagerD3D9(LPDIRECT3DDEVICE9 pD3DDevice,HQLogStrea
 	this->firstStageOp[0] = D3DTOP_MODULATE;
 	this->firstStageOp[1] = D3DTOP_SELECTARG1;
 
-	pShaderMan=this;
+	g_pShaderMan=this;
 #if defined(DEBUG)||defined(_DEBUG)
 	cgSetErrorCallback(cgErrorCallBack);
 #endif
 
+	cgSetCompilerIncludeCallback(this->cgContext, cgIncludeCallback);
+
 	cgSetContextBehavior(this->cgContext, CG_BEHAVIOR_3100); 
+
+	this->includeFileManager = NULL;
 
 	const char* version = cgGetString(CG_VERSION);
 	Log("Init done! Cg library version is %s", version);
@@ -487,7 +528,7 @@ HQShaderManagerD3D9::~HQShaderManagerD3D9()
 	cgD3D9SetDevice(0);
 	cgDestroyContext(cgContext);
 	Log("Released!");
-	pShaderMan=NULL;
+	g_pShaderMan=NULL;
 }
 
 void HQShaderManagerD3D9::OnResetDevice()
@@ -741,7 +782,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 	streamContent[dataStream->TotalSize()] = '\0';
 
 	//obtain variables' infos from source
-	HQShaderVarParserD3D9 preprocessedConstInfo(streamContent, pDefines);
+	HQShaderVarParserD3D9 preprocessedConstInfo(streamContent, pDefines, this->includeFileManager);
 	
 	const char *actualSource = preprocessedConstInfo.GetPreprocessedSrc();
 	if (actualSource == NULL)
@@ -750,6 +791,9 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromStreamEx(HQShaderType type,
 	//now compile
 	CGprogram cgprogram = cgCreateProgram(this->cgContext, CG_SOURCE, actualSource, profile, entryFunctionName,args);
 	
+	//clear include data
+	cgSetCompilerIncludeString(this->cgContext, NULL, NULL);
+
 	delete[] streamContent;
 
 	if (cgprogram == NULL )
@@ -902,7 +946,7 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 	}
 
 	//obtain variables' infos from source
-	HQShaderVarParserD3D9 preprocessedConstInfo(pSourceData, pDefines);
+	HQShaderVarParserD3D9 preprocessedConstInfo(pSourceData, pDefines, this->includeFileManager);
 
 	const char *actualSource = preprocessedConstInfo.GetPreprocessedSrc();
 	if (actualSource == NULL)
@@ -910,6 +954,8 @@ HQReturnVal HQShaderManagerD3D9::CreateShaderFromMemoryEx(HQShaderType type,
 	
 	//now compile
 	CGprogram cgprogram = cgCreateProgram(this->cgContext, CG_SOURCE, actualSource, profile, entryFunctionName,args);
+	//clear include data
+	cgSetCompilerIncludeString(this->cgContext, NULL, NULL);
 
 	if (cgprogram == NULL )
 	{

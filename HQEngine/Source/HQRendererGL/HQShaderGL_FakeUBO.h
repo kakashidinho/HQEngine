@@ -52,9 +52,9 @@ protected:
 	//implement HQBaseCommonShaderManagerGL
 	virtual HQBaseShaderProgramGL * CreateNewProgramObject();
 	virtual void OnProgramCreated(HQBaseShaderProgramGL *program);
-	virtual void OnProgramActivated(HQBaseShaderProgramGL* program);
+	virtual void OnProgramActivated();
 	//implement HQBaseShaderManagerGL
-	virtual void Commit();//this is called before drawing
+	virtual void OnDraw();//this is called before drawing
 
 	HQIDItemManager<HQFakeUniformBufferGL> uniformBuffers;
 

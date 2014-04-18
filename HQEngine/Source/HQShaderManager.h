@@ -15,6 +15,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQRendererPlatformDef.h"
 #include "HQReturnVal.h"
 #include "HQ3DMathBasics.h"
+#include "HQFileManager.h"
 
 /*---------------------------------------*/
 /*
@@ -47,6 +48,11 @@ public:
 	///active compute shader. If shader is NULL => deactive compute shader
 	///
 	virtual HQReturnVal ActiveComputeShader(HQShaderObject *shader) = 0;
+
+	///
+	///set file manager for loading files in include directives during compilation
+	///
+	virtual HQReturnVal SetIncludeFileManager(HQFileManager* fileManager) = 0;
 
 	
 	//4 method sau chỉ dùng để tạo shader từ mã nguồn ngôn ngữ Cg (ngoại trừ openGL ES device hoặc openGL device với option "GLSL-only" là ngôn ngữ HQEngine extended HQ_OPENGLES )

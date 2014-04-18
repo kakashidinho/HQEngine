@@ -5,12 +5,28 @@
       <Configuration>Debug_CUDA</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_D3D11|Win32">
+      <Configuration>Debug_D3D11</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_D3D9|Win32">
+      <Configuration>Debug_D3D9</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_GL3|Win32">
+      <Configuration>Debug_GL3</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release_CUDA|Win32">
       <Configuration>Release_CUDA</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_D3D11|Win32">
+      <Configuration>Release_D3D11</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="release_no_optimize|Win32">
@@ -40,6 +56,12 @@
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v110</PlatformToolset>
@@ -47,6 +69,21 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -64,10 +101,22 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'" Label="PropertySheets">
@@ -82,12 +131,32 @@
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">
+    <OutDir>$(SolutionDir)..\VS2013_Desk_bin_$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">
+    <OutDir>$(SolutionDir)..\VS2013_Desk_bin_$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">
+    <OutDir>$(SolutionDir)..\VS2013_Desk_bin_$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">
     <OutDir>$(SolutionDir)..\VS2013_Desk_bin_$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)..\VS2013_Desk_bin_$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">
     <OutDir>$(SolutionDir)..\VS2013_Desk_bin_$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
@@ -124,6 +193,81 @@
     <PostBuildEvent>
       <Command>xcopy /q /y "$(SolutionDir)\..\..\..\HQEngine\VS2013\Desktop\Output\$(Configuration)\*.dll"  "$(OutDir)"
 xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\bin\$(ConfigurationName)\*.dll"  "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/include;$(SolutionDir)/../../../HQEngine/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_D3D11;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>MyGUIEngine_d.lib;MyGUI.HQEnginePlatform_d.lib;HQEngineD.lib;HQUtilMathD.lib;HQUtilD.lib;HQSceneManagement.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/Win32-vs2013-desktop/lib/Debug;$(SolutionDir)/../../../HQEngine/VS2013/Desktop/Output/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y "$(SolutionDir)\..\..\..\HQEngine\VS2013\Desktop\Output\Debug\*.dll"  "$(OutDir)"
+xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\bin\Debug\*.dll"  "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/include;$(SolutionDir)/../../../HQEngine/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_D3D9;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>MyGUIEngine_d.lib;MyGUI.HQEnginePlatform_d.lib;HQEngineD.lib;HQUtilMathD.lib;HQUtilD.lib;HQSceneManagement.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/Win32-vs2013-desktop/lib/Debug;$(SolutionDir)/../../../HQEngine/VS2013/Desktop/Output/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y "$(SolutionDir)\..\..\..\HQEngine\VS2013\Desktop\Output\Debug\*.dll"  "$(OutDir)"
+xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\bin\Debug\*.dll"  "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/include;$(SolutionDir)/../../../HQEngine/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_GL3;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>MyGUIEngine_d.lib;MyGUI.HQEnginePlatform_d.lib;HQEngineD.lib;HQUtilMathD.lib;HQUtilD.lib;HQSceneManagement.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/Win32-vs2013-desktop/lib/Debug;$(SolutionDir)/../../../HQEngine/VS2013/Desktop/Output/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y "$(SolutionDir)\..\..\..\HQEngine\VS2013\Desktop\Output\Debug\*.dll"  "$(OutDir)"
+xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\bin\Debug\*.dll"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">
@@ -175,6 +319,33 @@ xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2012-desktop\b
     <PostBuildEvent>
       <Command>xcopy /q /y "$(SolutionDir)\..\..\..\HQEngine\VS2013\Desktop\Output\$(Configuration)\*.dll"  "$(OutDir)"
 xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\bin\$(ConfigurationName)\*.dll"  "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/include;$(SolutionDir)/../../../HQEngine/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_D3D11;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>MyGUIEngine.lib;MyGUI.HQEnginePlatform.lib;HQEngine.lib;HQUtilMath.lib;HQUtil.lib;HQSceneManagement.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/Win32-vs2013-desktop/lib/Release;$(SolutionDir)/../../../HQEngine/VS2013/Desktop/Output/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y "$(SolutionDir)\..\..\..\HQEngine\VS2013\Desktop\Output\Release\*.dll"  "$(OutDir)"
+xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\bin\Release\*.dll"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">
@@ -234,7 +405,11 @@ xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\b
     <ClCompile Include="..\..\..\utilities\CUDA\src\HQCudaBinding.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\main.cpp" />
     <ClCompile Include="..\Source\RenderLoop_depth_pass.cpp" />
@@ -246,15 +421,27 @@ xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\b
     <CustomBuild Include="..\Data\depth-pass.cg">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
@@ -263,15 +450,27 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
     <CustomBuild Include="..\Data\final-gathering.cg">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
@@ -280,15 +479,27 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
     <CustomBuild Include="..\Data\lowres-pass.cg">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
@@ -297,15 +508,27 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
     <CustomBuild Include="..\Data\noise_decoding.cg">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
+call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">call $(SolutionDir)\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.glslf
 call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filename).cg $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslv $(SolutionDir)\..\Data\%(Filename)-compiled-cg.hlslf</Command>
@@ -317,6 +540,7 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
     <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaD3D11Binding.h" />
     <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaD3D9Binding.h" />
     <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaGLBinding.h" />
+    <ClInclude Include="..\Data\common_shader_code.h" />
     <ClInclude Include="..\Source\RenderLoop.h" />
   </ItemGroup>
   <ItemGroup>
@@ -326,7 +550,11 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
       <CodeGeneration Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">compute_20,sm_20</CodeGeneration>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">true</ExcludedFromBuild>
       <GPUDebugInfo Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">true</GPUDebugInfo>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">Od</Optimization>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">$(CUDA_PATH)\bin\nvcc -gencode=arch=compute_20,code=\"sm_20,compute_20\" --cl-version 2012  --use-local-env  -I$(CUDA_PATH)\include  -G   --keep-dir $(IntDir) -maxrregcount=0  --machine 32 --compile -cudart static     -DHQ_USE_CUDA -DWIN32 -D_DEBUG -D_WINDOWS -D_CRT_SECURE_NO_WARNINGS -D_UNICODE -DUNICODE -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o $(IntDir)%(Filename)%(Extension).obj "%(FullPath)"</Command>
@@ -339,12 +567,27 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Data\noise_decoding.glslcs">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">true</ExcludedFromBuild>
+    </None>
     <None Include="..\Data\noise_decoding.hlslcs">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_CUDA|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_no_optimize|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_D3D11|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_GL3|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="..\Data\rsm_effects.script">
       <FileType>Document</FileType>
@@ -354,6 +597,7 @@ call $(SolutionDir)\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\Data\%(Filen
     <None Include="..\Data\rsm_resourcesD3D11.script" />
     <None Include="..\Data\rsm_resourcesD3D9.script" />
     <None Include="..\Data\rsm_resourcesGL.script" />
+    <None Include="..\Data\rsm_resourcesGL_compute_shader.script" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

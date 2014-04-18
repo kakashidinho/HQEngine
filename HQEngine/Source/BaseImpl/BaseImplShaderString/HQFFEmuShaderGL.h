@@ -1,13 +1,3 @@
-/*
-Copyright (C) 2010-2013  Le Hoang Quyen (lehoangq@gmail.com)
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the MIT license.  See the file
-COPYING.txt included with this distribution for more information.
-
-
-*/
-
 #ifndef BASEIMPLSHADERSTRING_HQFFEMUSHADERGL_H_INCLUDED
 #define BASEIMPLSHADERSTRING_HQFFEMUSHADERGL_H_INCLUDED
 const char HQFFEmuShaderGL[] = "\
@@ -29,6 +19,12 @@ attribute vec3 aPosition;\n\
 attribute vec4 aColor;\n\
 attribute vec3 aNormal;\n\
 attribute vec2 aTexcoords;\n\
+#endif\n\
+\n\
+#ifdef HQEXT_GLSL_SEPARATE_SHADER\n\
+out gl_PerVertex{\n\
+	vec4 gl_Position;\n\
+};\n\
 #endif\n\
 \n\
 /* Matrix Uniforms */\n\

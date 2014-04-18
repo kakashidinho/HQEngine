@@ -17,9 +17,59 @@ COPYING.txt included with this distribution for more information.
 #include "../../../ThirdParty-mod/mojoshader/mojoshader.h" //for preprocessor
 
 
+/*-------------read data from file-------------------------*/
+//returned pointer must be deleted manually. last character in returned data is zero
+static void * ReadFileData(HQFileManager* fileManager, const char * fileName, hquint32 &size){
+	if (fileManager == NULL)
+		return NULL;
+	HQDataReaderStream * stream = fileManager->OpenFileForRead(fileName);
+	if (!stream)
+		return NULL;
+	hqubyte8* pData;
+	pData = HQ_NEW hqubyte8[stream->TotalSize() + 1];
+
+	stream->ReadBytes(pData, stream->TotalSize(), 1);
+	pData[stream->TotalSize()] = '\0';
+
+
+	//return size
+	size = stream->TotalSize() + 1;
+
+	stream->Release();
+
+	//return data
+	return pData;
+}
+
+/*---------------------mojo shader's include handler---------------------*/
+int MOJOSHADER_includeOpenHandler(MOJOSHADER_includeType inctype,
+	const char *fname, const char *parent,
+	const char **outdata, unsigned int *outbytes,
+	MOJOSHADER_malloc m, MOJOSHADER_free f, void *d)
+{
+	hquint32 size = 0;
+	char *pData = (char*)ReadFileData((HQFileManager*) d, fname, size);
+	if (pData == NULL)
+		return 0;
+
+	pData[size - 1] = '\n';//new line at the end of file
+
+	//return data
+	*outdata = pData;
+	*outbytes = size;
+
+	return 1;
+}
+
+void MOJOSHADER_includeCloseHandler(const char *data,
+	MOJOSHADER_malloc m, MOJOSHADER_free f, void *d)
+{
+	delete[] data;
+}
+
 /*----------------------ShaderVarParserInfo implementation -----------------------*/
 
-HQShaderVarParserD3D9::HQShaderVarParserD3D9(const char *src, const HQShaderMacro* pDefines)
+HQShaderVarParserD3D9::HQShaderVarParserD3D9(const char *src, const HQShaderMacro* pDefines, HQFileManager* includeFileManager)
 : m_isColMajor (false)
 {
 	int numDefines = 0;
@@ -38,11 +88,11 @@ HQShaderVarParserD3D9::HQShaderVarParserD3D9(const char *src, const HQShaderMacr
 												strlen(src),
 												(const MOJOSHADER_preprocessorDefine*)pDefines,
 												numDefines,
+												MOJOSHADER_includeOpenHandler,
+												MOJOSHADER_includeCloseHandler,
 												NULL,
 												NULL,
-												NULL,
-												NULL,
-												NULL);
+												includeFileManager);
 
 	if (preprocessedData->output != NULL)
 	{

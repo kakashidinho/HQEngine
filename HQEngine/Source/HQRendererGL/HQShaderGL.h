@@ -17,7 +17,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQShaderGL_GLSLController.h"
 
 
-#define GLSL_SHADER_MANAGER 1
+#define HQ_GLSL_SHADER_MANAGER 1
 
 struct HQFixedFunctionShaderGL;
 
@@ -51,8 +51,6 @@ protected:
 template <class ShaderController , class BaseShaderManagerClass>
 class HQShaderManagerGL: public BaseShaderManagerClass, public HQFFShaderControllerGL
 {
-private:
-	ShaderController shaderController;
 public:
 	HQShaderManagerGL(HQLogStream* logFileStream , const char*logPrefix , bool flushLog);
 	~HQShaderManagerGL();
@@ -190,12 +188,14 @@ public:
 								   hq_uint32 numMatrices=1);
 
 
-	void Commit();
+	void OnDraw();
 
 	//device lost handling methods
 	void OnLost() ;
 	void OnReset() ;
-	
+
+private:
+	ShaderController shaderController;
 };
 
 

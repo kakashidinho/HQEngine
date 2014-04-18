@@ -13,7 +13,11 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQShaderGL_Common.h"
 
-#ifndef HQ_OPENGLES
+#ifdef GL_UNIFORM_BUFFER
+#	define HQ_GL_UNIFORM_BUFFER_DEFINED
+#endif
+
+#ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 
 #define MAX_UNIFORM_BUFFER_SLOTS 36
 
@@ -62,8 +66,8 @@ public:
 protected:
 	//implement HQBaseCommonShaderManagerGL
 	virtual HQBaseShaderProgramGL * CreateNewProgramObject() { return HQ_NEW HQBaseShaderProgramGL(); }
-	virtual void OnProgramCreated(HQBaseShaderProgramGL *program) {}//do nothing
-	virtual void OnProgramActivated(HQBaseShaderProgramGL* program) {}//do nothing
+	virtual inline void OnProgramCreated(HQBaseShaderProgramGL *program) {}//do nothing
+	virtual inline void OnProgramActivated() {}//do nothing
 
 	HQIDItemManager<HQUniformBufferGL> uniformBuffers;
 
@@ -72,6 +76,6 @@ protected:
 };
 
 
-#endif
+#endif//ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 
 #endif

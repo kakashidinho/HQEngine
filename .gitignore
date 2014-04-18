@@ -6,7 +6,21 @@
 *.idb
 *.opensdf
 *.bak
+*.cache
+*.temp
 *~
+VS_int_files
+ThirdParty-mod/libvorbis/**/Debug
+ThirdParty-mod/libvorbis/**/Release
+ThirdParty-mod/libvorbis/**/ReleaseX64
+ThirdParty-mod/libvorbis/**/Release_nooptimize
+ThirdParty-mod/libvorbis/**/Release_noptimize
+ThirdParty-mod/libvorbis/**/Release static CRT
+ThirdParty-mod/libvorbis/**/Debug static CRT
+ThirdParty-mod/libogg/**/Debug
+ThirdParty-mod/libogg/**/Release
+ThirdParty-mod/libogg/**/Release static CRT
+ThirdParty-mod/libogg/**/Debug static CRT
 ThirdParty-mod/libogg/xcode/build
 ThirdParty-mod/libvorbis/xcode/build
 ThirdParty-mod/openal-soft/build
@@ -68,14 +82,22 @@ HQEngine/VS2012/WindowsStoreApp/HQEngine/test/Debug
 HQEngine/VS2012/WindowsStoreApp/HQEngine/test/StaticDebug
 HQEngine/VS2012/WindowsStoreApp/HQEngine/test/Release
 HQEngine/VS2012/WindowsStoreApp/HQEngine/test/StaticRelease
-tools/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/build
-tools/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/dist
-tools/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/setting.ini
-VS2008_bin_Debug
-VS2008_bin_Release
-VS2012_Desk_bin_Debug
-VS2012_Desk_bin_Release
+utilities/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/build
+utilities/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/dist
+utilities/HQShaderCompiler/Netbeans/HQEngineShaderCompiler/setting.ini
+utilities/HQShaderCompiler/VS2008/**/Debug/
+utilities/HQShaderCompiler/VS2008/**/Release/
+utilities/HQShaderCompiler/VS2008/**/ReleaseX64/
+utilities/HQShaderCompiler/VS2008/**/Release_noptimize/
+**/VS2008_bin_Debug
+**/VS2008_bin_Release
+**/VS2013_Desk_bin_Debug*
+**/VS2013_Desk_bin_Release*
+samples/reflective_shadow_map/Data/*.hlslv
+samples/reflective_shadow_map/Data/*.hlslf
+samples/reflective_shadow_map/Data/*.glslv
+samples/reflective_shadow_map/Data/*.glslf
 samples/reflective_shadow_map/VS2008/Debug
 samples/reflective_shadow_map/VS2008/Release
-samples/reflective_shadow_map/VS2012_Desk/Debug
-samples/reflective_shadow_map/VS2012_Desk/Release
+samples/reflective_shadow_map/VS2013_Desk/Debug*
+samples/reflective_shadow_map/VS2013_Desk/Release*

@@ -38,6 +38,61 @@ COPYING.txt included with this distribution for more information.
 		dicPtr->lightAttrib##Loc[index] = glGetUniformLocation(program, lightAttrib##Name);\
 	}
 
+
+typedef void (GLAPIENTRY * PFNGLPROGRAMUNIFORM1FPROC) (GLuint program, GLint location, GLfloat x);
+typedef void (GLAPIENTRY * PFNGLPROGRAMUNIFORM3FVPROC) (GLuint program, GLint location, GLsizei count, const GLfloat* value);
+typedef void (GLAPIENTRY * PFNGLPROGRAMUNIFORM4FVPROC) (GLuint program, GLint location, GLsizei count, const GLfloat* value);
+typedef void (GLAPIENTRY * PFNGLPROGRAMUNIFORMMATRIX4FVPROC) (GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
+
+typedef void(*PGLUSEFIXEDFUNCTIONPROGRAM_WRAPPER) (GLuint);
+
+void glUseFixedFunctionProgram(GLuint program)
+{
+	glUseProgram(program);
+}
+
+#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
+void glUseFixedFunctionProgramPipeline(GLuint program)
+{
+	glBindProgramPipeline(HQ_GLSL_SHADER_PIPELINE_ID);
+	const GLbitfield activeStages = GL_VERTEX_SHADER_BIT | GL_FRAGMENT_SHADER_BIT;
+	const GLbitfield inactiveStages = GL_TESS_CONTROL_SHADER_BIT | GL_TESS_EVALUATION_SHADER_BIT | GL_GEOMETRY_SHADER_BIT;
+
+	glUseProgramStages(HQ_GLSL_SHADER_PIPELINE_ID, activeStages, program);
+	glUseProgramStages(HQ_GLSL_SHADER_PIPELINE_ID, inactiveStages, 0);
+}
+#endif
+
+#define DECL_NOPIPELINE_UNIFORM_VEC_FUNCTION(PostFix) \
+	void GLAPIENTRY glNoPipelineUniform ## PostFix(GLuint program, GLint location, GLsizei count, const GLfloat* f)\
+	{\
+		glUniform ## PostFix(location, count, f);\
+	}
+
+#define DECL_NOPIPELINE_UNIFORM_MAT_FUNCTION(PostFix) \
+	void GLAPIENTRY glNoPipelineUniform##PostFix(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat* f)\
+	{\
+		glUniform##PostFix(location, count, transpose, f); \
+	}
+
+/*--------------wrapper functions for glUniform* --------------*/
+void GLAPIENTRY glNoPipelineUniform1f(GLuint program, GLint location, GLfloat value)
+{
+	glUniform1f(location, value);
+}
+
+DECL_NOPIPELINE_UNIFORM_VEC_FUNCTION(3fv)
+DECL_NOPIPELINE_UNIFORM_VEC_FUNCTION(4fv)
+DECL_NOPIPELINE_UNIFORM_MAT_FUNCTION(Matrix4fv);
+
+/*----will use pipeline versions if supported  -----------*/
+PGLUSEFIXEDFUNCTIONPROGRAM_WRAPPER glUseFixedFunctionProgramWrapper;
+PFNGLPROGRAMUNIFORM1FPROC glProgramUniform1fWrapper;
+PFNGLPROGRAMUNIFORM3FVPROC glProgramUniform3fvWrapper;
+PFNGLPROGRAMUNIFORM4FVPROC glProgramUniform4fvWrapper;
+PFNGLPROGRAMUNIFORMMATRIX4FVPROC glProgramUniformMatrix4fvWrapper;
+/*-------------------------------------------------------*/
+
 struct HQFixedFunctionParamenters: public HQA16ByteObject
 {
 	HQFixedFunctionParamenters()
@@ -172,6 +227,27 @@ struct HQFixedFunctionShaderGL: public HQA16ByteObject
 			m_uniformLoc[i] = NULL;
 		}
 		
+		/*------------use correct versions of functions---------------*/
+#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
+		if (GLEW_VERSION_4_1)
+		{
+			glUseFixedFunctionProgramWrapper = glUseFixedFunctionProgramPipeline;
+			glProgramUniform1fWrapper = glProgramUniform1f;
+			glProgramUniform3fvWrapper = glProgramUniform3fv;
+			glProgramUniform4fvWrapper = glProgramUniform4fv;
+			glProgramUniformMatrix4fvWrapper = glProgramUniformMatrix4fv;
+		}
+		else
+		{
+			glUseFixedFunctionProgramWrapper = glUseFixedFunctionProgram;
+			glProgramUniform1fWrapper = glNoPipelineUniform1f;
+			glProgramUniform3fvWrapper = glNoPipelineUniform3fv;
+			glProgramUniform4fvWrapper = glNoPipelineUniform4fv;
+			glProgramUniformMatrix4fvWrapper = glNoPipelineUniformMatrix4fv;
+		}
+#endif
+
+		/*---------------------------*/
 		Restore();
 	}
 	
@@ -381,6 +457,10 @@ private:
 		}
 #endif
 
+		std::string predefinedMacros = "";
+		if (GLEW_VERSION_4_1)
+			predefinedMacros = "#define HQEXT_GLSL_SEPARATE_SHADER\n";
+
 		//create vertex shader
 		if (vshader == 0)//only create when it is not created before
 		{
@@ -391,6 +471,7 @@ private:
 				version_line,
 #endif
 				"#define VERTEX_SHADER\n",
+				predefinedMacros.c_str(),
 				light? lightingDefine: "",
 				specular? specularDefine: "",
 				texture? textureDefine: "",
@@ -415,6 +496,7 @@ private:
 				version_line,
 #endif
 				"#define FRAGMENT_SHADER\n",
+				predefinedMacros.c_str(), 
 				texture? textureDefine: "",
 
 				HQFFEmuShaderGL
@@ -434,6 +516,14 @@ private:
 
 		glAttachShader(program, vshader);
 		glAttachShader(program, pshader);
+
+#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
+		if (GLEW_VERSION_4_1)
+		{
+			//convert to separable program
+			glProgramParameteri(program, GL_PROGRAM_SEPARABLE, GL_TRUE);
+		}
+#endif
 
 		glLinkProgram(program);
 
@@ -773,7 +863,7 @@ public:
 	{
 		if (active)
 		{
-			glUseProgram(GetCurrentProgram());
+			glUseFixedFunctionProgramWrapper(GetCurrentProgram());
 
 			m_flags &= ~PROGRAM_DIRTY;//don't need to switch if there is not any change in lighting, specular and texture
 
@@ -793,12 +883,13 @@ public:
 		return m_uniformLoc[m_activeProgramIndex];
 	}
 
-	//commit uniform change to the program, and/or change the program if needed
-	void CommitChange()
+	//commit uniform changes to the program, and/or change the program if needed
+	void CommitChanges()
 	{
+		GLuint currentProgram = GetCurrentProgram();
 		if (m_flags & PROGRAM_DIRTY)
 		{
-			glUseProgram(GetCurrentProgram());
+			glUseFixedFunctionProgramWrapper(currentProgram);
 
 			m_flags &= ~PROGRAM_DIRTY;
 		}
@@ -812,7 +903,7 @@ public:
 		//mvp matrix
 		if (m_parameters.uMvpMatrixMask & currentProgramMask)
 		{
-			glUniformMatrix4fv(uniforms->uMvpMatrixLoc, 1, GL_FALSE, (GLfloat*)m_parameters.uMvpMatrix);
+			glProgramUniformMatrix4fvWrapper(currentProgram, uniforms->uMvpMatrixLoc, 1, GL_FALSE, (GLfloat*)m_parameters.uMvpMatrix);
 
 			m_parameters.uMvpMatrixMask &= negCurrentProgramMask;
 		}
@@ -820,7 +911,7 @@ public:
 		//world matrix
 		if (m_parameters.uWorldMatrixMask & currentProgramMask)
 		{
-			glUniformMatrix4fv(uniforms->uWorldMatrixLoc, 1, GL_FALSE, (GLfloat*)m_parameters.uWorldMatrix);
+			glProgramUniformMatrix4fvWrapper(currentProgram, uniforms->uWorldMatrixLoc, 1, GL_FALSE, (GLfloat*)m_parameters.uWorldMatrix);
 
 			m_parameters.uWorldMatrixMask &= negCurrentProgramMask;
 		}
@@ -833,7 +924,7 @@ public:
 			if (programUseSpecular && (m_parameters.uEyePosMask & currentProgramMask) != 0)
 			{
 				//eye position is used when specular is enabled
-				glUniform3fv(uniforms->uEyePosLoc, 1, m_parameters.uEyePos.f);
+				glProgramUniform3fvWrapper(currentProgram, uniforms->uEyePosLoc, 1, m_parameters.uEyePos.f);
 
 				m_parameters.uEyePosMask &= negCurrentProgramMask;
 			}
@@ -841,7 +932,7 @@ public:
 			//ambient color 
 			if (m_parameters.uAmbientColorMask & currentProgramMask)
 			{
-				glUniform4fv(uniforms->uAmbientColorLoc, 1, m_parameters.uAmbientColor);
+				glProgramUniform4fvWrapper(currentProgram, uniforms->uAmbientColorLoc, 1, m_parameters.uAmbientColor);
 
 				m_parameters.uAmbientColorMask &= negCurrentProgramMask;
 			}
@@ -849,7 +940,7 @@ public:
 			//normalize normal
 			if (m_parameters.uNormalizeMask & currentProgramMask)
 			{
-				glUniform1f(uniforms->uNormalizeLoc, m_parameters.uNormalize);
+				glProgramUniform1fWrapper(currentProgram, uniforms->uNormalizeLoc, m_parameters.uNormalize);
 
 				m_parameters.uNormalizeMask &= negCurrentProgramMask;
 			}
@@ -857,14 +948,14 @@ public:
 			//material
 			if (m_parameters.uMaterialMask & currentProgramMask)
 			{
-				glUniform4fv(uniforms->uMaterialAmbientLoc, 1, m_parameters.uMaterialAmbient);
-				glUniform4fv(uniforms->uMaterialEmissionLoc, 1, m_parameters.uMaterialEmission);
-				glUniform4fv(uniforms->uMaterialDiffuseLoc, 1, m_parameters.uMaterialDiffuse);
+				glProgramUniform4fvWrapper(currentProgram, uniforms->uMaterialAmbientLoc, 1, m_parameters.uMaterialAmbient);
+				glProgramUniform4fvWrapper(currentProgram, uniforms->uMaterialEmissionLoc, 1, m_parameters.uMaterialEmission);
+				glProgramUniform4fvWrapper(currentProgram, uniforms->uMaterialDiffuseLoc, 1, m_parameters.uMaterialDiffuse);
 				if (programUseSpecular)
 				{
 					//only sync when program use specular
-					glUniform4fv(uniforms->uMaterialSpecularLoc, 1, m_parameters.uMaterialSpecular);
-					glUniform1f(uniforms->uMaterialShininessLoc, m_parameters.uMaterialShininess);
+					glProgramUniform4fvWrapper(currentProgram, uniforms->uMaterialSpecularLoc, 1, m_parameters.uMaterialSpecular);
+					glProgramUniform1fWrapper(currentProgram, uniforms->uMaterialShininessLoc, m_parameters.uMaterialShininess);
 				}
 
 				m_parameters.uMaterialMask &= negCurrentProgramMask;
@@ -873,7 +964,7 @@ public:
 			//light(i) enable
 			if (m_parameters.uUseLightMask & currentProgramMask)
 			{
-				glUniform4fv(uniforms->uUseLightLoc, 1, m_parameters.uUseLight);
+				glProgramUniform4fvWrapper(currentProgram, uniforms->uUseLightLoc, 1, m_parameters.uUseLight);
 
 				m_parameters.uUseLightMask &= negCurrentProgramMask;
 			}
@@ -885,12 +976,12 @@ public:
 				{
 					//light [i] has been changed
 
-					glUniform4fv(uniforms->uLightPositionLoc[i], 1, m_parameters.uLightPosition[i].f);
-					glUniform4fv(uniforms->uLightAmbientLoc[i], 1, m_parameters.uLightAmbient[i].f);
-					glUniform4fv(uniforms->uLightDiffuseLoc[i], 1, m_parameters.uLightDiffuse[i].f);
-					glUniform4fv(uniforms->uLightAttenuationLoc[i], 1, m_parameters.uLightAttenuation[i].f);
+					glProgramUniform4fvWrapper(currentProgram, uniforms->uLightPositionLoc[i], 1, m_parameters.uLightPosition[i].f);
+					glProgramUniform4fvWrapper(currentProgram, uniforms->uLightAmbientLoc[i], 1, m_parameters.uLightAmbient[i].f);
+					glProgramUniform4fvWrapper(currentProgram, uniforms->uLightDiffuseLoc[i], 1, m_parameters.uLightDiffuse[i].f);
+					glProgramUniform4fvWrapper(currentProgram, uniforms->uLightAttenuationLoc[i], 1, m_parameters.uLightAttenuation[i].f);
 					if (programUseSpecular)
-						glUniform4fv(uniforms->uLightSpecularLoc[i], 1, m_parameters.uLightSpecular[i].f);
+						glProgramUniform4fvWrapper(currentProgram, uniforms->uLightSpecularLoc[i], 1, m_parameters.uLightSpecular[i].f);
 
 					m_parameters.uLightMask[i] &= negCurrentProgramMask;
 				}
@@ -1079,7 +1170,7 @@ void HQFFShaderControllerGL::NotifyFFRender()// notify shader manager that the r
 	}
 #endif
 
-	pFFEmu->CommitChange();
+	pFFEmu->CommitChanges();
 }
 
 void HQFFShaderControllerGL::ReleaseFFEmu()

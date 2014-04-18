@@ -131,11 +131,8 @@ HQEngineApp::~HQEngineApp()
 	this->DestroyWindow();
 	this->PlatformRelease();
 
-	HQLinkedList<HQFileManager*>::Iterator ite;
-	m_fileManagers.GetIterator(ite);
-	for (; !ite.IsAtEnd(); ++ite) {
-		(*ite)->Release();
-	}
+	HQDefaultFileManager* defaultFileMan = static_cast<HQDefaultFileManager*>( m_fileManagers.GetFront());
+	delete defaultFileMan;
 }
 
 HQEngineApp * HQEngineApp::CreateInstance(bool rendererDebugLayer )
@@ -263,7 +260,11 @@ HQReturnVal HQEngineApp::CreateRenderDevice(const WindowInitParams* initParams)
 			initParams->logStream,
 			initParams->rendererAdditionalSetting);
 		if (re == HQ_OK)
+		{
 			m_pRenderDevice = m_renderer.GetDevice();
+			//set include file manger for shader manager
+			m_pRenderDevice->GetShaderManager()->SetIncludeFileManager(this);
+		}
 	}
 	return re;
 }

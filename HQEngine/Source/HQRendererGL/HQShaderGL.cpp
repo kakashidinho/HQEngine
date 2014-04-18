@@ -19,20 +19,31 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 	HQBaseShaderManagerGL * shaderMan = NULL;
 	/*---------create shader manager object based on capabilities and option---------*/
 	typedef HQShaderManagerGL<HQGLSLShaderController, HQBaseShaderManagerGL_FakeUBO> GLSLShaderManager;
-#ifndef HQ_OPENGLES
+#ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 	typedef HQShaderManagerGL<HQGLSLShaderController , HQBaseShaderManagerGL_UBO> GLSLShaderManagerUBO;
+#	ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
+	typedef HQShaderManagerGL<HQGLSLShaderPipelineController, HQBaseShaderManagerGL_UBO> GLSLShaderPipelineManagerUBO;
+#	endif
 
-	bool uniformBufferSupported = GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object;
+	bool uniformBufferSupported = GLEW_VERSION_3_1 == GL_TRUE;
 #endif
 
-#ifndef HQ_OPENGLES
 	switch (shaderManagerType)
 	{
-	case GLSL_SHADER_MANAGER:
+	case HQ_GLSL_SHADER_MANAGER:
+#ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 		if (uniformBufferSupported)
-			shaderMan = new GLSLShaderManagerUBO(logFileStream , "GL Shader Manager (UBO supported):" , flushLog);
-		else
+		{
+#	ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
+			if (GLEW_VERSION_4_1)
+				shaderMan = new GLSLShaderPipelineManagerUBO(logFileStream, "GL Shader Pipeline Manager:", flushLog);
+			else
 #endif
+				shaderMan = new GLSLShaderManagerUBO(logFileStream, "GL Shader Manager (UBO supported):", flushLog);
+
+		}
+		else
+#endif//#ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 		{
 #ifdef HQ_ANDROID_PLATFORM
 			if (!GLEW_VERSION_2_0)
@@ -41,11 +52,9 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 #endif
 				shaderMan = new GLSLShaderManager(logFileStream , "GL Shader Manager:" , flushLog);
 		}
-		
-#ifndef HQ_OPENGLES		
+			
 		break;
 	}
-#endif
 
 	return shaderMan;
 }

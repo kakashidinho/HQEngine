@@ -14,12 +14,12 @@ endlocal
 exit /b
 
 :Compile
-set cmd=%TOOLS_FOLDER%\HQEXT_cg2glsl -profile glslv -entry VS -o %~n1-compiled-cg.glslv -version 120 %1
+set cmd=%TOOLS_FOLDER%\HQEXT_cg2glsl -profile glslv -separate -entry VS -o %~n1-compiled-cg.glslv -version 120 %1
 echo.
 echo %cmd%
 %cmd% || set error=1
 
-set cmd=%TOOLS_FOLDER%\HQEXT_cg2glsl -profile glslf -entry PS -o %~n1-compiled-cg.glslf -version 120 %1
+set cmd=%TOOLS_FOLDER%\HQEXT_cg2glsl -profile glslf -separate -entry PS -o %~n1-compiled-cg.glslf -version 120 %1
 echo %cmd%
 %cmd% || set error=1
 exit /b

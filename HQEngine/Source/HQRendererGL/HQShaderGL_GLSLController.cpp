@@ -215,35 +215,59 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 	}
 
 	GLenum shaderType;
-	if(type==HQ_VERTEX_SHADER)
-		shaderType = GL_VERTEX_SHADER;
-	else if (type==HQ_PIXEL_SHADER)
-		shaderType = GL_FRAGMENT_SHADER;
-	else if ((GLEW_EXT_geometry_shader4 || GLEW_VERSION_3_2 ) && type==HQ_GEOMETRY_SHADER)
-		shaderType = GL_GEOMETRY_SHADER_EXT;
-	else
+	bool selfContained = false;
+	switch (type)
 	{
+	case HQ_VERTEX_SHADER:
+		shaderType = GL_VERTEX_SHADER; break;
+	case HQ_PIXEL_SHADER:
+		shaderType = GL_FRAGMENT_SHADER; break;
+	case HQ_GEOMETRY_SHADER:
+		if (GLEW_EXT_geometry_shader4 || GLEW_VERSION_3_2)
+		{
+			shaderType = GL_GEOMETRY_SHADER;
+			break;
+		}
+	case HQ_COMPUTE_SHADER:
+		if (GLEW_VERSION_4_3)
+		{
+			shaderType = GL_COMPUTE_SHADER;
+			selfContained = true;
+			break;
+		}
+	default:
 		g_pShaderMan->Log("Error : Unsupported GLSL shader type=%u", (hquint32)type);
 		return HQ_FAILED;
 	}
 
-	HQShaderObjectGL *sobject= new HQShaderObjectGL();
+
+	HQShaderObjectGL *sobject = HQ_NEW HQShaderObjectGL();
+	sobject->type = type;
+	sobject->selfContainProgram = selfContained;
 	sobject->isGLSL = true;
 	bool parseSuccess ;
 	std::string processed_src;
 
 	HQLinkedList<HQUniformBlockInfoGL>** ppUBlocksInfo = NULL;
 	ppUBlocksInfo = &sobject->pUniformBlocks;
-	bool native_UBO_supported = GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object;
-	bool only_UBO_extension_supported = !GLEW_VERSION_3_1 && GLEW_ARB_uniform_buffer_object;
+	bool native_UBO_supported = GLEW_VERSION_3_1 == GL_TRUE;
 
+#ifdef HQ_OPENGLES
+	std::string preDefined = "#define HQEXT_GLSL_ES\n";
+#else
+	std::string preDefined = "#define HQEXT_GLSL\n";
+#endif
+
+	this->AppendPredefinedMacros(preDefined);//implement dependent
+
+	/*--------------preprocess source---------------*/
 	if(type==HQ_VERTEX_SHADER)
 	{
-		parseSuccess = pVParser->Parse(source, pDefines, processed_src, native_UBO_supported, ppUBlocksInfo, &sobject->pAttribList, &sobject->pUniformSamplerList);
+		parseSuccess = pVParser->Parse(source, g_pShaderMan->GetIncludeFileManager(), preDefined, pDefines, processed_src, native_UBO_supported, ppUBlocksInfo, &sobject->pAttribList, &sobject->pUniformSamplerList);
 	}
 	else
 	{
-		parseSuccess = pVParser->Parse(source, pDefines, processed_src, native_UBO_supported, ppUBlocksInfo, NULL, &sobject->pUniformSamplerList);
+		parseSuccess = pVParser->Parse(source, g_pShaderMan->GetIncludeFileManager(), preDefined, pDefines, processed_src, native_UBO_supported, ppUBlocksInfo, NULL, &sobject->pUniformSamplerList);
 	}
 
 	if (!parseSuccess)
@@ -315,22 +339,13 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 #else//#ifdef HQ_OPENGLES
 			if (version_number < 140)
 			{
-				if (only_UBO_extension_supported)//140 is not supported but GL_ARB_uniform_buffer_object is supported
-					UBO_extension_line = "#extension GL_ARB_uniform_buffer_object: enable\n";
-				else { 
-					version_string = "#version 140\n";//140 is minimum version for uniform buffer objects
-					g_pShaderMan->Log("GLSL shader compile warning: shader contains uniform buffer blocks but they are not supported. Switching to version 140...", version_number); 
-				}
+				version_string = "#version 140\n";//140 is minimum version for uniform buffer objects
+				g_pShaderMan->Log("GLSL shader compile warning: shader contains uniform buffer blocks but they are not supported. Switching to version 140...", version_number); 
 			}
 #endif//#ifdef HQ_OPENGLES
 		}//if (native_UBO_supported)
 	}//if (sobject->pUniformBlocks != NULL && sobject->pUniformBlocks->GetSize() > 0)
 
-#ifdef HQ_OPENGLES
-	const char prefDefExtVersion[]	= "#define HQEXT_GLSL_ES\n";
-#else
-	const char prefDefExtVersion[] = "#define HQEXT_GLSL\n";
-#endif
 
 	/*--------set shader source---------*/
 	const GLchar* sourceArray[] = {
@@ -338,7 +353,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 		UBO_extension_line.c_str(),
 		semanticKeywords,
 		samplerKeywords,
-		prefDefExtVersion,
+		preDefined.c_str(),
 		macroDefList.c_str(),
 		"#line 0 0\n",
 		processed_src.c_str()
@@ -391,13 +406,86 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 			return HQ_FAILED;
 		}
 	}
-	sobject->type=type;
 	
-#if 0//can't debug shader if use the following line
-	//hide predefine macros
-	glShaderSource(sobject->shader, 1 , (const GLchar**)&source, NULL);
-#endif
+	//create self-contained shader program
+	if (sobject->selfContainProgram)
+	{
+		HQReturnVal re = this->ConvertToSelfContainedShaderProgram(sobject);
+		if (HQFailed(re))
+		{
+			delete sobject;
+			return re;
+		}
+	}
+
 	*ppShaderObjectOut = sobject;
+
+	return HQ_OK;
+}
+
+//convert shader object to self-contained shader program
+HQReturnVal HQBaseGLSLShaderController::ConvertToSelfContainedShaderProgram(HQShaderObjectGL *sobject)
+{
+	//backup shader object
+	GLuint originalGlShaderObj = sobject->shader;
+	//create a self-contained program
+	sobject->shader = glCreateProgram();
+
+	glAttachShader(sobject->shader, originalGlShaderObj);
+
+	this->OnLinkingProgram(sobject->shader);//implementation dependent, may convert program to separable program
+
+	//fist linking
+	glLinkProgram(sobject->shader);
+
+	if (sobject->type == HQ_VERTEX_SHADER)
+	{
+		//bind attributes' locations
+		this->BindAttributeLocationGLSL(sobject->shader, *sobject->pAttribList);
+
+		//re-link
+		glLinkProgram(sobject->shader);
+	}
+
+	//no longer need this shader object
+	glDeleteShader(originalGlShaderObj);
+
+	//check for link error
+	GLint OK;
+	glGetProgramiv(sobject->shader, GL_LINK_STATUS, &OK);
+
+	if (OK == GL_FALSE)
+	{
+		int infologLength = 0;
+		int charsWritten = 0;
+		char *infoLog;
+		glGetProgramiv(sobject->shader, GL_INFO_LOG_LENGTH, &infologLength);
+		if (infologLength > 0)
+		{
+			infoLog = (char *)malloc(infologLength);
+			glGetProgramInfoLog(sobject->shader, infologLength, &charsWritten, infoLog);
+			g_pShaderMan->Log("GLSL self-contained program link error: %s", infoLog);
+			free(infoLog);
+		}
+		return HQ_FAILED;
+	}
+
+
+	//---------bind sampler units and uniform blocks-------------------
+	GLuint currentActiveProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)&currentActiveProgram);
+	glUseProgram(sobject->shader);
+
+
+	//bind sampler units
+	this->BindSamplerUnitGLSL(sobject->shader,
+		*sobject->pUniformSamplerList);
+
+	//bind uniform blocks
+	this->BindUniformBlockGLSL(sobject->shader);
+
+	//back to current program
+	glUseProgram(currentActiveProgram);
 
 	return HQ_OK;
 }
@@ -450,10 +538,15 @@ HQReturnVal HQBaseGLSLShaderController::CreateProgramGLSL(
 	if(flags & useF)
 		glAttachShader(pNewProgramObj->programGLHandle, pFShader->shader);
 
+	this->OnLinkingProgram(pNewProgramObj->programGLHandle);//implementation dependent, may convert program to separable program
+
+	//first link
 	glLinkProgram(pNewProgramObj->programGLHandle);
 
+	//bind program attributes; locations
 	this->BindAttributeLocationGLSL(pNewProgramObj->programGLHandle, *pVShader->pAttribList);
 
+	//final link
 	glLinkProgram(pNewProgramObj->programGLHandle);
 
 	GLint OK;
@@ -538,8 +631,8 @@ void HQBaseGLSLShaderController::BindAttributeLocationGLSL(GLuint program , HQLi
 
 void HQBaseGLSLShaderController::BindUniformBlockGLSL(GLuint program)
 {
-#ifndef HQ_OPENGLES
-	if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
+#ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
+	if (GLEW_VERSION_3_1)
 	{
 		char blockName[10];
 		GLuint index;
@@ -554,6 +647,18 @@ void HQBaseGLSLShaderController::BindUniformBlockGLSL(GLuint program)
 #endif
 }
 
+void HQBaseGLSLShaderController::BindSamplerUnitGLSL(GLuint program, HQLinkedList<HQUniformSamplerGL>& samplerList)
+{
+	HQLinkedList<HQUniformSamplerGL>::Iterator ite;
+	samplerList.GetIterator(ite);
+	for (; !ite.IsAtEnd(); ++ite) {
+		GLint index = glGetUniformLocation(program, ite->name.c_str());
+		if (index != -1) {
+			glUniform1i(index, ite->samplerUnit);
+		}
+	}
+}
+
 void HQBaseGLSLShaderController::BindSamplerUnitGLSL(HQBaseShaderProgramGL* pProgram , HQLinkedList<HQUniformSamplerGL>& samplerList)
 {
 	HQLinkedList<HQUniformSamplerGL>::Iterator ite;
@@ -566,81 +671,39 @@ void HQBaseGLSLShaderController::BindSamplerUnitGLSL(HQBaseShaderProgramGL* pPro
 	}
 }
 
-/*----------HQGLSLShaderController----------------*/
 
-HQReturnVal HQGLSLShaderController::CreateShaderFromStream(HQShaderType type,
-										HQDataReaderStream* dataStream,
-										const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
-										bool isPreCompiled,
-										const char* entryFunctionName,
-										HQShaderObjectGL **ppShaderObjectOut)
+
+#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
+/*-----------HQBaseGLSLShaderPipelineController----------------------*/
+GLuint ge_shader_pipeline = 0;
+
+
+HQBaseGLSLShaderPipelineController::HQBaseGLSLShaderPipelineController()
+: HQBaseGLSLShaderController()
 {
-	return this->CreateShaderFromStreamGLSL(type,dataStream,pDefines ,ppShaderObjectOut);
+	glGenProgramPipelines(1, &ge_shader_pipeline);
+	glBindProgramPipeline(HQ_GLSL_SHADER_PIPELINE_ID);
+#if HQ_GLSL_SHADER_VERIFY_PIPELINE
+	GLint pipeline;
+	glGetIntegerv(GL_PROGRAM_PIPELINE_BINDING, &pipeline);
+#endif
+}
+HQBaseGLSLShaderPipelineController::~HQBaseGLSLShaderPipelineController()
+{
+	glBindProgramPipeline(0);
+	glDeleteProgramPipelines(1, &ge_shader_pipeline);
 }
 
-HQReturnVal HQGLSLShaderController::CreateShaderFromMemory(HQShaderType type,
-										  const char* pSourceData,
-										  const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
-										  bool isPreCompiled,
-										  const char* entryFunctionName,
-										  HQShaderObjectGL **ppShaderObjectOut)
+
+void HQBaseGLSLShaderPipelineController::OnLinkingProgram(GLuint program)
 {
-	return this->CreateShaderFromMemoryGLSL(type , pSourceData,pDefines , ppShaderObjectOut);
+	//convert to separable program
+	glProgramParameteri(program, GL_PROGRAM_SEPARABLE, GL_TRUE);
 }
 
-HQReturnVal HQGLSLShaderController::CreateShaderFromStream(HQShaderType type,
-								 HQShaderCompileMode compileMode,
-								 HQDataReaderStream* dataStream,
-								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
-								 const char* entryFunctionName,
-								 HQShaderObjectGL **ppShaderObjectOut)
+void HQBaseGLSLShaderPipelineController::AppendPredefinedMacros(std::string & predefinedMacros)
 {
-	switch (compileMode)
-	{
-	case HQ_SCM_GLSL:case HQ_SCM_GLSL_DEBUG:
-		return this->CreateShaderFromStreamGLSL(type , dataStream,pDefines,ppShaderObjectOut);
-
-	default:
-		return HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;
-	}
+	predefinedMacros += "#define HQEXT_GLSL_SEPARATE_SHADER\n";
 }
 
-HQReturnVal HQGLSLShaderController::CreateShaderFromMemory(HQShaderType type,
-								 HQShaderCompileMode compileMode,
-								 const char* pSourceData,
-								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
-								 const char* entryFunctionName,
-								 HQShaderObjectGL **ppShaderObjectOut)
-{
-	switch (compileMode)
-	{
-	case HQ_SCM_GLSL:case HQ_SCM_GLSL_DEBUG:
-		return this->CreateShaderFromMemoryGLSL(type , pSourceData,pDefines,ppShaderObjectOut);
-	default:
-		return HQ_FAILED_SHADER_SOURCE_IS_NOT_SUPPORTED;
-	}
-
-}
-
-HQReturnVal HQGLSLShaderController::CreateProgram(
-							    HQBaseShaderProgramGL *pNewProgramObj,
-								HQSharedPtr<HQShaderObjectGL>& pVShader,
-								HQSharedPtr<HQShaderObjectGL>& pGShader,
-								HQSharedPtr<HQShaderObjectGL>& pFShader)
-{
-	if (pNewProgramObj->isGLSL == false)
-		return HQ_FAILED;
-	
-	HQReturnVal re = this->CreateProgramGLSL(pNewProgramObj, pVShader, pGShader, pFShader);
-
-	//store shaders' IDs
-	if (!HQFailed(re))
-	{
-		pNewProgramObj->vertexShader = pVShader.GetRawPointer();
-		pNewProgramObj->geometryShader = pGShader.GetRawPointer();
-		pNewProgramObj->pixelShader = pFShader.GetRawPointer();
-	}
-
-	return re;
-}
-
+#endif //#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED

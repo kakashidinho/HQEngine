@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 #define HQ_SHADER_GL_VAR_PARSER_H
 
 #include "../HQLoggableObject.h"
+#include "../HQFileManager.h"
 #include "../HQLinkedList.h"
 #include "../HQRendererCoreType.h"
 
@@ -96,9 +97,11 @@ struct HQVarParserGL
 {
 public:
 
-	HQVarParserGL(HQLoggableObject *manager);
+	HQVarParserGL(HQLoggableObject *logger);
 	~HQVarParserGL();
-	bool Parse(const char* source , 
+	bool Parse(const char* source,
+				HQFileManager *includeManager,
+				const std::string & predefinedMacrosString,
 			   const HQShaderMacro * pDefines,
 			   std::string& processed_source_out,
 			   bool native_UBO_supported,//is uniform buffer object supported natively
@@ -121,7 +124,7 @@ private:
 	HQLinkedList<HQUniformSamplerGL>* pUniformSamplerList;
 	HQLinkedList<HQUniformBlockInfoGL>* pUniformBlocks;
 	
-	HQLoggableObject *manager;
+	HQLoggableObject *logger;
 	
 	bool IsWhiteSpaceNotNewLine();
 	bool IsWhiteSpace();

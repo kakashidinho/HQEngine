@@ -18,6 +18,12 @@ attribute vec3 aNormal;
 attribute vec2 aTexcoords;
 #endif
 
+#ifdef HQEXT_GLSL_SEPARATE_SHADER
+out gl_PerVertex{
+	vec4 gl_Position;
+};
+#endif
+
 /* Matrix Uniforms */
 
 uniform mat4 uMvpMatrix;

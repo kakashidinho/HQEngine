@@ -1,19 +1,3 @@
-//uniform sampler2D texture0 TEXUNIT99;
-/*agaba				gfdllf *
-asdgdg
-*/
-/*#define TEX 1
-
-
-#define VTEXUNIT3
-#define VTEXCOORD6
-#define VCOLOR
-#define VPOSITION
-#define VPSIZE
-#define TEXUNIT3
-*/
-
-
 #ifdef UNIFORM_BUFFER
 
 #	extension GL_EXT_gpu_shader4 : enable
@@ -29,7 +13,7 @@ uniform ubuffer11
 	mat4 viewProj;
 };
 
-#elif defined TEXTURE_BUFFER
+#elif defined TEXTURE_BUFFER //#ifdef UNIFORM_BUFFER
 
 #	if __VERSION__ < 140
 #		extension GL_EXT_gpu_shader4 : enable
@@ -37,7 +21,7 @@ uniform ubuffer11
 
 uniform samplerBuffer textureBuffer TEXUNIT11;
 
-#else
+#else //#ifdef UNIFORM_BUFFER
 
 #	ifdef HQEXT_GLSL_ES
 uniform vec4 rotation[3];
@@ -46,9 +30,15 @@ uniform mat3x4 rotation;
 #	endif
 uniform mat4 viewProj;
 
+#endif //#ifdef UNIFORM_BUFFER
+
+
+#ifdef HQEXT_GLSL_SEPARATE_SHADER
+out gl_PerVertex{
+	vec4 gl_Position;
+	float gl_PointSize;
+};
 #endif
-
-
 
 uniform sampler2D texture0 TEXUNIT3;
 

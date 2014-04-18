@@ -86,8 +86,9 @@ private:
 #ifdef WIN32
 #	pragma warning( push )
 #	pragma warning( disable : 4251 )
+#	pragma warning( disable : 4275 )
 #endif
-class HQENGINE_API HQEngineApp
+class HQENGINE_API HQEngineApp : public HQFileManager
 {
 public:
 
@@ -119,11 +120,12 @@ public:
 	///
 	static HQEngineApp * CreateInstance(bool rendererDebugLayer = false);
 	///
-	///create application instance. 
+	///create application instance and its window as well as its render device. 
 	///if it's already created and not destroyed,return already existing instance. 
 	///{initParams} = NULL equals to a parameter with all NULL members and
 	///				 {flushDebugLog} member = false. 
-	///{rendererDebugLayer} is ignored in release build
+	///{rendererDebugLayer} is ignored in release build. 
+	///Shader manager will use application instance as its include file manager
 	///
 	static HQReturnVal CreateInstanceAndWindow(
 		const WindowInitParams* initParams,
@@ -141,7 +143,8 @@ public:
 	///Init window and its render device
 	///fail if window already init and hasn't been destroyed
 	///{initParams} = NULL equals to a parameter with all NULL members and
-	///				 {flushDebugLog} member = false
+	///				 {flushDebugLog} member = false. 
+	///Shader manager will use application instance as its include file manager
 	///
 	HQReturnVal InitWindow(const WindowInitParams* initParams = NULL);
 	HQReturnVal DestroyWindow();
@@ -216,7 +219,7 @@ public:
 	static void SetCurrentDir(const char *dir);
 #endif
 
-	HQDataReaderStream* OpenFileForRead(const char *file);///open a file
+	HQDataReaderStream* OpenFileForRead(const char *file);///open a file. implement HQFileManager
 	bool AddFileSearchPath(const char* path);///add a path to the list of default file manager's searching paths for a file. This path will be searched last.
 	bool PushFileSearchPath(const char* path);///add a path to the list of default file manager's searching paths for a file. This path will be searched first.
 	///

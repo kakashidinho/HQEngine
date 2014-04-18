@@ -396,7 +396,7 @@ inline HQSharedPtr<HQVertexArrayObjGL> HQVertexStreamManagerGL_VAO::GetOrCreateN
 	return vao;
 }
 
-void HQVertexStreamManagerGL_VAO::Commit()//tell vertex stream manager that we are about to draw
+void HQVertexStreamManagerGL_VAO::OnDraw()//tell vertex stream manager that we are about to draw
 {
 	if (m_currentVAOParamsChanged)
 	{

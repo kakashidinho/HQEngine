@@ -920,7 +920,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 
 #ifndef HQ_OPENGLES
 	caps.maxUniformBufferSlots = 0;
-	if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
+	if (GLEW_VERSION_3_1)
 	{
 		glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS , & maxVal);
 		caps.maxUniformBufferSlots = maxVal;

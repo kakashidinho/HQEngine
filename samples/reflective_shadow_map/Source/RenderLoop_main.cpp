@@ -10,7 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "RenderLoop.h"
 
-#if _MSC_VER >= 1800 && defined _DEBUG
+#if _MSC_VER >= 1800 && defined _DEBUG && defined USE_D3D11
 #	define DONT_SAVE_VSGLOG_TO_TEMP
 #	define VSG_DEFAULT_RUN_FILENAME L"graphics-capture.vsglog"
 //#	define VSG_NODEFAULT_INSTANCE
@@ -84,7 +84,15 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	if (strcmp(m_renderAPI_name, "GL") == 0)
 	{
 		this->m_renderAPI_type = HQ_RA_OGL;
-		strcpy(apiResNamXML, "rsm_resourcesGL.script");
+#ifndef HQ_USE_CUDA
+		if (this->m_pRDevice->IsShaderSupport(HQ_COMPUTE_SHADER, "4.3"))
+		{
+			use_compute_shader = true;
+			strcpy(apiResNamXML, "rsm_resourcesGL_compute_shader.script");
+		}
+		else
+#endif
+			strcpy(apiResNamXML, "rsm_resourcesGL.script");
 	}
 	else if (strcmp(m_renderAPI_name, "D3D11") == 0)
 	{
@@ -311,28 +319,46 @@ void RenderLoop::ComputeShaderDecodeNoiseMap()
 	VsgDbg vsgDbg(true);
 	vsgDbg.BeginCapture();
 #endif
-	
+
 	HQEngineTextureResource * encoded = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("random_factors_img");
 	HQEngineTextureResource * decoded = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("decoded_random_factors_img");
 	HQEngineShaderResource* computeShader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("noise_decoding_cs");
-	
-	//set encoded texture
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER | 0, encoded->GetTexture());
-	//set decoded texture UAV
-	m_pRDevice->GetTextureManager()->SetTextureUAV(HQ_COMPUTE_SHADER | 0, decoded->GetTexture());
+
+	if (m_renderAPI_type == HQ_RA_OGL)
+	{
+		//set encoded texture
+		m_pRDevice->GetTextureManager()->SetTexture(0, encoded->GetTexture());
+		//set decoded texture UAV
+		m_pRDevice->GetTextureManager()->SetTextureUAV(0, decoded->GetTexture());
+	}
+	else{
+		//set encoded texture
+		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER | 0, encoded->GetTexture());
+		//set decoded texture UAV
+		m_pRDevice->GetTextureManager()->SetTextureUAV(HQ_COMPUTE_SHADER | 0, decoded->GetTexture());
+	}
 
 	//active compute shader
 	m_pRDevice->GetShaderManager()->ActiveComputeShader(computeShader->GetShader());
 
 	//run compute shader
-	m_pRDevice->GetShaderManager()->DispatchCompute(1, 1, 1);
+	m_pRDevice->DispatchCompute(1, 1, 1);
 
 	//clean up
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER | 0, NULL);
-	m_pRDevice->GetTextureManager()->SetTextureUAV(HQ_COMPUTE_SHADER | 0, NULL);
+	if (m_renderAPI_type == HQ_RA_OGL)
+	{
+		m_pRDevice->GetTextureManager()->SetTexture(0, NULL);
+		m_pRDevice->GetTextureManager()->SetTextureUAV(0, NULL);
+	}
+	else{
+		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER | 0, NULL);
+		m_pRDevice->GetTextureManager()->SetTextureUAV(HQ_COMPUTE_SHADER | 0, NULL);
+	}
 	m_pRDevice->GetShaderManager()->ActiveComputeShader(NULL);
 	HQEngineApp::GetInstance()->GetResourceManager()->RemoveTextureResource(encoded);
 	HQEngineApp::GetInstance()->GetResourceManager()->RemoveShaderResource(computeShader);
+
+	m_pRDevice->TextureUAVBarrier();
 
 #ifdef DX_FRAME_CAPTURE
 	vsgDbg.EndCapture();

@@ -21,6 +21,12 @@ COPYING.txt included with this distribution for more information.
 #include "glHeaders.h"
 
 
+#ifdef GL_PROGRAM_PIPELINE_BINDING
+extern GLuint ge_shader_pipeline;
+#	define HQ_GLSL_SHADER_PIPELINE_DEFINED
+#	define HQ_GLSL_SHADER_PIPELINE_ID ge_shader_pipeline
+#endif
+
 #define useV USEVSHADER
 #define useG USEGSHADER
 #define useF USEFSHADER
@@ -53,6 +59,7 @@ struct HQShaderObjectGL: public HQShaderObject, public HQBaseIDObject
 	HQLinkedList<HQUniformSamplerGL> * pUniformSamplerList;//for HQEngine extended GLSL
 
 	bool isGLSL;//compiled from openGL shading laguage or Cg language
+	bool selfContainProgram;
 };
 
 /*---------HQBaseShaderProgramGL----------------------*/
@@ -123,7 +130,7 @@ class HQBaseShaderManagerGL : public HQShaderManager, public HQResetable
 public:
 	~HQBaseShaderManagerGL() {}
 
-	virtual void Commit() {}//this is called before drawing
+	virtual void OnDraw() {}//this is called before drawing
 	virtual void OnLost() {}
 	virtual void OnReset() {}
 
@@ -166,6 +173,10 @@ public:
 	bool IsUsingPShader();//có đang dùng pixel/fragment shader không,hay đang dùng fixed function
 	bool IsUsingShader() {return this->activeProgram != NULL;}
 
+	HQFileManager* GetIncludeFileManager() const { return this->includeFileManager; }
+
+	HQReturnVal SetIncludeFileManager(HQFileManager* fileManager) { this->includeFileManager = fileManager; return HQ_OK; }
+
 	HQSharedPtr<HQBaseShaderProgramGL> GetActiveProgram() { return activeProgram; }
 
 	HQReturnVal DestroyProgram(HQShaderProgram* programID);
@@ -177,12 +188,17 @@ public:
 	hq_uint32 GetParameterIndex(HQShaderProgram* programID ,const char *parameterName);
 
 protected:
+	//these virtual functions can be inlined
 	virtual HQBaseShaderProgramGL * CreateNewProgramObject() = 0;
 	virtual void OnProgramCreated(HQBaseShaderProgramGL *program) = 0;
-	virtual void OnProgramActivated(HQBaseShaderProgramGL* program) = 0;//a handler method to notify the parent class that a program has been activated
+	virtual void OnProgramActivated() = 0;//a handler method to notify the parent class that a program has been activated
+	/*-------------------------------------*/
 
 	HQSharedPtr<HQBaseShaderProgramGL> activeProgram;
+	HQSharedPtr<HQShaderObjectGL> activeCShader;//active compute shader
 	HQIDItemManager<HQShaderObjectGL> shaderObjects;//danh sách shader object
+
+	HQFileManager* includeFileManager;
 
 	HQSharedPtr<HQShaderParameterGL> GetParameterInline(HQBaseShaderProgramGL* pProgramRawPtr, const char *parameterName);
 };

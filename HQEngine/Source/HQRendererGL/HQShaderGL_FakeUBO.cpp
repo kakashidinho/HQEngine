@@ -544,8 +544,9 @@ void HQBaseShaderManagerGL_FakeUBO::OnProgramCreated(HQBaseShaderProgramGL *prog
 }
 
 
-void HQBaseShaderManagerGL_FakeUBO::OnProgramActivated(HQBaseShaderProgramGL* program)
+void HQBaseShaderManagerGL_FakeUBO::OnProgramActivated()
 {
+	HQBaseShaderProgramGL* program = this->activeProgram.GetRawPointer();
 	HQShaderProgramFakeUBO* programFakeUBO = static_cast<HQShaderProgramFakeUBO*> (program);
 	//mark every associated buffer slots as dirty for this shader program
 	HQShaderProgramFakeUBO::BufferSlotList::Iterator slot_ite;
@@ -555,7 +556,7 @@ void HQBaseShaderManagerGL_FakeUBO::OnProgramActivated(HQBaseShaderProgramGL* pr
 	}
 }
 
-void HQBaseShaderManagerGL_FakeUBO::Commit()
+void HQBaseShaderManagerGL_FakeUBO::OnDraw()
 {
 	HQShaderProgramFakeUBO * program = static_cast<HQShaderProgramFakeUBO*> (activeProgram.GetRawPointer());
 	if (program != NULL)

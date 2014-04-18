@@ -13,6 +13,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "../HQLinkedList.h"
 #include "../HQRendererCoreType.h"
+#include "../HQFileManager.h"
 #include <string>
 
 /*----------------------ShaderVarParserInfo-----------------------*/
@@ -34,7 +35,7 @@ struct UniformBlock{
 };
 
 struct HQShaderVarParserD3D9 {
-	HQShaderVarParserD3D9(const char * src, const HQShaderMacro* pDefines);
+	HQShaderVarParserD3D9(const char * src, const HQShaderMacro* pDefines, HQFileManager* includeFileManager);
 	~HQShaderVarParserD3D9();
 	HQLinkedList<UniformBlock> uniformBlocks;//list of declared uniform blocks
 

@@ -28,9 +28,61 @@ COPYING.txt included with this distribution for more information.
 
 #include "HQShaderGL_GLSL_VarParser.h"
 
-HQVarParserGL::HQVarParserGL(HQLoggableObject *manager )
+
+/*-------------read data from file-------------------------*/
+//returned pointer must be deleted manually. last character in returned data is zero
+static void * ReadFileData(HQFileManager* fileManager, const char * fileName, hquint32 &size){
+	if (fileManager == NULL)
+		return NULL;
+	HQDataReaderStream * stream = fileManager->OpenFileForRead(fileName);
+	if (!stream)
+		return NULL;
+	hqubyte8* pData;
+	pData = HQ_NEW hqubyte8[stream->TotalSize() + 1];
+
+	stream->ReadBytes(pData, stream->TotalSize(), 1);
+	pData[stream->TotalSize()] = '\0';
+
+
+	//return size
+	size = stream->TotalSize() + 1;
+
+	stream->Release();
+
+	//return data
+	return pData;
+}
+
+/*---------------------mojo shader's include handler---------------------*/
+int MOJOSHADER_includeOpenHandler(MOJOSHADER_includeType inctype,
+	const char *fname, const char *parent,
+	const char **outdata, unsigned int *outbytes,
+	MOJOSHADER_malloc m, MOJOSHADER_free f, void *d)
 {
-	this->manager = manager;
+	hquint32 size = 0;
+	char *pData = (char*)ReadFileData((HQFileManager*)d, fname, size);
+	if (pData == NULL)
+		return 0;
+
+	pData[size - 1] = '\n';//new line at the end of file
+
+	//return data
+	*outdata = pData;
+	*outbytes = size;
+
+	return 1;
+}
+
+void MOJOSHADER_includeCloseHandler(const char *data,
+	MOJOSHADER_malloc m, MOJOSHADER_free f, void *d)
+{
+	delete[] data;
+}
+
+/*--------------HQVarParserGL----------------------*/
+HQVarParserGL::HQVarParserGL(HQLoggableObject *logger)
+{
+	this->logger = logger;
 }
 
 HQVarParserGL::~HQVarParserGL()
@@ -1475,6 +1527,8 @@ void HQVarParserGL::nextToken()
 }
 
 bool HQVarParserGL::Parse(const char* ori_source , 
+				HQFileManager *includeManager,
+				const std::string & predefinedMacrosString,
 				const HQShaderMacro * pDefines,
 			   std::string& processed_source_out,
 			   bool native_UBO_supported,
@@ -1484,10 +1538,12 @@ bool HQVarParserGL::Parse(const char* ori_source ,
 			   )
 {
 #ifdef HQ_OPENGLES
-    processed_source_out = "#define __VERSION__ 100  \n#define HQEXT_GLSL_ES\n";
+    processed_source_out = "#define __VERSION__ 100  \n";
 #else
-	processed_source_out = "#define __VERSION__ 110  \n#define HQEXT_GLSL\n";
+	processed_source_out = "#define __VERSION__ 110  \n";
 #endif
+	processed_source_out += predefinedMacrosString;
+
 	size_t search_start_pos = processed_source_out.size();
 	processed_source_out += ori_source;
 
@@ -1552,11 +1608,11 @@ bool HQVarParserGL::Parse(const char* ori_source ,
 												processed_source_out.size(),
 												(const MOJOSHADER_preprocessorDefine*)pDefines,
 												numDefines,
+												MOJOSHADER_includeOpenHandler,
+												MOJOSHADER_includeCloseHandler,
 												NULL,
 												NULL,
-												NULL,
-												NULL,
-												NULL);
+												includeManager);
 
 	if (preprocessedData->output != NULL)
 	{
@@ -1588,12 +1644,12 @@ bool HQVarParserGL::Parse(const char* ori_source ,
 		/*
 		if(token.kind == VTK_SEMANTIC)
 		{
-			manager->Log("(%u) error : '%s' is semantic keyword" ,currentLine , token.lexeme.c_str());
+			logger->Log("(%u) error : '%s' is semantic keyword" ,currentLine , token.lexeme.c_str());
 			noError = false;
 		}
 		else */if(token.kind == VTK_TEXUNIT)
 		{
-			manager->Log("(%u) error : '%s' is texture sampler unit binding keyword" ,currentLine , token.lexeme.c_str());
+			logger->Log("(%u) error : '%s' is texture sampler unit binding keyword" ,currentLine , token.lexeme.c_str());
 			noError = false;
 		}
 		else if (token.kind == VTK_UNIFORM)
@@ -1656,12 +1712,12 @@ bool HQVarParserGL::ParseSematicBinding()
 	{
 		if(!Match(VTK_TYPE))
 		{
-			//manager->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
+			//logger->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
 			return true;//it's up to opengl compiler to check this error
 		}
 		if(token.kind != VTK_ID)
 		{
-			//manager->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
+			//logger->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
 			return true;//it's up to opengl compiler to check this error
 		}
 		attrib.name = token.lexeme;
@@ -1669,7 +1725,7 @@ bool HQVarParserGL::ParseSematicBinding()
 
 		if(token.kind != VTK_SEMANTIC)
 		{
-			//manager->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
+			//logger->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
 			return true;//it's up to opengl compiler to check this error
 		}
 		this->GetAttribIndex(attrib , token.lexeme.c_str());
@@ -1679,7 +1735,7 @@ bool HQVarParserGL::ParseSematicBinding()
 	{
 		if(token.kind != VTK_ID)
 		{
-			//manager->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
+			//logger->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
 			return true;//it's up to opengl compiler to check this error
 		}
 		attrib.name = token.lexeme;
@@ -1687,13 +1743,13 @@ bool HQVarParserGL::ParseSematicBinding()
 
 		if(token.kind != VTK_SEMANTIC)
 		{
-			//manager->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
+			//logger->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
 			return true;//it's up to opengl compiler to check this error
 		}
 		this->GetAttribIndex(attrib , token.lexeme.c_str());
 	}
 	else{
-		//manager->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
+		//logger->Log("(%u) semantic binding syntax error : unexpected token '%s'" , currentLine , token.lexeme.c_str());
 		return true;//it's up to opengl compiler to check this error
 	}
 	pAttribList->PushBack(attrib);
@@ -1706,16 +1762,18 @@ bool HQVarParserGL::ParseSamplerBinding()
 	HQUniformSamplerGL sampler;
 	if(token.kind != VTK_ID)
 	{
-		manager->Log("(%u) sampler unit binding syntax error : unexpected token '%s'" , currentLine, token.lexeme.c_str());
-		return false;
+		//logger->Log("(%u) sampler unit binding syntax error : unexpected token '%s'" , currentLine, token.lexeme.c_str());
+		//return false;
+		return true;//ignore
 	}
 	sampler.name = token.lexeme;
 	nextToken();
 
 	if(token.kind != VTK_TEXUNIT)
 	{
-		manager->Log("(%u) sampler unit binding syntax error : unexpected token '%s'" , currentLine, token.lexeme.c_str());
-		return false;
+		//logger->Log("(%u) sampler unit binding syntax error : unexpected token '%s'" , currentLine, token.lexeme.c_str());
+		//return false;
+		return true;//ignore
 	}
 	
 	int samplerUnit;
@@ -1723,7 +1781,7 @@ bool HQVarParserGL::ParseSamplerBinding()
 
 	if (samplerUnit > 31)
 	{
-		manager->Log("(%u) sampler unit binding error : i in TEXUNITi is too large (i = %d).Max supported i is 31" , currentLine, samplerUnit);
+		logger->Log("(%u) sampler unit binding error : i in TEXUNITi is too large (i = %d).Max supported i is 31" , currentLine, samplerUnit);
 		return false;
 	}
 

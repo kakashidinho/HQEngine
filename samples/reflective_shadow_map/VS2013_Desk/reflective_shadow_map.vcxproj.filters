@@ -59,6 +59,9 @@
     <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaGLBinding.h">
       <Filter>Source Files\cuda</Filter>
     </ClInclude>
+    <ClInclude Include="..\Data\common_shader_code.h">
+      <Filter>Source Files\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\Data\depth-pass.cg">
@@ -97,6 +100,12 @@
       <Filter>Source Files\scripts</Filter>
     </None>
     <None Include="..\Data\noise_decoding.hlslcs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="..\Data\rsm_resourcesGL_compute_shader.script">
+      <Filter>Source Files\scripts</Filter>
+    </None>
+    <None Include="..\Data\noise_decoding.glslcs">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>

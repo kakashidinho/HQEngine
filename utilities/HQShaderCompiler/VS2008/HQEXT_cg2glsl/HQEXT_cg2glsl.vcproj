@@ -366,6 +366,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="HQEngine"
+				>
+				<File
+					RelativePath="..\..\..\..\HQEngine\Source\HQEngine\HQDefaultFileManager.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

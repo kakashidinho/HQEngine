@@ -20,6 +20,7 @@ HQBaseCommonShaderManagerGL* g_pShaderMan = NULL;
 /*---------HQShaderObjectGL---------------*/
 HQShaderObjectGL::HQShaderObjectGL()
 {
+	this->selfContainProgram = false;
 	this->isGLSL = false;
 	this->shader = 0;
 	this->pUniformBlocks = NULL;
@@ -35,7 +36,12 @@ HQShaderObjectGL::~HQShaderObjectGL()
 #if defined DEVICE_LOST_POSSIBLE
 			if (!g_pOGLDev->IsDeviceLost())
 #endif
-				glDeleteShader(this->shader);
+			{
+				if (this->selfContainProgram)
+					glDeleteProgram(this->shader);
+				else
+					glDeleteShader(this->shader);
+			}
 		}
 		SafeDelete(this->pUniformBlocks);
 		SafeDelete(this->pAttribList);
@@ -49,6 +55,7 @@ HQShaderObjectGL::~HQShaderObjectGL()
 /*---------HQBaseShaderProgramGL--------------*/
 HQBaseShaderProgramGL::HQBaseShaderProgramGL() 
 {
+	this->programGLHandle = 0;
 }
 HQBaseShaderProgramGL::~HQBaseShaderProgramGL()
 {
@@ -132,7 +139,7 @@ hq_uint32 HQBaseShaderProgramGL::TryCreateParamObjAndAddToParamsList(const char 
 HQBaseCommonShaderManagerGL::HQBaseCommonShaderManagerGL(HQLogStream* logFileStream , const char * logPrefix , bool flushLog)
 :HQLoggableObject(logFileStream , logPrefix , flushLog , 1024) 
 {
-	activeProgram=NULL;
+	this->includeFileManager = NULL;
 
 	g_pShaderMan = this;
 }
@@ -206,6 +213,7 @@ HQReturnVal HQBaseCommonShaderManagerGL::DestroyShader(HQShaderObject* shaderID)
 
 void HQBaseCommonShaderManagerGL::DestroyAllShader()
 {
+	this->ActiveComputeShader(NULL);
 	this->shaderObjects.RemoveAll();
 }
 

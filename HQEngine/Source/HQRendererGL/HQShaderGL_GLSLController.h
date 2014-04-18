@@ -25,15 +25,21 @@ public:
 protected:
 	HQVarParserGL *pVParser;
 	
+	virtual void OnLinkingProgram(GLuint Program) {} //this is called before linking a program
+	virtual void AppendPredefinedMacros(std::string & predefinedMacros) {}
+
 	void BindAttributeLocationGLSL(GLuint program , HQLinkedList<HQShaderAttrib>& attribList);
 	void BindUniformBlockGLSL(GLuint program);
-	void BindSamplerUnitGLSL(HQBaseShaderProgramGL* pProgram , HQLinkedList<HQUniformSamplerGL>& samplerList);
+	void BindSamplerUnitGLSL(GLuint program, HQLinkedList<HQUniformSamplerGL>& samplerList);
+	void BindSamplerUnitGLSL(HQBaseShaderProgramGL* pProgram, HQLinkedList<HQUniformSamplerGL>& samplerList);
 	
 	void GetPredefineMacroGLSL(std::string & macroDefList , const HQShaderMacro * pDefines, std::string &version_string);//convert HQShaderMacro array to GLSL macro definition
 
 
-	HQReturnVal DeActiveProgramGLSL();
 	HQReturnVal ActiveProgramGLSL(HQSharedPtr<HQBaseShaderProgramGL>& pProgram);
+	HQReturnVal DeactiveProgramGLSL(HQSharedPtr<HQBaseShaderProgramGL>& pProgram);
+	HQReturnVal ActiveComputeShaderGLSL(HQSharedPtr<HQShaderObjectGL> &pShader);
+	HQReturnVal DeactiveComputeShaderGLSL(HQSharedPtr<HQShaderObjectGL> &pShader);
 
 	HQReturnVal CreateShaderFromStreamGLSL(HQShaderType type,
 									 HQDataReaderStream* dataStream,
@@ -43,6 +49,10 @@ protected:
 									 const char* pSourceData,
 									 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
 									 HQShaderObjectGL **ppShaderObjectOut);
+
+	HQReturnVal ConvertToSelfContainedShaderProgram(HQShaderObjectGL *sobject);
+
+
 	HQReturnVal CreateProgramGLSL(
 								HQBaseShaderProgramGL *pNewProgramObj,
 							  HQSharedPtr<HQShaderObjectGL>& pVShader,
@@ -83,23 +93,89 @@ protected:
 							hq_uint32 numMatrices);
 };
 
+#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
+
+class HQBaseGLSLShaderPipelineController : public HQBaseGLSLShaderController
+{
+public:
+	HQBaseGLSLShaderPipelineController();
+	virtual ~HQBaseGLSLShaderPipelineController();
+
+protected:
+	HQSharedPtr<HQBaseShaderProgramGL> activeProgram;
+
+	virtual void OnLinkingProgram(GLuint Program);//implement HQBaseGLSLShaderController
+	virtual void AppendPredefinedMacros(std::string & predefinedMacros);//implement HQBaseGLSLShaderController
+
+	HQReturnVal ActiveProgramGLSL(HQSharedPtr<HQBaseShaderProgramGL>& pProgram);
+	HQReturnVal DeactiveProgramGLSL(HQSharedPtr<HQBaseShaderProgramGL>& pProgram);
+	HQReturnVal ActiveComputeShaderGLSL(HQSharedPtr<HQShaderObjectGL> &pShader);
+	HQReturnVal DeactiveComputeShaderGLSL(HQSharedPtr<HQShaderObjectGL> &pShader);
+
+
+
+	HQReturnVal SetUniformIntGLSL(GLint param,
+		const hq_int32* pValues,
+		hq_uint32 numElements);
+	HQReturnVal SetUniform2IntGLSL(GLint param,
+		const hq_int32* pValues,
+		hq_uint32 numElements);
+	HQReturnVal SetUniform3IntGLSL(GLint param,
+		const hq_int32* pValues,
+		hq_uint32 numElements);
+	HQReturnVal SetUniform4IntGLSL(GLint param,
+		const hq_int32* pValues,
+		hq_uint32 numElements);
+	HQReturnVal SetUniformFloatGLSL(GLint param,
+		const hq_float32* pValues,
+		hq_uint32 numElements);
+	HQReturnVal SetUniform2FloatGLSL(GLint param,
+		const hq_float32* pValues,
+		hq_uint32 numElements);
+	HQReturnVal SetUniform3FloatGLSL(GLint param,
+		const hq_float32* pValues,
+		hq_uint32 numElements);
+	HQReturnVal SetUniform4FloatGLSL(GLint param,
+		const hq_float32* pValues,
+		hq_uint32 numElements);
+	HQReturnVal SetUniformMatrixGLSL(GLint param,
+		const HQBaseMatrix4* pMatrices,
+		hq_uint32 numMatrices);
+	HQReturnVal SetUniformMatrixGLSL(GLint param,
+		const HQBaseMatrix3x4* pMatrices,
+		hq_uint32 numMatrices);
+};
+
+#endif//#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
 
 /*----------HQGLSLShaderController------------------*/
 //this controller only accepts GLSL based shader
-class HQGLSLShaderController : public HQBaseGLSLShaderController
+template <class BaseGLSLShaderController>
+class HQGLSLShaderControllerTemplate : public BaseGLSLShaderController
 {
 public:
-	HQGLSLShaderController(){};
-	~HQGLSLShaderController(){};
+	HQGLSLShaderControllerTemplate(){};
+	~HQGLSLShaderControllerTemplate(){};
 
 	
-	HQ_FORCE_INLINE HQReturnVal DeActiveProgram(bool isGLSL ,HQSharedPtr<HQBaseShaderProgramGL>& pProgram)
-	{
-		return this->DeActiveProgramGLSL();
-	}
-	HQ_FORCE_INLINE HQReturnVal ActiveProgram(bool isGLSL ,HQSharedPtr<HQBaseShaderProgramGL>& pProgram)
+	HQ_FORCE_INLINE HQReturnVal ActiveProgram(HQSharedPtr<HQBaseShaderProgramGL>& pProgram)
 	{
 		return this->ActiveProgramGLSL(pProgram);
+	}
+
+	HQ_FORCE_INLINE HQReturnVal DeactiveProgram(HQSharedPtr<HQBaseShaderProgramGL>& pProgram)
+	{
+		return this->DeactiveProgramGLSL(pProgram);
+	}
+
+	HQ_FORCE_INLINE HQReturnVal ActiveComputeShader(HQSharedPtr<HQShaderObjectGL> &pShader)
+	{
+		return this->ActiveComputeShaderGLSL(pShader);
+	}
+
+	HQ_FORCE_INLINE HQReturnVal DeactiveComputeShader(HQSharedPtr<HQShaderObjectGL> &pShader)
+	{
+		return this->DeactiveComputeShaderGLSL(pShader);
 	}
 	
 	HQReturnVal CreateShaderFromStream(HQShaderType type,
@@ -221,5 +297,10 @@ public:
 
 	
 };
+
+typedef HQGLSLShaderControllerTemplate<HQBaseGLSLShaderController>  HQGLSLShaderController;
+#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
+typedef HQGLSLShaderControllerTemplate<HQBaseGLSLShaderPipelineController>  HQGLSLShaderPipelineController;
+#endif
 
 #endif

@@ -127,7 +127,7 @@ public:
 	HQVertexStreamManagerGL(hq_uint32 maxVertexAttribs , HQLogStream *logFileStream , bool flushLog);
 	~HQVertexStreamManagerGL() ;
 	
-	virtual void Commit() {}//this is called just before drawing
+	virtual void OnDraw() {}//this is called just before drawing
 	
 	HQSharedPtr<HQIndexBufferGL> GetActiveIndexBuffer() { return activeIndexBuffer; }
 	GLuint GetCurrentBoundVBuffer() {return this->currentBoundVBuffer;}

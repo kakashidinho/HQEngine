@@ -9,6 +9,8 @@ COPYING.txt included with this distribution for more information.
 */
 
 #pragma pack_matrix(column_major)
+#include "common_shader_code.h"
+
 /*---------------vertex shader-------------*/
 uniform transform {
 	float4x3 worldMat;
@@ -94,7 +96,6 @@ vOut VS(in vIn input){
 #define H_SAMPLE_START (0.5 * H_SAMPLE_STEP)
 #define SAMPLE_RADIUS 0.3 //sampling radius
 
-#define PI 3.141592654
 #define DEPTH_BIAS 0.0005
 #define SHADOW_MAP_SIZE 512
 #define LOW_RES_SIZE 128

@@ -873,7 +873,7 @@ HQReturnVal HQTextureManagerGL::SetTextureUAV(hq_uint32 slot, HQTexture* texture
 	HQSharedPtr<HQBaseTexture> & imageSlot = this->imageUnits[slot];
 	if (pTextureRawPtr == NULL)
 	{
-		if (imageSlot == NULL)
+		if (imageSlot != NULL)
 		{
 			glBindImageTextureWrapper(slot, 0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
 			imageSlot.ToNull();
@@ -1625,6 +1625,14 @@ HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAV
 
 		if (w > 1) w >>= 1; //w/=2
 		if (h > 1) h >>= 1; //h/=2
+	}
+
+
+	if (glGetError() != GL_NO_ERROR)
+	{
+		Log("Error : UAV Texture creation with format = %u failed", (hquint32)hqformat);
+		glBindTexture(GL_TEXTURE_2D, this->texUnits[this->activeTexture].GetTexture2DGL());//re-bind old texture
+		return HQ_FAILED;
 	}
 
 	glBindTexture(GL_TEXTURE_2D, this->texUnits[this->activeTexture].GetTexture2DGL());//re-bind old texture
