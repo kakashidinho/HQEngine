@@ -9,10 +9,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGLEW_NO_GLU -DMOJOSHADER_NO_VERSION_IN
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -DGLEW_NO_GLU -DMOJOSHADER_NO_VERSION_INCLUDE")
 
 set (MAIN_SRC_FILES 
-	HQDeviceEnumGL.cpp HQDeviceGL.cpp HQDeviceGL_caps.cpp
+	HQDeviceEnumGL.cpp HQDeviceGL.cpp HQDeviceGL_caps.cpp HQCommonGL.cpp
 	HQRenderTargetFBO.cpp HQShaderGL.cpp  	HQShaderGL_Common.cpp 
 	HQShaderGL_GLSLController.cpp 
-	HQShaderGL_GLSL_VarParser.cpp HQShaderGL_UBO.cpp  HQShaderGL_FakeUBO.cpp
+	HQShaderGL_GLSL_VarParser.cpp HQShaderGL_UBO.cpp  HQShaderGL_FakeUBO.cpp HQShaderGL_ShaderStorageSupported.cpp
 	HQFFEmuShaderControllerGL.cpp 
 	HQStateManagerGL.cpp 	HQVertexStreamManagerGL.cpp HQVertexStreamManagerGL_VAO.cpp
 	HQTextureManagerGL.cpp ../BaseImpl/HQTextureManagerBaseImpl.cpp 

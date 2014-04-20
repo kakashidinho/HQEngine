@@ -586,6 +586,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HQCommonGL.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HQDeviceEnumGL.cpp"
 				>
 			</File>
@@ -795,6 +799,10 @@
 			</File>
 			<File
 				RelativePath=".\HQShaderGL_GLSLController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HQShaderGL_ShaderStorageSupported.cpp"
 				>
 			</File>
 			<File
@@ -1723,6 +1731,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HQCommonGL.h"
+				>
+			</File>
+			<File
 				RelativePath=".\HQCommonVertexStreamManGL.h"
 				>
 			</File>
@@ -1828,6 +1840,10 @@
 			</File>
 			<File
 				RelativePath=".\HQShaderGL_GLSLController_inline.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HQShaderGL_ShaderStorageSupported.h"
 				>
 			</File>
 			<File

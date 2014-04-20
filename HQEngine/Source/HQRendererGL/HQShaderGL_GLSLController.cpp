@@ -222,12 +222,15 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 		shaderType = GL_VERTEX_SHADER; break;
 	case HQ_PIXEL_SHADER:
 		shaderType = GL_FRAGMENT_SHADER; break;
+#ifdef GL_GEOMETRY_SHADER
 	case HQ_GEOMETRY_SHADER:
 		if (GLEW_EXT_geometry_shader4 || GLEW_VERSION_3_2)
 		{
 			shaderType = GL_GEOMETRY_SHADER;
 			break;
 		}
+#endif
+#ifdef GL_COMPUTE_SHADER
 	case HQ_COMPUTE_SHADER:
 		if (GLEW_VERSION_4_3)
 		{
@@ -235,6 +238,7 @@ HQReturnVal HQBaseGLSLShaderController::CreateShaderFromMemoryGLSL(HQShaderType 
 			selfContained = true;
 			break;
 		}
+#endif
 	default:
 		g_pShaderMan->Log("Error : Unsupported GLSL shader type=%u", (hquint32)type);
 		return HQ_FAILED;

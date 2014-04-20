@@ -237,7 +237,7 @@ Game::Game()
 	bool support = pDevice->IsBlendStateExSupported();
 	support = pDevice->IsIndexDataTypeSupported(HQ_IDT_UINT);
 
-	HQVertexBufferUAV* pBufferUAV;
+	HQVertexBufferUAV* pBufferUAV = NULL;
 	pDevice->GetVertexStreamManager()->CreateVertexBufferUAV(NULL, 30, 4, &pBufferUAV);
 	pDevice->GetVertexStreamManager()->RemoveVertexBuffer(pBufferUAV);
 

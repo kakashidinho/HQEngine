@@ -72,13 +72,13 @@ HQReturnVal HQShaderManagerGL<ShaderController, BaseShaderManagerClass>::ActiveC
 	{
 		if (pShader == NULL)
 		{
-			this->shaderController.DeactiveComputeShader(activeCShader);
+			this->shaderController.DeactiveComputeShader(this->activeCShader);
 		}
 		else
 		{
 			if (pShader->type != HQ_COMPUTE_SHADER)
 			{
-				Log("Error : invalid compute shader!");
+				this->Log("Error : invalid compute shader!");
 				return HQ_FAILED_INVALID_ID;
 			}
 

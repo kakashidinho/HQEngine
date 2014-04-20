@@ -114,6 +114,9 @@
     <ClCompile Include="HQShaderGL_ShaderStorageSupported.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HQCommonGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HQRendererGLDef.def">

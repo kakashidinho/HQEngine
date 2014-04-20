@@ -971,13 +971,14 @@ void HQDeviceEnumGL::CheckCapabilities()
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS , & maxVal);
 	caps.nFragmentShaderSamplers = maxVal;
 
-
+#ifdef GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS
 	if (GLEW_EXT_geometry_shader4 || GLEW_VERSION_3_2)
 	{
 		glGetIntegerv(GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS, &maxVal);
 		caps.nGeometryShaderSamplers = maxVal;
 	}
 	else
+#endif
 		caps.nGeometryShaderSamplers = 0;
 
 #ifdef GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS

@@ -46,6 +46,7 @@ extern GLboolean GLEW_VERSION_3_3;
 extern GLboolean GLEW_VERSION_4_0;
 extern GLboolean GLEW_VERSION_4_1;
 extern GLboolean GLEW_VERSION_4_2;
+extern GLboolean GLEW_VERSION_4_3;
 
 extern GLboolean GLEW_ARB_multisample;
 extern GLboolean GLEW_EXT_texture_filter_anisotropic;
@@ -73,10 +74,16 @@ extern GLboolean GLEW_EXT_texture_rg;
 extern GLboolean GLEW_OES_texture_half_float;
 extern GLboolean GLEW_OES_texture_float;
 
+#ifndef GL_TEXTURE_BUFFER
 #define GL_TEXTURE_BUFFER 0x8C2A
 #define GL_RGBA16F 0x881A
 #define GL_RGBA32F 0x8814
 #define GL_RED_INTEGER 0x8D94
+#define GL_RG_INTEGER 0x8228
+#define GL_RGBA_INTEGER 0x8D99
+#endif//#ifndef GL_TEXTURE_BUFFER
+
+
 #ifndef GL_NUM_EXTENSIONS
 #define GL_NUM_EXTENSIONS                 0x821D
 #endif
@@ -154,6 +161,8 @@ extern PFNGLUNIFORMBLOCKBINDINGPROC glUniformBlockBinding;
 #	define GL_RG16UI 0x823A
 #	define GL_RG32I 0x823B
 #	define GL_RG32UI 0x823C
+#	define GL_RGBA32I 0x8D82
+#	define GL_RGBA32UI 0x8D70
 
 #	define GLEW_OES_mapbuffer 1
 #	define GL_WRITE_ONLY GL_WRITE_ONLY_OES
@@ -187,6 +196,17 @@ void nullGlUniformMatrixNonSquare(
 #define glUniformMatrix4x2fv nullGlUniformMatrixNonSquare
 #define glUniformMatrix4x3fv nullGlUniformMatrixNonSquare
 
+#endif
+
+
+#ifndef GL_READ_ONLY
+#define GL_READ_ONLY 0x88B8
+#endif
+#ifndef GL_WRITE_ONLY
+#define GL_WRITE_ONLY 0x88B9
+#endif
+#ifndef GL_READ_WRITE
+#define GL_READ_WRITE 0x88BA
 #endif
 
 

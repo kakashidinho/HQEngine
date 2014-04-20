@@ -32,28 +32,5 @@ struct HQBufferGL : public HQGraphicsBufferRawRetrievable, public HQBaseIDObject
 	hquint32 totalElements;
 	hquint32 elementSize;
 };
-/*-------------------------------*/
-inline HQBufferGL::HQBufferGL(hq_uint32 size, GLenum targetName, GLenum usage)
-{
-	this->targetName = targetName;
-	this->bufferName = 0;
-	this->usage = usage;
-	this->size = size;
-
-	/*---------info for shader storage----------*/
-	this->totalElements = 0;
-	this->elementSize = 0;
-}
-
-inline HQBufferGL::~HQBufferGL()
-{
-	if (this->bufferName != 0)
-	{
-#if defined DEVICE_LOST_POSSIBLE
-		if (!g_pOGLDev->IsDeviceLost())
-#endif
-			glDeleteBuffers(1, &this->bufferName);
-	}
-}
 
 #endif

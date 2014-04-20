@@ -8,10 +8,13 @@ MOJO_SHADER_PATH := ../../../ThirdParty-mod/mojoshader
 LOCAL_MODULE := HQRenderer
 
 LOCAL_SRC_FILES := Android.cpp AndroidGLES.cpp HQDeviceEnumGL.cpp HQDeviceGL.cpp \
+				HQCommonGL.cpp \
 				HQDeviceGL_caps.cpp HQFixedFunctionShaderManagerGL.cpp \
 				HQRenderTargetFBO.cpp HQShaderGL.cpp  HQShaderGL_Common.cpp \
 				HQShaderGL_GLSLController.cpp HQShaderGL_GLSL_VarParser.cpp \
 				HQShaderGL_FakeUBO.cpp \
+				HQShaderGL_UBO.cpp \
+				HQShaderGL_ShaderStorageSupported.cpp \
 				HQStateManagerGL.cpp HQTextureManagerGL.cpp HQVertexStreamManagerGL.cpp \
 				HQVertexStreamManagerPreShaderGL.cpp ../BaseImpl/HQTextureManagerBaseImpl.cpp \
 				../HQEngineRenderer/HQRenderer.cpp \

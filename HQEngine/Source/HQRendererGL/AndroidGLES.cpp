@@ -27,6 +27,8 @@ GLboolean GLEW_VERSION_3_2 = false;
 GLboolean GLEW_VERSION_3_3 = false;
 GLboolean GLEW_VERSION_4_0 = false;
 GLboolean GLEW_VERSION_4_1 = false;
+GLboolean GLEW_VERSION_4_2 = false;
+GLboolean GLEW_VERSION_4_3 = false;
 
 GLboolean GLEW_ARB_multisample;
 GLboolean GLEW_EXT_texture_filter_anisotropic;
@@ -111,6 +113,8 @@ int glewInit()
 	GLEW_VERSION_3_3 = versionf >= 3.3f;
 	GLEW_VERSION_4_0 = versionf >= 4.0f;
 	GLEW_VERSION_4_1 = versionf >= 4.1f;
+	GLEW_VERSION_4_2 = versionf >= 4.2f;
+	GLEW_VERSION_4_3 = versionf >= 4.3f;
 	
 	const GLubyte * strExt = glGetString (GL_EXTENSIONS); 
 	GLEW_ARB_multisample = gluCheckExtension ((const GLubyte*)"GL_ARB_multisample",strExt);
