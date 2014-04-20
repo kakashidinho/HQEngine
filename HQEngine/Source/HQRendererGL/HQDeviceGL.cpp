@@ -70,8 +70,20 @@ PFNGLMEMORYBARRIER glMemoryBarrierWrapper;
 
 /*--------------------dispatch compute----------*/
 typedef void(GLAPIENTRY * PFNGLDISPATCHCOMPUTE) (GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
+typedef void(GLAPIENTRY * PFNGLDISPATCHCOMPUTEINDIRECT) (GLintptr offset);
 void GLAPIENTRY glDispatchComputeDummy(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z) {}
+void GLAPIENTRY glDispatchComputeIndirectDummy(GLintptr offset) {}
 PFNGLDISPATCHCOMPUTE glDispatchComputeWrapper;
+PFNGLDISPATCHCOMPUTEINDIRECT glDispatchComputeIndirectWrapper;
+
+/*------------------draw indirect---------------*/
+typedef void (GLAPIENTRY * PFNGLDRAWARRAYSINDIRECT) (GLenum mode, const GLvoid *indirect);
+typedef void (GLAPIENTRY * PFNGLDRAWELEMENTSINDIRECT) (GLenum mode, GLenum type, const GLvoid *indirect);
+
+void GLAPIENTRY glDrawArraysIndirectDummy(GLenum mode, const GLvoid *indirect) {}
+void GLAPIENTRY glDrawElementsIndirectDummy(GLenum mode, GLenum type, const GLvoid *indirect) {}
+PFNGLDRAWARRAYSINDIRECT glDrawArraysIndirectWrapper;
+PFNGLDRAWELEMENTSINDIRECT glDrawElementsIndirectWrapper;
 
 /*----------------------------------*/
 
@@ -178,6 +190,10 @@ HQDeviceGL::HQDeviceGL(bool flushLog)
 	this->stateMan = NULL;
 
 	this->usingCoreProfile = false;//core profile will not supported some deprecated features
+
+#ifdef GL_DISPATCH_INDIRECT_BUFFER
+	this->boundDispatchIndirectBuffer = this->boundDrawIndirectBuffer = 0;
+#endif
 
 	g_pOGLDev=this;
 }
@@ -691,6 +707,22 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 	else
 #endif
 		glDispatchComputeWrapper = glDispatchComputeDummy;
+
+#ifdef GL_DISPATCH_INDIRECT_BUFFER
+	if (GLEW_VERSION_4_3)
+	{
+		glDispatchComputeIndirectWrapper = glDispatchComputeIndirect;
+		glDrawArraysIndirectWrapper = glDrawArraysIndirect;
+		glDrawElementsIndirectWrapper = glDrawElementsIndirect;
+	}
+	else
+#endif
+	{
+		glDispatchComputeIndirectWrapper = glDispatchComputeIndirectDummy;
+		glDrawArraysIndirectWrapper = glDrawArraysIndirectDummy;
+		glDrawElementsIndirectWrapper = glDrawElementsIndirectDummy;
+	}
+
 }
 
 //***********************************
@@ -1565,6 +1597,40 @@ HQReturnVal HQDeviceGL::DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 p
 	return HQ_OK;
 }
 
+HQReturnVal HQDeviceGL::DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQBufferGL* pGLBuffer = static_cast<HQBufferGL*> (buffer);
+
+#ifdef GL_DISPATCH_INDIRECT_BUFFER
+	this->BindDrawIndirectBuffer(pGLBuffer->bufferName);
+#endif
+
+	static_cast<HQVertexStreamManagerGL*> (vStreamMan)->OnDraw();//tell vertex stream manager that we are about to draw
+	static_cast<HQBaseShaderManagerGL*> (shaderMan)->OnDraw();//tell shader manager that we are about to draw
+
+	glDrawArraysIndirectWrapper(this->primitiveMode, (void*) (pGLBuffer->elementSize * elementIndex));
+
+	return HQ_OK;
+}
+
+HQReturnVal HQDeviceGL::DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQBufferGL* pGLBuffer = static_cast<HQBufferGL*> (buffer);
+
+#ifdef GL_DISPATCH_INDIRECT_BUFFER
+	this->BindDrawIndirectBuffer(pGLBuffer->bufferName);
+#endif
+
+	static_cast<HQVertexStreamManagerGL*> (vStreamMan)->OnDraw();//tell vertex stream manager that we are about to draw
+	static_cast<HQBaseShaderManagerGL*> (shaderMan)->OnDraw();//tell shader manager that we are about to draw
+
+	glDrawElementsIndirectWrapper(this->primitiveMode, 
+		static_cast<HQVertexStreamManagerGL*> (this->vStreamMan)->GetIndexDataType(), 
+		(void*)(pGLBuffer->elementSize * elementIndex));
+
+	return HQ_OK;
+}
+
 HQReturnVal HQDeviceGL::SetViewPort(const HQViewPort &viewport)
 {
 	HQReturnVal re = HQ_OK;
@@ -1606,9 +1672,28 @@ HQReturnVal HQDeviceGL::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, 
 	return HQ_OK;
 }
 
+HQReturnVal HQDeviceGL::DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQBufferGL* pGLBuffer = static_cast<HQBufferGL*> (buffer);
+
+#ifdef GL_DISPATCH_INDIRECT_BUFFER
+	this->BindDispatchIndirectBuffer(pGLBuffer->bufferName);
+#endif
+	glDispatchComputeIndirectWrapper(pGLBuffer->elementSize * elementIndex);
+
+	return HQ_OK;
+}
+
 void HQDeviceGL::TextureUAVBarrier()
 {
 #ifdef GL_SHADER_IMAGE_ACCESS_BARRIER_BIT
-	glMemoryBarrierWrapper(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+	glMemoryBarrierWrapper(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+#endif
+}
+
+void HQDeviceGL::BufferUAVBarrier()
+{
+#ifdef GL_SHADER_STORAGE_BARRIER_BIT
+	glMemoryBarrierWrapper(GL_SHADER_STORAGE_BARRIER_BIT);
 #endif
 }

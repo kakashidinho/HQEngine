@@ -43,10 +43,21 @@ public:
 	~HQBaseShaderManagerGL_FakeUBO();
 
 	HQReturnVal CreateUniformBuffer(hq_uint32 size, void *initData, bool isDynamic, HQUniformBuffer **pBufferIDOut);
-	HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID);
-	void DestroyAllUniformBuffers();
+	HQReturnVal RemoveUniformBuffer(HQUniformBuffer* bufferID);
+	void RemoveAllUniformBuffers();
 	HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID);
 
+	/*-----unsupported features---------*/
+	HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	HQReturnVal CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	HQReturnVal CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)  { return HQ_FAILED; }
+
+	HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer) { return HQ_FAILED; }
+	void RemoveAllBufferUAVs() {}
 protected:
 	virtual void BufferChangeEnded(HQSysMemBuffer* pConstBuffer);//implement HQSysMemBuffer::Listener
 	//implement HQBaseCommonShaderManagerGL

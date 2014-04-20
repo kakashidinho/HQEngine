@@ -209,6 +209,8 @@ HQMeshNode::~HQMeshNode()
 	m_pRenderDevice->GetVertexStreamManager()->RemoveVertexInputLayout(m_geoInfo->vertexInputLayout);
 	m_pRenderDevice->GetVertexStreamManager()->RemoveVertexBuffer(m_geoInfo->vertexBuffer);
 	m_pRenderDevice->GetVertexStreamManager()->RemoveIndexBuffer(m_geoInfo->indexBuffer);
+	if (m_geoInfo->indirectBuffer != NULL)
+		m_pRenderDevice->GetShaderManager()->RemoveBufferUAV(m_geoInfo->indirectBuffer);
 
 	for (hquint32 i = 0; i < m_geoInfo->numGroups; ++i)
 	{
@@ -405,7 +407,52 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderO
 		}
 	}//for (hquint32 i = 0; i < header.numSubMeshes; ++i)
 
+	this->CreateIndirectBuffer();
+
 	return true;
+}
+
+void HQMeshNode::CreateIndirectBuffer()
+{
+	if (m_pRenderDevice->IsDrawIndirectSupported() == false)
+		return;
+	HQReturnVal re;
+
+	//init args data
+	struct IndirectArgs {
+		hquint32 number_of_indices_per_instance;
+		hquint32 number_of_instances;
+		hquint32 first_index;
+		hqint32 first_vertex;
+		hquint32 first_instance;
+	};
+
+	IndirectArgs * indirectArgs = HQ_NEW IndirectArgs[m_geoInfo->numGroups];
+	for (hquint32 i = 0; i < m_geoInfo->numGroups; ++i)
+	{
+		HQGeometricGroup &subMeshInfo = m_geoInfo->groups[i];
+		IndirectArgs& indirectArgsElem = indirectArgs[i];
+		
+		indirectArgsElem.number_of_indices_per_instance = subMeshInfo.numIndices;
+		indirectArgsElem.first_index = subMeshInfo.startIndex;
+		indirectArgsElem.first_vertex = 0;
+		indirectArgsElem.first_instance = 0;
+		indirectArgsElem.number_of_instances = 1;
+	}
+	//send data to buffer
+	if (!m_reloading)
+	{
+		re = m_pRenderDevice->GetShaderManager()->CreateDrawIndexedIndirectArgs(
+			m_geoInfo->numGroups,
+			indirectArgs,
+			&m_geoInfo->indirectBuffer
+			);
+	}
+	else if (m_geoInfo->indirectBuffer != NULL){
+		re = m_geoInfo->indirectBuffer->Update(indirectArgs);
+	}
+
+	delete[] indirectArgs;
 }
 
 void HQMeshNode::Update(hqfloat32 dt ,bool updateChilds , bool parentChanged)
@@ -447,6 +494,13 @@ void HQMeshNode::DrawSubMesh(hquint32 submeshIndex)
 	m_pRenderDevice->DrawIndexed(m_geoInfo->numVertices, subMeshInfo.numIndices, subMeshInfo.startIndex);
 }
 
+void HQMeshNode::DrawSubMeshIndirect(hquint32 submeshIndex)
+{
+	if (m_geoInfo->indirectBuffer == NULL)
+		return;
+	m_pRenderDevice->DrawIndexedInstancedIndirect(m_geoInfo->indirectBuffer, submeshIndex);
+}
+
 void HQMeshNode::SetSubMeshTextures(hquint32 submeshIndex)
 {
 	HQGeometricGroup &subMeshInfo = m_geoInfo->groups[submeshIndex];
@@ -463,6 +517,17 @@ void HQMeshNode::DrawInOneCall()
 	{
 		SetSubMeshTextures(i);
 		DrawSubMesh(i);
+	}
+	EndRender();
+}
+
+void HQMeshNode::DrawInOneCallIndirect()
+{
+	BeginRender();
+	for (hquint32 i = 0; i < m_geoInfo->numGroups; ++i)
+	{
+		SetSubMeshTextures(i);
+		DrawSubMeshIndirect(i);
 	}
 	EndRender();
 }

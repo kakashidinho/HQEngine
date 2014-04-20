@@ -891,6 +891,55 @@ HQReturnVal HQTextureManagerGL::SetTextureUAV(hq_uint32 slot, HQTexture* texture
 	return HQ_OK;
 }
 
+HQReturnVal HQTextureManagerGL::SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel)
+{
+#if defined _DEBUG || defined DEBUG
+	if (slot >= this->maxImageUnits)
+	{
+		hquint32 textureSlot = slot & 0xfffffff;
+		switch (slot & 0xf0000000){
+		case HQ_VERTEX_SHADER:
+			Log("SetTextureUAVForComputeShader() Error : Did you mistakenly bitwise OR %u with HQ_VERTEX_SHADER!", textureSlot);
+			break;
+		case HQ_PIXEL_SHADER:
+			Log("SetTextureUAVForComputeShader() Error : Did you mistakenly bitwise OR %u with HQ_PIXEL_SHADER!", textureSlot);
+			break;
+		case HQ_GEOMETRY_SHADER:
+			Log("SetTextureUAVForComputeShader() Error : Did you mistakenly bitwise OR %u with HQ_GEOMETRY_SHADER!", textureSlot);
+			break;
+		case HQ_COMPUTE_SHADER:
+			Log("SetTextureUAVForComputeShader() Error : Did you mistakenly bitwise OR %u with HQ_COMPUTE_SHADER!", textureSlot);
+			break;
+		default:
+			Log("SetTextureUAVForComputeShader() Error : {slot=%u} out of range!", slot);
+		}
+		return HQ_FAILED;
+	}
+#endif
+
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
+	HQTextureUAVGL* pTextureRawPtr = (HQTextureUAVGL*)pTexture.GetRawPointer();
+	HQSharedPtr<HQBaseTexture> & imageSlot = this->imageUnits[slot];
+	if (pTextureRawPtr == NULL)
+	{
+		if (imageSlot != NULL)
+		{
+			glBindImageTextureWrapper(slot, 0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
+			imageSlot.ToNull();
+		}
+		return HQ_OK;
+	}
+
+	if (imageSlot != pTexture)
+		imageSlot = pTexture;//hold the reference to texture
+
+	GLuint textureName = *((GLuint*)pTexture->pData);
+
+	glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, GL_READ_WRITE, pTextureRawPtr->internalFormat);
+
+	return HQ_OK;
+}
+
 /*
 Load texture from file
 */

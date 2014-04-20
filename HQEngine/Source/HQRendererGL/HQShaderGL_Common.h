@@ -179,11 +179,11 @@ public:
 
 	HQSharedPtr<HQBaseShaderProgramGL> GetActiveProgram() { return activeProgram; }
 
-	HQReturnVal DestroyProgram(HQShaderProgram* programID);
-	void DestroyAllProgram();
-	HQReturnVal DestroyShader(HQShaderObject* shaderID);
-	void DestroyAllShader() ;
-	void DestroyAllResource();
+	HQReturnVal RemoveProgram(HQShaderProgram* programID);
+	void RemoveAllProgram();
+	HQReturnVal RemoveShader(HQShaderObject* shaderID);
+	void RemoveAllShader() ;
+	void RemoveAllResource();
 
 	hq_uint32 GetParameterIndex(HQShaderProgram* programID ,const char *parameterName);
 

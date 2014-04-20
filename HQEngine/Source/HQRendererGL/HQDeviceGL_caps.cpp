@@ -162,6 +162,22 @@ hq_uint32 HQDeviceGL::GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
 	return 0;
 }
 
+hq_uint32 HQDeviceGL::GetMaxShaderBufferUAVs()
+{
+	return pEnum->caps.nShaderStorageBlocks;
+}
+hq_uint32 HQDeviceGL::GetMaxShaderStageBufferUAVs(HQShaderType shaderStage)
+{
+	switch (shaderStage)
+	{
+	case HQ_PIXEL_SHADER:
+		return pEnum->caps.nFragmentShaderStorageBlocks;
+	case HQ_COMPUTE_SHADER:
+		return pEnum->caps.nComputeShaderStorageBlocks;
+	}
+	return 0;
+}
+
 void HQDeviceGL::GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ)
 {
 	nGroupsX = pEnum->caps.nComputeGroupsX;

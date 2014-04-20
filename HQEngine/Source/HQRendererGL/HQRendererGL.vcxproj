@@ -344,6 +344,7 @@
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <ClCompile Include="HQShaderGL_GLSLController.cpp" />
+    <ClCompile Include="HQShaderGL_ShaderStorageSupported.cpp" />
     <ClCompile Include="HQShaderGL_UBO.cpp" />
     <ClCompile Include="HQStateManagerGL.cpp" />
     <ClCompile Include="..\BaseImpl\HQTextureManagerBaseImpl.cpp">
@@ -455,6 +456,7 @@
     <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader.h" />
     <ClInclude Include="..\..\..\ThirdParty-mod\mojoshader\mojoshader_internal.h" />
     <ClInclude Include="glHeaders.h" />
+    <ClInclude Include="HQCommonGL.h" />
     <ClInclude Include="HQCommonVertexStreamManGL.h" />
     <ClInclude Include="HQCommonVertexStreamManGL_inline.h" />
     <ClInclude Include="HQDeviceEnumGL.h" />
@@ -475,6 +477,7 @@
     <ClInclude Include="HQShaderGL_GLSL_VarParser.h" />
     <ClInclude Include="HQShaderGL_GLSLController.h" />
     <ClInclude Include="HQShaderGL_GLSLController_inline.h" />
+    <ClInclude Include="HQShaderGL_ShaderStorageSupported.h" />
     <ClInclude Include="HQShaderGL_template_impl.h" />
     <ClInclude Include="HQShaderGL_UBO.h" />
     <ClInclude Include="HQStateManagerGL.h" />

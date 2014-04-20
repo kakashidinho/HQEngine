@@ -602,11 +602,11 @@ HQReturnVal HQBaseShaderManagerGL_FakeUBO::CreateUniformBuffer(hq_uint32 size, v
 	}
 	return HQ_OK;
 }
-HQReturnVal HQBaseShaderManagerGL_FakeUBO::DestroyUniformBuffer(HQUniformBuffer* bufferID)
+HQReturnVal HQBaseShaderManagerGL_FakeUBO::RemoveUniformBuffer(HQUniformBuffer* bufferID)
 {
 	return (HQReturnVal)this->uniformBuffers.Remove(bufferID);
 }
-void HQBaseShaderManagerGL_FakeUBO::DestroyAllUniformBuffers()
+void HQBaseShaderManagerGL_FakeUBO::RemoveAllUniformBuffers()
 {
 	this->uniformBuffers.RemoveAll();
 }

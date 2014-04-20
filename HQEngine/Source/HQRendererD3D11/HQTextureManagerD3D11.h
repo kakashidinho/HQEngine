@@ -20,6 +20,11 @@ COPYING.txt included with this distribution for more information.
 #endif
 #define HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER 0
 
+#ifndef HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
+#define HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
+class HQDeviceD3D11;
+#endif
+
 //this is the type of HQBaseTexture::pData
 struct HQTextureResourceD3D11
 {
@@ -80,7 +85,8 @@ public:
 	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
 
 	HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel);
-
+	HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel);
+	
 	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
 	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);
 	HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex);
@@ -98,13 +104,17 @@ public:
 	HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
 	HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);
 
-	void UnbindTextureFromAllSlots(const HQSharedPtr<HQBaseTexture> &pTexture);//unbind the given texture from every texture slots
+	void UnbindTextureFromAllTextureSlots(const HQSharedPtr<HQBaseTexture> &pTexture);//unbind the given texture from every texture slots
+
+	void UnbindTextureFromComputeShaderUAVSlot(hquint32 slot);//unbind any texture from compute shader's UAV slot {slot}
 
 
 	static DXGI_FORMAT GetD3DFormat(HQTextureUAVFormat format);
 private:
 	//create UAV for a certain mip level or get existing one
 	ID3D11UnorderedAccessView * GetOrCreateNewUAV(HQTextureType type, HQUAVTextureResourceD3D11 * pTexResD3D, hquint32 mipLevel);
+
+	HQDeviceD3D11 * pMasterDevice;
 
 	ID3D11Device* pD3DDevice;
 	ID3D11DeviceContext* pD3DContext;

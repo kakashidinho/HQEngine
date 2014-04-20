@@ -176,11 +176,11 @@ public:
 								HQShaderObject * geometryShaderID,
 								HQShaderProgram **pID);
 
-	HQReturnVal DestroyProgram(HQShaderProgram* programID);
-	void DestroyAllProgram();
-	HQReturnVal DestroyShader(HQShaderObject* shaderID);
-	void DestroyAllShader() ;
-	void DestroyAllResource();
+	HQReturnVal RemoveProgram(HQShaderProgram* programID);
+	void RemoveAllProgram();
+	HQReturnVal RemoveShader(HQShaderObject* shaderID);
+	void RemoveAllShader() ;
+	void RemoveAllResource();
 	
 	HQReturnVal SetUniformInt(const char* parameterName,
 						 const int* pValues,
@@ -262,9 +262,20 @@ public:
 	friend void cgErrorCallBack(void);
 
 	HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut);
-	HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID);
-	void DestroyAllUniformBuffers();
+	HQReturnVal RemoveUniformBuffer(HQUniformBuffer* bufferID);
+	void RemoveAllUniformBuffers();
 	HQReturnVal SetUniformBuffer(hq_uint32 slot ,  HQUniformBuffer* bufferID );
+
+	HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	HQReturnVal CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	HQReturnVal CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)  { return HQ_FAILED; }
+
+	HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer) { return HQ_FAILED; }
+	void RemoveAllBufferUAVs() {}
 
 	void OnResetDevice();
 private:

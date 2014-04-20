@@ -35,6 +35,22 @@ public:
 										  HQIndexBuffer **pIndexBufferID) = 0;
 
 	///
+	///create unordered access buffer, supports read and write via shader
+	///
+	virtual HQReturnVal CreateVertexBufferUAV(const void *initData, 
+												hq_uint32 elementSize,
+												hq_uint32 numElements,
+												HQVertexBufferUAV **ppVertexBufferOut) = 0;
+
+	///
+	///create unordered access buffer, supports read and write via shader
+	///
+	virtual HQReturnVal CreateIndexBufferUAV(const void *initData,
+		hq_uint32 numElements,
+		HQIndexDataType indexDataType,
+		HQVertexBufferUAV **ppIndexBufferOut) = 0;
+
+	///
 	///{vertexShaderID} is ignored in D3D9 device. if {vertexShaderID} = NULL, this method will create 
 	///input layout for fixed function shader. D3D11 & GL only accepts the following layout: 
 	///position (x,y,z); color (r,g,b,a); normal (x,y,z); texcoords (u,v)

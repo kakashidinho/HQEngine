@@ -111,6 +111,9 @@
     <ClCompile Include="HQVertexStreamManagerGL_VAO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HQShaderGL_ShaderStorageSupported.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HQRendererGLDef.def">
@@ -192,6 +195,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HQVertexStreamManagerGL_VAO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQCommonGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQShaderGL_ShaderStorageSupported.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

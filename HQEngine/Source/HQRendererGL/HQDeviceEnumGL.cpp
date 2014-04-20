@@ -980,12 +980,14 @@ void HQDeviceEnumGL::CheckCapabilities()
 	else
 		caps.nGeometryShaderSamplers = 0;
 
+#ifdef GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS
 	if (GLEW_VERSION_4_3)
 	{
 		glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &maxVal);
 		caps.nComputeShaderSamplers = maxVal;
 	}
 	else
+#endif//ifdef GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS
 		caps.nComputeShaderSamplers = 0;
 
 	//get max vertex attributes
@@ -1000,6 +1002,7 @@ void HQDeviceEnumGL::CheckCapabilities()
 	}
 
 	/*----------get max image units------------*/
+#ifdef GL_MAX_IMAGE_UNITS
 	if (GLEW_VERSION_4_2)
 	{
 		glGetIntegerv(GL_MAX_IMAGE_UNITS, &maxVal);
@@ -1008,22 +1011,43 @@ void HQDeviceEnumGL::CheckCapabilities()
 		caps.nFragmentImageUnits = maxVal;//image load store
 
 	}
-	else{
+	else
+#endif//ifdef GL_MAX_IMAGE_UNITS
+	{
 		caps.nImageUnits//image load store
 			= caps.nFragmentImageUnits//image load store
 			= 0;
 	}
 
-
+#ifdef GL_MAX_COMPUTE_IMAGE_UNIFORMS
 	if (GLEW_VERSION_4_3)
 	{
 		glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &maxVal);
 		caps.nComputeImageUnits = maxVal;
 	}
 	else
+#endif//ifdef GL_MAX_COMPUTE_IMAGE_UNIFORMS
 		caps.nComputeImageUnits = 0;//image load store
 
+	//shader storage blocks
+#ifdef GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS
+	if (GLEW_VERSION_4_3)
+	{
+		glGetIntegerv(GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS, &maxVal);
+		caps.nShaderStorageBlocks = maxVal;
+		glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &maxVal);
+		caps.nComputeShaderStorageBlocks = maxVal;
+		glGetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS, &maxVal);
+		caps.nFragmentShaderStorageBlocks = maxVal;
+	}
+	else
+#endif//#ifdef GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS
+	{
+		caps.nShaderStorageBlocks = caps.nFragmentShaderStorageBlocks = caps.nComputeShaderStorageBlocks = 0;
+	}
+
 	//compute thread groups
+#ifdef GL_MAX_COMPUTE_WORK_GROUP_COUNT
 	if (GLEW_VERSION_4_3)
 	{
 		glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &maxVal);
@@ -1033,7 +1057,9 @@ void HQDeviceEnumGL::CheckCapabilities()
 		glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &maxVal);
 		caps.nComputeGroupsZ = maxVal;
 	}
-	else{
+	else
+#endif//GL_MAX_COMPUTE_WORK_GROUP_COUNT
+	{
 		caps.nComputeGroupsX = 0;
 		caps.nComputeGroupsY = 0;
 		caps.nComputeGroupsZ = 0;

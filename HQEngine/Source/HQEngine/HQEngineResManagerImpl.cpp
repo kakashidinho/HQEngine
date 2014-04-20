@@ -57,7 +57,7 @@ m_shader(NULL)
 HQEngineShaderResImpl::~HQEngineShaderResImpl()
 {
 	if (m_shader != NULL)
-		m_renderDevice->GetShaderManager()->DestroyShader(m_shader);
+		m_renderDevice->GetShaderManager()->RemoveShader(m_shader);
 }
 
 /*----------------resource loading session----------------*/

@@ -272,11 +272,25 @@ public:
 	///
 	virtual HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 primitiveCount , hq_uint32 firstIndex ) = 0;
 
+	///
+	///Draw instances using arguments comming from element {elementIndex}th in {buffer}
+	///
+	virtual HQReturnVal DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
 
+	///
+	///Draw indexed instances using arguments coming from element {elementIndex}th in {buffer}
+	///
+	virtual HQReturnVal DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
+	
 	///
 	///dispatch commands from compute shader
 	///
 	virtual HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ) = 0;
+
+	///
+	///dispatch commands from compute shader with arguments coming from element {elementIndex}th in {buffer}
+	///
+	virtual HQReturnVal DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
 
 	///
 	///Every UAV textures' memory access after this method returns will reflect data changed by shaders or other 
@@ -284,6 +298,13 @@ public:
 	///will not execute until every prior memory access has finished
 	///
 	virtual void TextureUAVBarrier() = 0;
+
+	///
+	///UAV buffers' memory access after this method returns will reflect data changed by shaders 
+	///issue before this method's called. Additionally, every data modification of UAV buffer after this method returns 
+	///will not execute until every prior memory access has finished
+	///
+	virtual void BufferUAVBarrier() = 0;
 
 	/*-------------------------------
 	device capabilities
@@ -314,16 +335,33 @@ public:
 	virtual hq_uint32 GetMaxShaderStageTextures(HQShaderType shaderStage) = 0;
 
 	///
-	///query max UAV textures for shader
+	///query max UAV textures for all shaders
 	///
 	virtual hq_uint32 GetMaxShaderTextureUAVs() = 0;
+	///
+	///query max UAV textures for specific shader stage
+	///
 	virtual hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage) = 0;
+
+	///
+	///query max UAV buffer for all shaders
+	///
+	virtual hq_uint32 GetMaxShaderBufferUAVs() = 0;
+	///
+	///query max UAV buffers for specific shader stage
+	///
+	virtual hq_uint32 GetMaxShaderStageBufferUAVs(HQShaderType shaderStage) = 0;
 
 
 	///
 	///Get maximum number of compute thread groups per dimension
 	///
 	virtual void GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ) = 0;
+
+	///
+	///Is indirect draw supported
+	///
+	virtual bool IsDrawIndirectSupported() { return GetMaxShaderBufferUAVs() > 0; }
 
 	///
 	///is two sided stencil supported

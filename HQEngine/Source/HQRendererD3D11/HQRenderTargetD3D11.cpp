@@ -629,7 +629,7 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargetsImpl(HQSharedPtr<HQBa
 	for (hq_uint32 i = 0; i < group->numRenderTargets; ++i)
 	{
 		if (group->renderTargetViews[i] != NULL)
-			static_cast<HQTextureManagerD3D11*> (this->pTextureManager)->UnbindTextureFromAllSlots(group->renderTargets[i].pRenderTarget->GetTexture());
+			static_cast<HQTextureManagerD3D11*> (this->pTextureManager)->UnbindTextureFromAllTextureSlots(group->renderTargets[i].pRenderTarget->GetTexture());
 	}
 
 	this->renderTargetWidth = group->commonWidth;

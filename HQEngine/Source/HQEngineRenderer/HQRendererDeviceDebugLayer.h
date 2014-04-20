@@ -70,10 +70,15 @@ public:
 	HQReturnVal DrawPrimitive(hq_uint32 primitiveCount , hq_uint32 firstVertex) ;
 	HQReturnVal DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCount , hq_uint32 firstIndex );
 	HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 primitiveCount , hq_uint32 firstIndex );
+	
+	HQReturnVal DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex) ;
+	HQReturnVal DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex);
 
 	HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ);
+	HQReturnVal DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex);
 
 	void TextureUAVBarrier() { m_pDevice->TextureUAVBarrier(); }
+	void BufferUAVBarrier() { m_pDevice->BufferUAVBarrier(); }
 
 	/*---------------------------------
 	device capabilities
@@ -118,6 +123,14 @@ public:
 	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
 	{
 		return m_pDevice->GetMaxShaderStageTextureUAVs(shaderStage);
+	}
+
+	hq_uint32 GetMaxShaderBufferUAVs() {
+		return m_pDevice->GetMaxShaderBufferUAVs();
+	}
+	hq_uint32 GetMaxShaderStageBufferUAVs(HQShaderType shaderStage)
+	{
+		return m_pDevice->GetMaxShaderStageBufferUAVs(shaderStage);
 	}
 
 	void GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ)

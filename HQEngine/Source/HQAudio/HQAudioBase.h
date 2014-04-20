@@ -81,11 +81,11 @@ public:
 
 		return buffer->m_playTime;
 	}
-	virtual HQReturnVal DeleteAudioBuffer(hquint32 bufferID) 
+	virtual HQReturnVal RemoveAudioBuffer(hquint32 bufferID) 
 	{
 		return (HQReturnVal) m_bufferManager.Remove(bufferID);
 	}
-	virtual void DeleteAllAudioBuffers() 
+	virtual void RemoveAllAudioBuffers() 
 	{
 		m_bufferManager.RemoveAll();
 	}
@@ -96,11 +96,11 @@ public:
 		return m_sourceManager.GetItemRawPointer(sourceID);
 	}
 	
-	virtual HQReturnVal DeleteSource(hquint32 sourceID) 
+	virtual HQReturnVal RemoveSource(hquint32 sourceID) 
 	{
 		return (HQReturnVal) m_sourceManager.Remove(sourceID);
 	}
-	virtual void DeleteAllSources()
+	virtual void RemoveAllSources()
 	{
 		m_sourceManager.RemoveAll();
 	}

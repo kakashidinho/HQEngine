@@ -47,11 +47,11 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxPixelSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 		featureCaps.maxComputeSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 #if HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER
-		featureCaps.maxPixelTextureUAVs = D3D11_1_UAV_SLOT_COUNT;
+		featureCaps.maxPixelUAVSlots = D3D11_1_UAV_SLOT_COUNT;
 #else
-		featureCaps.maxPixelTextureUAVs = 0;
+		featureCaps.maxPixelUAVSlots = 0;
 #endif
-		featureCaps.maxComputeTextureUAVs = D3D11_1_UAV_SLOT_COUNT;
+		featureCaps.maxComputeUAVSlots = D3D11_1_UAV_SLOT_COUNT;
 
 		featureCaps.maxComputeGroupsX = featureCaps.maxComputeGroupsY = featureCaps.maxComputeGroupsZ = D3D11_CS_DISPATCH_MAX_THREAD_GROUPS_PER_DIMENSION;
 
@@ -76,8 +76,8 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxPixelSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 		featureCaps.maxComputeTextures = 0;
 		featureCaps.maxComputeSamplers = 0;
-		featureCaps.maxPixelTextureUAVs = 0;
-		featureCaps.maxComputeTextureUAVs = 0;
+		featureCaps.maxPixelUAVSlots = 0;
+		featureCaps.maxComputeUAVSlots = 0;
 		featureCaps.maxComputeGroupsX = featureCaps.maxComputeGroupsY = featureCaps.maxComputeGroupsZ = 0;
 		featureCaps.shaderModel = 4;
 		featureCaps.shaderModelMinor = 0;
@@ -104,8 +104,8 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxPixelSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 		featureCaps.maxComputeTextures = 0;
 		featureCaps.maxComputeSamplers = 0;
-		featureCaps.maxPixelTextureUAVs = 0;
-		featureCaps.maxComputeTextureUAVs = 0;
+		featureCaps.maxPixelUAVSlots = 0;
+		featureCaps.maxComputeUAVSlots = 0;
 		featureCaps.maxComputeGroupsX = featureCaps.maxComputeGroupsY = featureCaps.maxComputeGroupsZ = 0;
 		featureCaps.shaderModel = 2;
 		featureCaps.shaderModelMinor = 0;
@@ -120,7 +120,7 @@ void HQDeviceD3D11::InitFeatureCaps()
 	featureCaps.maxTotalBoundTextures = featureCaps.maxVertexTextures + featureCaps.maxGeometryTextures + featureCaps.maxPixelTextures
 		+ featureCaps.maxComputeTextures;
 
-	featureCaps.maxTotalBoundTextureUAVs = featureCaps.maxComputeTextureUAVs + featureCaps.maxPixelTextureUAVs;
+	featureCaps.maxTotalUAVSlots = featureCaps.maxComputeUAVSlots + featureCaps.maxPixelUAVSlots;
 }
 
 /*---------------------------*/
@@ -170,16 +170,35 @@ hq_uint32 HQDeviceD3D11::GetMaxShaderStageTextures(HQShaderType shaderStage) //t
 
 hq_uint32 HQDeviceD3D11::GetMaxShaderTextureUAVs()
 {
-	return this->featureCaps.maxTotalBoundTextureUAVs;
+	return this->featureCaps.maxTotalUAVSlots;
 }
 hq_uint32 HQDeviceD3D11::GetMaxShaderStageTextureUAVs(HQShaderType shaderStage)
 {
 	switch (shaderStage)
 	{
 	case HQ_PIXEL_SHADER:
-		return featureCaps.maxPixelTextureUAVs;
+		return featureCaps.maxPixelUAVSlots;
 	case HQ_COMPUTE_SHADER:
-		return featureCaps.maxComputeTextureUAVs;
+		return featureCaps.maxComputeUAVSlots;
+	default:
+		//TO DO
+		return 0;
+	}
+}
+
+
+hq_uint32 HQDeviceD3D11::GetMaxShaderBufferUAVs()
+{
+	return this->featureCaps.maxTotalUAVSlots;
+}
+hq_uint32 HQDeviceD3D11::GetMaxShaderStageBufferUAVs(HQShaderType shaderStage)
+{
+	switch (shaderStage)
+	{
+	case HQ_PIXEL_SHADER:
+		return featureCaps.maxPixelUAVSlots;
+	case HQ_COMPUTE_SHADER:
+		return featureCaps.maxComputeUAVSlots;
 	default:
 		//TO DO
 		return 0;

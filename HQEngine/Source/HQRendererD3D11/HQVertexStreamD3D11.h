@@ -11,63 +11,34 @@ COPYING.txt included with this distribution for more information.
 #ifndef _VERTEX_STREAM_MAN_
 #define _VERTEX_STREAM_MAN_
 
-#include "d3d11.h"
 #include "../HQVertexStreamManager.h"
-#include "HQLoggableObject.h"
-#include "../BaseImpl/HQBaseImplCommon.h"
-#include "HQShaderD3D11.h"
 #include "../HQItemManager.h"
+#include "HQCommonD3D11.h"
+#include "HQShaderD3D11.h"
 
 #define MAX_VERTEX_ATTRIBS 16
 #ifndef D3D11_1_UAV_SLOT_COUNT
 #	define D3D11_1_UAV_SLOT_COUNT 64
 #endif
 
-struct HQBufferD3D11 : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable, public HQBaseIDObject
-{
-	HQBufferD3D11(bool isDynamic , hq_uint32 size)
-	{
-		this->pD3DBuffer = NULL;
-		this->isDynamic = isDynamic;
-		this->size = size;
-	}
-	virtual ~HQBufferD3D11()
-	{
-		SafeRelease(this->pD3DBuffer);
-	}
-	
-	virtual hquint32 GetSize() const { return size; }
-	virtual HQReturnVal Unmap();
-	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
-	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
-
-	//implement HQGraphicsResourceRawRetrievable
-	virtual void * GetRawHandle() { return pD3DBuffer; }
-
-	ID3D11DeviceContext* pD3DContext;
-	ID3D11Buffer *pD3DBuffer;
-	HQLoggableObject *pLog;
-	bool isDynamic;
-	hq_uint32 size;
-};
 
 #ifdef WIN32
 #	pragma warning( push )
 #	pragma warning( disable : 4250 )//dominance inheritance of HQBufferD3D11
 #endif
 
-struct HQVertexBufferD3D11 : public HQBufferD3D11, public HQVertexBuffer
+struct HQVertexBufferD3D11 : public HQGenericBufferD3D11
 {
 	HQVertexBufferD3D11(bool dynamic, hq_uint32 size)
-	: HQBufferD3D11(dynamic, size)
+	: HQGenericBufferD3D11(HQ_VERTEX_BUFFER_D3D11, dynamic, size)
 	{
 	}
 };
 
-struct HQIndexBufferD3D11 : public HQBufferD3D11, public HQIndexBuffer
+struct HQIndexBufferD3D11 : public HQGenericBufferD3D11
 {
 	HQIndexBufferD3D11(bool dynamic   , hq_uint32 size, HQIndexDataType dataType) 
-		: HQBufferD3D11(dynamic , size)
+	: HQGenericBufferD3D11(HQ_INDEX_BUFFER_D3D11, dynamic, size)
 	{
 		switch (dataType)
 		{
@@ -82,6 +53,23 @@ struct HQIndexBufferD3D11 : public HQBufferD3D11, public HQIndexBuffer
 	DXGI_FORMAT d3dDataType;
 };
 
+//unordered access supported vertex buffer
+struct HQVertexBufferUAVD3D11 : public HQVertexBufferD3D11
+{
+	HQVertexBufferUAVD3D11(hquint32 size)
+	: HQVertexBufferD3D11(false, size)
+	{
+	}
+};
+
+//unordered access supported index buffer
+struct HQIndexBufferUAVD3D11 : public HQIndexBufferD3D11
+{
+	HQIndexBufferUAVD3D11(hq_uint32 size, HQIndexDataType dataType)
+	: HQIndexBufferD3D11(false, size, dataType)
+	{
+	}
+};
 
 #ifdef WIN32
 #	pragma warning( pop )
@@ -108,25 +96,6 @@ struct HQVertexStreamD3D11
 
 class HQVertexStreamManagerD3D11: public HQVertexStreamManager , public HQLoggableObject
 {
-private:
-	ID3D11Device * pD3DDevice;
-	ID3D11DeviceContext *pD3DContext;
-	ID3D11Buffer * pCleaVBuffer;//vertex buffer for clearing viewport
-	ID3D11InputLayout *pClearInputLayout;//input layout for clearing viewport
-
-	HQShaderManagerD3D11 *pShaderMan;
-
-	HQIDItemManager<HQVertexBufferD3D11> vertexBuffers;
-	HQIDItemManager<HQIndexBufferD3D11> indexBuffers;
-	HQIDItemManager<HQVertexInputLayoutD3D11> inputLayouts;
-
-	HQSharedPtr<HQIndexBufferD3D11> activeIndexBuffer;
-	HQSharedPtr<HQVertexInputLayoutD3D11> activeInputLayout;
-
-	HQVertexStreamD3D11 streams[MAX_VERTEX_ATTRIBS];
-	
-
-	void ConvertToElementDesc(const HQVertexAttribDesc &vAttribDesc ,D3D11_INPUT_ELEMENT_DESC &vElement);
 
 public:
 	HQVertexStreamManagerD3D11(ID3D11Device* pD3DDevice , 
@@ -139,10 +108,30 @@ public:
 	HQReturnVal CreateVertexBuffer(const void *initData , hq_uint32 size , bool dynamic , bool isForPointSprites ,HQVertexBuffer **pVertexBufferID);
 	HQReturnVal CreateIndexBuffer(const void *initData , hq_uint32 size , bool dynamic , HQIndexDataType dataType , HQIndexBuffer **pIndexBufferID);
 
+	HQReturnVal CreateVertexBufferUAV(const void *initData,
+		hq_uint32 elementSize,
+		hq_uint32 numElements,
+		HQVertexBufferUAV **ppVertexBufferOut);
+
+	HQReturnVal CreateIndexBufferUAV(const void *initData,
+		hq_uint32 numElements,
+		HQIndexDataType indexDataType,
+		HQVertexBufferUAV **ppIndexBufferOut);
+
 	HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDesc , 
 												hq_uint32 numAttrib ,
 												HQShaderObject* vertexShaderID , 
 												HQVertexLayout **pInputLayoutID);
+
+	//convert from raw pointer to shared pointer
+	HQSharedPtr<HQVertexBufferD3D11> GetVertexBufferSharedPtr(HQGenericBufferD3D11* buffer)
+	{
+		return this->vertexBuffers.GetItemPointer(buffer);
+	}
+	HQSharedPtr<HQIndexBufferD3D11> GetIndexBufferSharedPtr(HQGenericBufferD3D11* buffer)
+	{
+		return this->indexBuffers.GetItemPointer(buffer);
+	}
 
 	HQReturnVal SetVertexBuffer(HQVertexBuffer* vertexBufferID , hq_uint32 streamIndex , hq_uint32 stride ) ;
 
@@ -162,6 +151,26 @@ public:
 #endif
 	void BeginClearViewport();
 	void EndClearViewport();
+
+private:
+	void ConvertToElementDesc(const HQVertexAttribDesc &vAttribDesc, D3D11_INPUT_ELEMENT_DESC &vElement);
+
+	ID3D11Device * pD3DDevice;
+	ID3D11DeviceContext *pD3DContext;
+	ID3D11Buffer * pCleaVBuffer;//vertex buffer for clearing viewport
+	ID3D11InputLayout *pClearInputLayout;//input layout for clearing viewport
+
+	HQShaderManagerD3D11 *pShaderMan;
+
+	HQIDItemManager<HQVertexBufferD3D11> vertexBuffers;
+	HQIDItemManager<HQIndexBufferD3D11> indexBuffers;
+	HQIDItemManager<HQVertexInputLayoutD3D11> inputLayouts;
+
+	HQSharedPtr<HQIndexBufferD3D11> activeIndexBuffer;
+	HQSharedPtr<HQVertexInputLayoutD3D11> activeInputLayout;
+
+	HQVertexStreamD3D11 streams[MAX_VERTEX_ATTRIBS];
+
 };
 
 

@@ -74,12 +74,12 @@ struct HQD3DFEATURE_CAPS
 	UINT maxGeometryTextures;
 	UINT maxPixelSamplers;
 	UINT maxPixelTextures;
-	UINT maxPixelTextureUAVs;
+	UINT maxPixelUAVSlots;
 	UINT maxComputeSamplers;
 	UINT maxComputeTextures;
-	UINT maxComputeTextureUAVs;
+	UINT maxComputeUAVSlots;
 	UINT maxTotalBoundTextures;//maximum number of textures that can be bound
-	UINT maxTotalBoundTextureUAVs;
+	UINT maxTotalUAVSlots;
 	UINT maxComputeGroupsX;
 	UINT maxComputeGroupsY;
 	UINT maxComputeGroupsZ;
@@ -203,9 +203,14 @@ public:
 	HQReturnVal DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCount , hq_uint32 firstIndex );
 	HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices, hq_uint32 primitiveCount, hq_uint32 firstIndex);
 
+	HQReturnVal DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex);
+	HQReturnVal DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex);
+
 	HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ);
+	HQReturnVal DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex);
 
 	void TextureUAVBarrier() {}
+	void BufferUAVBarrier() {}
 
 	/*---------------------------------
 	device capabilities
@@ -219,6 +224,8 @@ public:
 	hq_uint32 GetMaxShaderStageTextures(HQShaderType shaderStage);
 	hq_uint32 GetMaxShaderTextureUAVs();
 	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage);
+	hq_uint32 GetMaxShaderBufferUAVs();
+	hq_uint32 GetMaxShaderStageBufferUAVs(HQShaderType shaderStage);
 
 	void GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ);
 

@@ -522,7 +522,7 @@ HQShaderManagerD3D9::HQShaderManagerD3D9(LPDIRECT3DDEVICE9 pD3DDevice,HQLogStrea
 
 HQShaderManagerD3D9::~HQShaderManagerD3D9()
 {
-	this->DestroyAllResource();
+	this->RemoveAllResource();
 	delete[] this->vshaderConstSlots;
 	delete[] this->pshaderConstSlots;
 	cgD3D9SetDevice(0);
@@ -625,7 +625,7 @@ HQReturnVal HQShaderManagerD3D9::ActiveProgram(HQShaderProgram* programID)
 	return HQ_OK;
 }
 /*------------------------*/
-HQReturnVal HQShaderManagerD3D9::DestroyProgram(HQShaderProgram* programID)
+HQReturnVal HQShaderManagerD3D9::RemoveProgram(HQShaderProgram* programID)
 {
 	HQSharedPtr<HQShaderProgramD3D9> pProgram = this->GetItemPointer(programID);
 	if(pProgram == NULL)
@@ -638,26 +638,26 @@ HQReturnVal HQShaderManagerD3D9::DestroyProgram(HQShaderProgram* programID)
 	return HQ_OK;
 }
 
-void HQShaderManagerD3D9::DestroyAllProgram()
+void HQShaderManagerD3D9::RemoveAllProgram()
 {
 	this->ActiveProgram(NULL);
 	
 	this->RemoveAll();
 }
 
-void HQShaderManagerD3D9::DestroyAllResource()
+void HQShaderManagerD3D9::RemoveAllResource()
 {
-	this->DestroyAllUniformBuffers();
-	this->DestroyAllProgram();
-	this->DestroyAllShader();
+	this->RemoveAllUniformBuffers();
+	this->RemoveAllProgram();
+	this->RemoveAllShader();
 }
 
 
-HQReturnVal HQShaderManagerD3D9::DestroyShader(HQShaderObject * shaderID)
+HQReturnVal HQShaderManagerD3D9::RemoveShader(HQShaderObject * shaderID)
 {return (HQReturnVal)this->shaderObjects.Remove(shaderID);
 }
 
-void HQShaderManagerD3D9::DestroyAllShader()
+void HQShaderManagerD3D9::RemoveAllShader()
 {
 	this->shaderObjects.RemoveAll();
 }
@@ -1909,11 +1909,11 @@ HQReturnVal HQShaderManagerD3D9::CreateUniformBuffer(hq_uint32 size , void *init
 	}
 	return HQ_OK;
 }
-HQReturnVal HQShaderManagerD3D9::DestroyUniformBuffer(HQUniformBuffer* bufferID)
+HQReturnVal HQShaderManagerD3D9::RemoveUniformBuffer(HQUniformBuffer* bufferID)
 {
 	return (HQReturnVal)shaderConstBuffers.Remove(bufferID);
 }
-void HQShaderManagerD3D9::DestroyAllUniformBuffers()
+void HQShaderManagerD3D9::RemoveAllUniformBuffers()
 {
 	this->shaderConstBuffers.RemoveAll();
 }

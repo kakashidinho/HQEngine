@@ -13,25 +13,6 @@ COPYING.txt included with this distribution for more information.
 #include "../BaseImpl/HQBaseImplCommon.h"
 #include "HQCommonVertexStreamManGL_inline.h"
 
-/*---------buffer----------------------*/
-
-
-HQBufferGL::HQBufferGL(hq_uint32 size , GLenum usage)
-{
-	this->bufferName = 0;
-	this->usage = usage;
-	this->size = size;
-}
-HQBufferGL::~HQBufferGL()
-{
-	if (this->bufferName != 0)
-	{
-#if defined DEVICE_LOST_POSSIBLE
-		if (!g_pOGLDev->IsDeviceLost())
-#endif
-			glDeleteBuffers( 1 , &this->bufferName);
-	}
-}
 
 
 //vertex buffer----------------------------------------------------
@@ -43,7 +24,7 @@ HQVertexBufferGL::~HQVertexBufferGL()
 	}
 }
 
-void HQVertexBufferGL::OnCreated(const void *initData)
+void HQVertexBufferGL::Init(const void *initData)
 {
 	glGenBuffers(1 , &this->bufferName);
 
@@ -97,9 +78,9 @@ HQUnmappableVertexBufferGL::HQUnmappableVertexBufferGL(HQVertexStreamManagerGL *
 		this->AllocRawBuffer(size);
 }
 
-void HQUnmappableVertexBufferGL::OnCreated(const void *initData)
+void HQUnmappableVertexBufferGL::Init(const void *initData)
 {
-	HQVertexBufferGL::OnCreated(initData);
+	HQVertexBufferGL::Init(initData);
 	if (initData != NULL && this->GetRawBuffer() != NULL)
 		this->Update(0, this->HQBufferGL::size, initData);//copy to system memory
 }
@@ -162,7 +143,7 @@ HQReturnVal HQUnmappableVertexBufferGL::GenericMap(void ** ppData, HQMapType map
 }
 
 //index buffer---------------------------------------------------------------
-void HQIndexBufferGL::OnCreated(const void *initData)
+void HQIndexBufferGL::Init(const void *initData)
 {
 	GLuint currentIBO;
 	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, (GLint*)&currentIBO);
@@ -247,9 +228,9 @@ HQUnmappableIndexBufferGL::HQUnmappableIndexBufferGL(HQVertexStreamManagerGL *ma
 		this->AllocRawBuffer(size);
 }
 
-void HQUnmappableIndexBufferGL::OnCreated(const void *initData)
+void HQUnmappableIndexBufferGL::Init(const void *initData)
 {
-	HQIndexBufferGL::OnCreated(initData);
+	HQIndexBufferGL::Init(initData);
 	if (initData != NULL && this->GetRawBuffer() != NULL)
 		this->Update(0, this->HQBufferGL::size, initData);//copy to system memory
 }
@@ -467,7 +448,7 @@ HQReturnVal HQVertexStreamManagerGL::CreateVertexBuffer(const void *initData , h
 		return HQ_FAILED_MEM_ALLOC;
 	}
 
-	newVBuffer->OnCreated(initData);
+	newVBuffer->Init(initData);
 	
 	if (glGetError() == GL_OUT_OF_MEMORY || !this->vertexBuffers.AddItem(newVBuffer , pID))
 	{
@@ -495,7 +476,7 @@ HQReturnVal HQVertexStreamManagerGL::CreateIndexBuffer(const void *initData , hq
 		return HQ_FAILED_MEM_ALLOC;
 	}
 	
-	newIBuffer->OnCreated( initData);
+	newIBuffer->Init( initData);
 
 	if (glGetError() == GL_OUT_OF_MEMORY || !this->indexBuffers.AddItem(newIBuffer , pID))
 	{
@@ -503,6 +484,73 @@ HQReturnVal HQVertexStreamManagerGL::CreateIndexBuffer(const void *initData , hq
 		return HQ_FAILED_MEM_ALLOC;
 	}
 	return HQ_OK;
+}
+
+HQReturnVal HQVertexStreamManagerGL::CreateVertexBufferUAV(const void *initData,
+	hq_uint32 elementSize,
+	hq_uint32 numElements,
+	HQVertexBufferUAV **ppVertexBufferOut)
+{
+	if (!GLEW_VERSION_4_3)
+	{
+		this->Log("Error : UAV buffer is not supported!");
+		return HQ_FAILED;
+	}
+
+	HQVertexBuffer* pVNewBuf;
+
+	hquint32 size = elementSize * numElements;
+
+	HQReturnVal re = this->CreateVertexBuffer(initData, size, false, false, &pVNewBuf);
+
+	if (re == HQ_OK)
+	{
+		HQBufferGL * pNewBuf = static_cast<HQBufferGL*>(pVNewBuf);
+		pNewBuf->elementSize = elementSize;
+		pNewBuf->totalElements = numElements;
+
+		if (ppVertexBufferOut != NULL)
+			*ppVertexBufferOut = pNewBuf;
+	}
+	return re;
+}
+
+HQReturnVal HQVertexStreamManagerGL::CreateIndexBufferUAV(const void *initData,
+	hq_uint32 numElements,
+	HQIndexDataType indexDataType,
+	HQVertexBufferUAV **ppIndexBufferOut)
+{
+	if (!GLEW_VERSION_4_3)
+	{
+		this->Log("Error : UAV buffer is not supported!");
+		return HQ_FAILED;
+	}
+
+	HQIndexBuffer* pINewBuf;
+	hquint32 elementSize = 0;
+	switch (indexDataType)
+	{
+	case HQ_IDT_UINT:
+		elementSize = 4;
+		break;
+	case HQ_IDT_USHORT:
+		elementSize = 2;
+		break;
+	}
+	hquint32 size = elementSize * numElements;
+
+	HQReturnVal re = this->CreateIndexBuffer(initData, size, false, indexDataType, &pINewBuf);
+
+	if (re == HQ_OK)
+	{
+		HQBufferGL * pNewBuf = static_cast<HQBufferGL*>( pINewBuf);
+		pNewBuf->elementSize = elementSize;
+		pNewBuf->totalElements = numElements;
+
+		if (ppIndexBufferOut != NULL)
+			*ppIndexBufferOut = pNewBuf;
+	}
+	return re;
 }
 
 HQReturnVal HQVertexStreamManagerGL::CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDesc , 
@@ -800,7 +848,7 @@ void HQVertexStreamManagerGL::OnReset()
 
 	while (!itev.IsAtEnd())
 	{
-		itev->OnCreated(NULL);
+		itev->Init(NULL);
 		++itev;
 	}
 
@@ -809,7 +857,7 @@ void HQVertexStreamManagerGL::OnReset()
 
 	while (!itei.IsAtEnd())
 	{
-		itei->OnCreated(NULL);
+		itei->Init(NULL);
 		++itei;
 	}
 

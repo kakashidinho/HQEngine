@@ -163,8 +163,8 @@ HQXAudioDevice::~HQXAudioDevice()
 	});
 #endif
 
-	DeleteAllAudioBuffers();
-	DeleteAllSources();
+	RemoveAllAudioBuffers();
+	RemoveAllSources();
 
 	ULONG ref;
 	if (m_masterVoice)

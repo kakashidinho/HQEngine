@@ -54,6 +54,12 @@ public:
 	hquint32 GetNumBones() const;
 	const HQMatrix3x4 * GetBoneTransformMatrices() const;
 
+	///
+	///may return NULL if indirect draw is not supported. Don't modify index count & first index & first vertex in buffer or 
+	///it will produce wrong drawing
+	///
+	HQDrawIndexedIndirectArgsBuffer* GetDrawIndirectArgs();
+
 	void AdvanceAnimationTime(hqfloat32 dt);
 	///
 	///reset animation
@@ -68,7 +74,12 @@ public:
 	void SetSubMeshTextures(hquint32 submeshIndex);
 	void DrawSubMesh(hquint32 submeshIndex);//only draw with vertex & index buffer
 
+	//only draw with vertex & index buffer & indirect buffer
+	void DrawSubMeshIndirect(hquint32 submeshIndex);
+
 	void DrawInOneCall();
+
+	void DrawInOneCallIndirect();
 
 	void OnResetDevice();//need to call this when render device restore
 
@@ -84,6 +95,8 @@ private:
 
 	bool LoadGeometricInfo(void *f, MeshFileHeader &header, HQShaderObject* vertexShaderID);
 	bool LoadAnimationInfo(const char *fileName);
+
+	void CreateIndirectBuffer();
 	
 
 	GeometricInfo *m_geoInfo;

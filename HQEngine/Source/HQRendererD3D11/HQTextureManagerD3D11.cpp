@@ -343,6 +343,7 @@ DXGI_FORMAT HQTextureManagerD3D11::GetD3DFormat(HQTextureUAVFormat format)
 HQTextureManagerD3D11::HQTextureManagerD3D11(ID3D11Device* pDev , ID3D11DeviceContext *pContext, HQLogStream* logFileStream , bool flushLog)
 : HQBaseTextureManager(logFileStream , "D3D11 Texture Manager :" , flushLog)
 {
+	pMasterDevice = g_pD3DDev;
 	pD3DDevice=pDev;
 	pD3DContext = pContext;
 
@@ -392,7 +393,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 	{
 	case HQ_VERTEX_SHADER:
 #if defined _DEBUG || defined DEBUG
-		if (resourceSlot >= g_pD3DDev->GetCaps().maxVertexTextures)
+		if (resourceSlot >= this->pMasterDevice->GetCaps().maxVertexTextures)
 		{
 			Log("SetTexture() Error : texture slot=%u is out of range!", resourceSlot);
 			return HQ_FAILED;
@@ -423,7 +424,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 		break;
 	case HQ_GEOMETRY_SHADER:
 #if defined _DEBUG || defined DEBUG
-		if (resourceSlot >= g_pD3DDev->GetCaps().maxGeometryTextures)
+		if (resourceSlot >= this->pMasterDevice->GetCaps().maxGeometryTextures)
 		{
 			Log("SetTexture() Error : texture slot=%u is out of range!", resourceSlot);
 			return HQ_FAILED;
@@ -454,7 +455,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 		break;
 	case HQ_PIXEL_SHADER:
 #if defined _DEBUG || defined DEBUG
-		if (resourceSlot >= g_pD3DDev->GetCaps().maxPixelTextures)
+		if (resourceSlot >= this->pMasterDevice->GetCaps().maxPixelTextures)
 		{
 			Log("SetTexture() Error : texture slot=%u is out of range!", resourceSlot);
 			return HQ_FAILED;
@@ -485,7 +486,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 		break;
 	case HQ_COMPUTE_SHADER:
 #if defined _DEBUG || defined DEBUG
-		if (resourceSlot >= g_pD3DDev->GetCaps().maxComputeTextures)
+		if (resourceSlot >= this->pMasterDevice->GetCaps().maxComputeTextures)
 		{
 			Log("SetTexture() Error : texture slot=%u is out of range!", resourceSlot);
 			return HQ_FAILED;
@@ -530,7 +531,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSl
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 
 #if defined _DEBUG || defined DEBUG
-	if (resourceSlot >= g_pD3DDev->GetCaps().maxPixelTextures)
+	if (resourceSlot >= this->pMasterDevice->GetCaps().maxPixelTextures)
 	{
 		Log("SetTextureForPixelShader() Error : texture slot=%u is out of range!", resourceSlot);
 		return HQ_FAILED;
@@ -574,7 +575,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* text
 {
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 
-	hq_uint32 resourceSlot = slot & 0x0fffffff;
+	hq_uint32 uavSlot = slot & 0x0fffffff;
 
 	hq_uint32 shaderStage = slot & 0xf0000000;
 
@@ -601,24 +602,24 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* text
 #endif//#if HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER
 	case HQ_COMPUTE_SHADER:
 #if defined _DEBUG || defined DEBUG
-		if (resourceSlot >= g_pD3DDev->GetCaps().maxComputeTextureUAVs)
+		if (uavSlot >= this->pMasterDevice->GetCaps().maxComputeUAVSlots)
 		{
-			Log("SetTextureUAV() Error : texture slot=%u is out of range!", resourceSlot);
+			Log("SetTextureUAV() Error : texture slot=%u is out of range!", uavSlot);
 			return HQ_FAILED;
 		}
 #endif
-		pTextureSlot = this->textureUAVSlots[1] + resourceSlot;
+		pTextureSlot = this->textureUAVSlots[1] + uavSlot;
 		pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureSlot->GetRawPointer();
 		if (pTextureD3D11 != pCurrentTextureD3D11)
 		{
-			*pTextureSlot = pTexture;
+			*pTextureSlot = pTexture;//hold reference to texture
 		}
 
 		if (pUAV != NULL)
-			this->UnbindTextureFromAllSlots(pTexture);//first unbind texture from all shader resource view slots
+			this->UnbindTextureFromAllTextureSlots(pTexture);//first unbind texture from all shader resource view slots
 
 		//now set UAV
-		pD3DContext->CSSetUnorderedAccessViews(resourceSlot, 1, &pUAV, &uavInitialCount);
+		pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &pUAV, &uavInitialCount);
 
 		break;
 	default:
@@ -632,7 +633,60 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* text
 	return HQ_OK;
 }
 
-void HQTextureManagerD3D11::UnbindTextureFromAllSlots(const HQSharedPtr<HQBaseTexture> &pTexture)
+HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSlot, HQTexture* textureID, hq_uint32 mipLevel)
+{
+#if defined _DEBUG || defined DEBUG
+	if (uavSlot >= this->pMasterDevice->GetCaps().maxComputeUAVSlots)
+	{
+		Log("SetTextureUAVForComputeShader() Error : texture slot=%u is out of range!", uavSlot);
+		return HQ_FAILED;
+	}
+#endif
+
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
+
+	HQSharedPtr<HQBaseTexture> *pTextureSlot;
+	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
+	ID3D11UnorderedAccessView *pUAV = NULL;
+	HQTextureD3D11* pCurrentTextureD3D11;
+
+	UINT uavInitialCount = -1;
+
+	//retrieve UAV
+	if (pTextureD3D11 != NULL)
+	{
+		HQUAVTextureResourceD3D11* pTextureUAVResD3D11 = (HQUAVTextureResourceD3D11 *)pTextureD3D11->pData;
+		pUAV = GetOrCreateNewUAV(pTextureD3D11->type, pTextureUAVResD3D11, mipLevel);
+	}
+
+	
+	pTextureSlot = this->textureUAVSlots[1] + uavSlot;
+	pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureSlot->GetRawPointer();
+	
+	if (pTextureD3D11 != pCurrentTextureD3D11)
+		*pTextureSlot = pTexture;//hold reference to texture
+
+
+	if (pUAV != NULL)
+		this->UnbindTextureFromAllTextureSlots(pTexture);//first unbind texture from all shader resource view slots
+
+	//unbind any bound UAV buffer
+	static_cast<HQShaderManagerD3D11*>(this->pMasterDevice->GetShaderManager())->UnbindBufferFromComputeShaderUAVSlot(uavSlot);
+
+	//now set UAV
+	pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &pUAV, &uavInitialCount);
+
+
+
+	return HQ_OK;
+}
+
+void HQTextureManagerD3D11::UnbindTextureFromComputeShaderUAVSlot(hquint32 slot)
+{
+	this->textureUAVSlots[1][slot].ToNull();
+}
+
+void HQTextureManagerD3D11::UnbindTextureFromAllTextureSlots(const HQSharedPtr<HQBaseTexture> &pTexture)
 {
 	HQTextureD3D11 *pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
 
@@ -995,7 +1049,7 @@ HQReturnVal HQTextureManagerD3D11::InitTexture(bool changeAlpha,hq_uint32 numMip
 
 	if(!IsPowerOfTwo(bitmap.GetWidth(),&Exp) || !IsPowerOfTwo(bitmap.GetHeight(),&Exp))
 	{
-		if (!g_pD3DDev->IsNpotTextureFullySupported(pTex->type))//only 1 mipmap level is allowed
+		if (!this->pMasterDevice->IsNpotTextureFullySupported(pTex->type))//only 1 mipmap level is allowed
 		{
 			t2DDesc.MipLevels = 1;
 			Log("warning : only 1 mipmap level is allowed to use in a non power of 2 texture ");
@@ -1376,7 +1430,7 @@ HQReturnVal HQTextureManagerD3D11::InitTextureBuffer(HQBaseTexture *pTex ,HQText
 
 	hq_uint32 texelSize;
 
-	if (g_pD3DDev->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
+	if (this->pMasterDevice->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
 	{
 		Log ("Error : Texture buffer is not supported");
 		return HQ_FAILED;
@@ -1420,7 +1474,7 @@ HQReturnVal HQTextureManagerD3D11::InitTextureBuffer(HQBaseTexture *pTex ,HQText
 
 HQReturnVal HQTextureManagerD3D11::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmaps)
 {
-	if (g_pD3DDev->IsUAVTextureFormatSupported(format, pTex->type, hasMipmaps) == false)
+	if (this->pMasterDevice->IsUAVTextureFormatSupported(format, pTex->type, hasMipmaps) == false)
 	{
 		Log("Error : UAV Texture creation with format = %u is not supported", (hquint32)format);
 		return HQ_FAILED;

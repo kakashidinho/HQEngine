@@ -48,7 +48,7 @@ HQEngineShaderProgramWrapper::HQEngineShaderProgramWrapper()
 HQEngineShaderProgramWrapper::~HQEngineShaderProgramWrapper()
 {
 	if (m_programID != NULL)
-		m_renderDevice->GetShaderManager()->DestroyProgram(m_programID);
+		m_renderDevice->GetShaderManager()->RemoveProgram(m_programID);
 }
 
 HQReturnVal HQEngineShaderProgramWrapper::Init(const CreationParams& params)

@@ -1260,6 +1260,29 @@ HQReturnVal HQDeviceD3D11::DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint3
 	return HQ_OK;
 }
 
+HQReturnVal HQDeviceD3D11::DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQDrawIndirectBufferD3D11* pD3DBuffer = static_cast<HQDrawIndirectBufferD3D11*> (buffer);
+
+	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+
+	pDevContext->DrawInstancedIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
+
+	return HQ_OK;
+}
+
+HQReturnVal HQDeviceD3D11::DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQDrawIndirectBufferD3D11* pD3DBuffer = static_cast<HQDrawIndirectBufferD3D11*> (buffer);
+
+	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+
+	pDevContext->DrawIndexedInstancedIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
+
+	return HQ_OK;
+}
+
+
 HQReturnVal HQDeviceD3D11::SetViewPort(const HQViewPort &viewport)
 {
 	HQReturnVal re = HQ_OK;
@@ -1290,6 +1313,15 @@ HQReturnVal HQDeviceD3D11::SetViewPort(const HQViewPort &viewport)
 HQReturnVal HQDeviceD3D11::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
 {
 	pDevContext->Dispatch(numGroupX, numGroupY, numGroupZ);
+
+	return HQ_OK;
+}
+
+HQReturnVal HQDeviceD3D11::DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQDrawIndirectBufferD3D11* pD3DBuffer = static_cast<HQDrawIndirectBufferD3D11*> (buffer);
+
+	pDevContext->DispatchIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
 
 	return HQ_OK;
 }

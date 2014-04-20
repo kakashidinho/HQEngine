@@ -183,11 +183,11 @@ public:
 								HQShaderObject* geometryShaderID,
 								HQShaderProgram **pID)=0;
 
-	virtual HQReturnVal DestroyProgram(HQShaderProgram* programID) = 0;
-	virtual HQReturnVal DestroyShader(HQShaderObject* shaderID) = 0;
-	virtual void DestroyAllProgram()=0;
-	virtual void DestroyAllShader() = 0;
-	virtual void DestroyAllResource()=0;//destroy both programs & shader objects
+	virtual HQReturnVal RemoveProgram(HQShaderProgram* programID) = 0;
+	virtual HQReturnVal RemoveShader(HQShaderObject* shaderID) = 0;
+	virtual void RemoveAllProgram()=0;
+	virtual void RemoveAllShader() = 0;
+	virtual void RemoveAllResource()=0;//destroy both programs & shader objects
 
 
 	///
@@ -317,8 +317,8 @@ public:
 	///Dynamic buffer can be updated by calling Map and Unmap methods
 	///
 	virtual HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut) = 0;
-	virtual HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID) = 0;
-	virtual void DestroyAllUniformBuffers() = 0;
+	virtual HQReturnVal RemoveUniformBuffer(HQUniformBuffer* bufferID) = 0;
+	virtual void RemoveAllUniformBuffers() = 0;
 	///
 	///Direct3d : {slot} = {buffer slot} bitwise OR với enum HQShaderType để chỉ  {buffer slot} thuộc shader stage nào. 
 	///			Ví dụ muốn gắn uniform buffer vào buffer slot 3 của vertex shader , ta truyền tham số {slot} = (3 | HQ_VERTEX_SHADER).
@@ -326,6 +326,39 @@ public:
 	virtual HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID) = 0;
 	
 #endif
+
+	///
+	///create a buffer containing indirect compute arguments. 
+	///buffer contains an array of {numElements} elements, each element is in form {uint numGroupX, uint numGroupY, uint numGroupZ}
+	///
+	virtual HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut) = 0;
+
+	///
+	///create a buffer containing indirect draw instance arguments. 
+	///buffer contains an array of {numElements} elements, each element is in form 
+	///{uint number_of_vertices_per_instance, uint number_of_instances, uint first_vertex, uint first_instance}
+	///
+	virtual HQReturnVal CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut) = 0;
+
+	///
+	///create a buffer containing indirect draw indexed instance arguments . 
+	///buffer contains an array of {numElements} elements, each element is in form 
+	///{uint number_of_indices_per_instance, uint number_of_instances, uint first_index, uint/int first_vertex, uint first_instance}
+	///
+	virtual HQReturnVal CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut) = 0;
+
+	///
+	///Set UAV buffer to be read and written by compute shader. 
+	///Direct3D 11: {slot} is UAV slot. max number of slots is 64. 
+	///			Note: setting this will unset previously bound UAV texture from the same slot. 
+	///				  indirect compute/draw buffer is viewed as RWBuffer<uint> in shader, while vertex/index is viewed as RWByteAddressBuffer
+	///OpenGL: {slot} is shader storage slot. max number of slots is obtained by HQRenderDevice::GetMaxShaderBufferUAVs(). 
+	///			Note: buffer is viewed as storage block in shader
+	///
+	virtual HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements) = 0;
+
+	virtual HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer) = 0;
+	virtual void RemoveAllBufferUAVs() = 0;
 };
 
 #endif

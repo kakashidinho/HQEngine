@@ -75,8 +75,8 @@ HQAudioDeviceAL::HQAudioDeviceAL(hqfloat32 speedOfSound, HQLogStream *logStream,
 }
 HQAudioDeviceAL::~HQAudioDeviceAL() 
 {
-	DeleteAllAudioBuffers();
-	DeleteAllSources();
+	RemoveAllAudioBuffers();
+	RemoveAllSources();
 
 	alcMakeContextCurrent(NULL);
 	if (m_context != NULL)

@@ -11,6 +11,7 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceGLPCH.h"
 #include "HQShaderGL_GLSLController_inline.h"
 #include "HQFixedFunctionShaderManagerGL.h"
+#include "HQShaderGL_ShaderStorageSupported.h"
 #include "HQDeviceGL.h"
 #include <string.h>
 
@@ -25,8 +26,12 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 	typedef HQShaderManagerGL<HQGLSLShaderPipelineController, HQBaseShaderManagerGL_UBO> GLSLShaderPipelineManagerUBO;
 #	endif
 
+#	ifdef HQ_GL_SHADER_STORAGE_BUFFER_DEFINED
+	typedef HQShaderManagerGL<HQGLSLShaderPipelineController, HQBaseShaderManagerGL_StorageBlockSupprted> GLSLShaderPipelineStorageBlockSupportedManager;
+#	endif
+
 	bool uniformBufferSupported = GLEW_VERSION_3_1 == GL_TRUE;
-#endif
+#endif//#ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 
 	switch (shaderManagerType)
 	{
@@ -34,11 +39,16 @@ HQBaseShaderManagerGL * HQCreateShaderManager(int shaderManagerType, HQLogStream
 #ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 		if (uniformBufferSupported)
 		{
+#	ifdef HQ_GL_SHADER_STORAGE_BUFFER_DEFINED
+			if (GLEW_VERSION_4_3)
+				shaderMan = new GLSLShaderPipelineStorageBlockSupportedManager(logFileStream, "GL Shader Pipeline Manager (Storage Blocks supported):", flushLog);
+			else
+#	endif
 #	ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
 			if (GLEW_VERSION_4_1)
 				shaderMan = new GLSLShaderPipelineManagerUBO(logFileStream, "GL Shader Pipeline Manager:", flushLog);
 			else
-#endif
+#	endif
 				shaderMan = new GLSLShaderManagerUBO(logFileStream, "GL Shader Manager (UBO supported):", flushLog);
 
 		}

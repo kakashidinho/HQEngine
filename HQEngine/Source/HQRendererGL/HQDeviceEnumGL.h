@@ -92,6 +92,9 @@ struct Caps//device capabilities
 	hquint32 nImageUnits;//image load store
 	hquint32 nFragmentImageUnits;//image load store
 	hquint32 nComputeImageUnits;//image load store
+	hquint32 nShaderStorageBlocks;//total number of shader storage blocks supported for all stages
+	hquint32 nFragmentShaderStorageBlocks;//number of shader storage blocks supported
+	hquint32 nComputeShaderStorageBlocks;//number of shader storage blocks supported
 	hquint32 nComputeGroupsX;
 	hquint32 nComputeGroupsY;
 	hquint32 nComputeGroupsZ;

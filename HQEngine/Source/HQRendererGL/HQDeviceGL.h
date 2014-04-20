@@ -74,47 +74,6 @@ struct WindowInfo
 
 class HQDeviceGL:public HQBaseRenderDevice 
 {
-protected:
-	~HQDeviceGL();
-	int CreateContext(HQRenderDeviceInitInput input, const char* coreProfile);
-
-
-#if defined DEVICE_LOST_POSSIBLE
-	void OnLost();
-	void OnReset();
-#endif
-
-	void OnFinishInitDevice(int shaderManagerType);
-	void EnableVSyncNonSave(bool enable);
-
-#ifdef WIN32
-	HMODULE pDll;
-
-	HDC hDC;//device context
-	HGLRC hRC;//render context
-    WindowInfo winfo;//window info
-#elif defined (HQ_LINUX_PLATFORM)
-    Display *dpy;
-	WindowInfo winfo;
-	GLXContext glc;
-#elif defined HQ_IPHONE_PLATFORM
-	HQIOSOpenGLContext *glc;
-#elif defined HQ_MAC_PLATFORM
-	HQAppleOpenGLContext * glc;
-#elif defined HQ_ANDROID_PLATFORM
-	HQAndroidOpenGLContext *glc;
-	jobject jeglConfig;
-#endif
-
-	HQColor clearColor;
-	hqfloat32 clearDepth;
-	hquint32 clearStencil;
-
-	GLenum primitiveMode;
-	GLenum primitiveLookupTable[HQ_PRI_NUM_PRIMITIVE_MODE];
-
-	bool usingCoreProfile;
-	HQDeviceEnumGL *pEnum;
 public:
 #ifdef WIN32
 	HQDeviceGL(HMODULE _pDll, bool flushLog);
@@ -178,9 +137,34 @@ public:
 	HQReturnVal DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCount , hq_uint32 firstIndex );
 	HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices, hq_uint32 primitiveCount, hq_uint32 firstIndex);
 
+	HQReturnVal DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex);
+	HQReturnVal DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex);
+
 	HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ);
+	HQReturnVal DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex);
 
 	void TextureUAVBarrier();
+	void BufferUAVBarrier();
+
+	/*--------------utility functions--------------*/
+#ifdef GL_DISPATCH_INDIRECT_BUFFER
+	void BindDispatchIndirectBuffer(GLuint buffer){
+		if (this->boundDispatchIndirectBuffer != buffer){
+			glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, buffer);
+			this->boundDispatchIndirectBuffer = buffer;
+		}
+	}
+
+	void BindDrawIndirectBuffer(GLuint buffer){
+		if (this->boundDrawIndirectBuffer != buffer){
+			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, buffer);
+			this->boundDrawIndirectBuffer = buffer;
+		}
+	}
+
+	GLuint GetBoundDispatchIndirectBuffer() const { return this->boundDispatchIndirectBuffer; }
+	GLuint GetBoundDrawIndirectBuffer() const { return this->boundDrawIndirectBuffer; }
+#endif//#ifdef GL_DISPATCH_INDIRECT_BUFFER
 
 	/*---------------------------------
 	device capabilities
@@ -201,6 +185,8 @@ public:
 
 	hq_uint32 GetMaxShaderTextureUAVs();
 	hq_uint32 GetMaxShaderStageTextureUAVs(HQShaderType shaderStage);
+	hq_uint32 GetMaxShaderBufferUAVs();
+	hq_uint32 GetMaxShaderStageBufferUAVs(HQShaderType shaderStage);
 
 	void GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hquint32 &nGroupsZ);
 
@@ -247,6 +233,53 @@ public:
 	}
 
 	void * GetRawHandle();
+
+protected:
+	~HQDeviceGL();
+	int CreateContext(HQRenderDeviceInitInput input, const char* coreProfile);
+
+
+#if defined DEVICE_LOST_POSSIBLE
+	void OnLost();
+	void OnReset();
+#endif
+
+	void OnFinishInitDevice(int shaderManagerType);
+	void EnableVSyncNonSave(bool enable);
+
+#ifdef WIN32
+	HMODULE pDll;
+
+	HDC hDC;//device context
+	HGLRC hRC;//render context
+	WindowInfo winfo;//window info
+#elif defined (HQ_LINUX_PLATFORM)
+	Display *dpy;
+	WindowInfo winfo;
+	GLXContext glc;
+#elif defined HQ_IPHONE_PLATFORM
+	HQIOSOpenGLContext *glc;
+#elif defined HQ_MAC_PLATFORM
+	HQAppleOpenGLContext * glc;
+#elif defined HQ_ANDROID_PLATFORM
+	HQAndroidOpenGLContext *glc;
+	jobject jeglConfig;
+#endif
+
+	HQColor clearColor;
+	hqfloat32 clearDepth;
+	hquint32 clearStencil;
+
+	GLenum primitiveMode;
+	GLenum primitiveLookupTable[HQ_PRI_NUM_PRIMITIVE_MODE];
+
+#ifdef GL_DISPATCH_INDIRECT_BUFFER
+	GLuint boundDispatchIndirectBuffer;//current bound dispatch indirect buffer
+	GLuint boundDrawIndirectBuffer;//current bound dispatch indirect buffer
+#endif
+
+	bool usingCoreProfile;
+	HQDeviceEnumGL *pEnum;
 };
 
 

@@ -52,11 +52,19 @@ public:
 	///Direct3d : {slot} = {texture slot} bitwise OR with enum HQShaderType to specify  {texture slot} belongs to which shader stage. 
 	///			Eg. to set texture to texture slot 3 of compute shader , pass {slot} = (3 | HQ_COMPUTE_SHADER). 
 	///			Direct3d 11 : {texture slot} refers to UAV slot. Each shader stage has 64 slots.  It should be checked by calling HQRenderDevice::GetMaxShaderStageTextureUAVs(). 
-	///						  Note that set texture to UAV slot will unset it from every resource slots.  
+	///						  Note that this will unset the texture from every resource slots as well as unset previously bound UAV buffer from the same slot 
 	///OpenGL : {slot} is slot of texture image unit.{slot} is between  0 and HQRenderDevice::GetMaxShaderTextureUAVs() minus 1. 
-	///Note : passing NULL will unset the current texture out of slot
+	///Note : passing NULL will unset the current texture out of the slot
 	///
 	virtual HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel = 0) = 0;
+
+	///
+	///Direct3d 11: {slot}  refers to compute shader's UAV slot. It has 64 slots.  
+	///				Note that this will unset the texture from every resource slots  as well as unset previously bound UAV buffer from the same slot.  
+	///OpenGL : {slot} is slot of texture image unit.{slot} is between  0 and HQRenderDevice::GetMaxShaderTextureUAVs() minus 1. 
+	///Note : passing NULL will unset the current texture out of the slot
+	///
+	virtual HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel = 0) = 0;
 
 
 	///

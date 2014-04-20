@@ -48,6 +48,9 @@
     <ClCompile Include="HQVertexStreamD3D11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HQCommonD3D11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HQRendererD3D11Def.def">
@@ -83,6 +86,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HQCommonD3D11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

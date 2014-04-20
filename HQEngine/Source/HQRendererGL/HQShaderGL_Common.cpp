@@ -177,7 +177,7 @@ bool HQBaseCommonShaderManagerGL::IsUsingPShader() //có đang dùng pixel/fragm
 
 /*------------------------*/
 
-HQReturnVal HQBaseCommonShaderManagerGL::DestroyProgram(HQShaderProgram* programID)
+HQReturnVal HQBaseCommonShaderManagerGL::RemoveProgram(HQShaderProgram* programID)
 {
 	HQSharedPtr<HQBaseShaderProgramGL> pProgram = this->GetItemPointer(programID);
 	if(pProgram == NULL)
@@ -195,7 +195,7 @@ HQReturnVal HQBaseCommonShaderManagerGL::DestroyProgram(HQShaderProgram* program
 	return HQ_OK;
 }
 
-void HQBaseCommonShaderManagerGL::DestroyAllProgram()
+void HQBaseCommonShaderManagerGL::RemoveAllProgram()
 {
 #if defined DEVICE_LOST_POSSIBLE
 	if (!g_pOGLDev->IsDeviceLost())//must not call opengl when device is lost
@@ -206,24 +206,24 @@ void HQBaseCommonShaderManagerGL::DestroyAllProgram()
 	this->activeProgram = NULL;
 }
 
-HQReturnVal HQBaseCommonShaderManagerGL::DestroyShader(HQShaderObject* shaderID)
+HQReturnVal HQBaseCommonShaderManagerGL::RemoveShader(HQShaderObject* shaderID)
 {
 	return (HQReturnVal)this->shaderObjects.Remove(shaderID);
 }
 
-void HQBaseCommonShaderManagerGL::DestroyAllShader()
+void HQBaseCommonShaderManagerGL::RemoveAllShader()
 {
 	this->ActiveComputeShader(NULL);
 	this->shaderObjects.RemoveAll();
 }
 
-void HQBaseCommonShaderManagerGL::DestroyAllResource()
+void HQBaseCommonShaderManagerGL::RemoveAllResource()
 {
 #ifndef HQ_OPENGLES
-	DestroyAllUniformBuffers();
+	RemoveAllUniformBuffers();
 #endif
-	DestroyAllProgram();
-	DestroyAllShader();
+	RemoveAllProgram();
+	RemoveAllShader();
 }
 
 

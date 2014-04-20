@@ -11,7 +11,9 @@ COPYING.txt included with this distribution for more information.
 #ifndef _SHADER_H_
 #define _SHADER_H_
 #include "../BaseImpl/HQClearViewportShaderCodeD3D1x.h"
+#include "../BaseImpl/HQBaseImplCommon.h"
 #include "../HQShaderManager.h"
+#include "HQCommonD3D11.h"
 #include "HQLoggableObject.h"
 
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
@@ -39,6 +41,14 @@ COPYING.txt included with this distribution for more information.
 
 #define HQ_DEFINE_SEMANTICS 0
 
+/*--------------------------------------------------------*/
+#ifndef HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
+#define HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
+class HQDeviceD3D11;
+#endif
+struct HQFixedFunctionShaderD3D11;
+
+/*-----------------HQShaderObjectD3D11-----------------------*/
 struct HQShaderObjectD3D11 : public HQShaderObject, public HQBaseIDObject
 {
 	HQShaderObjectD3D11();
@@ -51,6 +61,7 @@ struct HQShaderObjectD3D11 : public HQShaderObject, public HQBaseIDObject
 	HQShaderType type;
 };
 
+/*------------------HQShaderConstBufferD3D11------------------*/
 struct HQShaderConstBufferD3D11 : public HQUniformBuffer, public HQBaseIDObject
 {
 	HQShaderConstBufferD3D11(bool isDynamic, hq_uint32 size);
@@ -69,6 +80,7 @@ struct HQShaderConstBufferD3D11 : public HQUniformBuffer, public HQBaseIDObject
 	hq_uint32 size;
 };
 
+/*----------------HQShaderProgramD3D11--------------------------*/
 struct HQShaderProgramD3D11 : public HQShaderProgram, public HQBaseIDObject
 {
 	inline bool isUseVS() {return vertexShader != NULL;}
@@ -82,8 +94,8 @@ struct HQShaderProgramD3D11 : public HQShaderProgram, public HQBaseIDObject
 	HQSharedPtr<HQShaderObjectD3D11> pixelShader;
 };
 
-struct HQFixedFunctionShaderD3D11;
 
+/*-----------------HQShaderIncludeHandlerD3D11------------------------*/
 class HQShaderIncludeHandlerD3D11 : public ID3DInclude {
 public:
 	HQShaderIncludeHandlerD3D11();
@@ -96,85 +108,28 @@ private:
 	HQFileManager* includeFileManager;
 };
 
+#ifdef WIN32
+#	pragma warning( push )
+#	pragma warning( disable : 4250 )//dominance inheritance of HQBufferD3D11
+#endif
+
+/*-------------HQDrawIndirectBufferD3D11------------------*/
+struct HQDrawIndirectBufferD3D11 : public HQGenericBufferD3D11 {
+	HQDrawIndirectBufferD3D11(hquint32 size)
+	: HQGenericBufferD3D11(HQ_DRAW_INDIRECT_BUFFER_D3D11, false, size)
+	{
+
+	}
+};
+
+#ifdef WIN32
+#	pragma warning( pop )
+#endif
+
+
+/*----------------HQShaderManagerD3D11------------------------------*/
 class HQShaderManagerD3D11 :public HQShaderManager, private HQIDItemManager<HQShaderProgramD3D11>, public HQLoggableObject
 {
-private:
-	HQSharedPtr<HQShaderProgramD3D11> activeProgram;
-	HQSharedPtr<HQShaderObjectD3D11> activeVShader,activeGShader,activePShader, activeCShader;
-	
-	HQSharedPtr<HQShaderConstBufferD3D11> uBufferSlots[4][D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
-
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-	CGcontext cgContext;
-	CGprofile cgVertexProfile,cgPixelProfile ,cgGeometryProfile;
-#endif
-
-	ID3D11Device* pD3DDevice;
-	ID3D11DeviceContext* pD3DContext;
-	HQIDItemManager<HQShaderObjectD3D11> shaderObjects;//danh sách shader object
-	HQIDItemManager<HQShaderConstBufferD3D11> shaderConstBuffers;
-	
-	HQShaderObjectD3D11 clearVShader , clearGShader , clearPShader;//shaders for clearing viewport
-#if !HQ_D3D_CLEAR_VP_USE_GS
-	HQShaderConstBufferD3D11* clearShaderParameters;//uniform parameters for clear viewport shaders 
-#endif
-
-	D3D_FEATURE_LEVEL featureLevel;
-	
-	// for fixed function emulation 
-	HQFixedFunctionShaderD3D11 * pFFEmu;
-
-	HQShaderIncludeHandlerD3D11 includeHandler;
-	
-
-	void InitFFEmu();
-	void ReleaseFFEmu();
-
-	HQReturnVal ActiveFFEmu();
-	HQReturnVal DeActiveFFEmu();
-	bool IsFFEmuActive();
-	HQReturnVal SetFFTransform(HQFFTransformMatrix type, const HQBaseMatrix4 *pMatrix);
-	HQReturnVal SetFFRenderState(HQFFRenderState stateType, const void* pValue);
-
-	//end for fixed function emulation 
-
-	int GetNumMacros(const HQShaderMacro * pDefines);
-	char ** GetPredefineMacroArgumentsCg(const HQShaderMacro * pDefines);//convert HQShaderMacro array to Cg compiler command arguments
-	void DeAllocArgsCg(char **ppC);//delete arguments array
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-	D3D10_SHADER_MACRO* GetPredefineMacroArgumentsHLSL(const HQShaderMacro * pDefines);//convert HQShaderMacro array to D3D macro array
-	void DeAllocMacrosHLSL(D3D10_SHADER_MACRO *pM);//delete D3D macro array
-#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-
-	HQReturnVal CreateShaderFromStreamCg(HQShaderType type,
-								 HQDataReaderStream* dataStream,
-								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
-								 bool isPreCompiled,
-								 const char* entryFunctionName,
-								 bool debugMode ,
-								 HQShaderObject **pID);
-	HQReturnVal CreateShaderFromMemoryCg(HQShaderType type,
-								 const char* pSourceData,
-								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
-								 bool isPreCompiled,
-								 const char* entryFunctionName,
-								 bool debugMode ,
-								 HQShaderObject **pID);
-	HQReturnVal CreateShaderFromStreamHLSL(HQShaderType type,
-								 HQDataReaderStream* dataStream,
-								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
-								 const char* entryFunctionName,
-								 bool debugMode ,
-								 HQShaderObject **pID);
-	HQReturnVal CreateShaderFromMemoryHLSL(HQShaderType type,
-								 const char* pSourceData,
-								 const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
-								 const char* entryFunctionName,
-								 bool debugMode ,
-								 HQShaderObject **pID);
-
-	HQReturnVal CreateShader(HQShaderType type , ID3D10Blob *pBlob , HQShaderObjectD3D11 * sobject);
-
 public:
 	HQShaderManagerD3D11(ID3D11Device* g_pD3DDev , 
 		ID3D11DeviceContext* pD3DContext,
@@ -244,11 +199,11 @@ public:
 							  HQShaderProgram **pID);
 
 
-	HQReturnVal DestroyProgram(HQShaderProgram* programID);
-	void DestroyAllProgram();
-	HQReturnVal DestroyShader(HQShaderObject* shaderID);
-	void DestroyAllShader() ;
-	void DestroyAllResource();
+	HQReturnVal RemoveProgram(HQShaderProgram* programID);
+	void RemoveAllProgram();
+	HQReturnVal RemoveShader(HQShaderObject* shaderID);
+	void RemoveAllShader() ;
+	void RemoveAllResource();
 
 	
 	HQReturnVal SetUniformInt(const char* parameterName,
@@ -325,9 +280,22 @@ public:
 	friend void cgErrorCallBack(void);
 
 	HQReturnVal CreateUniformBuffer(hq_uint32 size, void *initData, bool isDynamic, HQUniformBuffer **pBufferIDOut);
-	HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID);
-	void DestroyAllUniformBuffers();
+	HQReturnVal RemoveUniformBuffer(HQUniformBuffer* bufferID);
+	void RemoveAllUniformBuffers();
 	HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID);
+
+	HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut);
+
+	HQReturnVal CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut) ;
+
+	HQReturnVal CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut);
+
+	HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements);
+
+	void UnbindBufferFromComputeShaderUAVSlot(hquint32 slot);//unbind any buffer from compute shader's UAV slot {slot}
+
+	HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer);
+	void RemoveAllBufferUAVs();
 
 	/*----------------------------------*/
 	ID3DBlob * GetCompiledClearVShader();
@@ -344,6 +312,91 @@ public:
 	bool IsFFShader(HQShaderObject* shader);
 	bool IsFFProgram(HQShaderProgram* program);
 	bool IsFFConstBuffer(HQUniformBuffer* buffer);
+
+private:
+
+
+	void InitFFEmu();
+	void ReleaseFFEmu();
+
+	HQReturnVal ActiveFFEmu();
+	HQReturnVal DeActiveFFEmu();
+	bool IsFFEmuActive();
+	HQReturnVal SetFFTransform(HQFFTransformMatrix type, const HQBaseMatrix4 *pMatrix);
+	HQReturnVal SetFFRenderState(HQFFRenderState stateType, const void* pValue);
+
+	//end for fixed function emulation 
+
+	int GetNumMacros(const HQShaderMacro * pDefines);
+	char ** GetPredefineMacroArgumentsCg(const HQShaderMacro * pDefines);//convert HQShaderMacro array to Cg compiler command arguments
+	void DeAllocArgsCg(char **ppC);//delete arguments array
+#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+	D3D10_SHADER_MACRO* GetPredefineMacroArgumentsHLSL(const HQShaderMacro * pDefines);//convert HQShaderMacro array to D3D macro array
+	void DeAllocMacrosHLSL(D3D10_SHADER_MACRO *pM);//delete D3D macro array
+#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+
+	HQReturnVal CreateShaderFromStreamCg(HQShaderType type,
+		HQDataReaderStream* dataStream,
+		const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
+		bool isPreCompiled,
+		const char* entryFunctionName,
+		bool debugMode,
+		HQShaderObject **pID);
+	HQReturnVal CreateShaderFromMemoryCg(HQShaderType type,
+		const char* pSourceData,
+		const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
+		bool isPreCompiled,
+		const char* entryFunctionName,
+		bool debugMode,
+		HQShaderObject **pID);
+	HQReturnVal CreateShaderFromStreamHLSL(HQShaderType type,
+		HQDataReaderStream* dataStream,
+		const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
+		const char* entryFunctionName,
+		bool debugMode,
+		HQShaderObject **pID);
+	HQReturnVal CreateShaderFromMemoryHLSL(HQShaderType type,
+		const char* pSourceData,
+		const HQShaderMacro * pDefines,//pointer đến dãy các shader macro, phần tử cuối phải có cả 2 thành phần <name> và <definition>là NULL để chỉ kết thúc dãy
+		const char* entryFunctionName,
+		bool debugMode,
+		HQShaderObject **pID);
+
+	HQReturnVal CreateShader(HQShaderType type, ID3D10Blob *pBlob, HQShaderObjectD3D11 * sobject);
+
+	HQReturnVal CreateGenericDrawIndirectBuffer(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut);
+
+	/*------------attributes--------------*/
+	HQSharedPtr<HQShaderProgramD3D11> activeProgram;
+	HQSharedPtr<HQShaderObjectD3D11> activeVShader, activeGShader, activePShader, activeCShader;
+
+	HQSharedPtr<HQShaderConstBufferD3D11> uBufferSlots[4][D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
+	HQSharedPtr<HQGenericBufferD3D11> uavBufferSlots[4][D3D11_1_UAV_SLOT_COUNT];
+
+#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+	CGcontext cgContext;
+	CGprofile cgVertexProfile, cgPixelProfile, cgGeometryProfile;
+#endif
+
+	HQDeviceD3D11 * pMasterDevice;
+
+	ID3D11Device* pD3DDevice;
+	ID3D11DeviceContext* pD3DContext;
+	HQIDItemManager<HQShaderObjectD3D11> shaderObjects;//danh sách shader object
+	HQIDItemManager<HQShaderConstBufferD3D11> shaderConstBuffers;
+	HQIDItemManager<HQGenericBufferD3D11> indirectDrawBuffers;
+
+	HQShaderObjectD3D11 clearVShader, clearGShader, clearPShader;//shaders for clearing viewport
+#if !HQ_D3D_CLEAR_VP_USE_GS
+	HQShaderConstBufferD3D11* clearShaderParameters;//uniform parameters for clear viewport shaders 
+#endif
+
+	D3D_FEATURE_LEVEL featureLevel;
+
+	// for fixed function emulation 
+	HQFixedFunctionShaderD3D11 * pFFEmu;
+
+	HQShaderIncludeHandlerD3D11 includeHandler;
 };
 
 #endif

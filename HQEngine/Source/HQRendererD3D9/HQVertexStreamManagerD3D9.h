@@ -140,6 +140,23 @@ public:
 	HQReturnVal CreateVertexBuffer(const void *initData , hq_uint32 size , bool dynamic , bool isForPointSprites ,HQVertexBuffer** pVertexBufferID);
 	HQReturnVal CreateIndexBuffer(const void *initData , hq_uint32 size , bool dynamic , HQIndexDataType dataType , HQIndexBuffer** pIndexBufferID);
 
+
+	HQReturnVal CreateVertexBufferUAV(const void *initData,
+		hq_uint32 elementSize,
+		hq_uint32 numElements,
+		HQVertexBufferUAV **ppVertexBufferOut)
+	{
+		return HQ_FAILED;
+	}
+
+	HQReturnVal CreateIndexBufferUAV(const void *initData,
+		hq_uint32 numElements,
+		HQIndexDataType indexDataType,
+		HQVertexBufferUAV **ppIndexBufferOut)
+	{
+		return HQ_FAILED;
+	}
+
 	HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDesc , 
 												hq_uint32 numAttrib ,
 												HQShaderObject* vertexShaderID , 

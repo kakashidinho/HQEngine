@@ -27,7 +27,8 @@ struct HQGeometricGroup
 struct HQMeshNode::GeometricInfo : public HQReferenceCountObj
 {
 	GeometricInfo() :
-		groups(NULL) 
+		groups(NULL) ,
+		indirectBuffer(NULL)
 	{
 	}
 	~GeometricInfo() {
@@ -40,6 +41,7 @@ struct HQMeshNode::GeometricInfo : public HQReferenceCountObj
 	hquint32 vertexBufferStride;
 	HQIndexBuffer* indexBuffer;
 	HQIndexDataType indexDataType;
+	HQDrawIndexedIndirectArgsBuffer* indirectBuffer;
 
 	hquint32 numGroups;
 	

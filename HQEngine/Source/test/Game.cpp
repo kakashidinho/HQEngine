@@ -237,6 +237,10 @@ Game::Game()
 	bool support = pDevice->IsBlendStateExSupported();
 	support = pDevice->IsIndexDataTypeSupported(HQ_IDT_UINT);
 
+	HQVertexBufferUAV* pBufferUAV;
+	pDevice->GetVertexStreamManager()->CreateVertexBufferUAV(NULL, 30, 4, &pBufferUAV);
+	pDevice->GetVertexStreamManager()->RemoveVertexBuffer(pBufferUAV);
+
 	/*---------meshes------------*/
 
 	mesh[0] = HQ_NEW HQMeshNode("bat", "bat.hqmesh", pDevice, "vs-mesh", logFile);
@@ -395,8 +399,11 @@ void Game::Render(HQTime dt)
 	//pDevice->GetStateManager()->SetFillMode(HQ_FILL_WIREFRAME);
 
 
+	bool indirectDraw = pDevice->IsDrawIndirectSupported();
+
 	for (int i = 0; i < 2; ++i)
 	{
+		indirectDraw = indirectDraw && mesh[i]->GetDrawIndirectArgs() != NULL;
 		HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("mesh-effect")->GetPass(i)->Apply();
 
 		BUFFER2 * pTBuffer0 = NULL;
@@ -414,7 +421,10 @@ void Game::Render(HQTime dt)
 
 		this->uniformBuffer[1]->Unmap();
 
-		mesh[i]->DrawInOneCall();
+		if (indirectDraw)
+			mesh[i]->DrawInOneCallIndirect();
+		else
+			mesh[i]->DrawInOneCall();
 	}//for (int i = 0; i < 2; ++i)
 
 	pDevice->EndRender();

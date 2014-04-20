@@ -234,6 +234,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HQCommonD3D11.cpp" />
     <ClCompile Include="HQDeviceD3D11.cpp" />
     <ClCompile Include="HQDeviceD3D11_caps.cpp" />
     <ClCompile Include="HQDeviceD3D11PCH.cpp">
@@ -277,6 +278,7 @@
     <None Include="HQRendererD3D11Def.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HQCommonD3D11.h" />
     <ClInclude Include="HQDeviceD3D11.h" />
     <ClInclude Include="HQDeviceD3D11PCH.h" />
     <ClInclude Include="HQDeviceEnumD3D11.h" />

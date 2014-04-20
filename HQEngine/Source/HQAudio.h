@@ -121,8 +121,8 @@ public:
 	virtual HQReturnVal CreateStreamAudioBufferFromFile(const char *fileName, hq_uint32 *pBufferID) = 0;///Create Stream Buffer with default num sub buffers and default sub buffer size (Implementation dependent)
 	///get playback duration in seconds of audio buffer
 	virtual hqfloat32 GetAudioBufferPlaybackTime(hquint32 bufferID) = 0;
-	virtual HQReturnVal DeleteAudioBuffer(hquint32 bufferID) = 0;
-	virtual void DeleteAllAudioBuffers() = 0;
+	virtual HQReturnVal RemoveAudioBuffer(hquint32 bufferID) = 0;
+	virtual void RemoveAllAudioBuffers() = 0;
 	///
 	///{info} specifies format, channels and samples rate ... of audio buffers that can be attached to source. 
 	///{bufferID} can be HQ_NOT_AVAIL_ID, in that case no audio buffer is attached to source. 
@@ -137,8 +137,8 @@ public:
 	virtual HQReturnVal AttachAudioBuffer(hq_uint32 bufferID, hq_uint32 sourceID) = 0;///Note: stream buffer cannot be attached to multiple sources at the same time
 
 	virtual HQAudioSourceController *GetSourceController(hquint32 sourceID) = 0;
-	virtual HQReturnVal DeleteSource(hquint32 sourceID) = 0;
-	virtual void DeleteAllSources() = 0;
+	virtual HQReturnVal RemoveSource(hquint32 sourceID) = 0;
+	virtual void RemoveAllSources() = 0;
 
 	///default position is {0 , 0 , 0}
 	virtual HQReturnVal SetListenerPosition(const hqfloat32 position[3]) = 0;

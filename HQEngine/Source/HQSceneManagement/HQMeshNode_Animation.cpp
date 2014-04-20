@@ -472,6 +472,11 @@ const HQMatrix3x4 * HQMeshNode::GetBoneTransformMatrices() const
 	return m_animInfo->boneTransformMatrices;
 }
 
+HQDrawIndexedIndirectArgsBuffer* HQMeshNode::GetDrawIndirectArgs()
+{
+	return m_geoInfo->indirectBuffer;
+}
+
 void HQMeshNode::AdvanceAnimationTime(hqfloat32 dt)
 {
 	TRACE("here %s %d", __FILE__, __LINE__);

@@ -107,11 +107,11 @@ HQReturnVal HQBaseShaderManagerGL_UBO::CreateUniformBuffer(hq_uint32 size , void
 
 	return HQ_FAILED;
 }
-HQReturnVal HQBaseShaderManagerGL_UBO::DestroyUniformBuffer(HQUniformBuffer* bufferID)
+HQReturnVal HQBaseShaderManagerGL_UBO::RemoveUniformBuffer(HQUniformBuffer* bufferID)
 {
 	return (HQReturnVal)this->uniformBuffers.Remove(bufferID);
 }
-void HQBaseShaderManagerGL_UBO::DestroyAllUniformBuffers()
+void HQBaseShaderManagerGL_UBO::RemoveAllUniformBuffers()
 {
 	this->uniformBuffers.RemoveAll();
 }

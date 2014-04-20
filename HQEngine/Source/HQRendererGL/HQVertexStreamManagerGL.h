@@ -24,16 +24,16 @@ COPYING.txt included with this distribution for more information.
 #endif
 
 //vertex buffer
-struct HQVertexBufferGL : public HQBufferGL, public HQVertexBuffer, public HQBaseIDObject
+struct HQVertexBufferGL : public HQBufferGL
 {
 	HQVertexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage)
-	: HQBufferGL(size, usage)
+	: HQBufferGL(size, GL_ARRAY_BUFFER, usage)
 	{
 		this->manager = manager;
 	}
 	~HQVertexBufferGL();
 
-	void OnCreated(const void *initData);
+	void Init(const void *initData);
 
 	HQVertexStreamManagerGL *manager;
 };
@@ -54,7 +54,7 @@ struct HQMappableVertexBufferGL : public HQVertexBufferGL {
 struct HQUnmappableVertexBufferGL : public HQVertexBufferGL, public HQSysMemBuffer{
 	HQUnmappableVertexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage);
 
-	void OnCreated(const void *initData);
+	void Init(const void *initData);
 
 	//implement HQSysMemBuffer
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
@@ -63,10 +63,10 @@ struct HQUnmappableVertexBufferGL : public HQVertexBufferGL, public HQSysMemBuff
 };
 
 //index buffer
-struct HQIndexBufferGL :public HQBufferGL, public HQIndexBuffer, public HQBaseIDObject
+struct HQIndexBufferGL :public HQBufferGL
 {
 	HQIndexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage, HQIndexDataType dataType)
-		: HQBufferGL(size , usage )
+	: HQBufferGL(size, GL_ELEMENT_ARRAY_BUFFER, usage)
 	{
 		this->manager = manager;
 
@@ -80,7 +80,7 @@ struct HQIndexBufferGL :public HQBufferGL, public HQIndexBuffer, public HQBaseID
 		}
 	}
 
-	void OnCreated(const void *initData);
+	void Init(const void *initData);
 
 	GLenum dataType;
 
@@ -103,7 +103,7 @@ struct HQMappableIndexBufferGL : public HQIndexBufferGL {
 struct HQUnmappableIndexBufferGL : public HQIndexBufferGL, public HQSysMemBuffer{
 	HQUnmappableIndexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage, HQIndexDataType dataType);
 
-	void OnCreated(const void *initData);
+	void Init(const void *initData);
 
 	//implement HQSysMemBuffer
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
@@ -145,10 +145,30 @@ public:
 								  HQIndexDataType indexDataType  , 
 								  HQIndexBuffer **pIndexBufferID);
 
+	HQReturnVal CreateVertexBufferUAV(const void *initData,
+		hq_uint32 elementSize,
+		hq_uint32 numElements,
+		HQVertexBufferUAV **ppVertexBufferOut);
+
+	HQReturnVal CreateIndexBufferUAV(const void *initData,
+		hq_uint32 numElements,
+		HQIndexDataType indexDataType,
+		HQVertexBufferUAV **ppIndexBufferOut);
+
 	HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDesc , 
 												hq_uint32 numAttrib ,
 												HQShaderObject* vertexShaderID , 
 												HQVertexLayout **pInputLayoutID);
+
+	//convert from raw pointer to shared pointer
+	HQSharedPtr<HQVertexBufferGL> GetVertexBufferSharedPtr(HQBufferGL* buffer)
+	{
+		return this->vertexBuffers.GetItemPointer(buffer);
+	}
+	HQSharedPtr<HQIndexBufferGL> GetIndexBufferSharedPtr(HQBufferGL* buffer)
+	{
+		return this->indexBuffers.GetItemPointer(buffer);
+	}
 
 	HQReturnVal SetVertexBuffer(HQVertexBuffer* vertexBufferID, hq_uint32 streamIndex, hq_uint32 stride);
 

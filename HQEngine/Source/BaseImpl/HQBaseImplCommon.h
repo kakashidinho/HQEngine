@@ -152,15 +152,15 @@ struct HQEnginePtrKeyEqual {
 //hash table for a pointer typed key
 template
 <
-	class Key,
+	class PointerTypedKey,
 	class T,
 	class ProbingFunction = HQQuadradticProbing,
 	class MemoryManager = HQDefaultMemManager
 >
-class HQClosedPtrKeyHashTable : public HQClosedPrimeHashTable<Key, T, HQPtrKeyHashFunc<Key>, ProbingFunction, HQEnginePtrKeyEqual<Key>, MemoryManager>
+class HQClosedPtrKeyHashTable : public HQClosedPrimeHashTable<PointerTypedKey, T, HQPtrKeyHashFunc<PointerTypedKey>, ProbingFunction, HQEnginePtrKeyEqual<PointerTypedKey>, MemoryManager>
 {
 public:
-	typedef HQClosedPrimeHashTable<Key, T, HQPtrKeyHashFunc<Key>, ProbingFunction, HQEnginePtrKeyEqual<Key>, MemoryManager > parentType;
+	typedef HQClosedPrimeHashTable<PointerTypedKey, T, HQPtrKeyHashFunc<PointerTypedKey>, ProbingFunction, HQEnginePtrKeyEqual<PointerTypedKey>, MemoryManager > parentType;
 
 	/*----create hash table with 16 buckets and max load factor 0.75----------*/
 	HQClosedPtrKeyHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(pMemoryManager) {}

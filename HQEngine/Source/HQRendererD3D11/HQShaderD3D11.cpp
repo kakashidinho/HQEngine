@@ -9,7 +9,7 @@ COPYING.txt included with this distribution for more information.
 */
 
 #include "HQDeviceD3D11PCH.h"
-#include "HQShaderD3D11.h"
+#include "HQDeviceD3D11.h"
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 #include "d3dx11.h"
 #define WRITE_DEBUG_SHADER_TO_TEMP_FILE 0
@@ -342,6 +342,9 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 										   HQLogStream* logFileStream , bool flushLog)
 : HQLoggableObject(logFileStream , "D3D11 Shader Manager :" , flushLog , 1024)
 {
+	g_pShaderMan = this;
+
+	this->pMasterDevice = g_pD3DDev;
 	this->pD3DDevice=pD3DDevice;
 	this->pD3DContext = pD3DContext;
 
@@ -373,11 +376,6 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 		break;
 	}
 
-#endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
-
-	g_pShaderMan=this;
-
-#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 #if defined(DEBUG)||defined(_DEBUG)
 	cgSetErrorCallback(cgErrorCallBack);
 #endif
@@ -461,7 +459,7 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 HQShaderManagerD3D11::~HQShaderManagerD3D11()
 {
 
-	this->DestroyAllResource();
+	this->RemoveAllResource();
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	cgD3D11SetDevice(this->cgContext , NULL);
 	cgDestroyContext(cgContext);
@@ -585,7 +583,7 @@ HQReturnVal HQShaderManagerD3D11::ActiveComputeShader(HQShaderObject *shader)
 }
 
 /*------------------------*/
-HQReturnVal HQShaderManagerD3D11::DestroyProgram(HQShaderProgram* programID)
+HQReturnVal HQShaderManagerD3D11::RemoveProgram(HQShaderProgram* programID)
 {
 	HQSharedPtr<HQShaderProgramD3D11> pProgram = this->GetItemPointer(programID);
 	if(pProgram == NULL)
@@ -601,7 +599,7 @@ HQReturnVal HQShaderManagerD3D11::DestroyProgram(HQShaderProgram* programID)
 	return HQ_OK;
 }
 
-void HQShaderManagerD3D11::DestroyAllProgram()
+void HQShaderManagerD3D11::RemoveAllProgram()
 {
 	this->ActiveProgram(NULL);
 	
@@ -610,21 +608,21 @@ void HQShaderManagerD3D11::DestroyAllProgram()
 
 	while (!ite.IsAtEnd())
 	{
-		this->DestroyProgram(ite.GetItemPointer().GetRawPointer());
+		this->RemoveProgram(ite.GetItemPointer().GetRawPointer());
 
 		++ite;
 	}
 }
 
-void HQShaderManagerD3D11::DestroyAllResource()
+void HQShaderManagerD3D11::RemoveAllResource()
 {
-	this->DestroyAllUniformBuffers();
-	this->DestroyAllProgram();
-	this->DestroyAllShader();
+	this->RemoveAllUniformBuffers();
+	this->RemoveAllProgram();
+	this->RemoveAllShader();
 }
 
 
-HQReturnVal HQShaderManagerD3D11::DestroyShader(HQShaderObject* shaderID)
+HQReturnVal HQShaderManagerD3D11::RemoveShader(HQShaderObject* shaderID)
 {
 	if (IsFFShader(shaderID))
 		return HQ_FAILED;//prevent deletion of default fixed function shader
@@ -632,7 +630,7 @@ HQReturnVal HQShaderManagerD3D11::DestroyShader(HQShaderObject* shaderID)
 	return (HQReturnVal)this->shaderObjects.Remove(shaderID);
 }
 
-void HQShaderManagerD3D11::DestroyAllShader()
+void HQShaderManagerD3D11::RemoveAllShader()
 {
 	this->ActiveComputeShader(NULL);
 
@@ -641,26 +639,26 @@ void HQShaderManagerD3D11::DestroyAllShader()
 
 	while (!ite.IsAtEnd())
 	{
-		this->DestroyShader(ite.GetItemPointer().GetRawPointer());
+		this->RemoveShader(ite.GetItemPointer().GetRawPointer());
 
 		++ite;
 	}
 }
 
-HQReturnVal HQShaderManagerD3D11::DestroyUniformBuffer(HQUniformBuffer* bufferID)
+HQReturnVal HQShaderManagerD3D11::RemoveUniformBuffer(HQUniformBuffer* bufferID)
 {
 	if (IsFFConstBuffer(bufferID))//prevent deletion of fixed function's own const buffer
 		return HQ_FAILED;
 	return (HQReturnVal)shaderConstBuffers.Remove(bufferID);
 }
-void HQShaderManagerD3D11::DestroyAllUniformBuffers()
+void HQShaderManagerD3D11::RemoveAllUniformBuffers()
 {
 	HQItemManager<HQShaderConstBufferD3D11>::Iterator ite;
 	this->shaderConstBuffers.GetIterator(ite);
 
 	while (!ite.IsAtEnd())
 	{
-		this->DestroyUniformBuffer(ite.GetItemPointer().GetRawPointer());
+		this->RemoveUniformBuffer(ite.GetItemPointer().GetRawPointer());
 
 		++ite;
 	}
@@ -1691,3 +1689,146 @@ void HQShaderManagerD3D11::EndClearViewport()
 #endif
 }
 
+
+HQReturnVal HQShaderManagerD3D11::CreateGenericDrawIndirectBuffer(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut)
+{
+	hquint32 size = elementSize * numElements;
+	HQDrawIndirectBufferD3D11* newBuffer = HQ_NEW HQDrawIndirectBufferD3D11(size);
+
+	newBuffer->pLog = this;
+	newBuffer->pD3DContext = this->pD3DContext;
+
+	//create indirect draw buffer
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.CPUAccessFlags = 0;
+	vbd.ByteWidth = size;
+	vbd.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	vbd.MiscFlags = D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS;
+	vbd.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA vinitData;
+	vinitData.pSysMem = initData;
+
+	D3D11_SUBRESOURCE_DATA *pInitiData = (initData == NULL) ? NULL : &vinitData;
+
+	if (FAILED(pD3DDevice->CreateBuffer(&vbd, pInitiData, &newBuffer->pD3DBuffer)) ||
+		!newBuffer->InitUAVCache(pD3DDevice, numElements, elementSize) ||
+		!this->indirectDrawBuffers.AddItem(newBuffer, ppBufferOut))
+	{
+		delete newBuffer;
+		return HQ_FAILED_MEM_ALLOC;
+	}
+
+	return HQ_OK;
+}
+
+HQReturnVal HQShaderManagerD3D11::RemoveBufferUAV(HQBufferUAV * buffer)
+{
+	return (HQReturnVal)indirectDrawBuffers.Remove(buffer);
+}
+void HQShaderManagerD3D11::RemoveAllBufferUAVs()
+{
+	indirectDrawBuffers.RemoveAll();
+}
+
+
+HQReturnVal HQShaderManagerD3D11::CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)
+{
+	//element structure 
+	struct Element {
+		hquint32 groupX;
+		hquint32 groupY;
+		hquint32 groupZ;
+	};
+
+	return this->CreateGenericDrawIndirectBuffer(numElements, sizeof(Element), initData, ppBufferOut);
+}
+
+HQReturnVal HQShaderManagerD3D11::CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut)
+{
+	//element structure 
+	struct Element { 
+		hquint32 number_of_vertices_per_instance; 
+		hquint32 number_of_instances;
+		hquint32 first_vertex;
+		hquint32 first_instance;
+	};
+
+	return this->CreateGenericDrawIndirectBuffer(numElements, sizeof(Element), initData, ppBufferOut);
+}
+
+HQReturnVal HQShaderManagerD3D11::CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)
+{
+	//element structure 
+	struct Element { 
+		hquint32 number_of_indices_per_instance;
+		hquint32 number_of_instances;
+		hquint32 first_index;
+		hqint32 first_vertex; 
+		hquint32 first_instance;
+	};
+
+	return this->CreateGenericDrawIndirectBuffer(numElements, sizeof(Element), initData, ppBufferOut);
+}
+
+HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)
+{
+
+#if defined _DEBUG || defined DEBUG
+	if (uavSlot >= this->pMasterDevice->GetCaps().maxComputeUAVSlots)
+	{
+		Log("SetBufferUAVForComputeShader() Error : slot=%u is out of range!", uavSlot);
+		return HQ_FAILED;
+	}
+#endif
+
+	HQGenericBufferD3D11* pGenericD3DBuffer = static_cast<HQGenericBufferD3D11*> (buffer);
+	HQVertexStreamManagerD3D11* pVStreamMan = static_cast<HQVertexStreamManagerD3D11*>(this->pMasterDevice->GetVertexStreamManager());
+	HQSharedPtr<HQGenericBufferD3D11> pBuffer;
+	if (pGenericD3DBuffer != NULL)
+	{
+		switch (pGenericD3DBuffer->type)
+		{
+		case HQ_VERTEX_BUFFER_D3D11://need to retrieve shared pointer from vertex stream manager
+			pBuffer = pVStreamMan->GetVertexBufferSharedPtr(pGenericD3DBuffer).UpCast<HQGenericBufferD3D11>();
+			break;
+		case HQ_INDEX_BUFFER_D3D11://need to retrieve shared pointer from vertex stream manager
+			pBuffer = pVStreamMan->GetIndexBufferSharedPtr(pGenericD3DBuffer).UpCast<HQGenericBufferD3D11>();
+			break;
+		case HQ_DRAW_INDIRECT_BUFFER_D3D11://we own this buffer
+			pBuffer = this->indirectDrawBuffers.GetItemPointer(pGenericD3DBuffer);
+			break;
+		}
+	}
+
+	ID3D11UnorderedAccessView *pUAV = NULL;
+	HQSharedPtr< HQGenericBufferD3D11>* pCurrentBufferUAVD3D11Slot;
+
+	UINT uavInitialCount = -1;
+
+	//retrieve UAV
+	if (pBuffer != NULL)
+	{
+		pUAV = pBuffer->GetOrCreateUAView(pD3DDevice, firstElementIdx, numElements);
+	}
+
+	pCurrentBufferUAVD3D11Slot = this->uavBufferSlots[1] + uavSlot;
+	if (*pCurrentBufferUAVD3D11Slot != pBuffer)
+		*pCurrentBufferUAVD3D11Slot = pBuffer;//hold reference to buffer
+
+	//unbind any bound UAV texture
+	static_cast<HQTextureManagerD3D11*>(this->pMasterDevice->GetTextureManager())->UnbindTextureFromComputeShaderUAVSlot(uavSlot);
+
+	//now set UAV
+	pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &pUAV, &uavInitialCount);
+
+
+
+	return HQ_OK;
+}
+
+void HQShaderManagerD3D11::UnbindBufferFromComputeShaderUAVSlot(hquint32 slot)//unbind any buffer from compute shader's UAV slot {slot}
+{
+	this->uavBufferSlots[1][slot].ToNull();
+}

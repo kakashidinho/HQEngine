@@ -25,7 +25,7 @@ HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::HQShaderManagerGL(
 template <class ShaderController , class BaseShaderManagerClass>
 HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::~HQShaderManagerGL()
 {
-	this->DestroyAllResource();
+	this->RemoveAllResource();
 	this->Log("Released!");
 }
 
@@ -803,7 +803,7 @@ void HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::OnDraw()
 
 template <class ShaderController , class BaseShaderManagerClass>
 void HQShaderManagerGL<ShaderController , BaseShaderManagerClass>::OnLost() {
-	this->DestroyAllResource();
+	this->RemoveAllResource();
 	this->ReleaseFFEmu();
 }
 

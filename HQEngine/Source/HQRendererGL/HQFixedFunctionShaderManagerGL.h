@@ -77,11 +77,11 @@ public:
 								HQShaderProgram **pID)
 	{return HQ_FAILED;}
 
-	virtual HQReturnVal DestroyProgram(HQShaderProgram* programID){return HQ_FAILED;}
-	virtual HQReturnVal DestroyShader(HQShaderObject* shaderID) {return HQ_FAILED;}
-	virtual void DestroyAllProgram() {}
-	virtual void DestroyAllShader() {}
-	virtual void DestroyAllResource() {}
+	virtual HQReturnVal RemoveProgram(HQShaderProgram* programID){return HQ_FAILED;}
+	virtual HQReturnVal RemoveShader(HQShaderObject* shaderID) {return HQ_FAILED;}
+	virtual void RemoveAllProgram() {}
+	virtual void RemoveAllShader() {}
+	virtual void RemoveAllResource() {}
 	
 	virtual hq_uint32 GetParameterIndex(HQShaderProgram* programID , 
 											const char *parameterName)
@@ -186,17 +186,29 @@ public:
 	{
 		return HQ_FAILED;
 	}
-	virtual HQReturnVal DestroyUniformBuffer(HQUniformBuffer* bufferID)
+	virtual HQReturnVal RemoveUniformBuffer(HQUniformBuffer* bufferID)
 	{
 		return HQ_FAILED;
 	}
-	virtual void DestroyAllUniformBuffers()  {
+	virtual void RemoveAllUniformBuffers()  {
 	}
 	
 	virtual HQReturnVal SetUniformBuffer(hq_uint32 slot ,  HQUniformBuffer* bufferID ) 
 	{
 		return HQ_FAILED;
 	}
+
+	virtual HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	virtual HQReturnVal CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	virtual HQReturnVal CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+
+	virtual HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)  { return HQ_FAILED; }
+
+	virtual HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer) { return HQ_FAILED; }
+	virtual void RemoveAllBufferUAVs() {}
+
 private:
 	void SetLightPosition(unsigned int light);//set light position in world space
 	void SetLight(unsigned int light , HQFFLight* lightInfo);

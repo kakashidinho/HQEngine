@@ -33,6 +33,7 @@ public:
 	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
 
 	HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel) { return HQ_FAILED; }
+	HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel) { return HQ_FAILED; }
 
 	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
 	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);

@@ -79,7 +79,7 @@ typedef enum HQTextureType
 	HQ_TEXTURE_2D = 0,
 	HQ_TEXTURE_CUBE = 1,
 	HQ_TEXTURE_BUFFER = 2,
-	HQ_TEXTURE_2D_UAV = 3,///unordered access texture
+	HQ_TEXTURE_2D_UAV = 3,///unordered access texture, supports read and write via shader
 	HQ_TEXTURE_TYPE_FORCE_DWORD = 0xffffffff
 } _HQTextureType;
 
@@ -591,13 +591,19 @@ class HQUpdatableTexture : public HQTexture, public HQMappableResource {
 class HQTextureBuffer : public HQUpdatableTexture {
 };
 
-class HQVertexBuffer : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable {
+class HQGraphicsBufferRawRetrievable : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable{
 
 };
 
-class HQIndexBuffer : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable {
+typedef HQGraphicsBufferRawRetrievable HQVertexBuffer;
+typedef HQGraphicsBufferRawRetrievable HQIndexBuffer;
+typedef HQGraphicsBufferRawRetrievable HQBufferUAV;///unordered access buffer, supports read and write via shader
+typedef HQGraphicsBufferRawRetrievable HQVertexBufferUAV;///unordered access buffer, supports read and write via shader
+typedef HQGraphicsBufferRawRetrievable HQIndexBufferUAV;///unordered access buffer, supports read and write via shader
+typedef HQGraphicsBufferRawRetrievable HQComputeIndirectArgsBuffer;///unordered access buffer, supports read and write via shader
+typedef HQGraphicsBufferRawRetrievable HQDrawIndirectArgsBuffer; ///unordered access buffer, supports read and write via shader
+typedef HQGraphicsBufferRawRetrievable HQDrawIndexedIndirectArgsBuffer;///unordered access buffer, supports read and write via shader
 
-};
 
 class HQUniformBuffer : public virtual HQMappableResource {
 

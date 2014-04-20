@@ -231,6 +231,35 @@ HQReturnVal HQRenderDeviceDebugLayer::DrawIndexedPrimitive(hq_uint32 numVertices
 	return re;
 }
 
+HQReturnVal HQRenderDeviceDebugLayer::DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQReturnVal re = m_pDevice->DrawInstancedIndirect(buffer, elementIndex);
+	if (HQFailed(re))
+	{
+		sprintf(debugString, 2048, "HQRenderDevice::DrawInstancedIndirect(...) return %s\n",
+			HQReturnValToString(re));
+
+		__OutputDebugString;
+	}
+
+	return re;
+}
+
+HQReturnVal HQRenderDeviceDebugLayer::DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQReturnVal re = m_pDevice->DrawIndexedInstancedIndirect(buffer, elementIndex);
+	if (HQFailed(re))
+	{
+		sprintf(debugString, 2048, "HQRenderDevice::DrawIndexedInstancedIndirect(...) return %s\n",
+			HQReturnValToString(re));
+
+		__OutputDebugString;
+	}
+
+	return re;
+}
+
+
 HQReturnVal HQRenderDeviceDebugLayer::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
 {
 	HQReturnVal re = m_pDevice->DispatchCompute(numGroupX, numGroupY, numGroupZ);
@@ -238,6 +267,21 @@ HQReturnVal HQRenderDeviceDebugLayer::DispatchCompute(hquint32 numGroupX, hquint
 	{
 		sprintf(debugString, 2048, "HQRenderDevice::DispatchCompute(%u , %u , %u) return %s\n",
 			numGroupX, numGroupY, numGroupZ, HQReturnValToString(re));
+
+		__OutputDebugString;
+	}
+
+	return re;
+}
+
+
+HQReturnVal HQRenderDeviceDebugLayer::DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex)
+{
+	HQReturnVal re = m_pDevice->DispatchComputeIndirect(buffer, elementIndex);
+	if (HQFailed(re))
+	{
+		sprintf(debugString, 2048, "HQRenderDevice::DispatchComputeIndirect(...) return %s\n",
+			HQReturnValToString(re));
 
 		__OutputDebugString;
 	}
