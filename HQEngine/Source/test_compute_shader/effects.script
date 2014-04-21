@@ -1,0 +1,12 @@
+techniques{
+	technique "draw" { /*  must specify technique name  */
+		pass "0" {
+			vertex_shader=draw-shader-vs
+			pixel_shader=draw-shader-ps
+
+			texture0 {
+				source = "color_texture"
+			}
+		}
+	}
+}

@@ -46,21 +46,19 @@ protected:
 ///
 class HQEngineEffectManager {
 public:
+	///
+	///Set file's suffix name. When loading a effect file, if it cannot be not found, 
+	///effect manager will try to load another file with specified suffix name. 
+	///For example, if suffix set to "GL", if a file "effect.script" can't be found, 
+	///"effectGL.script" will be searched. By default, suffix is renderer type passing to HQEngineApp's Window creation functions
+	///
+	virtual void SetSuffix(const char* suffix) = 0;
+
 	virtual HQReturnVal AddEffectsFromFile(const char* fileName) = 0;
 	virtual HQEngineEffectLoadSession* BeginAddEffectsFromFile(const char* fileName) = 0;
 	virtual bool HasMoreEffects(HQEngineEffectLoadSession* session) = 0;
 	virtual HQReturnVal AddNextEffect(HQEngineEffectLoadSession* session) = 0;
 	virtual HQReturnVal EndAddEffects(HQEngineEffectLoadSession* session) = 0;///for releasing loading session
-
-	///
-	///{vertexShader} is ignored in D3D9 device. if {vertexShader} = NULL, this method will create 
-	///input layout for fixed function shader. D3D11 & GL only accepts the following layout: 
-	///position (x,y,z); color (r,g,b,a); normal (x,y,z); texcoords (u,v)
-	///
-	virtual HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs , 
-												hq_uint32 numAttrib ,
-												HQEngineShaderResource* vertexShader , 
-												HQVertexLayout **pInputLayoutID) = 0;
 
 	///
 	///Direct3d : {slot} = {texture slot} bitwise OR với enum HQShaderType để chỉ  {texture slot} thuộc shader stage nào. 

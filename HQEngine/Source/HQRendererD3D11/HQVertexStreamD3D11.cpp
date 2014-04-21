@@ -24,9 +24,6 @@ struct ClearBufferVertex
 };
 #endif//#if HQ_D3D_CLEAR_VP_USE_GS
 
-const hq_uint32 g_clearVBStride = sizeof(ClearBufferVertex);
-const hq_uint32 g_offset = 0;
-ID3D11Buffer * const g_nullBuffer = NULL;
 
 const char *semanticName[] =
 {
@@ -67,6 +64,11 @@ const char *semanticName[] =
 #endif//if HQ_DEFINE_SEMANTICS
 };
 
+/*------------HQVertexBufferD3D11----------------*/
+HQSharedPtr<HQPoolMemoryManager> HQVertexBufferD3D11::s_streamBoundSlotsMemManager;
+
+/*----------------HQIndexBufferD3D11----------------*/
+HQSharedPtr<HQPoolMemoryManager> HQIndexBufferD3D11::s_boundSlotsMemManager;
 
 /*---------vertex stream manager-------*/
 
@@ -79,17 +81,26 @@ HQVertexStreamManagerD3D11::HQVertexStreamManagerD3D11(ID3D11Device* pD3DDevice 
 	this->pD3DDevice = pD3DDevice;
 	this->pD3DContext = pD3DContext;
 	this->pShaderMan = pShaderMan;
+
+	/*-------create memory manager for vertex and index buffer's bound slot list--------*/
+	HQVertexBufferD3D11::s_streamBoundSlotsMemManager = 
+		HQ_NEW HQPoolMemoryManager(sizeof(HQGenericBufferD3D11::SlotList::LinkedListNodeType), MAX_VERTEX_ATTRIBS);
+
+	HQIndexBufferD3D11::s_boundSlotsMemManager =
+		HQ_NEW HQPoolMemoryManager(sizeof(HQGenericBufferD3D11::SlotList::LinkedListNodeType), 1);//not important
 	
 	/*------create vertex buffer and input layout for clearing viewport---------*/
+	const hq_uint32 l_clearVBStride = sizeof(ClearBufferVertex);
+
 	D3D11_BUFFER_DESC vbd;
 #if HQ_D3D_CLEAR_VP_USE_GS
 	vbd.Usage = D3D11_USAGE_DYNAMIC;
 	vbd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-	vbd.ByteWidth = g_clearVBStride;
+	vbd.ByteWidth = l_clearVBStride;
 #else
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.CPUAccessFlags = 0;
-	vbd.ByteWidth = 4 * g_clearVBStride;
+	vbd.ByteWidth = 4 * l_clearVBStride;
 #endif
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.MiscFlags = 0;
@@ -477,18 +488,45 @@ HQReturnVal HQVertexStreamManagerD3D11::SetVertexBuffer(HQVertexBuffer* vertexBu
 {
 	if (streamIndex >= MAX_VERTEX_ATTRIBS)
 		return HQ_FAILED;
-	HQSharedPtr<HQVertexBufferD3D11> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID);
-	if (vBuffer != this->streams[streamIndex].vertexBuffer || stride != this->streams[streamIndex].stride)
+
+	const hq_uint32 l_offset = 0;
+	ID3D11Buffer * const l_nullBuffer = NULL;
+
+	HQSharedPtr<HQGenericBufferD3D11> vBuffer = this->vertexBuffers.GetItemPointer(vertexBufferID).UpCast<HQGenericBufferD3D11>();
+	if (vBuffer != this->streams[streamIndex].pBuffer || stride != this->streams[streamIndex].stride)
 	{
 		if (vBuffer == NULL)
-			pD3DContext->IASetVertexBuffers(streamIndex , 1 , &g_nullBuffer , &stride , &g_offset);
+			pD3DContext->IASetVertexBuffers(streamIndex , 1 , &l_nullBuffer , &stride , &l_offset);
 		else
-			pD3DContext->IASetVertexBuffers(streamIndex , 1 , &vBuffer->pD3DBuffer , &stride , &g_offset);
+		{
+			//make sure buffer will not be bound to any UAV slot
+			pShaderMan->UnbindBufferFromAllUAVSlots(vBuffer);
 
-		this->streams[streamIndex].vertexBuffer = vBuffer;
+			pD3DContext->IASetVertexBuffers(streamIndex, 1, &vBuffer->pD3DBuffer, &stride, &l_offset);
+		}
+
+		this->streams[streamIndex].BindAsInput(streamIndex, vBuffer);//hold reference to buffer
 		this->streams[streamIndex].stride = stride;
 	}
 	return HQ_OK;
+}
+
+
+
+void HQVertexStreamManagerD3D11::UnbindVertexBufferFromAllStreams(HQSharedPtr<HQVertexBufferD3D11>& buffer)//unbind vertex buffer from all stream slots
+{
+	HQVertexBufferD3D11* pBufferRawPtr = buffer.GetRawPointer();
+	HQGenericBufferD3D11::SlotList::Iterator ite;
+	const hq_uint32 l_offset = 0;
+	ID3D11Buffer * const l_nullBuffer = NULL;
+
+	for (pBufferRawPtr->inputBoundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+	{
+		hquint32 streamIndex = *ite;
+		this->streams[streamIndex].UnbindAsInput();//remove the link between the buffer and this stream
+		//set buffer to NULL
+		pD3DContext->IASetVertexBuffers(streamIndex, 1, &l_nullBuffer, &this->streams[streamIndex].stride, &l_offset);
+	}
 }
 
 HQReturnVal  HQVertexStreamManagerD3D11::SetIndexBuffer(HQIndexBuffer* indexBufferID)
@@ -499,12 +537,29 @@ HQReturnVal  HQVertexStreamManagerD3D11::SetIndexBuffer(HQIndexBuffer* indexBuff
 		if (iBuffer == NULL )
 			pD3DContext->IASetIndexBuffer(NULL , DXGI_FORMAT_R16_UINT , 0);
 		else
-			pD3DContext->IASetIndexBuffer(iBuffer->pD3DBuffer , iBuffer->d3dDataType , 0);
+		{
+			//make sure buffer will not be bound to any UAV slot
+			pShaderMan->UnbindBufferFromAllUAVSlots(iBuffer.GetRawPointer());
+
+			pD3DContext->IASetIndexBuffer(iBuffer->pD3DBuffer, iBuffer->d3dDataType, 0);
+		}
 		this->activeIndexBuffer = iBuffer;
 	}
 
 	return HQ_OK;
 }
+
+
+void HQVertexStreamManagerD3D11::UnsetIndexBufferIfActivated(HQSharedPtr<HQIndexBufferD3D11>& indexBuffer)
+{
+	if (indexBuffer == this->activeIndexBuffer)
+	{
+		this->activeIndexBuffer.ToNull();
+
+		pD3DContext->IASetIndexBuffer(NULL, DXGI_FORMAT_R16_UINT, 0);
+	}
+}
+
 
 HQReturnVal  HQVertexStreamManagerD3D11::SetVertexInputLayout(HQVertexLayout* inputLayoutID) 
 {
@@ -567,20 +622,26 @@ void HQVertexStreamManagerD3D11::ChangeClearVBuffer(HQColorui color , hq_float32
 
 void HQVertexStreamManagerD3D11::BeginClearViewport()
 {
+	const hq_uint32 l_clearVBStride = sizeof(ClearBufferVertex);
+	const hq_uint32 l_offset = 0;
+
 	pD3DContext->IASetInputLayout(this->pClearInputLayout);
-	pD3DContext->IASetVertexBuffers(0 , 1 , &this->pCleaVBuffer ,&g_clearVBStride , &g_offset); 
+	pD3DContext->IASetVertexBuffers(0, 1, &this->pCleaVBuffer, &l_clearVBStride, &l_offset);
 }
 
 void HQVertexStreamManagerD3D11::EndClearViewport()
 {
+	const hq_uint32 l_offset = 0;
+	ID3D11Buffer * const l_nullBuffer = NULL;
+
 	if (this->activeInputLayout != NULL)
 		pD3DContext->IASetInputLayout(this->activeInputLayout->pD3DLayout);
 	else
 		pD3DContext->IASetInputLayout(NULL);
-	if (this->streams[0].vertexBuffer != NULL)
-		pD3DContext->IASetVertexBuffers(0 , 1 , &this->streams[0].vertexBuffer->pD3DBuffer ,&this->streams[0].stride , &g_offset); 
+	if (this->streams[0].pBuffer != NULL)
+		pD3DContext->IASetVertexBuffers(0, 1, &this->streams[0].pBuffer->pD3DBuffer, &this->streams[0].stride, &l_offset);
 	else
-		pD3DContext->IASetVertexBuffers(0 , 1 , &g_nullBuffer ,&this->streams[0].stride , &g_offset); 
+		pD3DContext->IASetVertexBuffers(0, 1, &l_nullBuffer, &this->streams[0].stride, &l_offset);
 
 }
 

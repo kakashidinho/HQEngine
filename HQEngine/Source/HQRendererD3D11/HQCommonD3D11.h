@@ -296,16 +296,39 @@ struct HQBufferUAView_CacheD3D11 {
 enum HQGenericBufferD3D11Type{
 	HQ_VERTEX_BUFFER_D3D11,
 	HQ_INDEX_BUFFER_D3D11,
-	HQ_DRAW_INDIRECT_BUFFER_D3D11
+	HQ_DRAW_INDIRECT_BUFFER_D3D11,
+	HQ_SHADER_USE_ONLY_D3D11
 };
 
 //Note: D3D11 resource's creation is done outside this class
 struct HQGenericBufferD3D11 : public HQBufferUAView_CacheD3D11, public HQBufferD3D11, public HQGraphicsBufferRawRetrievable {
-	HQGenericBufferD3D11(HQGenericBufferD3D11Type _type, bool dynamic, hquint32 size)
-	: HQBufferD3D11(dynamic, size),
-	type(_type)
-	{
+	typedef HQLinkedList<hquint32, HQPoolMemoryManager> SlotList;
 
+	struct BufferSlot//represent a (input/output) slot that buffer can bind to 
+	{
+		SlotList::LinkedListNodeType *bufferLink;//for fast removal
+		HQSharedPtr<HQGenericBufferD3D11> pBuffer;//buffer reference
+
+		void BindAsInput(hquint32 slotIndex, HQSharedPtr<HQGenericBufferD3D11>& pBuffer);
+		void UnbindAsInput();
+
+		void BindAsUAV(hquint32 slotIndex, HQSharedPtr<HQGenericBufferD3D11>& pBuffer);
+		void UnbindAsUAV();
+	};
+
+
+	//constructor
+	HQGenericBufferD3D11(HQGenericBufferD3D11Type _type, 
+						bool dynamic, 
+						hquint32 size, 
+						const HQSharedPtr<HQPoolMemoryManager>& inputBoundListsMemManager)
+	: HQBufferD3D11(dynamic, size),
+		type(_type),
+		inputBoundSlots(inputBoundListsMemManager),
+		uavBoundSlots(s_uavBoundSlotsMemManager)
+	{
+		HQ_ASSERT(inputBoundListsMemManager != NULL);
+		HQ_ASSERT(s_uavBoundSlotsMemManager != NULL);
 	}
 
 	bool InitUAVCache(ID3D11Device* creator, hquint32 _totalElements, hquint32 _elementSize)
@@ -319,10 +342,61 @@ struct HQGenericBufferD3D11 : public HQBufferUAView_CacheD3D11, public HQBufferD
 	}
 
 	HQGenericBufferD3D11Type type;
+
+	SlotList inputBoundSlots; //list of input slots that this buffer is bound to
+	SlotList uavBoundSlots; //list of UAV slots that this buffer is bound to
+
+	static HQSharedPtr<HQPoolMemoryManager> s_uavBoundSlotsMemManager;//must be created before any buffer's creation
 };
 
 #ifdef WIN32
 #	pragma warning( pop )
 #endif
+
+/*------------HQGenericBufferD3D11::BufferSlot---------------------*/
+//{slotIndex} is index of buffer slot, of course buffer doesn't know about its index
+HQ_FORCE_INLINE void HQGenericBufferD3D11::BufferSlot::BindAsInput(hquint32 slotIndex, HQSharedPtr<HQGenericBufferD3D11>& pNewBuffer)
+{
+	if (this->pBuffer != pNewBuffer){
+		this->UnbindAsInput();//unlink old buffer
+
+		if (pNewBuffer != NULL)
+			this->bufferLink = pNewBuffer->inputBoundSlots.PushBack(slotIndex);
+			
+		this->pBuffer = pNewBuffer;
+	}
+}
+
+HQ_FORCE_INLINE void HQGenericBufferD3D11::BufferSlot::UnbindAsInput()
+{
+	if (this->pBuffer != NULL)
+	{
+		this->pBuffer->inputBoundSlots.RemoveAt(this->bufferLink);
+		this->pBuffer.ToNull();
+	}
+}
+
+//{slotIndex} is index of buffer slot, of course buffer doesn't know about its index
+HQ_FORCE_INLINE void HQGenericBufferD3D11::BufferSlot::BindAsUAV(hquint32 slotIndex, HQSharedPtr<HQGenericBufferD3D11>& pNewBuffer)
+{
+
+	if (this->pBuffer != pNewBuffer){
+		this->UnbindAsUAV();//unlink old buffer
+
+		if (pNewBuffer != NULL)
+			this->bufferLink = pNewBuffer->uavBoundSlots.PushBack(slotIndex);
+
+		this->pBuffer = pNewBuffer;
+	}
+}
+
+HQ_FORCE_INLINE void HQGenericBufferD3D11::BufferSlot::UnbindAsUAV()
+{
+	if (this->pBuffer != NULL)
+	{
+		this->pBuffer->uavBoundSlots.RemoveAt(this->bufferLink);
+		this->pBuffer.ToNull();
+	}
+}
 
 #endif

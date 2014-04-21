@@ -117,9 +117,33 @@ void HQDispatchIndirectBufferGL::BindBuffer()
 	pMasterDevice->BindDispatchIndirectBuffer(this->bufferName);
 }
 
+/*--------------HQGeneralPurposeStorageBufferGL-------------------*/
+HQGeneralPurposeStorageBufferGL::HQGeneralPurposeStorageBufferGL(hq_uint32 elemSize, hquint32 numElems)
+: HQShaderStorageBufferGL(elemSize, numElems, GL_SHADER_STORAGE_BUFFER)
+{
+
+}
+
+HQGeneralPurposeStorageBufferGL::~HQGeneralPurposeStorageBufferGL(){
+	HQBaseShaderManagerGL_StorageBlockSupprted* pManager =
+		static_cast <HQBaseShaderManagerGL_StorageBlockSupprted*> (pMasterDevice->GetShaderManager());
+
+	if (pManager->GetBoundShaderStorageBuffer() == this->bufferName)
+		pManager->BindShaderStorageBuffer(0);
+}
+
+void HQGeneralPurposeStorageBufferGL::BindBuffer()
+{
+	HQBaseShaderManagerGL_StorageBlockSupprted* pManager =
+		static_cast <HQBaseShaderManagerGL_StorageBlockSupprted*> (pMasterDevice->GetShaderManager());
+
+	pManager->BindShaderStorageBuffer(this->bufferName);
+}
+
 /*----------------HQBaseShaderManagerGL_StorageBlockSupprted------------------------*/
 HQBaseShaderManagerGL_StorageBlockSupprted::HQBaseShaderManagerGL_StorageBlockSupprted(HQLogStream* logFileStream, const char * logPrefix, bool flushLog)
-: HQBaseShaderManagerGL_UBO(logFileStream, logPrefix, flushLog)
+: HQBaseShaderManagerGL_UBO(logFileStream, logPrefix, flushLog),
+boundStorageBuffer(0)
 {
 	this->pMasterDevice = g_pOGLDev;
 	this->shaderStorageBufferSlots = HQ_NEW HQSharedPtr<HQBufferGL>[this->pMasterDevice->GetDeviceCaps().nShaderStorageBlocks];
@@ -139,6 +163,20 @@ void HQBaseShaderManagerGL_StorageBlockSupprted::RemoveAllBufferUAVs()
 	shaderStorageBuffers.RemoveAll();
 }
 
+
+HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut)
+{
+	HQGeneralPurposeStorageBufferGL* newBuffer = HQ_NEW HQGeneralPurposeStorageBufferGL(elementSize, numElements);
+
+	newBuffer->Init(initData);
+
+	if (glGetError() == GL_OUT_OF_MEMORY || !this->shaderStorageBuffers.AddItem(newBuffer, ppBufferOut))
+	{
+		delete newBuffer;
+		return HQ_FAILED_MEM_ALLOC;
+	}
+	return HQ_OK;
+}
 
 HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)
 {
@@ -230,7 +268,7 @@ HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::SetBufferUAVForComputeSh
 		case GL_ELEMENT_ARRAY_BUFFER://need to retrieve shared pointer from vertex stream manager
 			pBuffer = pVStreamMan->GetIndexBufferSharedPtr(pGenericGLBuffer).UpCast<HQBufferGL>();
 			break;
-		case GL_DISPATCH_INDIRECT_BUFFER: case GL_DRAW_INDIRECT_BUFFER://we own this buffer
+		case GL_DISPATCH_INDIRECT_BUFFER: case GL_DRAW_INDIRECT_BUFFER: case GL_SHADER_STORAGE_BUFFER://we own this buffer
 			pBuffer = this->shaderStorageBuffers.GetItemPointer(pGenericGLBuffer).UpCast<HQBufferGL>();
 			break;
 		}

@@ -234,6 +234,11 @@ public:
 	///nếu vùng viewport không nằm gọn trong phạm vi của render target, viewport sẽ được set thành toàn bộ vùng render của render target
 	///
 	virtual HQReturnVal SetViewPort(const HQViewPort &viewport) = 0;
+
+	HQReturnVal SetFullViewPort() {
+		HQViewPort fullViewport = { 0, 0, this->GetWidth(), this->GetHeight() };
+		return SetViewPort(fullViewport);
+	}
 	
 	virtual const HQViewPort & GetViewPort() const = 0;
 
@@ -273,12 +278,14 @@ public:
 	virtual HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 primitiveCount , hq_uint32 firstIndex ) = 0;
 
 	///
-	///Draw instances using arguments comming from element {elementIndex}th in {buffer}
+	///Draw instances using arguments comming from element {elementIndex}th in {buffer}. 
+	///Note: Direct3D 11 will unset this buffer from every UAV slots
 	///
 	virtual HQReturnVal DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
 
 	///
-	///Draw indexed instances using arguments coming from element {elementIndex}th in {buffer}
+	///Draw indexed instances using arguments coming from element {elementIndex}th in {buffer} 
+	///Note: Direct3D 11 will unset this buffer from every UAV slots
 	///
 	virtual HQReturnVal DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
 	
@@ -288,7 +295,8 @@ public:
 	virtual HQReturnVal DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ) = 0;
 
 	///
-	///dispatch commands from compute shader with arguments coming from element {elementIndex}th in {buffer}
+	///dispatch commands from compute shader with arguments coming from element {elementIndex}th in {buffer} 
+	///Note: Direct3D 11 will unset this buffer from every UAV slots
 	///
 	virtual HQReturnVal DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
 

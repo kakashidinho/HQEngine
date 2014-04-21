@@ -96,9 +96,9 @@ public:
 	
 
 	struct WindowInitParams{
-		inline static WindowInitParams Default();//return default params 
-		inline static WindowInitParams Construct(const char *windowTitle = NULL,//if NULL => "untitled"
-												const char *rendererType = NULL,//"D3D9", "D3D11" , "GL" .if NULL => "D3D9" for win32 and "GL" for the others
+		static WindowInitParams Default();//return default params 
+		static WindowInitParams Construct(const char *windowTitle = NULL,//if NULL => "untitled"
+												const char *rendererType = NULL,//"D3D9", "D3D11" , "GL" .if NULL => "D3D9" for win32 and "GL" for the others. Ignored on platforms having only one possoble renderer's type
 												const char *rendererSettingFileDir = NULL,//can be NULL => default renderer setting
 												const char *rendererAdditionalSetting = NULL,//see HQRenderDevice::Init().can be NULL
 												HQLogStream* logStream = NULL,//can be NULL
@@ -129,8 +129,23 @@ public:
 	///
 	static HQReturnVal CreateInstanceAndWindow(
 		const WindowInitParams* initParams,
-		bool rendererDebugLayer, 
-		HQEngineApp **ppAppOut
+		bool rendererDebugLayer = false, 
+		HQEngineApp **ppAppOut = NULL
+		);
+
+	///
+	///create application instance and its window as well as its render device. 
+	///if it's already created and not destroyed,return already existing instance. 
+	///{initParams} = NULL equals to a parameter with all NULL members and
+	///				 {flushDebugLog} member = false. 
+	///{rendererDebugLayer} is ignored in release build. 
+	///Shader manager will use application instance as its include file manager. 
+	///Default log stream will be created (Windows: MSVC's debug output, unix: stdout, android: log cat )
+	///
+	static HQReturnVal CreateInstanceAndWindow(
+		const char* rendererType,//"D3D9", "D3D11" , "GL" .if NULL => "D3D9" for win32 and "GL" for the others
+		bool rendererDebugLayer = false,
+		HQEngineApp **ppAppOut = NULL
 		);
 	///get instance of application
 	static HQEngineApp *GetInstance() {return sm_instance;}
@@ -206,6 +221,8 @@ public:
 
 	hqfloat32 GetFPS() const {return m_fps;}
 
+	const char * GetRendererType() const { return m_rendererType; }
+
 #if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	HQNativeWindow GetNativeWindow();///Don't remove window procedure on Win32 or App delegates will not work. Internal use only
 #endif
@@ -279,15 +296,18 @@ private:
 
 	HQEngineOrientationListener *m_orientListener;
 	HQEngineOrientationListener *m_waitOrientListener;
-
-	hquint32 m_flags;
 	
 	hqfloat32 m_fps;
+
+	char* m_rendererType;
+
+	hquint32 m_flags;
 };
 
 #ifdef WIN32
 #	pragma warning( pop )
 #endif
+
 
 /*------HQEngineApp::WindowInitParams-----*/
 inline HQEngineApp::WindowInitParams HQEngineApp::WindowInitParams::Default()

@@ -63,12 +63,14 @@ public:
 	///
 	///gắn vertex buffer {vertexBufferID} vào stream slot {streamIndex}. 
 	///{stride} - khoảng cách giữa 2 dữ liệu vertex trong vertex buffer. 
-	///Lưu ý : {streamIndex} phải nằm trong khoảng từ 0 đến giá trị mà method GetMaxVertexStream() của HQRenderDevice trả về trừ đi 1
+	///Lưu ý : {streamIndex} phải nằm trong khoảng từ 0 đến giá trị mà method GetMaxVertexStream() của HQRenderDevice trả về trừ đi 1. 
+	///			Direct3D11 : sẽ unset  buffer ra khỏi mọi UAV slots
 	///
 	virtual HQReturnVal SetVertexBuffer(HQVertexBuffer* vertexBufferID , hq_uint32 streamIndex , hq_uint32 stride) =0;
 
 	///
-	///active index buffer {indexBufferID}
+	///active index buffer {indexBufferID}. 
+	///			Lưu ý Direct3D11 : sẽ unset  buffer ra khỏi mọi UAV slots
 	///
 	virtual HQReturnVal SetIndexBuffer(HQIndexBuffer* indexBufferID ) =0;
 

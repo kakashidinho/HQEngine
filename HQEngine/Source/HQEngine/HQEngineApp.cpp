@@ -18,8 +18,12 @@ COPYING.txt included with this distribution for more information.
 #include <iostream>
 #include <string.h>
 
-#if defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
+#define HQ_SUPPORT_MULTIPLE_RENDERER_TYPES 0
+
+#if defined HQ_WIN_DESKTOP_PLATFORM
 #	define HQ_DEFAULT_RENDERER_TYPE "D3D9"
+#	undef HQ_SUPPORT_MULTIPLE_RENDERER_TYPES
+#	define HQ_SUPPORT_MULTIPLE_RENDERER_TYPES 1
 #elif (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 #	define HQ_DEFAULT_RENDERER_TYPE "D3D11"
 #else
@@ -77,6 +81,20 @@ static HQEngineOrientationListener defaultOrientListener;
 
 HQEngineApp *HQEngineApp::sm_instance = NULL;
 
+static char* CreateCopiedString(const char *src){
+	char* dest = HQ_NEW char[strlen(src) + 1];
+	strcpy(dest, src);
+
+	return dest;
+}
+
+static void CopyString(char *&dest, const char* src){
+	if (dest != NULL)
+		delete[] dest;
+
+	dest = CreateCopiedString(src);
+}
+
 /*----HQEngineApp::RenderDevice---------*/
 HQReturnVal HQEngineApp::RenderDevice::Release() 
 { 
@@ -111,6 +129,8 @@ m_waitAppListener(NULL),
 m_orientListener(&defaultOrientListener),
 m_waitOrientListener(NULL),
 
+m_rendererType(NULL),
+
 m_flags(HQ_CURSOR_ENABLE)
 {
 	this->PlatformInit();
@@ -124,6 +144,9 @@ m_flags(HQ_CURSOR_ENABLE)
 
 	//create default file manager
 	m_fileManagers.PushBack(HQ_NEW HQDefaultFileManager());
+
+	//set default renderer type
+	CopyString(m_rendererType, HQ_DEFAULT_RENDERER_TYPE);
 }
 
 HQEngineApp::~HQEngineApp()
@@ -133,6 +156,9 @@ HQEngineApp::~HQEngineApp()
 
 	HQDefaultFileManager* defaultFileMan = static_cast<HQDefaultFileManager*>( m_fileManagers.GetFront());
 	delete defaultFileMan;
+
+	if (m_rendererType != NULL)
+		delete[] m_rendererType;
 }
 
 HQEngineApp * HQEngineApp::CreateInstance(bool rendererDebugLayer )
@@ -154,6 +180,35 @@ HQReturnVal HQEngineApp::CreateInstanceAndWindow(
 	if (ppAppOut != NULL)
 		*ppAppOut = pApp;
 	return pApp->InitWindow(initParams);
+}
+
+HQReturnVal HQEngineApp::CreateInstanceAndWindow(
+	const char* rendererType,//"D3D9", "D3D11" , "GL" .if NULL => "D3D9" for win32 and "GL" for the others
+	bool rendererDebugLayer,
+	HQEngineApp **ppAppOut
+	)
+{
+#if defined _DEBUG || defined DEBUG
+	bool flushLog = true;
+#else
+	bool flushLog = false;
+#endif
+
+	HQLogStream * logStream = NULL;
+#if defined _MSC_VER
+	logStream = HQCreateDebugLogStream();
+#elif defined HQ_ANDROID_PLATFORM
+	logStream = HQCreateLogCatStream();
+#else
+	logStream = HQCreateConsoleLogStream();
+#endif
+
+	WindowInitParams params = WindowInitParams::Construct(
+		NULL, rendererType, NULL, NULL, logStream,
+		flushLog, NULL
+		);
+
+	return HQEngineApp::CreateInstanceAndWindow(&params, rendererDebugLayer, ppAppOut);
 }
 
 HQReturnVal HQEngineApp::Release()
@@ -205,7 +260,9 @@ HQReturnVal HQEngineApp::InitWindow(const WindowInitParams* initParams)
 
 		/*-----------create resource and effect manager--------*/
 		m_resManager = HQ_NEW HQEngineResManagerImpl(initParams->logStream, initParams->flushDebugLog);
+		m_resManager->SetSuffix(m_rendererType);
 		m_effectManager = HQ_NEW HQEngineEffectManagerImpl(initParams->logStream, initParams->flushDebugLog);
+		m_effectManager->SetSuffix(m_rendererType);
 		return re;
 	}
 	return HQ_FAILED;
@@ -215,9 +272,11 @@ HQReturnVal HQEngineApp::InitWindow(const WindowInitParams* initParams)
 
 HQReturnVal HQEngineApp::CreateRenderDevice(const WindowInitParams* initParams)
 {
-	const char *l_rendererType = initParams->rendererType;
-	if (l_rendererType == NULL)
-			l_rendererType = HQ_DEFAULT_RENDERER_TYPE;
+	const char *l_rendererType = HQ_DEFAULT_RENDERER_TYPE;
+#if HQ_SUPPORT_MULTIPLE_RENDERER_TYPES
+	if (initParams->rendererType != NULL)
+#endif
+		l_rendererType = initParams->rendererType;
 		
 	HQReturnVal re = HQ_FAILED;
 
@@ -264,6 +323,9 @@ HQReturnVal HQEngineApp::CreateRenderDevice(const WindowInitParams* initParams)
 			m_pRenderDevice = m_renderer.GetDevice();
 			//set include file manger for shader manager
 			m_pRenderDevice->GetShaderManager()->SetIncludeFileManager(this);
+
+			//copy renderer type
+			CopyString(m_rendererType, l_rendererType);
 		}
 	}
 	return re;

@@ -30,15 +30,17 @@ COPYING.txt included with this distribution for more information.
 struct HQVertexBufferD3D11 : public HQGenericBufferD3D11
 {
 	HQVertexBufferD3D11(bool dynamic, hq_uint32 size)
-	: HQGenericBufferD3D11(HQ_VERTEX_BUFFER_D3D11, dynamic, size)
+	: HQGenericBufferD3D11(HQ_VERTEX_BUFFER_D3D11, dynamic, size, s_streamBoundSlotsMemManager)
 	{
 	}
+
+	static HQSharedPtr<HQPoolMemoryManager> s_streamBoundSlotsMemManager;//important! must be created before any object's creation
 };
 
 struct HQIndexBufferD3D11 : public HQGenericBufferD3D11
 {
 	HQIndexBufferD3D11(bool dynamic   , hq_uint32 size, HQIndexDataType dataType) 
-	: HQGenericBufferD3D11(HQ_INDEX_BUFFER_D3D11, dynamic, size)
+	: HQGenericBufferD3D11(HQ_INDEX_BUFFER_D3D11, dynamic, size, s_boundSlotsMemManager)
 	{
 		switch (dataType)
 		{
@@ -51,6 +53,8 @@ struct HQIndexBufferD3D11 : public HQGenericBufferD3D11
 	}
 
 	DXGI_FORMAT d3dDataType;
+
+	static HQSharedPtr<HQPoolMemoryManager> s_boundSlotsMemManager;//important! must be created before any object's creation
 };
 
 //unordered access supported vertex buffer
@@ -87,10 +91,9 @@ struct HQVertexInputLayoutD3D11: public HQVertexLayout, public HQBaseIDObject
 	ID3D11InputLayout * pD3DLayout;
 };
 
-struct HQVertexStreamD3D11
+struct HQVertexStreamD3D11 : public HQGenericBufferD3D11::BufferSlot
 {
 	HQVertexStreamD3D11() {stride = 0;}
-	HQSharedPtr<HQVertexBufferD3D11> vertexBuffer;
 	hq_uint32 stride;
 };
 
@@ -138,6 +141,9 @@ public:
 	HQReturnVal SetIndexBuffer(HQIndexBuffer* indexBufferID );
 
 	HQReturnVal SetVertexInputLayout(HQVertexLayout* inputLayoutID) ;
+
+	void UnbindVertexBufferFromAllStreams(HQSharedPtr<HQVertexBufferD3D11>& buffer);//unbind vertex buffer from all stream slots
+	void UnsetIndexBufferIfActivated(HQSharedPtr<HQIndexBufferD3D11>& indexBuffer);//unset index buffer is it is currently activated
 
 	HQReturnVal RemoveVertexBuffer(HQVertexBuffer* vertexBufferID);
 	HQReturnVal RemoveIndexBuffer(HQIndexBuffer* indexBufferID);

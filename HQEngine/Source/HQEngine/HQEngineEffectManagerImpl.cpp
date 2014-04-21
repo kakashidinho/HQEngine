@@ -683,8 +683,9 @@ const HQEngineEffectParserNode * HQEngineEffectLoadSessionImpl::NextEffect() {
 HQEngineEffectManagerImpl::HQEngineEffectManagerImpl(HQLogStream *stream, bool flushLog)
 : HQLoggableObject(stream, "Engine's Effect Manager :", flushLog)
 {
+	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
 	//check if we are using OpenGL
-	const char *renderer = HQEngineApp::GetInstance()->GetRenderDevice()->GetDeviceDesc();
+	const char *renderer = m_pRDevice->GetDeviceDesc();
 	if (strncmp(renderer, "OpenGL", 6) == 0)
 		m_isGL = true;
 	else
@@ -772,6 +773,12 @@ HQEngineEffectManagerImpl::~HQEngineEffectManagerImpl()
 	Log("Released!");
 }
 
+void HQEngineEffectManagerImpl::SetSuffix(const char* suffix)
+{
+	if (suffix)
+		m_suffix = suffix;
+}
+
 HQReturnVal HQEngineEffectManagerImpl::AddEffectsFromFile(const char* fileName)
 {
 	HQEngineEffectLoadSession * session = this->BeginAddEffectsFromFile(fileName);
@@ -791,13 +798,20 @@ HQReturnVal HQEngineEffectManagerImpl::AddEffectsFromFile(const char* fileName)
 	return re;
 }
 
-HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromFile(const char* fileName)
+HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromFile(const char* raw_fileName)
 {
-	HQDataReaderStream* data_stream = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
+	HQDataReaderStream* data_stream = HQEngineApp::GetInstance()->OpenFileForRead(raw_fileName);
 	if (data_stream == NULL)
 	{
-		this->Log("Error : Could not load effects from file %s! Could not open the file!", fileName);
-		return NULL;
+		//try again with suffix
+		std::string fileName = raw_fileName;
+		HQEngineHelper::InsertFileNameSuffix(fileName, m_suffix);
+		data_stream = HQEngineApp::GetInstance()->OpenFileForRead(fileName.c_str());
+		if (data_stream == NULL)//still failed
+		{
+			this->Log("Error : Could not load effects from file %s! Could not open the file!", raw_fileName);
+			return NULL;
+		}
 	}
 
 	//prepare the parser
@@ -808,14 +822,14 @@ HQEngineEffectLoadSession* HQEngineEffectManagerImpl::BeginAddEffectsFromFile(co
 	//now parse the script
 	if (hqengine_effect_parser_scan())
 	{
-		this->Log("Error : Could not load effect from file %s! %s", fileName, hqengine_effect_parser_log_stream->str().c_str());
+		this->Log("Error : Could not load effect from file %s! %s", raw_fileName, hqengine_effect_parser_log_stream->str().c_str());
 		HQEngineHelper::GlobalPoolReleaseAll();
 		data_stream->Release();
 		return NULL;
 	}
 	data_stream->Release();
 
-	this->Log("Effects loading session from file '%s' started!", fileName);
+	this->Log("Effects loading session from file '%s' started!", raw_fileName);
 
 	HQEngineEffectParserNode *result = hqengine_effect_parser_root_result;
 	hqengine_effect_parser_root_result = NULL;
@@ -1569,7 +1583,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
 	HQEngineDSBufferWrapper::CreationParams dsBufferParams;
 	bool useDSBuffer = false;//default is not using depth stencil buffer
-	hquint32 maxNumRTs = HQEngineApp::GetInstance()->GetRenderDevice()->GetMaxActiveRenderTargets();
+	hquint32 maxNumRTs = m_pRDevice->GetMaxActiveRenderTargets();
 	HQSharedArrayPtr<HQEngineRenderTargetWrapper> outputArray = HQ_NEW HQEngineRenderTargetWrapper[maxNumRTs];//auto release array
 	hquint32 numOutputs = 0;
 	hquint32 global_width = 0xffffffff;
@@ -1823,26 +1837,13 @@ void HQEngineEffectManagerImpl::RemoveAllEffects()
 	m_samplerStates.RemoveAll();
 }
 
- HQReturnVal HQEngineEffectManagerImpl::CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs , 
-												hq_uint32 numAttrib ,
-												HQEngineShaderResource* vertexShader , 
-												HQVertexLayout **pInputLayoutID)
- {
-	 HQEngineShaderResImpl * vshaderImpl = (HQEngineShaderResImpl*) vertexShader;
-	 HQShaderObject* vid = vshaderImpl != NULL ? vshaderImpl->GetShader(): NULL;
-
-	 return HQEngineApp::GetInstance()->GetRenderDevice()->GetVertexStreamManager()
-		 ->CreateVertexInputLayout(vAttribDescs, numAttrib, vid, pInputLayoutID);
-									
-						
- }
 
 HQReturnVal HQEngineEffectManagerImpl::SetTexture(hq_uint32 slot, HQEngineTextureResource* texture)
 {
 	HQEngineTextureResImpl* textureImpl = (HQEngineTextureResImpl*)texture;
 	HQTexture* tid = textureImpl != NULL ? textureImpl->GetTexture() : NULL;
 
-	return HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
+	return m_pRDevice->GetTextureManager()
 		->SetTexture(slot, tid);
 }
 
@@ -1851,6 +1852,6 @@ HQReturnVal HQEngineEffectManagerImpl::SetTextureForPixelShader(hq_uint32 slot, 
 	HQEngineTextureResImpl* textureImpl = (HQEngineTextureResImpl*)texture;
 	HQTexture* tid = textureImpl != NULL ? textureImpl->GetTexture() : NULL;
 
-	return HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
+	return m_pRDevice->GetTextureManager()
 		->SetTextureForPixelShader(slot, tid);
 }

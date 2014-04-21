@@ -116,10 +116,21 @@ private:
 /*-------------HQDrawIndirectBufferD3D11------------------*/
 struct HQDrawIndirectBufferD3D11 : public HQGenericBufferD3D11 {
 	HQDrawIndirectBufferD3D11(hquint32 size)
-	: HQGenericBufferD3D11(HQ_DRAW_INDIRECT_BUFFER_D3D11, false, size)
+	: HQGenericBufferD3D11(HQ_DRAW_INDIRECT_BUFFER_D3D11, false, size, s_inputBoundSlotsMemManager)
 	{
-
 	}
+
+	static HQSharedPtr<HQPoolMemoryManager> s_inputBoundSlotsMemManager;//important! must be created before any object's creation
+};
+
+/*-------------HQShaderUseOnlyBufferD3D11------------------*/
+struct HQShaderUseOnlyBufferD3D11 : public HQGenericBufferD3D11 {
+	HQShaderUseOnlyBufferD3D11(hquint32 size)
+	: HQGenericBufferD3D11(HQ_SHADER_USE_ONLY_D3D11, false, size, s_inputBoundSlotsMemManager)
+	{
+	}
+
+	static HQSharedPtr<HQPoolMemoryManager> s_inputBoundSlotsMemManager;//important! must be created before any object's creation
 };
 
 #ifdef WIN32
@@ -284,6 +295,8 @@ public:
 	void RemoveAllUniformBuffers();
 	HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID);
 
+	HQReturnVal CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut);
+
 	HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut);
 
 	HQReturnVal CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut) ;
@@ -292,7 +305,14 @@ public:
 
 	HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements);
 
-	void UnbindBufferFromComputeShaderUAVSlot(hquint32 slot);//unbind any buffer from compute shader's UAV slot {slot}
+	void OnTextureBindToComputeShaderUAVSlot(hquint32 slot);//unbind any buffer from compute shader's UAV slot {slot}
+	
+	void UnbindBufferFromAllUAVSlots(HQSharedPtr<HQGenericBufferD3D11>& pBuffer)//unbind buffer from every UAV slot
+	{
+		UnbindBufferFromAllUAVSlots(pBuffer.GetRawPointer());
+	}
+	void UnbindBufferFromAllUAVSlots(HQGenericBufferD3D11* pBuffer);//unbind buffer from every UAV slot
+
 
 	HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer);
 	void RemoveAllBufferUAVs();
@@ -371,7 +391,7 @@ private:
 	HQSharedPtr<HQShaderObjectD3D11> activeVShader, activeGShader, activePShader, activeCShader;
 
 	HQSharedPtr<HQShaderConstBufferD3D11> uBufferSlots[4][D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
-	HQSharedPtr<HQGenericBufferD3D11> uavBufferSlots[4][D3D11_1_UAV_SLOT_COUNT];
+	HQGenericBufferD3D11::BufferSlot uavBufferSlots[2][D3D11_1_UAV_SLOT_COUNT];
 
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	CGcontext cgContext;
@@ -384,7 +404,7 @@ private:
 	ID3D11DeviceContext* pD3DContext;
 	HQIDItemManager<HQShaderObjectD3D11> shaderObjects;//danh sách shader object
 	HQIDItemManager<HQShaderConstBufferD3D11> shaderConstBuffers;
-	HQIDItemManager<HQGenericBufferD3D11> indirectDrawBuffers;
+	HQIDItemManager<HQGenericBufferD3D11> uavBuffers;
 
 	HQShaderObjectD3D11 clearVShader, clearGShader, clearPShader;//shaders for clearing viewport
 #if !HQ_D3D_CLEAR_VP_USE_GS

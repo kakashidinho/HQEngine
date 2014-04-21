@@ -69,6 +69,9 @@ struct HQTextureD3D11 :public HQBaseTexture
 
 	typedef HQLinkedList<hquint32, HQPoolMemoryManager> SlotList; //list of texture slots that this texture is bound to
 	SlotList boundSlots;
+	SlotList uavBoundSlots;
+
+	static HQSharedPtr<HQPoolMemoryManager> s_boundSlotsMemManager;//important! must be created before any creation of texture object
 };
 
 class HQTextureManagerD3D11:public HQBaseTextureManager
@@ -106,8 +109,9 @@ public:
 
 	void UnbindTextureFromAllTextureSlots(const HQSharedPtr<HQBaseTexture> &pTexture);//unbind the given texture from every texture slots
 
-	void UnbindTextureFromComputeShaderUAVSlot(hquint32 slot);//unbind any texture from compute shader's UAV slot {slot}
+	void OnBufferBindToComputeShaderUAVSlot(hquint32 slot);//unbind any texture from compute shader's UAV slot {slot}
 
+	void UnbindTextureFromAllUAVSlots(const HQSharedPtr<HQBaseTexture> &pTexture);//unbind texture from all UAV slots
 
 	static DXGI_FORMAT GetD3DFormat(HQTextureUAVFormat format);
 private:
@@ -128,7 +132,7 @@ private:
 	};
 	TextureSlot textureSlots[4][D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
 
-	HQSharedPtr<HQBaseTexture> textureUAVSlots[2][D3D11_1_UAV_SLOT_COUNT];
+	TextureSlot textureUAVSlots[2][D3D11_1_UAV_SLOT_COUNT];
 
 };
 #endif

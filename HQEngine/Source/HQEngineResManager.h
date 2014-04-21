@@ -48,16 +48,14 @@ protected:
 //resource manager
 class HQEngineResManager {
 public:
+	///
+	///Set file's suffix name. When loading a resource file, if it cannot be not found, 
+	///resource manager will try to load another file with specified suffix name. 
+	///For example, if suffix set to "GL", if a file "resource.script" can't be found, 
+	///"resourceGL.script" will be searched. By default, suffix is renderer type passing to HQEngineApp's Window creation functions
+	///
+	virtual void SetSuffix(const char* suffix) = 0;
 	
-
-	/*XML format
-	<resource>
-		<texture>
-		</texture>
-		<shader>
-		</shader>
-	</resources>
-	*/
 	virtual HQReturnVal AddResourcesFromFile(const char* fileName) = 0;
 	virtual HQEngineResLoadSession* BeginAddResourcesFromFile(const char* fileName) = 0;
 	virtual bool HasMoreResources(HQEngineResLoadSession* session) = 0;
@@ -125,6 +123,17 @@ public:
 									 const char *name,
 									 HQShaderType type,
 									 const char * source_file) = 0;
+
+
+	///
+	///{vertexShaderResourceName} is ignored in D3D9 device. if {vertexShaderResourceName} = NULL, this method will create 
+	///input layout for fixed function shader. D3D11 & GL only accepts the following layout: 
+	///position (x,y,z); color (r,g,b,a); normal (x,y,z); texcoords (u,v)
+	///
+	virtual HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs,
+		hq_uint32 numAttrib,
+		const char* vertexShaderResourceName,
+		HQVertexLayout **pInputLayoutID) = 0;
 
 	virtual HQEngineTextureResource * GetTextureResource(const char* name) = 0;
 	virtual HQEngineShaderResource * GetShaderResource(const char* name) = 0;

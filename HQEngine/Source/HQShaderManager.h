@@ -328,20 +328,26 @@ public:
 #endif
 
 	///
-	///create a buffer containing indirect compute arguments. 
+	///create a UAV buffer. In Direct3D11 shader, this buffer will be viewed as RWStructuredBuffer. 
+	///buffer contains an array of {numElements} elements, each element is {elementSize} in size. 
+	///Note that this buffer cannot be used as vertex buffer,index buffer or indirect draw/compute buffer.
+	///
+	virtual HQReturnVal CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut) = 0;
+	///
+	///create a buffer containing indirect compute arguments. In Direct3D11 shader, this buffer will be viewed as RWBuffer<uint>. 
 	///buffer contains an array of {numElements} elements, each element is in form {uint numGroupX, uint numGroupY, uint numGroupZ}
 	///
 	virtual HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut) = 0;
 
 	///
-	///create a buffer containing indirect draw instance arguments. 
+	///create a buffer containing indirect draw instance arguments. In Direct3D11 shader, this buffer will be viewed as RWBuffer<uint>. 
 	///buffer contains an array of {numElements} elements, each element is in form 
 	///{uint number_of_vertices_per_instance, uint number_of_instances, uint first_vertex, uint first_instance}
 	///
 	virtual HQReturnVal CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut) = 0;
 
 	///
-	///create a buffer containing indirect draw indexed instance arguments . 
+	///create a buffer containing indirect draw indexed instance arguments. In Direct3D11 shader, this buffer will be viewed as RWBuffer<uint>. 
 	///buffer contains an array of {numElements} elements, each element is in form 
 	///{uint number_of_indices_per_instance, uint number_of_instances, uint first_index, uint/int first_vertex, uint first_instance}
 	///
@@ -350,7 +356,7 @@ public:
 	///
 	///Set UAV buffer to be read and written by compute shader. 
 	///Direct3D 11: {slot} is UAV slot. max number of slots is 64. 
-	///			Note: setting this will unset previously bound UAV texture from the same slot. 
+	///			Note: setting this will unset previously bound UAV texture from the same slot as well as unset the buffer from every vertes stream's slots 
 	///				  indirect compute/draw buffer is viewed as RWBuffer<uint> in shader, while vertex/index is viewed as RWByteAddressBuffer
 	///OpenGL: {slot} is shader storage slot. max number of slots is obtained by HQRenderDevice::GetMaxShaderBufferUAVs(). 
 	///			Note: buffer is viewed as storage block in shader

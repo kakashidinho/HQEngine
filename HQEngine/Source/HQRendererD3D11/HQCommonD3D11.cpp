@@ -11,6 +11,8 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceD3D11PCH.h"
 #include "HQCommonD3D11.h"
 
+/*----------HQGenericBufferD3D11---------------*/
+HQSharedPtr<HQPoolMemoryManager> HQGenericBufferD3D11::s_uavBoundSlotsMemManager;
 
 /*-------------------HQBufferD3D11-------------------------*/
 HQReturnVal HQBufferD3D11::Unmap()

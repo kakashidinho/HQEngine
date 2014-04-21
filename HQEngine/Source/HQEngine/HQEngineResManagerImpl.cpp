@@ -140,6 +140,12 @@ HQEngineResManagerImpl::~HQEngineResManagerImpl()
 	this->Log("Released!");
 }
 
+void HQEngineResManagerImpl::SetSuffix(const char* suffix)
+{
+	if (suffix)
+		m_suffix = suffix;
+}
+
 HQReturnVal HQEngineResManagerImpl::AddResourcesFromFile(const char* fileName)
 {
 	HQEngineResLoadSession * session = this->BeginAddResourcesFromFile(fileName);
@@ -159,13 +165,20 @@ HQReturnVal HQEngineResManagerImpl::AddResourcesFromFile(const char* fileName)
 	return re;
 }
 
-HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromFile(const char* fileName)
+HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromFile(const char* raw_fileName)
 {
-	HQDataReaderStream* data_stream = HQEngineApp::GetInstance()->OpenFileForRead(fileName);
+	HQDataReaderStream* data_stream = HQEngineApp::GetInstance()->OpenFileForRead(raw_fileName);
 	if (data_stream == NULL)
 	{
-		this->Log("Error : Could not load resources from file %s! Could not open the file!", fileName);
-		return NULL;
+		//try again with suffix
+		std::string fileName = raw_fileName;
+		HQEngineHelper::InsertFileNameSuffix(fileName, m_suffix);
+		data_stream = HQEngineApp::GetInstance()->OpenFileForRead(fileName.c_str());
+		if (data_stream == NULL)//still failed
+		{
+			this->Log("Error : Could not load resources from file %s! Could not open the file!", raw_fileName);
+			return NULL;
+		}
 	}
 
 	//prepare the parser
@@ -176,7 +189,7 @@ HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromFile(const 
 	//now parse the script
 	if (hqengine_res_parser_scan())
 	{
-		this->Log("Error : Could not load resources from file %s! %s", fileName, hqengine_res_parser_log_stream->str().c_str());
+		this->Log("Error : Could not load resources from file %s! %s", raw_fileName, hqengine_res_parser_log_stream->str().c_str());
 		HQEngineHelper::GlobalPoolReleaseAll();
 		data_stream->Release();
 		return NULL;
@@ -186,7 +199,7 @@ HQEngineResLoadSession* HQEngineResManagerImpl::BeginAddResourcesFromFile(const 
 	HQEngineResParserNode *result = hqengine_res_parser_root_result;
 	hqengine_res_parser_root_result = NULL;
 
-	this->Log("Resource loading session from file '%s' started!", fileName);
+	this->Log("Resource loading session from file '%s' started!", raw_fileName);
 
 	return HQ_NEW HQEngineResLoadSessionImpl(result);
 }
@@ -543,6 +556,8 @@ HQReturnVal HQEngineResManagerImpl::LoadTextureUAV(const HQEngineResParserNode* 
 		format = HQ_UAVTFMT_R32G32B32A32_UINT;
 	else if (!strcmp(formatStr, "rgba16f"))
 		format = HQ_UAVTFMT_R16G16B16A16_FLOAT;
+	else if (!strcmp(formatStr, "rgba8ub"))
+		format = HQ_UAVTFMT_R8G8B8A8_UNORM;
 	else
 	{
 		Log("Error : %d : UAV texture has invalid format info!", texture_info->GetSourceLine());
@@ -951,4 +966,20 @@ void HQEngineResManagerImpl::RemoveAllResources()
 {
 	m_textures.RemoveAll();
 	m_shaders.RemoveAll();
+}
+
+
+HQReturnVal HQEngineResManagerImpl::CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs,
+	hq_uint32 numAttrib,
+	const char* vertexShaderName,
+	HQVertexLayout **pInputLayoutID)
+{
+	HQEngineShaderResource* vertexShader = this->GetShaderResource(vertexShaderName);
+	HQEngineShaderResImpl * vshaderImpl = (HQEngineShaderResImpl*)vertexShader;
+	HQShaderObject* vid = vshaderImpl != NULL ? vshaderImpl->GetShader() : NULL;
+
+	return HQEngineApp::GetInstance()->GetRenderDevice()->GetVertexStreamManager()
+		->CreateVertexInputLayout(vAttribDescs, numAttrib, vid, pInputLayoutID);
+
+
 }

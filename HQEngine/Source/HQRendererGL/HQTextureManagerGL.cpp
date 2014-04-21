@@ -550,6 +550,9 @@ namespace helper
 		case HQ_UAVTFMT_R32G32B32A32_UINT:
 			format = GL_RGBA_INTEGER; type = GL_UNSIGNED_INT;
 			return GL_RGBA32UI;
+		case HQ_UAVTFMT_R8G8B8A8_UNORM:
+			format = GL_RGBA; type = GL_UNSIGNED_BYTE;
+			return GL_RGBA8;
 		default:
 			return 0;
 		}

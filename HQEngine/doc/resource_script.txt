@@ -41,7 +41,7 @@ Texture resource format, can be one of the following:
 		width=100
 		height=100
 		has_mipmap=true/false  //default is false
-		format=r32f/r16f/rgba32f/rgba16f/rg32f/rg16f/r32i/r32ui/rg32i/rg32ui/rgba32i/rgba32ui
+		format=r32f/r16f/rgba32f/rgba16f/rg32f/rg16f/r32i/r32ui/rg32i/rg32ui/rgba32i/rgba32ui/rgba8ub
 	}
 	
 Shader resource format:

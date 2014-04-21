@@ -120,6 +120,7 @@
       <PrecompiledHeaderFile>HQDeviceD3D11PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>HQUtilMathD.lib;$(SolutionDir)..\..\VS2008\Libs\PVRTexLib/Windows_x86_32/Dll/PVRTexLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -130,6 +131,9 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

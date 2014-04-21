@@ -481,6 +481,7 @@ typedef enum _HQTextureUAVFormat {
 	HQ_UAVTFMT_R32_UINT,
 	HQ_UAVTFMT_R32G32_UINT,
 	HQ_UAVTFMT_R32G32B32A32_UINT,
+	HQ_UAVTFMT_R8G8B8A8_UNORM, //8 bit per channel, when use as input, each channel will be converted to floating point between [0..1] in shader. while in Direct3d11, when use as UAV, it will be uint format instead of float4
 	HQ_UAVTFMT_FORCE_DWORD = 0xffffffff
 } HQTextureUAVFormat;
 
@@ -640,5 +641,6 @@ public:
 
 #include "HQRendererCoreTypeInline.h"
 #include "HQRendererCoreTypeFixedFunction.h"
+#include "HQVertexAttribute.h"
 
 #endif

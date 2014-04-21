@@ -1,0 +1,9 @@
+resources {
+	texture_uav "color_texture" {
+		width=2
+		height=2
+			
+		format=rgba8ub
+		
+	}
+}

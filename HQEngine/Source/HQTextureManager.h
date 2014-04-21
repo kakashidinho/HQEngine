@@ -32,7 +32,7 @@ public:
 	///Direct3d : {slot} = {texture slot} bitwise OR với enum HQShaderType để chỉ  {texture slot} thuộc shader stage nào. 
 	///			Ví dụ muốn gắn texture vào texture slot 3 của vertex shader , ta truyền tham số {slot} = (3 | HQ_VERTEX_SHADER). 
 	///			Trong direct3d 9 {texture slot} là slot của sampler unit .Shader model 3.0 : pixel shader có 16 sampler. vertex shader có 4 sampler. Các model khác truy vấn bằng method GetMaxShaderStageSamplers() của render device. 
-	///			Trong direct3d 10/11 : {texture slot} là slot shader resource view.Mỗi shader stage có 128 slot.  
+	///			Trong direct3d 10/11 : {texture slot} là slot shader resource view.Mỗi shader stage có 128 slot. Lưu ý: texture sẽ bị unset khỏi mọi UAV slot  
 	///OpenGL : {slot} là slot của sampler unit.{slot} nằm trong khoảng từ 0 đến số trả về từ method GetMaxShaderSamplers() của render device trừ đi 1.Các texture khác loại (ví dụ cube & 2d texture) có thể gắn cùng vào 1 slot.  
 	///Lưu ý : -pixel shader dùng trung sampler unit với fixed function.Với openGL , các slot đầu tiên trùng với các slot của fixed function sampler. 
 	///		   -pass NULL sẽ unset texture ra khỏi slot (Trong OpenGL, tất cả cube/2d/buffer texture đều bị unset)
@@ -41,7 +41,7 @@ public:
 	
 	///
 	///Direct3d : Trong direct3d 9 {slot} là slot của sampler unit trong pixel shader.Shader model 3.0 : pixel shader có 16 sampler. Các model khác truy vấn bằng method GetMaxShaderStageSamplers(HQ_PIXEL_SHADER) của render device. 
-	///			Trong direct3d 10/11 : {slot} là slot pixel shader resource view.Mỗi shader stage có 128 slot.  
+	///			Trong direct3d 10/11 : {slot} là slot pixel shader resource view.Mỗi shader stage có 128 slot. Lưu ý: texture sẽ bị unset khỏi mọi UAV slot
 	///OpenGL : {slot} là slot của sampler unit.{slot} nằm trong khoảng từ 0 đến số trả về từ method GetMaxShaderSamplers() của render device trừ đi 1.Các texture khác loại (ví dụ cube & 2d texture) có thể gắn cùng vào 1 slot.  
 	///Lưu ý : -pixel shader dùng trung sampler unit với fixed function.Với openGL , các slot đầu tiên trùng với các slot của fixed function sampler. 
 	///		   -pass NULL sẽ unset texture ra khỏi slot (Trong OpenGL, tất cả cube/2d/buffer texture đều bị unset)

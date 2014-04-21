@@ -60,6 +60,15 @@ char * GlobalPoolMallocString(const char* s, size_t len)
 	return newStr;
 }
 
+void InsertFileNameSuffix(std::string & fileName, const std::string& suffix)
+{
+	size_t pos = fileName.find_last_of('.');
+	if (pos == std::string::npos)
+		fileName += suffix;
+	else
+		fileName.insert(pos, suffix);
+}
+
 /*------------C functions for data stream-----------------*/
 void seek_datastream (void* fileHandle, long offset, int origin)
 {

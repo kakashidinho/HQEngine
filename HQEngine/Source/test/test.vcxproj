@@ -114,6 +114,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <OutputFile>$(SolutionDir)\Output\$(Configuration)\$(ProjectName).exe</OutputFile>
@@ -125,6 +126,9 @@
     <PostBuildEvent>
       <Command>xcopy /q /y $(SolutionDir)..\..\VS2008\Libs\developer_runtime_dll\*.*  "$(SolutionDir)\Output\$(Configuration)\"</Command>
     </PostBuildEvent>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

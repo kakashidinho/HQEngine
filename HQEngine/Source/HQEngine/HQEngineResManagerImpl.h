@@ -89,6 +89,8 @@ public:
 	HQEngineResManagerImpl(HQLogStream* stream, bool flushLog);
 	~HQEngineResManagerImpl();
 
+	virtual void SetSuffix(const char* suffix);
+
 	virtual HQReturnVal AddResourcesFromFile(const char* fileName);
 	virtual HQEngineResLoadSession* BeginAddResourcesFromFile(const char* fileName);
 	virtual bool HasMoreResources(HQEngineResLoadSession* session);
@@ -135,6 +137,11 @@ public:
 	virtual HQEngineTextureResource * GetTextureResource(const char* name);
 	virtual HQEngineShaderResource * GetShaderResource(const char* name);
 
+	virtual HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs,
+		hq_uint32 numAttrib,
+		const char* vertexShaderResourceName,
+		HQVertexLayout **pInputLayoutID);
+
 	const HQSharedPtr<HQEngineTextureResImpl>& GetTextureResourceSharedPtr(const char* name);
 	const HQSharedPtr<HQEngineShaderResImpl>& GetShaderResourceSharedPtr(const char* name);
 
@@ -151,6 +158,8 @@ private:
 
 	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineTextureResImpl> > m_textures;
 	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineShaderResImpl> > m_shaders;
+
+	std::string m_suffix;
 };
 
 

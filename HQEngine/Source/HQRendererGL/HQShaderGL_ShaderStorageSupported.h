@@ -65,11 +65,21 @@ struct HQDrawIndirectBufferGL: public HQShaderStorageBufferGL{
 	virtual void BindBuffer();
 };
 
+/*----------------------HQGeneralPurposeStorageBufferGL---------------------------*/
+struct HQGeneralPurposeStorageBufferGL : public HQShaderStorageBufferGL{
+	HQGeneralPurposeStorageBufferGL(hq_uint32 elemSize, hquint32 numElems);
+	~HQGeneralPurposeStorageBufferGL();
+
+	virtual void BindBuffer();
+};
+
 /*------------HQBaseShaderManagerGL_StorageBlockSupprted-------------------*/
 class HQBaseShaderManagerGL_StorageBlockSupprted : public HQBaseShaderManagerGL_UBO{
 public:
 	HQBaseShaderManagerGL_StorageBlockSupprted(HQLogStream* logFileStream, const char * logPrefix, bool flushLog);
 	~HQBaseShaderManagerGL_StorageBlockSupprted();
+
+	HQReturnVal CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut);
 
 	HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut);
 
@@ -82,10 +92,21 @@ public:
 	HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer);
 	void RemoveAllBufferUAVs();
 
+	void BindShaderStorageBuffer(GLuint buffer){
+		if (this->boundStorageBuffer != buffer){
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+			this->boundStorageBuffer = buffer;
+		}
+	}
+
+	GLuint GetBoundShaderStorageBuffer() const { return this->boundStorageBuffer; }
+
 private:
 	HQDeviceGL *pMasterDevice;
 
 	HQIDItemManager<HQShaderStorageBufferGL> shaderStorageBuffers;
+
+	GLuint boundStorageBuffer;
 
 	HQSharedPtr<HQBufferGL> *shaderStorageBufferSlots;//binding slots for shader storage buffer
 };

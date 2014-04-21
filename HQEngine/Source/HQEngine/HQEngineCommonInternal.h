@@ -82,6 +82,9 @@ void GlobalPoolReleaseAll();
 ///
 char * GlobalPoolMallocString(const char* s, size_t len);
 
+
+void InsertFileNameSuffix(std::string & fileName, const std::string& suffix);
+
 //C functions for data stream
 void seek_datastream (void* fileHandle, long offset, int origin);
 size_t tell_datastream (void* fileHandle);
@@ -94,6 +97,7 @@ HQENGINE_API void rewind( HQDataReaderStream* stream );
 HQENGINE_API int fgetc(HQDataReaderStream *stream);
 HQENGINE_API size_t fread ( void * ptr, size_t size, size_t count, HQDataReaderStream * stream );
 HQENGINE_API int fclose ( HQDataReaderStream * stream );
+
 
 };//namespace HQEngineHelper
 

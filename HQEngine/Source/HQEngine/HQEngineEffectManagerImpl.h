@@ -279,16 +279,13 @@ public:
 	HQEngineEffectManagerImpl(HQLogStream* stream, bool flushLog);
 	virtual ~HQEngineEffectManagerImpl() ;
 
+	virtual void SetSuffix(const char* suffix);
+
 	virtual HQReturnVal AddEffectsFromFile(const char* fileName);
 	virtual HQEngineEffectLoadSession* BeginAddEffectsFromFile(const char* fileName);
 	virtual bool HasMoreEffects(HQEngineEffectLoadSession* session);
 	virtual HQReturnVal AddNextEffect(HQEngineEffectLoadSession* session);
 	virtual HQReturnVal EndAddEffects(HQEngineEffectLoadSession* session);///for releasing loading session
-
-	virtual HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs , 
-												hq_uint32 numAttrib ,
-												HQEngineShaderResource* vertexShader , 
-												HQVertexLayout **pInputLayoutID);
 
 	virtual HQReturnVal SetTexture(hq_uint32 slot, HQEngineTextureResource* texture);
 	virtual HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQEngineTextureResource* texture);
@@ -322,6 +319,8 @@ private:
 	typedef HQClosedPtrKeyHashTable<const HQEngineSamplerStateWrapper::CreationParams*, HQSharedPtr<HQEngineSamplerStateWrapper> > SamplerStateTable;
 	typedef HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderEffectImpl> > EffectTable;
 
+	HQRenderDevice *m_pRDevice;
+
 	ProgramTable m_shaderPrograms;//shader programs
 	RTGroupTable m_renderTargetGroups;//render targets. 
 	DSBufferTable m_dsBuffers;//depth stencil buffers
@@ -340,6 +339,8 @@ private:
 	HQClosedStringPrimeHashTable<HQTexAddressMode> m_taddrModeMap;
 	HQClosedStringPrimeHashTable<HQFilterMode> m_filterModeMap;
 	HQClosedStringPrimeHashTable<HQDepthStencilFormat> m_dsFmtMap;
+
+	std::string m_suffix;
 
 	bool m_isGL;
 };

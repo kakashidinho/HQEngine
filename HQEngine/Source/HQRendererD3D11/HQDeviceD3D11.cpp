@@ -1264,6 +1264,8 @@ HQReturnVal HQDeviceD3D11::DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffe
 {
 	HQDrawIndirectBufferD3D11* pD3DBuffer = static_cast<HQDrawIndirectBufferD3D11*> (buffer);
 
+	static_cast<HQShaderManagerD3D11*> (shaderMan)->UnbindBufferFromAllUAVSlots(pD3DBuffer);//make sure it will not be bound to any UAV slot
+
 	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
 
 	pDevContext->DrawInstancedIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
@@ -1275,6 +1277,8 @@ HQReturnVal HQDeviceD3D11::DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArg
 {
 	HQDrawIndirectBufferD3D11* pD3DBuffer = static_cast<HQDrawIndirectBufferD3D11*> (buffer);
 
+	static_cast<HQShaderManagerD3D11*> (shaderMan)->UnbindBufferFromAllUAVSlots(pD3DBuffer);//make sure it will not be bound to any UAV slot
+	
 	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
 
 	pDevContext->DrawIndexedInstancedIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
@@ -1321,6 +1325,8 @@ HQReturnVal HQDeviceD3D11::DispatchComputeIndirect(HQComputeIndirectArgsBuffer* 
 {
 	HQDrawIndirectBufferD3D11* pD3DBuffer = static_cast<HQDrawIndirectBufferD3D11*> (buffer);
 
+	static_cast<HQShaderManagerD3D11*> (shaderMan)->UnbindBufferFromAllUAVSlots(pD3DBuffer);//make sure it will not be bound to any UAV slot
+	
 	pDevContext->DispatchIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
 
 	return HQ_OK;
