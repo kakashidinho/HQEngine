@@ -34,6 +34,18 @@
     <None Include="resourcesCommon.script">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="compute-shader.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="resourcesGL.script">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="draw-shader.glslf">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="draw-shader.glslv">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="compute-shader.hlsl">

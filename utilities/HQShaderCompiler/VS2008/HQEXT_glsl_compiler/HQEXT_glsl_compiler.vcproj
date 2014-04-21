@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
-				PreprocessorDefinitions="GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;MOJOSHADER_NO_VERSION_INCLUDE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -121,7 +121,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
-				PreprocessorDefinitions="GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;MOJOSHADER_NO_VERSION_INCLUDE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -198,7 +198,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
-				PreprocessorDefinitions="GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;MOJOSHADER_NO_VERSION_INCLUDE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -277,7 +277,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
-				PreprocessorDefinitions="GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;MOJOSHADER_NO_VERSION_INCLUDE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -355,7 +355,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
-				PreprocessorDefinitions="GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;MOJOSHADER_NO_VERSION_INCLUDE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -434,7 +434,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
-				PreprocessorDefinitions="GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;MOJOSHADER_NO_VERSION_INCLUDE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -512,7 +512,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
-				PreprocessorDefinitions="GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;MOJOSHADER_NO_VERSION_INCLUDE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -591,7 +591,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\HQEngine\Source\HQRendererGL\glew\include&quot;"
-				PreprocessorDefinitions="GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;MOJOSHADER_NO_VERSION_INCLUDE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -658,6 +658,54 @@
 				RelativePath="..\..\Source\HQEXT_glsl_compiler\hqext_glsl_compiler.cpp"
 				>
 			</File>
+			<Filter
+				Name="HQEngine"
+				>
+				<File
+					RelativePath="..\..\..\..\HQEngine\Source\HQEngine\HQDefaultFileManager.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="HQRendererGL"
+				>
+				<File
+					RelativePath="..\..\..\..\HQEngine\Source\HQRendererGL\HQShaderGL_GLSL_VarParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\HQEngine\Source\HQRendererGL\HQShaderGL_GLSL_VarParser.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mojoshader"
+				>
+				<File
+					RelativePath="..\..\..\..\ThirdParty-mod\mojoshader\mojoshader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\ThirdParty-mod\mojoshader\mojoshader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\ThirdParty-mod\mojoshader\mojoshader_common.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\ThirdParty-mod\mojoshader\mojoshader_internal.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\ThirdParty-mod\mojoshader\mojoshader_lexer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\ThirdParty-mod\mojoshader\mojoshader_preprocessor.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

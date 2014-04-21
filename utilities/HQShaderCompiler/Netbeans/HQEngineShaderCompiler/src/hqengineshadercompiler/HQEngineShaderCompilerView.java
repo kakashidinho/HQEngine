@@ -483,7 +483,7 @@ public class HQEngineShaderCompilerView extends FrameView {
         glslVersionTextField.setEnabled(false);
         glslVersionTextField.setName("glslVersionTextField"); // NOI18N
 
-        glslShaderTypeList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "GL_VERTEX_SHADER", "GL_GEOMETRY_SHADER", "GL_FRAGMENT_SHADER", "GL_TESS_CONTROL_SHADER", "GL_TESS_EVALUATION_SHADER" }));
+        glslShaderTypeList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "GL_VERTEX_SHADER", "GL_GEOMETRY_SHADER", "GL_FRAGMENT_SHADER", "GL_TESS_CONTROL_SHADER", "GL_TESS_EVALUATION_SHADER", "GL_COMPUTE_SHADER" }));
         glslShaderTypeList.setEnabled(false);
         glslShaderTypeList.setName("glslShaderTypeList"); // NOI18N
 
@@ -825,12 +825,13 @@ public class HQEngineShaderCompilerView extends FrameView {
                             "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                         break ;
                     }
+                    /*
                     if (this.glslVersionTextField.getText().equals(""))
                     {
                         javax.swing.JOptionPane.showMessageDialog(this.getFrame() , "glsl version string is empty!",
                             "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                         break ;
-                    }
+                    }*/
                     glslMacros = this.glslMacrosTestField.getText();
                     glslMacros = glslMacros.replace(',', '\n');
                     glslMacros += "\n";

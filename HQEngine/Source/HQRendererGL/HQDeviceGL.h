@@ -279,6 +279,7 @@ protected:
 #endif
 
 	bool usingCoreProfile;
+	bool usingDebugContext;
 	HQDeviceEnumGL *pEnum;
 };
 

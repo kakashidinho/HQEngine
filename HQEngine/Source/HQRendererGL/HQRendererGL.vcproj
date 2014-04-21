@@ -753,6 +753,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
 						AssemblerOutput="2"
 					/>
 				</FileConfiguration>
@@ -761,7 +762,16 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
 						AssemblerOutput="4"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release noptimize|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -769,6 +779,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
 						AssemblerOutput="2"
 					/>
 				</FileConfiguration>
@@ -777,6 +788,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
 						AssemblerOutput="4"
 					/>
 				</FileConfiguration>
@@ -785,6 +797,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
 						AssemblerOutput="2"
 					/>
 				</FileConfiguration>
@@ -793,6 +806,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
 						AssemblerOutput="2"
 					/>
 				</FileConfiguration>

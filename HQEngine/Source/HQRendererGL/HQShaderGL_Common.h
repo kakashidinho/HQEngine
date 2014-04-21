@@ -24,7 +24,6 @@ COPYING.txt included with this distribution for more information.
 #ifdef GL_PROGRAM_PIPELINE_BINDING
 extern GLuint ge_shader_pipeline;
 #	define HQ_GLSL_SHADER_PIPELINE_DEFINED
-#	define HQ_GLSL_SHADER_PIPELINE_ID ge_shader_pipeline
 #endif
 
 #define useV USEVSHADER

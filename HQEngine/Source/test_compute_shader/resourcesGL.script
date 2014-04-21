@@ -1,0 +1,22 @@
+resources {
+	shader "compute-shader-cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		src="compute-shader.glsl" 			/* source file */
+		debug=true
+	}
+
+	shader "draw-shader-vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		src="draw-shader.glslv" 			/* source file */
+		debug=true
+	}
+
+	shader "draw-shader-ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		src="draw-shader.glslf" 			/* source file */
+		debug=true
+	}
+}

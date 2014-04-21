@@ -177,8 +177,8 @@ inline HQReturnVal HQBaseGLSLShaderPipelineController::ActiveProgramGLSL(HQShare
 
 	inactiveStages &= ~activeStages;
 
-	glUseProgramStages(HQ_GLSL_SHADER_PIPELINE_ID, activeStages, pProgram->programGLHandle);
-	glUseProgramStages(HQ_GLSL_SHADER_PIPELINE_ID, inactiveStages, 0);
+	glUseProgramStages(ge_shader_pipeline, activeStages, pProgram->programGLHandle);
+	glUseProgramStages(ge_shader_pipeline, inactiveStages, 0);
 
 	this->activeProgram = pProgram;
 	return HQ_OK;
@@ -194,7 +194,7 @@ inline HQReturnVal HQBaseGLSLShaderPipelineController::DeactiveProgramGLSL(HQSha
 inline HQReturnVal HQBaseGLSLShaderPipelineController::ActiveComputeShaderGLSL(HQSharedPtr<HQShaderObjectGL> &pShader)
 {
 #ifdef GL_COMPUTE_SHADER_BIT
-	glUseProgramStages(HQ_GLSL_SHADER_PIPELINE_ID, GL_COMPUTE_SHADER_BIT, pShader->shader);//shader is self-contained program
+	glUseProgramStages(ge_shader_pipeline, GL_COMPUTE_SHADER_BIT, pShader->shader);//shader is self-contained program
 	return HQ_OK;
 #else
 	return HQ_FAILED;
@@ -204,7 +204,7 @@ inline HQReturnVal HQBaseGLSLShaderPipelineController::ActiveComputeShaderGLSL(H
 inline HQReturnVal HQBaseGLSLShaderPipelineController::DeactiveComputeShaderGLSL(HQSharedPtr<HQShaderObjectGL> &pShader)
 {
 #ifdef GL_COMPUTE_SHADER_BIT
-	glUseProgramStages(HQ_GLSL_SHADER_PIPELINE_ID, GL_COMPUTE_SHADER_BIT, 0);
+	glUseProgramStages(ge_shader_pipeline, GL_COMPUTE_SHADER_BIT, 0);
 	return HQ_OK;
 #else
 	return HQ_FAILED;

@@ -105,7 +105,7 @@ HQReturnVal HQBaseShaderManagerGL_UBO::CreateUniformBuffer(hq_uint32 size , void
 		return HQ_FAILED_MEM_ALLOC;
 	}
 
-	return HQ_FAILED;
+	return HQ_OK;
 }
 HQReturnVal HQBaseShaderManagerGL_UBO::RemoveUniformBuffer(HQUniformBuffer* bufferID)
 {
@@ -130,7 +130,7 @@ HQReturnVal HQBaseShaderManagerGL_UBO::SetUniformBuffer(hq_uint32 slot ,  HQUnif
 		this->uBufferSlots[slot] = buffer;
 	}
 
-	return HQ_FAILED;
+	return HQ_OK;
 }
 
 #endif//ifdef HQ_GL_UNIFORM_BUFFER_DEFINED

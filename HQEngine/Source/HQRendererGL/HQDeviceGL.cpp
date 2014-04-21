@@ -88,8 +88,32 @@ PFNGLDRAWELEMENTSINDIRECT glDrawElementsIndirectWrapper;
 /*----------------------------------*/
 
 
-HQDeviceGL* g_pOGLDev=NULL;
+HQDeviceGL* g_pOGLDev = NULL;
 
+
+//debug callback
+#ifdef GL_DEBUG_SOURCE_API
+static void GLAPIENTRY HQGLDebugCallback(
+	GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar *message,
+	void *userParam)
+{
+	switch (source)
+	{
+	case GL_DEBUG_SOURCE_API: case GL_DEBUG_SOURCE_OTHER:
+		if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR)
+			g_pOGLDev->LogMessage(message);
+		break;
+	default:
+		//TO DO
+		break;
+	}
+}
+#endif//ifdef GL_DEBUG_SOURCE_API
 
 
 //***********************************
@@ -189,6 +213,7 @@ HQDeviceGL::HQDeviceGL(bool flushLog)
 	this->shaderMan = NULL;
 	this->stateMan = NULL;
 
+	this->usingDebugContext = false;
 	this->usingCoreProfile = false;//core profile will not supported some deprecated features
 
 #ifdef GL_DISPATCH_INDIRECT_BUFFER
@@ -636,6 +661,14 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 {
 	this->EnableVSyncNonSave(pEnum->vsync != 0);
 
+#ifdef GL_DEBUG_SOURCE_API
+	//enable debug output
+	if (this->usingDebugContext && GLEW_VERSION_4_3)
+	{
+		glDebugMessageCallback(HQGLDebugCallback, NULL);
+	}
+#endif//#ifdef GL_DEBUG_SOURCE_API
+
 #ifndef HQ_OPENGLES
 
 	if (!GLEW_VERSION_3_0)
@@ -723,6 +756,9 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 		glDrawElementsIndirectWrapper = glDrawElementsIndirectDummy;
 	}
 
+
+	//clear error
+	glGetError();
 }
 
 //***********************************
@@ -1077,27 +1113,40 @@ int HQDeviceGL::CreateContext( HQRenderDeviceInitInput input, const char* corePr
 		return 1;
 
 	//now crete context
-	if (!WGLEW_ARB_create_context_profile || version_major < 3)
+	if (!WGLEW_ARB_create_context_profile)
 	{
 		version_major = 1; version_minor = 0;
 		this->hRC = wglCreateContext(this->hDC);
 	}
 	else
 	{
+		if (version_major < 3)
+		{
+			version_major = 1; version_minor = 0;//backward compatiblity with opengl 1.0
+		}
 		int ctxtAttributes[] = {
 			WGL_CONTEXT_MAJOR_VERSION_ARB, version_major,//request core profile version major
 			WGL_CONTEXT_MINOR_VERSION_ARB, version_minor,//request core profile version minor
 			WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+			WGL_CONTEXT_FLAGS_ARB, 0,
 			0, 0,
 		};
+
+#if defined DEBUG || defined _DEBUG
+		ctxtAttributes[7] = WGL_CONTEXT_DEBUG_BIT_ARB;
+		this->usingDebugContext = true;
+#endif
 
 		this->hRC = wglCreateContextAttribsARB(this->hDC, NULL, ctxtAttributes);
 		if (this->hRC == NULL)
 		{
+			this->usingDebugContext = false;
 			//retry without core profile
-			this->Log("Warning : Cannot create device using version %d.%d core profile!", version_major, version_minor);
-			version_major = 1; version_minor = 0;
-
+			if (version_major >= 3)
+			{
+				this->Log("Warning : Cannot create device using version %d.%d core profile!", version_major, version_minor);
+				version_major = 1; version_minor = 0;
+			}
 			this->hRC = wglCreateContext(this->hDC);
 		}
 	}

@@ -1658,6 +1658,8 @@ HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAV
 		return HQ_FAILED;
 	}
 
+	glGetError();//clear previous errors
+
 	hquint32 numMipmaps = 1;
 	if (hasMipmaps)
 		numMipmaps = HQBaseTextureManager::CalculateFullNumMipmaps(width, height);//full range mipmap level

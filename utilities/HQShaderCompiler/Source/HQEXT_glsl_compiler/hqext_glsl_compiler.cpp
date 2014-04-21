@@ -8,13 +8,19 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#define _CRT_SECURE_NO_WARNINGS
 #include "jnicompilerheader.h"
+
+#include "../../../../HQEngine/Source/HQEngine/HQDefaultFileManager.h"
+#include "../../../../HQEngine/Source/HQRendererGL/HQShaderGL_GLSL_VarParser.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <string>
+#include <sstream>
+
+#define PREPROCESS_FILE
+
 #ifdef __APPLE__
 
 #define GL_GEOMETRY_SHADER 0x8DD9
@@ -222,6 +228,9 @@ JNIEXPORT jstring JNICALL Java_hqengineshadercompiler_HQEngineShaderCompilerView
 	case 4:
 		shaderTypeGL = GL_TESS_EVALUATION_SHADER;
 		break;
+	case 5: 
+		shaderTypeGL = GL_COMPUTE_SHADER;
+		break;
 	}
 
 
@@ -313,9 +322,86 @@ JNIEXPORT jstring JNICALL Java_hqengineshadercompiler_HQEngineShaderCompilerView
 	if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
 	{
 		if (version_number < 140)
-			uniform_buffer_extension_line = "#extension GL_ARB_uniform_buffer_object : enable\nlayout(std140) uniform;\n";
+			uniform_buffer_extension_line = "#extension GL_ARB_uniform_buffer_object : enable\n";
 	}
 
+	std::stringstream message;
+
+#ifdef PREPROCESS_FILE
+
+	/*--------preprocess code-------------*/
+	{
+		HQDefaultFileManager includeFileManager;
+		HQLoggableObject nullLogger("", false, 1);
+		HQVarParserGL preprocessor(&nullLogger);
+
+		//combine the code
+		std::string codeToPreprocess;
+		if (versionDeclare != NULL)//use version in source if user doesn't specify any in command arguments
+			codeToPreprocess = versionDeclare;
+		else
+			codeToPreprocess = version_string_in_src;
+		if (shaderTypeGL == GL_VERTEX_SHADER)//vertex attribute semantic keywords
+			codeToPreprocess += semanticKeywords;
+
+		codeToPreprocess += cMacros;
+		codeToPreprocess += prefDefExtVersion;
+		codeToPreprocess += samplerKeywords;
+		codeToPreprocess += uniform_buffer_extension_line +
+			processed_src;
+
+		//find source file's containing directory
+		std::string source_file_std_string = cfileName;
+		std::string containingFoler;
+
+		//find last '/' or '\\'
+		size_t pos1 = source_file_std_string.find_last_of('/');
+		size_t pos2 = source_file_std_string.find_last_of('\\');
+		size_t last_slash;
+		if (pos1 != std::string::npos)
+		{
+			last_slash = pos1;
+			if (pos2 != std::string::npos && pos2 > pos1)
+				last_slash = pos2;
+		}
+		else
+			last_slash = pos2;
+
+		if (last_slash != std::string::npos)
+		{
+			containingFoler = source_file_std_string.substr(0, last_slash);
+			includeFileManager.AddFirstSearchPath(containingFoler.c_str());
+		}
+
+		//now preprocess
+		preprocessor.Parse(codeToPreprocess.c_str(), &includeFileManager, "", NULL,
+			processed_src, true, NULL, NULL, NULL);
+
+		//print preprocess code
+		hquint32 line = 1;
+		char c;
+		message << "preprocessed code:\n";
+		message << line << ": ";
+		for (hquint32 i = 0; i < processed_src.size(); ++i)
+		{
+			c = processed_src[i];
+			message << c;
+			if (c == '\n')
+			{
+				line ++;
+				message << line << ": ";
+			}
+		}
+
+		message << "\n";
+	}
+
+
+	//now send to opengl
+	const GLchar* sourceArray[] = {
+		processed_src.c_str()
+	};
+#else
 	const GLchar* sourceArray[] = {
 		version_string_in_src.c_str(),
 		cMacros,
@@ -330,10 +416,12 @@ JNIEXPORT jstring JNICALL Java_hqengineshadercompiler_HQEngineShaderCompilerView
 		sourceArray[0] = versionDeclare;
 	if (shaderTypeGL != GL_VERTEX_SHADER)
 		sourceArray[3] = "";//only vertex shader need sematic definitions
-
+#endif
 	jstring result;
 
-	glShaderSource(shader, 8, (const GLchar**)sourceArray, NULL);
+	int sourceSize = sizeof(sourceArray) / sizeof(GLchar*);
+
+	glShaderSource(shader, sourceSize, (const GLchar**)sourceArray, NULL);
 	glCompileShader(shader);
 
 
@@ -350,20 +438,22 @@ JNIEXPORT jstring JNICALL Java_hqengineshadercompiler_HQEngineShaderCompilerView
         glGetShaderInfoLog(shader, infologLength, &charsWritten, infoLog);
 
 		if (!strcmp(infoLog , ""))
-			result = env->NewStringUTF("compilation succeeded!");
+			message << "compilation succeeded!\n";
 		else
-			result = env->NewStringUTF(infoLog);
+			message << infoLog << "\n";
 
         free(infoLog);
     }
 	else
-		result = env->NewStringUTF("compilation succeeded!");
+		message << "compilation succeeded!\n";
 
 	if (versionDeclare != NULL)
 		delete [] versionDeclare;
 	delete[] source;
 	glDeleteShader(shader);
 	env->ReleaseStringUTFChars(macros , cMacros);
+	
+	result = env->NewStringUTF(message.str().c_str());
 
 	return result;
 }

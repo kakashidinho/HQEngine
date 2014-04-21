@@ -8,7 +8,11 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#include "HQDeviceGLPCH.h"
+#define MOJOSHADER_NO_VERSION_INCLUDE
+#include "../../../ThirdParty-mod/mojoshader/mojoshader.h" //for preprocessor
+
+#include "HQShaderGL_GLSL_VarParser.h"
+
 #define VERTEX_SEMANTIC_START 1000
 #define COMMENT_START 200
 #define COMMENTLINE 201
@@ -23,10 +27,6 @@ COPYING.txt included with this distribution for more information.
 #define ZERO_NUMBER_START 20000
 #define DEC_NUMBER_START 30000
 
-#define MOJOSHADER_NO_VERSION_INCLUDE
-#include "../../../ThirdParty-mod/mojoshader/mojoshader.h" //for preprocessor
-
-#include "HQShaderGL_GLSL_VarParser.h"
 
 
 /*-------------read data from file-------------------------*/

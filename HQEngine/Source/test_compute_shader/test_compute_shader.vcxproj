@@ -96,9 +96,13 @@
     <Text Include="API.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="compute-shader.glsl" />
+    <None Include="draw-shader.glslv" />
+    <None Include="draw-shader.glslf" />
     <None Include="effects.script" />
     <None Include="resourcesCommon.script" />
     <None Include="resourcesD3D11.script" />
+    <None Include="resourcesGL.script" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="compute-shader.hlsl">

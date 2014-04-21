@@ -685,8 +685,9 @@ GLuint ge_shader_pipeline = 0;
 HQBaseGLSLShaderPipelineController::HQBaseGLSLShaderPipelineController()
 : HQBaseGLSLShaderController()
 {
-	glGenProgramPipelines(1, &ge_shader_pipeline);
-	glBindProgramPipeline(HQ_GLSL_SHADER_PIPELINE_ID);
+	if (ge_shader_pipeline == 0)
+		glGenProgramPipelines(1, &ge_shader_pipeline);
+	glBindProgramPipeline(ge_shader_pipeline);
 #if HQ_GLSL_SHADER_VERIFY_PIPELINE
 	GLint pipeline;
 	glGetIntegerv(GL_PROGRAM_PIPELINE_BINDING, &pipeline);
@@ -696,6 +697,8 @@ HQBaseGLSLShaderPipelineController::~HQBaseGLSLShaderPipelineController()
 {
 	glBindProgramPipeline(0);
 	glDeleteProgramPipelines(1, &ge_shader_pipeline);
+
+	ge_shader_pipeline = 0;
 }
 
 

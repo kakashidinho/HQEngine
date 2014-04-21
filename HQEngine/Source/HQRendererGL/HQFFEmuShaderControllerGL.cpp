@@ -54,12 +54,12 @@ void glUseFixedFunctionProgram(GLuint program)
 #ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
 void glUseFixedFunctionProgramPipeline(GLuint program)
 {
-	glBindProgramPipeline(HQ_GLSL_SHADER_PIPELINE_ID);
+	glBindProgramPipeline(ge_shader_pipeline);
 	const GLbitfield activeStages = GL_VERTEX_SHADER_BIT | GL_FRAGMENT_SHADER_BIT;
 	const GLbitfield inactiveStages = GL_TESS_CONTROL_SHADER_BIT | GL_TESS_EVALUATION_SHADER_BIT | GL_GEOMETRY_SHADER_BIT;
 
-	glUseProgramStages(HQ_GLSL_SHADER_PIPELINE_ID, activeStages, program);
-	glUseProgramStages(HQ_GLSL_SHADER_PIPELINE_ID, inactiveStages, 0);
+	glUseProgramStages(ge_shader_pipeline, activeStages, program);
+	glUseProgramStages(ge_shader_pipeline, inactiveStages, 0);
 }
 #endif
 
@@ -231,6 +231,10 @@ struct HQFixedFunctionShaderGL: public HQA16ByteObject
 #ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
 		if (GLEW_VERSION_4_1)
 		{
+			//create pipeline
+			if (ge_shader_pipeline == 0)
+				glGenProgramPipelines(1, &ge_shader_pipeline);
+
 			glUseFixedFunctionProgramWrapper = glUseFixedFunctionProgramPipeline;
 			glProgramUniform1fWrapper = glProgramUniform1f;
 			glProgramUniform3fvWrapper = glProgramUniform3fv;

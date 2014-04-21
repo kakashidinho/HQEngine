@@ -5,6 +5,7 @@ techniques{
 			pixel_shader=draw-shader-ps
 
 			texture0 {
+				mipmap_filter="none"
 				source = "color_texture"
 			}
 		}

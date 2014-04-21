@@ -65,8 +65,8 @@ void CS(uint3 threadIdx : SV_GroupThreadID) {
 	uint vertexIdx = 2 * threadIdx.y + threadIdx.x;
 	float2 texcoords = float2(threadIdx.xy);
 	uint color = colorRGBA8(
-		(threadIdx.x + counter_buffer[0]) % 255, 
-		255 - (threadIdx.y + counter_buffer[0]) % 255,
+	(vertexIdx * 33 + counter_buffer[0]) % 255,
+	255 - (vertexIdx * 33 + counter_buffer[0]) % 255,
 		0, 255);
 	float2 position;
 
