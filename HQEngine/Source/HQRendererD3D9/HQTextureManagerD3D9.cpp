@@ -204,18 +204,14 @@ HQBaseTexture * HQTextureManagerD3D9::CreateNewTextureObject(HQTextureType type)
 	return new HQTextureD3D9(type);
 }
 /*-------set texture ---------------------*/
-HQReturnVal HQTextureManagerD3D9::SetTexture(hq_uint32 slot , HQTexture* textureID)
+HQReturnVal HQTextureManagerD3D9::SetTexture(HQShaderType shaderStageIndex, hq_uint32 samplerSlot, HQTexture* textureID)
 {
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
-
-	hq_uint32 samplerSlot = slot & 0x0fffffff;
-	hq_uint32 shaderStageIndex = GetShaderStageIndex( (HQShaderType)(slot & 0xf0000000) );
 
 #if defined _DEBUG || defined DEBUG
 	if (shaderStageIndex >= 2)
 	{
-		Log("Error : {slot} parameter passing to SetTexture() method didn't bitwise OR with HQ_VERTEX_SHADER/HQ_PIXEL_SHADER!");
-		return HQ_FAILED;
+		return HQ_FAILED_INVALID_PARAMETER;
 	}
 	if (samplerSlot >= this->shaderStage[shaderStageIndex].maxSamplers)
 	{
@@ -235,6 +231,24 @@ HQReturnVal HQTextureManagerD3D9::SetTexture(hq_uint32 slot , HQTexture* texture
 	}
 
 	return HQ_OK;
+}
+
+
+HQReturnVal HQTextureManagerD3D9::SetTexture(hq_uint32 slot, HQTexture* textureID)
+{
+	hq_uint32 samplerSlot = slot & 0x0fffffff;
+	hq_uint32 shaderStageIndex = GetShaderStageIndex((HQShaderType)(slot & 0xf0000000));
+
+	HQReturnVal re = this->HQTextureManagerD3D9::SetTexture((HQShaderType)shaderStageIndex, samplerSlot, textureID);
+
+#if defined DEBUG || defined _DEBUG
+	if (re == HQ_FAILED_INVALID_PARAMETER)
+	{
+		Log("Error : {slot} parameter passing to SetTexture() method didn't bitwise OR with HQ_VERTEX_SHADER/HQ_PIXEL_SHADER!");
+	}
+#endif
+
+	return re;
 }
 
 HQReturnVal HQTextureManagerD3D9::SetTextureForPixelShader(hq_uint32 samplerSlot, HQTexture* textureID)

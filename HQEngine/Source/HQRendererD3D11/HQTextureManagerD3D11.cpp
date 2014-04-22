@@ -387,16 +387,12 @@ HQBaseTexture * HQTextureManagerD3D11::CreateNewTextureObject(HQTextureType type
 	return HQ_NEW HQTextureD3D11(type);
 }
 /*-------set texture ---------------------*/
-HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textureID)
+HQReturnVal HQTextureManagerD3D11::SetTexture(HQShaderType shaderStage, hq_uint32 resourceSlot, HQTexture* textureID)
 {
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
-
-	hq_uint32 resourceSlot = slot & 0x0fffffff;
-
-	hq_uint32 shaderStage = slot & 0xf0000000;
-	
-	TextureSlot *pTextureSlot;
 	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
+	hquint32 unifySlot = shaderStage | resourceSlot;
+	TextureSlot *pTextureSlot;
 	HQTextureD3D11* pCurrentTextureD3D11;
 
 	//first make sure this texture will not be bound to any UAV slots
@@ -427,7 +423,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 			{
 				pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
 				//link the texture with this slot
-				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(slot);
+				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(unifySlot);
 			}
 			else
 				pSRV = NULL  ;
@@ -458,7 +454,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 			{
 				pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
 				//link the texture with this slot
-				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(slot);
+				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(unifySlot);
 			}
 			else
 				pSRV = NULL;
@@ -489,7 +485,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 			{
 				pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
 				//link the texture with this slot
-				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(slot);
+				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(unifySlot);
 			}
 			else
 				pSRV = NULL;
@@ -520,7 +516,7 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 			{
 				pSRV = ((HQTextureResourceD3D11 *)pTexture->pData)->pResourceView;
 				//link the texture with this slot
-				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(slot);
+				pTextureSlot->textureLink = pTextureD3D11->boundSlots.PushBack(unifySlot);
 			}
 			else
 				pSRV = NULL;
@@ -529,14 +525,30 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot , HQTexture* textur
 		}
 		break;
 	default:
-#if defined _DEBUG || defined DEBUG
-		Log("Error : {slot} parameter passing to SetTexture() method didn't bitwise OR with HQShaderType enum value!");
-#endif
-		return HQ_FAILED;
+		return HQ_FAILED_INVALID_PARAMETER;
 	}
 	
 
 	return HQ_OK;
+}
+
+
+HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot, HQTexture* textureID)
+{
+	hq_uint32 resourceSlot = slot & 0x0fffffff;
+
+	hq_uint32 shaderStage = slot & 0xf0000000;
+
+	HQReturnVal re = this->HQTextureManagerD3D11::SetTexture((HQShaderType)shaderStage, resourceSlot, textureID);
+
+#if defined _DEBUG || defined DEBUG
+	if (re == HQ_FAILED_INVALID_PARAMETER)
+	{
+		Log("Error : {slot} parameter passing to SetTexture() method didn't bitwise OR with HQShaderType enum value!");
+	}
+#endif
+
+	return re;
 }
 
 HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSlot, HQTexture* textureID)

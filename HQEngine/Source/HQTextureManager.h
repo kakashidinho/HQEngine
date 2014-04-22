@@ -49,6 +49,12 @@ public:
 	virtual HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID) = 0;
 	
 	///
+	///Note: shader stage separate textures are not implemented in OpenGL. Every shader uses same set of texture units. 
+	///This method is only relevant in Direct3D
+	///
+	virtual HQReturnVal SetTexture(HQShaderType shaderStage, hq_uint32 slot, HQTexture* textureID) = 0;
+
+	///
 	///Direct3d : {slot} = {texture slot} bitwise OR with enum HQShaderType to specify  {texture slot} belongs to which shader stage. 
 	///			Eg. to set texture to texture slot 3 of compute shader , pass {slot} = (3 | HQ_COMPUTE_SHADER). 
 	///			Direct3d 11 : {texture slot} refers to UAV slot. Each shader stage has 64 slots.  It should be checked by calling HQRenderDevice::GetMaxShaderStageTextureUAVs(). 

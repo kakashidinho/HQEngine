@@ -37,7 +37,7 @@ COPYING.txt included with this distribution for more information.
 
 
 
-
+/*-------------------------------------------------*/
 
 #if !defined WIN32 && !defined HQ_WIN_STORE_PLATFORM &&  !defined HQ_WIN_PHONE_PLATFORM
 #	ifndef DWORD
@@ -51,6 +51,11 @@ COPYING.txt included with this distribution for more information.
 #	endif
 #endif
 
+#if _MSC_VER >= 1800
+#	define __FINAL__ final
+#else
+#	define __FINAL__
+#endif
 
 
 #ifndef SafeDelete

@@ -2046,13 +2046,11 @@ void HQShaderManagerD3D9::Commit()
 }
 
 
-HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  HQUniformBuffer* bufferID )
+HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(HQShaderType shaderStage, hq_uint32 slot, HQUniformBuffer* bufferID)
 {
 	HQSharedPtr<HQShaderConstBufferD3D9> pBuffer = shaderConstBuffers.GetItemPointer(bufferID);
-	
-	hq_uint32 slot = index & 0x0fffffff;
-	hq_uint32 shaderStage = index & 0xf0000000;
-	
+	hquint32 unifySlot = shaderStage | slot;
+
 #if defined _DEBUG || defined DEBUG
 	if (slot >= 16)
 	{
@@ -2073,7 +2071,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  HQUniformBu
 				pBufferSlot->buffer->boundSlots.RemoveAt(pBufferSlot->bufferLink);//remove the link with the old buffer
 			}
 			pBufferSlot->buffer = pBuffer;
-			pBufferSlot->bufferLink = pBuffer->boundSlots.PushBack(index);
+			pBufferSlot->bufferLink = pBuffer->boundSlots.PushBack(unifySlot);
 
 			pBufferSlot->dirtyFlags = 1;//notify all dependent shaders
 		}
@@ -2087,17 +2085,34 @@ HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index ,  HQUniformBu
 				pBufferSlot->buffer->boundSlots.RemoveAt(pBufferSlot->bufferLink);//remove the link with the old buffer
 			}
 			pBufferSlot->buffer = pBuffer;
-			pBufferSlot->bufferLink = pBuffer->boundSlots.PushBack(index);
+			pBufferSlot->bufferLink = pBuffer->boundSlots.PushBack(unifySlot);
 
 			pBufferSlot->dirtyFlags = 1;//notify all dependent shaders
 		}
 		break;
 	default:
-		Log("Error : {index} parameter passing to SetUniformBuffer() method didn't bitwise OR with HQ_VERTEX_SHADER/HQ_PIXEL_SHADER!");
-		return HQ_FAILED;
+		return HQ_FAILED_INVALID_PARAMETER;
 	}
 
 	return HQ_OK;
+}
+
+
+HQReturnVal HQShaderManagerD3D9::SetUniformBuffer(hq_uint32 index, HQUniformBuffer* bufferID)
+{
+	hq_uint32 slot = index & 0x0fffffff;
+	hq_uint32 shaderStage = index & 0xf0000000;
+
+	HQReturnVal re = this->HQShaderManagerD3D9::SetUniformBuffer((HQShaderType) shaderStage, slot, bufferID);
+
+#if defined DEBUG || defined _DEBUG
+	if (re == HQ_FAILED_INVALID_PARAMETER)
+	{
+		Log("Error : {index} parameter passing to SetUniformBuffer() method didn't bitwise OR with HQ_VERTEX_SHADER/HQ_PIXEL_SHADER!");
+	}
+#endif
+
+	return re;
 }
 
 void HQShaderManagerD3D9:: BufferChangeEnded(HQSysMemBuffer* pConstBuffer)

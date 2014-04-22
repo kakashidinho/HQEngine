@@ -264,7 +264,8 @@ public:
 	HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut);
 	HQReturnVal RemoveUniformBuffer(HQUniformBuffer* bufferID);
 	void RemoveAllUniformBuffers();
-	HQReturnVal SetUniformBuffer(hq_uint32 slot ,  HQUniformBuffer* bufferID );
+	HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID);
+	HQReturnVal SetUniformBuffer(HQShaderType stage, hq_uint32 slot, HQUniformBuffer* bufferID);
 
 	HQReturnVal CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut) { return HQ_FAILED; }
 

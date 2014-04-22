@@ -52,7 +52,11 @@ public:
 	HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut);
 	HQReturnVal RemoveUniformBuffer(HQUniformBuffer* bufferID);
 	void RemoveAllUniformBuffers();
-	HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID);
+	HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID) __FINAL__;
+	HQReturnVal SetUniformBuffer(HQShaderType stage, hq_uint32 slot, HQUniformBuffer* bufferID){
+		return this->HQBaseShaderManagerGL_UBO::SetUniformBuffer(slot, bufferID);//shader stage is ignored since opengl used same set of buffer slots for all shader stages
+	}
+
 
 	inline void BindUniformBuffer(GLuint buffer)
 	{

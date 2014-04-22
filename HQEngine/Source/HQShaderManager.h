@@ -324,6 +324,12 @@ public:
 	///			Ví dụ muốn gắn uniform buffer vào buffer slot 3 của vertex shader , ta truyền tham số {slot} = (3 | HQ_VERTEX_SHADER).
 	///
 	virtual HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID) = 0;
+
+	///
+	///Note: shader stage separate buffers are not implemented in OpenGL. Every shader uses same set of buffer slots. 
+	///This method is only relevant in Direct3D
+	///
+	virtual HQReturnVal SetUniformBuffer(HQShaderType stage, hq_uint32 slot, HQUniformBuffer* bufferID) = 0;
 	
 #endif
 

@@ -198,6 +198,10 @@ public:
 		return HQ_FAILED;
 	}
 
+	virtual HQReturnVal SetUniformBuffer(HQShaderType stage, hq_uint32 slot, HQUniformBuffer* bufferID) {
+		return HQ_FAILED;
+	}
+
 	virtual HQReturnVal CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut) { return HQ_FAILED; }
 
 	virtual HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }

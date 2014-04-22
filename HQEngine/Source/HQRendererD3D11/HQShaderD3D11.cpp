@@ -1585,16 +1585,10 @@ HQReturnVal HQShaderManagerD3D11::CreateUniformBuffer(hq_uint32 size , void *ini
 
 	return HQ_OK;
 }
-HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(hq_uint32 index ,  HQUniformBuffer* bufferID )
+
+HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(HQShaderType shaderStage, hq_uint32 slot, HQUniformBuffer* bufferID)
 {
 	HQSharedPtr<HQShaderConstBufferD3D11> pBuffer = shaderConstBuffers.GetItemPointer(bufferID);
-	
-	hq_uint32 slot = index & 0x0fffffff;
-	
-	if (slot >= D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT)
-		return HQ_FAILED;
-
-	hq_uint32 shaderStage = index & 0xf0000000;
 
 	HQSharedPtr<HQShaderConstBufferD3D11>* ppCurrentBuffer;
 
@@ -1651,6 +1645,19 @@ HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(hq_uint32 index ,  HQUniformB
 	}
 
 	return HQ_OK;
+}
+
+
+HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(hq_uint32 index, HQUniformBuffer* bufferID)
+{
+	hq_uint32 slot = index & 0x0fffffff;
+
+	if (slot >= D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT)
+		return HQ_FAILED;
+
+	hq_uint32 shaderStage = index & 0xf0000000;
+
+	return this->HQShaderManagerD3D11::SetUniformBuffer((HQShaderType)shaderStage, slot, bufferID);
 }
 
 /*--------------------------------*/

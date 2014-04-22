@@ -294,6 +294,7 @@ public:
 	HQReturnVal RemoveUniformBuffer(HQUniformBuffer* bufferID);
 	void RemoveAllUniformBuffers();
 	HQReturnVal SetUniformBuffer(hq_uint32 slot, HQUniformBuffer* bufferID);
+	HQReturnVal SetUniformBuffer(HQShaderType stage, hq_uint32 slot, HQUniformBuffer* bufferID);
 
 	HQReturnVal CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut);
 

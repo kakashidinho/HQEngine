@@ -59,10 +59,7 @@ Game::Game()
 	//create uniform buffer
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(UniformBlock), NULL, true, &m_uBuffer);
 
-	if (!strcmp(m_app->GetRendererType(), "GL"))
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(0, m_uBuffer);
-	else
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 0, m_uBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 0, m_uBuffer);
 
 	//load effect 
 	m_app->GetEffectManager()->AddEffectsFromFile("effects.script");

@@ -107,6 +107,9 @@ public:
 
 	HQReturnVal SetTexture(hq_uint32 slot , HQTexture* textureID);
 	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
+	HQReturnVal SetTexture(HQShaderType shaderStage, hq_uint32 slot, HQTexture* textureID) {
+		return this->HQTextureManagerGL::SetTexture(slot, textureID);//shader stage is ignored since opengl uses same set of texture unit for every shader stage 
+	}
 
 	HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel);
 	HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel);
