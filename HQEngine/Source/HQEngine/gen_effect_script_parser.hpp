@@ -56,7 +56,10 @@
      BORDER_COLOR_KEYWORD = 272,
      TEXUNIT = 273,
      OUTPUT = 274,
-     CUBE_FACE = 275
+     COMPUTE_PASS_KEYWORD = 275,
+     TEX_UAV_UNIT = 276,
+     BUFFER_UAV_UNIT = 277,
+     CUBE_FACE = 278
    };
 #endif
 
@@ -84,7 +87,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 88 "gen_effect_script_parser.hpp"
+#line 91 "gen_effect_script_parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

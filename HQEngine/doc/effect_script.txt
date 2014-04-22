@@ -4,6 +4,7 @@ techniques{
 	{
 		pass ...
 		pass ...
+		compute_pass ...
 		.
 		.
 		.
@@ -29,11 +30,11 @@ Pass format:
 			address_v=wrap/mirror/clamp/border
 			max_anisotropy=1
 			border_color=0 0 0 0 //red green blue alpha
-			source=resource_name
+			source=<resource_name>
 		} 
 		
 		//another syntax for specifying texture unit. In this case, default sampler state is used.
-		texture1=resource_name
+		texture1=<resource_name>
 		
 		/*
 		Note: some value with more than one word need to be quoted.
@@ -72,9 +73,9 @@ Pass format:
 		depth=full/read only/write only/none			// default is none 
 		cull=none/cw/ccw		// default is none 
 		
-		vertex_shader=shader resource name
-		pixel_shader=shader resource name
-		geometry_shader=shader resource name
+		vertex_shader=<shader resource name>
+		geometry_shader=<shader resource name>
+		pixel_shader=<shader resource name>
 		
 		outputs  // if not specified, default render target is used 
 		{
@@ -87,4 +88,46 @@ Pass format:
 			
 			depth_stencil_buffer_format = none/d24s8/d16/s8/d32			//default is none
 		}
+	}
+	
+	compute_pass name // must specify pass name 
+	{
+		/* texture unit 0. 0 can be replaced by any other number. 
+		resource_name can be replaced by name of a texture/render target resource
+		Note that in Direct3D this is the texture unit for compute shader. 
+		In OpenGL, if one texture is bound to multiple texture units, and each units has 
+		different sampler state, there will be undefined behavior.
+		For the attributes, default values are the first values specified below.
+		For example: min_filter=linear/point/anisotropic, means default value is linear.
+		max_anisotropy attribute is integer
+		*/
+		texture0{
+			min_filter=linear/point/anisotropic
+			mag_filter=linear/point/anisotropic
+			mipmap_filter=linear/point/none/anisotropic
+			address_u=wrap/mirror/clamp/border
+			address_v=wrap/mirror/clamp/border
+			max_anisotropy=1
+			border_color=0 0 0 0 //red green blue alpha
+			source=<resource_name>
+		} 
+		
+		//another syntax for specifying texture unit. In this case, default sampler state is used.
+		texture1=<resource_name>
+		
+		//bind first mipmap level of texture to UAV slot 0. Note: texture cannot be bound to texture unit and UAV slot at the same time
+		//and in Direct3D 11 case: texture and buffer cannot be bound to same slot.
+		texture_uav0=<resource_name>
+		
+		//bind 2nd mipmap level of texture to UAV slot 1.
+		texture_uav1 {
+			mip_level=1
+			source==<resource_name>
+		}
+		
+		//bind UAV buffer to slot 0 starting at 1st element and number of elements used is 2
+		//default starting element is 0, default number of used elements is 1
+		buffer_uav0= <buffer_name> 1 2
+		
+		shader=<compute shader resource name>
 	}

@@ -56,11 +56,11 @@ COPYING.txt included with this distribution for more information.
 %token <lex> IDENTIFIER FLOATCONSTANT INTCONSTANT STRING_CONST EQUAL SEMI_COLON
 %token <lex> LBRACE RBRACE TECHNIQUES_GROUP_KEYWORD TECHNIQUE_KEYWORD PASS_KEYWORD BLEND_KEYWORD  STENCIL_KEYWORD
 %token <lex> OUTPUTS_KEYWORD BORDER_COLOR_KEYWORD
-%token <lex> TEXUNIT OUTPUT CUBE_FACE
+%token <lex> TEXUNIT OUTPUT COMPUTE_PASS_KEYWORD TEX_UAV_UNIT BUFFER_UAV_UNIT CUBE_FACE 
 
 %type  <node> root technique_blocks technique_block block child_elems single_child assignment
 %type  <node> border_color_assignment  output_assignment
-%type  <node> texture_unit_assignment
+%type  <node> texture_unit_assignment texture_uav_unit_assignment buffer_uav_unit_assignment
 %type  <value> identifier_or_value
 %type  <value> string_or_identifier_or_value
 %type  <lex>  string_or_identifier
@@ -116,6 +116,13 @@ single_child:
 		$$->SetSourceLine($1.line);
 		$$->SetAttribute("name", $2.string);
 	}
+	| COMPUTE_PASS_KEYWORD string_or_identifier block {
+		$$ = $3;
+		$$->SetType("compute_pass");
+		$$->SetSourceLine($1.line);
+		$$->SetAttribute("name", $2.string);
+	}
+
 	| BLEND_KEYWORD block {
 		$$ = $2;
 		$$->SetType("blend");
@@ -136,6 +143,8 @@ single_child:
 
 assignment:
 	texture_unit_assignment   {$$ = $1;}
+	| texture_uav_unit_assignment   {$$ = $1;}
+	| buffer_uav_unit_assignment   {$$ = $1;}
 	| border_color_assignment  {$$ = $1;} 
 	| output_assignment   {$$ = $1;}
 	| IDENTIFIER EQUAL string_or_identifier_or_value {
@@ -155,6 +164,61 @@ texture_unit_assignment:
 		HQEngineEffectParserNode * source_elem = yynew_node("source", $3.line);
 		source_elem->SetAttribute("value", $3.string);
 		$$->AddChild(source_elem);
+	}
+	;
+
+texture_uav_unit_assignment:
+	TEX_UAV_UNIT block {
+		$$ = $2;
+		$$->SetType($1.string);
+		$$->SetSourceLine($1.line);
+	}
+	| TEX_UAV_UNIT EQUAL string_or_identifier {
+		$$ = yynew_node($1.string, $1.line);
+		//texture source
+		HQEngineEffectParserNode * source_elem = yynew_node("source", $3.line);
+		source_elem->SetAttribute("value", $3.string);
+		$$->AddChild(source_elem);
+	}
+	;
+
+buffer_uav_unit_assignment:
+	BUFFER_UAV_UNIT EQUAL string_or_identifier {
+		$$ = yynew_node($1.string, $1.line);
+		//buffer source
+		HQEngineEffectParserNode * source_elem = yynew_node("source", $3.line);
+		source_elem->SetAttribute("value", $3.string);
+		$$->AddChild(source_elem);
+	}
+	| BUFFER_UAV_UNIT EQUAL string_or_identifier INTCONSTANT {
+		$$ = yynew_node($1.string, $1.line);
+		//buffer source
+		HQEngineEffectParserNode * source_elem = yynew_node("source", $3.line);
+		source_elem->SetAttribute("value", $3.string);
+		$$->AddChild(source_elem);
+
+		//starting element
+		HQEngineEffectParserNode * startElemInfo_elem = yynew_node("first_element", $4.line);
+		startElemInfo_elem->SetAttribute("value", $4.iconst);
+		$$->AddChild(startElemInfo_elem);
+	}
+
+	| BUFFER_UAV_UNIT EQUAL string_or_identifier INTCONSTANT INTCONSTANT{
+		$$ = yynew_node($1.string, $1.line);
+		//buffer source
+		HQEngineEffectParserNode * source_elem = yynew_node("source", $3.line);
+		source_elem->SetAttribute("value", $3.string);
+		$$->AddChild(source_elem);
+
+		//starting element
+		HQEngineEffectParserNode * startElemInfo_elem = yynew_node("first_element", $4.line);
+		startElemInfo_elem->SetAttribute("value", $4.iconst);
+		$$->AddChild(startElemInfo_elem);
+
+		//number of elements
+		HQEngineEffectParserNode * numElemsInfo_elem = yynew_node("num_elements", $5.line);
+		numElemsInfo_elem->SetAttribute("value", $5.iconst);
+		$$->AddChild(numElemsInfo_elem);
 	}
 	;
 

@@ -6,4 +6,15 @@ resources {
 		format=rgba8ub
 		
 	}
+
+	buffer_uav indirect_draw_buffer {
+		type = draw_indirect
+		num_elements = 2
+	}
+
+	buffer_uav vertex_buffer {
+		type = vertex
+		num_elements = 4
+		element_size = 16
+	}
 }

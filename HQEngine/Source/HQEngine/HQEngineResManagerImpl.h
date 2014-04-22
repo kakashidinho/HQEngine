@@ -55,6 +55,25 @@ private:
 	HQShaderObject* m_shader;
 };
 
+//buffer resource
+class HQEngineShaderBufferResImpl : public virtual HQNamedGraphicsRelatedObj, public HQEngineShaderBufferResource{
+public:
+	HQEngineShaderBufferResImpl(const char *name);
+	virtual ~HQEngineShaderBufferResImpl();
+
+	void Init(HQEngineShaderBufferType type, HQBufferUAV* buffer, hquint32 numElements, hquint32 elementSize);
+
+	virtual HQEngineShaderBufferType GetType() const { return m_type; }
+	virtual HQBufferUAV* GetBuffer() const { return m_buffer; }
+	virtual hquint32 GetNumElements() const { return m_numElements; }
+	virtual hquint32 GetElementSize() const { return m_elementSize; }
+protected:
+	HQBufferUAV * m_buffer;
+
+	HQEngineShaderBufferType m_type;
+	hquint32 m_numElements;
+	hquint32 m_elementSize;
+};
 
 #ifdef WIN32
 #	pragma warning( pop )
@@ -134,8 +153,17 @@ public:
 									 HQShaderType type,
 									 const char * source_file);
 
+	virtual HQReturnVal AddShaderBufferResource(
+		const char *name,
+		HQEngineShaderBufferType type,
+		hquint32 numElements,
+		hquint32 elementSize,
+		void * initData
+		);
+
 	virtual HQEngineTextureResource * GetTextureResource(const char* name);
 	virtual HQEngineShaderResource * GetShaderResource(const char* name);
+	virtual HQEngineShaderBufferResource * GetShaderBufferResource(const char *name);
 
 	virtual HQReturnVal CreateVertexInputLayout(const HQVertexAttribDesc * vAttribDescs,
 		hq_uint32 numAttrib,
@@ -144,20 +172,23 @@ public:
 
 	const HQSharedPtr<HQEngineTextureResImpl>& GetTextureResourceSharedPtr(const char* name);
 	const HQSharedPtr<HQEngineShaderResImpl>& GetShaderResourceSharedPtr(const char* name);
-
+	const HQSharedPtr<HQEngineShaderBufferResImpl>& GetShaderBufferResourceSharedPtr(const char* name);
 
 	virtual HQReturnVal RemoveTextureResource(HQEngineTextureResource* res);
 	virtual HQReturnVal RemoveShaderResource(HQEngineShaderResource* res);
+	virtual HQReturnVal RemoveShaderBufferResource(HQEngineShaderBufferResource* res);
 	virtual void RemoveAllResources();
 private:
 	HQReturnVal LoadResource(const HQEngineResParserNode* resource);
 	HQReturnVal LoadTextureUAV(const HQEngineResParserNode* textureItem);
 	HQReturnVal LoadTexture(const HQEngineResParserNode* textureItem, bool renderTarget = false);
 	HQReturnVal LoadShader(const HQEngineResParserNode* shaderItem);
+	HQReturnVal LoadBuffer(const HQEngineResParserNode* bufferItem);
 
 
 	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineTextureResImpl> > m_textures;
 	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineShaderResImpl> > m_shaders;
+	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineShaderBufferResImpl> > m_buffers;
 
 	std::string m_suffix;
 };

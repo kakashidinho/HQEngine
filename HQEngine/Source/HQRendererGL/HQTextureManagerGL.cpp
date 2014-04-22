@@ -1274,6 +1274,8 @@ HQReturnVal HQTextureManagerGL::LoadCubeTextureFromStreams(HQDataReaderStream* d
 HQReturnVal HQTextureManagerGL::InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
 {
 	GLuint *pTextureName = (GLuint*)pTex->pData;
+	this->DefineTexture2DSize(pTex, 1, 1);
+
 	glBindTexture(GL_TEXTURE_2D , *pTextureName);
 
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1);
@@ -1284,6 +1286,7 @@ HQReturnVal HQTextureManagerGL::InitSingleColorTexture(HQBaseTexture *pTex,HQCol
 	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,1,1,0,GL_RGBA,GL_UNSIGNED_BYTE,&color);
 
 	glBindTexture(GL_TEXTURE_2D, this->texUnits[this->activeTexture].GetTexture2DGL());//bind old texture
+
 
 	return HQ_OK;
 }
@@ -1690,6 +1693,9 @@ HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAV
 	}
 
 	glBindTexture(GL_TEXTURE_2D, this->texUnits[this->activeTexture].GetTexture2DGL());//re-bind old texture
+
+	//store texture's size
+	this->DefineTexture2DSize(pTex, width, height);
 
 	return HQ_OK;
 }

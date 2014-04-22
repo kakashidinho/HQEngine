@@ -67,6 +67,7 @@ I           [uUlL]
 "texture_uav"		  {	SAVE_LINE; return (TEX_UAV_KEYWORD);}
 "render_target"		  {	SAVE_LINE; return (RENDER_TARGET_KEYWORD);}
 "shader"			  {	SAVE_LINE; return (SHADER_KEYWORD);}
+"buffer_uav"		  {	SAVE_LINE; return (BUFFER_UAV_KEYWORD);}
 
 "define"			  {	SAVE_LINE; return (DEF);}
 "="					  {	SAVE_LINE; return (EQUAL);}	

@@ -60,6 +60,46 @@ HQEngineShaderResImpl::~HQEngineShaderResImpl()
 		m_renderDevice->GetShaderManager()->RemoveShader(m_shader);
 }
 
+/*--------------buffer resource----------------*/
+HQEngineShaderBufferResImpl::HQEngineShaderBufferResImpl(const char *name)
+:HQNamedGraphicsRelatedObj(name),
+m_buffer(NULL)
+{
+
+}
+HQEngineShaderBufferResImpl::~HQEngineShaderBufferResImpl()
+{
+	if (m_buffer != NULL)
+	{
+		switch (m_type)
+		{
+		case HQ_ESBT_VERTEX:
+			HQEngineApp::GetInstance()->GetRenderDevice()->GetVertexStreamManager()
+				->RemoveVertexBuffer(m_buffer);
+			break;
+		case HQ_ESBT_INDEX:
+			HQEngineApp::GetInstance()->GetRenderDevice()->GetVertexStreamManager()
+				->RemoveIndexBuffer(m_buffer);
+			break;//case HQ_ESBT_INDEX:
+		case HQ_ESBT_COMPUTE_INDIRECT:
+		case HQ_ESBT_DRAW_INDIRECT:
+		case HQ_ESBT_DRAW_INDEXED_INDIRECT:
+		case HQ_ESBT_SHADER_USE_ONLY:
+			HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
+				->RemoveBufferUAV(m_buffer);
+			break;
+		}
+	}
+}
+
+void HQEngineShaderBufferResImpl::Init(HQEngineShaderBufferType type, HQBufferUAV* buffer, hquint32 numElements, hquint32 elementSize)
+{
+	m_type = type;
+	m_buffer = buffer;
+	m_elementSize = elementSize;
+	m_numElements = numElements;
+}
+
 /*----------------resource loading session----------------*/
 HQEngineResLoadSessionImpl::HQEngineResLoadSessionImpl(HQEngineResParserNode* root)
 : m_root(root), m_type(HQ_ERLT_STANDARD)
@@ -266,6 +306,13 @@ HQReturnVal HQEngineResManagerImpl::LoadResource(const HQEngineResParserNode* it
 	{
 		//shader resource
 		if (LoadShader(item) != HQ_OK)
+			re = HQ_FAILED;
+	}
+
+	else if (strcmp(item->GetType(), "buffer_uav") == 0)
+	{
+		//buffer resource
+		if (LoadBuffer(item) != HQ_OK)
 			re = HQ_FAILED;
 	}
 		
@@ -703,6 +750,72 @@ HQReturnVal HQEngineResManagerImpl::LoadShader(const HQEngineResParserNode* shad
 	return HQ_OK;
 }
 
+HQReturnVal HQEngineResManagerImpl::LoadBuffer(const HQEngineResParserNode* bufferItem)
+{
+	const char* res_name = bufferItem->GetStrAttribute("name");
+	HQEngineShaderBufferType type = HQ_ESBT_SHADER_USE_ONLY;
+	hquint32 numElements = 1;
+	hquint32 elementSize = 4;
+
+	if (res_name == NULL)
+	{
+		Log("Error : %d : Cannot create buffer resource without name!", bufferItem->GetSourceLine());
+		return HQ_FAILED;
+	}
+
+	const HQEngineResParserNode * item_elem = bufferItem->GetFirstChild();
+	while (item_elem != NULL)
+	{
+		int elemLine = item_elem->GetSourceLine();
+		const char *elemName = item_elem->GetType();
+		const char *elemStr = item_elem->GetStrAttribute("value");
+		const hqint32 * valuePtr = item_elem->GetIntAttributePtr("value");
+		if (!strcmp(elemName, "type"))
+		{
+			//vertex/index/draw_indirect/draw_indexed_indirect/compute_indirect
+			if (!strcmp(elemStr, "vertex"))
+				type = HQ_ESBT_VERTEX;
+			else if (!strcmp(elemStr, "index"))
+				type = HQ_ESBT_INDEX;
+			else if (!strcmp(elemStr, "draw_indirect"))
+				type = HQ_ESBT_DRAW_INDIRECT;
+			else if (!strcmp(elemStr, "draw_indexed_indirect"))
+				type = HQ_ESBT_DRAW_INDEXED_INDIRECT;
+			else if (!strcmp(elemStr, "compute_indirect"))
+				type = HQ_ESBT_COMPUTE_INDIRECT;
+			else
+			{
+				Log("Error : %d : unknown buffer type '%s'!", elemLine, elemStr);
+				return HQ_FAILED;
+			}
+		}//if (!strcmp(elemName, "type"))
+		else if (!strcmp(elemName, "num_elements"))
+		{
+			if (valuePtr != NULL)
+				numElements = *valuePtr;
+			else
+			{
+				Log("Error : %d : invalid num_elements='%s'!", elemLine, elemStr);
+				return HQ_FAILED;
+			}
+		}//else if (!strcmp(elemName, "num_elements"))
+		else if (!strcmp(elemName, "element_size"))
+		{
+			if (valuePtr != NULL)
+				elementSize = *valuePtr;
+			else
+			{
+				Log("Error : %d : invalid element_size='%s'!", elemLine, elemStr);
+				return HQ_FAILED;
+			}
+		}//else if (!strcmp(elemName, "element_size"))
+
+		item_elem = item_elem->GetNextSibling();//next element
+	}//while(item_elem != NULL)
+
+	return this->AddShaderBufferResource(res_name, type, numElements, elementSize, NULL);
+}
+
 HQReturnVal HQEngineResManagerImpl::AddTextureResource(const char *name,
 											const char * image_file,
 											bool generateMipmap,
@@ -921,6 +1034,82 @@ HQReturnVal HQEngineResManagerImpl::AddShaderResourceFromByteCode(
 	return HQ_OK;
 }
 
+
+HQReturnVal HQEngineResManagerImpl::AddShaderBufferResource(
+	const char *name,
+	HQEngineShaderBufferType type,
+	hquint32 numElements,
+	hquint32 elementSize,
+	void * initData
+	)
+{
+	if (m_buffers.GetItemPointer(name) != NULL)
+	{
+		this->Log("Error : could not create already existing shader buffer resource named %s", name);
+		return HQ_FAILED_RESOURCE_EXISTS;
+	}
+
+	//create shader buffer
+	HQBufferUAV * buffer;
+	HQReturnVal re = HQ_FAILED_INVALID_PARAMETER;
+	switch (type)
+	{
+	case HQ_ESBT_VERTEX:
+		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetVertexStreamManager()
+			->CreateVertexBufferUAV(initData, elementSize, numElements, &buffer);
+		break;
+	case HQ_ESBT_INDEX:
+	{
+			HQIndexDataType dataType;
+			switch (elementSize){
+			case 2:
+				dataType = HQ_IDT_USHORT;
+				break;
+			case 4:
+				dataType = HQ_IDT_UINT;
+				break;
+			default:
+				Log("Error : could not create index buffer resource named %s with element size=%u!", name, elementSize);
+				return HQ_FAILED_INVALID_PARAMETER;
+			}
+			re = HQEngineApp::GetInstance()->GetRenderDevice()->GetVertexStreamManager()
+							  ->CreateIndexBufferUAV(initData, numElements, dataType, &buffer);
+	}
+		break;//case HQ_ESBT_INDEX:
+	case HQ_ESBT_COMPUTE_INDIRECT:
+		elementSize = 0;//ignore
+		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
+			->CreateComputeIndirectArgs(numElements, initData, &buffer);
+		break;
+	case HQ_ESBT_DRAW_INDIRECT:
+		elementSize = 0;//ignore
+		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
+			->CreateDrawIndirectArgs(numElements, initData, &buffer);
+		break;
+	case HQ_ESBT_DRAW_INDEXED_INDIRECT:
+		elementSize = 0;//ignore
+		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
+			->CreateDrawIndexedIndirectArgs(numElements, initData, &buffer);
+		break;
+	case HQ_ESBT_SHADER_USE_ONLY:
+		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
+			->CreateBufferUAV(numElements, elementSize, initData, &buffer);
+		break;
+	}
+
+	if (HQFailed(re))
+		return re;
+
+	//succeeded, now create resource
+	m_buffers.Add(name, HQ_NEW HQEngineShaderBufferResImpl(name));
+	HQEngineShaderBufferResImpl *newRes = static_cast<HQEngineShaderBufferResImpl*>
+		(this->GetShaderBufferResource(name));
+
+	newRes->Init(type, buffer, numElements, elementSize);
+
+	return HQ_OK;
+}
+
 HQEngineTextureResource * HQEngineResManagerImpl::GetTextureResource(const char* name)
 {
 	HQSharedPtr<HQEngineTextureResImpl>* ppRes = m_textures.GetItemPointer(name);
@@ -941,9 +1130,23 @@ const HQSharedPtr<HQEngineShaderResImpl>& HQEngineResManagerImpl::GetShaderResou
 	return m_shaders.GetItem(name, found);
 }
 
+const HQSharedPtr<HQEngineShaderBufferResImpl>& HQEngineResManagerImpl::GetShaderBufferResourceSharedPtr(const char* name)
+{
+	bool found = false;
+	return m_buffers.GetItem(name, found);
+}
+
 HQEngineShaderResource * HQEngineResManagerImpl::GetShaderResource(const char* name)
 {
 	HQSharedPtr<HQEngineShaderResImpl>* ppRes = m_shaders.GetItemPointer(name);
+	if (ppRes == NULL)
+		return NULL;
+	return ppRes->GetRawPointer();
+}
+
+HQEngineShaderBufferResource * HQEngineResManagerImpl::GetShaderBufferResource(const char *name)
+{
+	HQSharedPtr<HQEngineShaderBufferResImpl>* ppRes = m_buffers.GetItemPointer(name);
 	if (ppRes == NULL)
 		return NULL;
 	return ppRes->GetRawPointer();
@@ -961,11 +1164,18 @@ HQReturnVal HQEngineResManagerImpl::RemoveShaderResource(HQEngineShaderResource*
 	return HQ_OK;//TO DO: error report
 }
 
+HQReturnVal  HQEngineResManagerImpl::RemoveShaderBufferResource(HQEngineShaderBufferResource* res)
+{
+	m_buffers.Remove(res->GetName());
+	return HQ_OK;//TO DO: error report
+}
+
 
 void HQEngineResManagerImpl::RemoveAllResources()
 {
 	m_textures.RemoveAll();
 	m_shaders.RemoveAll();
+	m_buffers.RemoveAll();
 }
 
 

@@ -1,6 +1,38 @@
 techniques{
+	technique "fail" {
+		compute_pass "compute-fail"
+		{
+			texture_uav3{
+				mip_level=0
+				source="color_texture"
+			}
+			texture0 = "color_texture"
+
+			buffer_uav0 = indirect_draw_buffer 0 2
+			buffer_uav1 = vertex_buffer 0 4
+			buffer_uav3 = counter_buffer
+
+			shader = "compute-shader-cs"
+		}
+	}
+
 	technique "draw" { /*  must specify technique name  */
-		pass "0" {
+		compute_pass "compute"
+		{
+			texture_uav2{
+				mip_level=0
+				source="color_texture"
+			}
+
+			buffer_uav0 = indirect_draw_buffer 0 2
+			buffer_uav1 = vertex_buffer 0 4
+			buffer_uav3 = counter_buffer
+
+			shader = "compute-shader-cs"
+		}
+
+
+		pass "draw" {
 			vertex_shader=draw-shader-vs
 			pixel_shader=draw-shader-ps
 

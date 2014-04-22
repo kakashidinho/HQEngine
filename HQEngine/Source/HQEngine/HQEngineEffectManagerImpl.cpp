@@ -332,20 +332,6 @@ HQEngineSamplerStateWrapper::CreationParams& HQEngineSamplerStateWrapper::Creati
 	return *this;
 }
 
-/*----------controlled texture unit------------------*/
-void HQEngineTextureUnit::InitD3D(HQShaderType shaderStage, hquint32 textureIdx, const HQSharedPtr<HQEngineTextureResImpl>& texture, const HQSharedPtr<HQEngineSamplerStateWrapper>& samplerState)
-{
-	this->unitIndex = shaderStage | textureIdx;
-	this->texture = texture;
-	this->samplerState = samplerState;
-}
-
-void HQEngineTextureUnit::InitGL(hquint32 textureIdx, const HQSharedPtr<HQEngineTextureResImpl>& texture, const HQSharedPtr<HQEngineSamplerStateWrapper>& samplerState)
-{
-	this->unitIndex =  textureIdx;
-	this->texture = texture;
-	this->samplerState = samplerState;
-}
 
 /*--------depth stencil buffer---------------*/
 HQEngineDSBufferWrapper::HQEngineDSBufferWrapper()
@@ -498,8 +484,88 @@ bool HQEngineRTGroupWrapper::CreationParams::Equal(const CreationParams* params2
 }
 
 /*------------rendering pass-----------------*/
-HQEngineRenderPassImpl::HQEngineRenderPassImpl(const char* name)
-:HQNamedGraphicsRelatedObj(name)
+
+//platform specific controller
+class HQEngineRenderPassPlatformController {
+public:
+	virtual ~HQEngineRenderPassPlatformController(){}
+
+	virtual void ApplyTextureStates(HQLinkedList<HQEngineTextureUnit >& textureUnits) = 0;
+	virtual bool Validate(HQEngineComputePassImpl &computePass, HQLoggableObject *logger) { return true; }
+};
+
+/*-----------base rendering pass class---------------*/
+HQEngineBaseRenderPassImpl::HQEngineBaseRenderPassImpl(const char *name, HQEngineRenderPassPlatformController* _platformController)
+:HQNamedGraphicsRelatedObj(name), platformController(_platformController)
+{
+
+}
+
+HQEngineBaseRenderPassImpl::~HQEngineBaseRenderPassImpl(){
+
+}
+
+void HQEngineBaseRenderPassImpl::AddTextureUnit(const HQEngineTextureUnit& texunit)
+{
+	this->textureUnits.PushBack(texunit);
+}
+
+void HQEngineBaseRenderPassImpl::ApplyTextureStates(){
+	platformController->ApplyTextureStates(this->textureUnits);//delegating
+}
+
+
+#ifdef WIN32
+#	pragma warning( push )
+#	pragma warning( disable : 4250 )//dominance inheritance of GetName()
+#endif
+
+//normal rendering pipeline pass
+struct HQEngineRenderPassImpl : public HQEngineBaseRenderPassImpl{
+	HQEngineRenderPassImpl(const char* name, HQEngineRenderPassPlatformController* _platformController);
+	virtual ~HQEngineRenderPassImpl();
+	virtual HQReturnVal Apply();
+
+	void Finalize();
+
+	HQSharedPtr<HQEngineShaderProgramWrapper> shaderProgram;//shader program
+	HQSharedPtr<HQEngineRTGroupWrapper> renderTargetGroup;//render targets. 
+	HQSharedPtr<HQEngineBlendStateWrapper> blendState;//blend state
+	HQSharedPtr<HQEngineDSStateWrapper> dsState;//depth stencil state
+
+	HQCullMode faceCullingMode;
+
+};
+
+/*--------------compute pass----------------*/
+struct HQEngineComputePassImpl : public HQEngineBaseRenderPassImpl{
+	HQEngineComputePassImpl(const char* name, HQEngineRenderPassPlatformController* _platformController)
+		: HQEngineBaseRenderPassImpl(name, _platformController)
+	{
+	}
+	virtual ~HQEngineComputePassImpl()
+	{
+	}
+	virtual HQReturnVal Apply();
+
+	void SetShader(const HQSharedPtr<HQEngineShaderResImpl>& computeShader) { this->computeShader = computeShader; }
+	void AddTextureUAVUnit(const HQEngineTextureUAVUnit& texunit);
+	void AddBufferUAVSlot(const HQEngineShaderBufferUAVSlot& bufferSlot);
+	bool Validate(HQLoggableObject *logger);
+
+	HQSharedPtr<HQEngineShaderResImpl> computeShader;
+
+	HQLinkedList<HQEngineTextureUAVUnit > textureUAVUnits;//used UAV texture slots
+	HQLinkedList<HQEngineShaderBufferUAVSlot > bufferUAVSlots;//used UAV buffer slots
+};
+
+#ifdef WIN32
+#	pragma warning( pop )//dominance inheritance of GetName() warning
+#endif
+
+/*-------------HQEngineRenderPassImpl implementation ---------------*/
+HQEngineRenderPassImpl::HQEngineRenderPassImpl(const char* name, HQEngineRenderPassPlatformController* _platformController)
+:HQEngineBaseRenderPassImpl(name, _platformController)
 {
 }
 
@@ -507,15 +573,19 @@ HQEngineRenderPassImpl::~HQEngineRenderPassImpl()
 {
 }
 
-void HQEngineRenderPassImpl::AddTextureUnit(const HQEngineTextureUnit& texunit)
+void HQEngineRenderPassImpl::Finalize()
 {
-	this->textureUnits.PushBack(texunit);
+	//set default values
+	if (this->shaderProgram == NULL) this->shaderProgram = HQ_NEW HQEngineShaderProgramWrapper();
+	if (this->renderTargetGroup == NULL) this->renderTargetGroup = HQ_NEW HQEngineRTGroupWrapper();
+	if (this->blendState == NULL) this->blendState = HQ_NEW HQEngineBlendStateWrapper();
+	if (this->dsState == NULL) this->dsState = HQ_NEW HQEngineDSStateWrapper();
 }
+
 
 HQReturnVal HQEngineRenderPassImpl::Apply()
 {
-
-	//apply states, controlled texture units and more
+	/*-----------apply states, controlled texture units and more-------------*/
 	this->m_renderDevice->GetStateManager()->SetFaceCulling(this->faceCullingMode);
 
 	this->shaderProgram->Active();
@@ -529,68 +599,161 @@ HQReturnVal HQEngineRenderPassImpl::Apply()
 	return HQ_OK;
 }
 
-//D3D version
-HQEngineRenderPassD3D::HQEngineRenderPassD3D(const char *name)
-: HQEngineRenderPassImpl(name)
+/*-----------HQEngineComputePassImpl implementation-----------------*/
+HQReturnVal HQEngineComputePassImpl::Apply()
 {
-}
+	//activate shader
+	m_renderDevice->GetShaderManager()->ActiveComputeShader(this->computeShader->GetShader());
 
-HQReturnVal HQEngineRenderPassD3D::ApplyTextureStates()
-{
-	HQLinkedList<HQEngineTextureUnit>::Iterator ite;
-	this->textureUnits.GetIterator(ite);
-	for (; !ite.IsAtEnd(); ++ite) //for each controlled texture unit
+	//apply texture sampler states
+	this->ApplyTextureStates();
+
+	//apply texture UAV states
+	HQLinkedList<HQEngineTextureUAVUnit >::Iterator ite;
+	this->textureUAVUnits.GetIterator(ite);
+	for (; !ite.IsAtEnd(); ++ite) //for each used texture unit
 	{
-		//set sampler state
-		ite->samplerState->Apply(ite->unitIndex);
-		//set texture
-		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetTexture());
+		HQEngineTextureUAVUnit & unit = *ite;
+		m_renderDevice->GetTextureManager()->SetTextureUAVForComputeShader(unit.unitIndex, unit.texture->GetTexture(), unit.mipLevel);
+	}
+
+	//apply buffer UAV states
+	HQLinkedList<HQEngineShaderBufferUAVSlot >::Iterator ite2;
+	this->bufferUAVSlots.GetIterator(ite2);
+	for (; !ite2.IsAtEnd(); ++ite2) //for each used texture unit
+	{
+		HQEngineShaderBufferUAVSlot& slot = (*ite2);
+		m_renderDevice->GetShaderManager()->SetBufferUAVForComputeShader(
+			slot.slotIndex, slot.buffer->GetBuffer(), slot.firstElement, slot.numElements);
 	}
 	return HQ_OK;
 }
 
-//GL version
-HQEngineRenderPassGL::HQEngineRenderPassGL(const char *name)
-: HQEngineRenderPassImpl(name)
+void HQEngineComputePassImpl::AddTextureUAVUnit(const HQEngineTextureUAVUnit& texunit)
 {
+	this->textureUAVUnits.PushBack(texunit);
+}
+void HQEngineComputePassImpl::AddBufferUAVSlot(const HQEngineShaderBufferUAVSlot& bufferSlot)
+{
+	this->bufferUAVSlots.PushBack(bufferSlot);
 }
 
-HQReturnVal HQEngineRenderPassGL::ApplyTextureStates()
-{
-	HQLinkedList<HQEngineTextureUnit>::Iterator ite;
-	this->textureUnits.GetIterator(ite);
-	for (; !ite.IsAtEnd(); ++ite) //for each controlled texture unit
+bool HQEngineComputePassImpl::Validate(HQLoggableObject *logger){
+	if (this->computeShader == NULL)
 	{
-		//set texture's sampler state
-		ite->samplerState->Apply(ite->texture->GetTexture()->GetResourceIndex());
-		//set texture
-		m_renderDevice->GetTextureManager()->SetTexture(ite->unitIndex, ite->texture->GetTexture());
+		logger->Log("Error: compute_pass '%s' has no compute shader!", m_name);
+		return false;
 	}
-	return HQ_OK;
+
+	return this->platformController->Validate(*this, logger);
 }
+
+/*-------------platform specific controller-------------------*/
+//D3D version of platform specific controller
+class HQPlatformControllerD3D : public HQEngineRenderPassPlatformController, public HQGraphicsRelatedObj {
+public:
+	void ApplyTextureStates(HQLinkedList<HQEngineTextureUnit >& textureUnits)
+	{
+		HQLinkedList<HQEngineTextureUnit >::Iterator ite;
+		textureUnits.GetIterator(ite);
+		for (; !ite.IsAtEnd(); ++ite) //for each controlled texture unit
+		{
+			HQEngineTextureUnit & unit = *ite;
+			//set sampler state
+			unit.samplerState->Apply(unit.unitIndex);
+			//set texture
+			m_renderDevice->GetTextureManager()->SetTexture(unit.unitIndex, unit.texture->GetTexture());
+		}
+	}
+};
+
+
+//D3D11 version of platform specific controller
+class HQPlatformControllerD3D11 : public HQPlatformControllerD3D {
+public:
+
+	//validate compute shader
+	bool Validate(HQEngineComputePassImpl &computePass, HQLoggableObject *logger)
+	{
+		bool success = true;
+
+		HQClosedPrimeHashTable<std::string, HQSharedPtr<HQEngineTextureResImpl> > inputTextures;
+		HQClosedPrimeHashTable<hquint32, std::string > usedUavSlots;
+		//check for illegal use of buffer and texture as input and output
+
+		/*------inpute textures-----------*/
+		HQLinkedList<HQEngineTextureUnit >::Iterator input_tex_ite;
+		computePass.textureUnits.GetIterator(input_tex_ite);
+		for (; !input_tex_ite.IsAtEnd(); ++input_tex_ite) //for each used texture unit
+		{
+			inputTextures.Add(input_tex_ite->texture->GetName(), input_tex_ite->texture);
+		}
+
+		/*----------output textures-------------*/
+		HQLinkedList<HQEngineTextureUAVUnit >::Iterator output_tex_ite;
+		computePass.textureUAVUnits.GetIterator(output_tex_ite);
+		for (; !output_tex_ite.IsAtEnd(); ++output_tex_ite) //for each used texture unit
+		{
+			usedUavSlots.Add(output_tex_ite->unitIndex, output_tex_ite->texture->GetName());
+			if (inputTextures.GetItemPointer(output_tex_ite->texture->GetName()) != NULL)
+			{
+				logger->Log("Error: compute_pass '%s' uses texture '%s' both in texture unit and UAV slot!", computePass.GetName(), output_tex_ite->texture->GetName());
+				success = false;
+			}
+		}
+
+		//check for illegal binding buffer and texture to same UAV slot
+		HQLinkedList<HQEngineShaderBufferUAVSlot >::Iterator buffer_ite;
+		computePass.bufferUAVSlots.GetIterator(buffer_ite);
+		for (; !buffer_ite.IsAtEnd(); ++buffer_ite) //for each used buffer slot
+		{
+			std::string * boundTextureNamePtr = usedUavSlots.GetItemPointer(buffer_ite->slotIndex);
+			if (boundTextureNamePtr != NULL)
+			{
+				logger->Log("Error: compute_pass '%s' binds both buffer '%s' and texture '%s' to the same slot %u!"
+					, computePass.GetName(), buffer_ite->buffer->GetName(), boundTextureNamePtr->c_str(), buffer_ite->slotIndex);
+				success = false;
+			}
+		}
+
+		return success;
+	}
+};
+
+//GL version of platform specific controller
+class HQPlatformControllerGL : public HQEngineRenderPassPlatformController, public HQGraphicsRelatedObj {
+public:
+	void ApplyTextureStates(HQLinkedList<HQEngineTextureUnit >& textureUnits)
+	{
+		HQLinkedList<HQEngineTextureUnit >::Iterator ite;
+		textureUnits.GetIterator(ite);
+		for (; !ite.IsAtEnd(); ++ite) //for each controlled texture unit
+		{
+			HQEngineTextureUnit & unit = *ite;
+			//set texture's sampler state
+			unit.samplerState->Apply(unit.texture->GetTexture()->GetResourceIndex());
+			//set texture
+			m_renderDevice->GetTextureManager()->SetTexture(unit.unitIndex, unit.texture->GetTexture());
+		}
+	}
+};
 
 /*-------------rendering effect--------------------*/
 HQEngineRenderEffectImpl::HQEngineRenderEffectImpl(const char* name, 
-												   HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderPassImpl> >& passes)
+	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineBaseRenderPassImpl> >& passes)
 : HQNamedGraphicsRelatedObj(name), m_passes(NULL), m_numPasses(0)
 {
 	m_numPasses = passes.GetNumItems();
-	m_passes = HQ_NEW HQSharedPtr<HQEngineRenderPassImpl> [m_numPasses];
+	m_passes = HQ_NEW HQSharedPtr<HQEngineBaseRenderPassImpl>[m_numPasses];
 
-	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderPassImpl> >::Iterator ite;
+	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineBaseRenderPassImpl> >::Iterator ite;
 	passes.GetIterator(ite);
 	
 	//copy passes' info
 	for (int i = 0; !ite.IsAtEnd(); ++ite, ++i){
-		HQSharedPtr<HQEngineRenderPassImpl> & pPass = *ite;
+		HQSharedPtr<HQEngineBaseRenderPassImpl> & pPass = *ite;
 		m_passes[i] = pPass;
 		m_passIdxMap.Add(pPass->GetName(), i);
-
-		//set default values
-		if (pPass->shaderProgram == NULL) m_passes[i]->shaderProgram = HQ_NEW HQEngineShaderProgramWrapper();
-		if (pPass->renderTargetGroup == NULL) m_passes[i]->renderTargetGroup = HQ_NEW HQEngineRTGroupWrapper();
-		if (pPass->blendState == NULL) m_passes[i]->blendState = HQ_NEW HQEngineBlendStateWrapper();
-		if (pPass->dsState == NULL) m_passes[i]->dsState = HQ_NEW HQEngineDSStateWrapper();
 	}
 }
 HQEngineRenderEffectImpl::~HQEngineRenderEffectImpl() 
@@ -687,10 +850,18 @@ HQEngineEffectManagerImpl::HQEngineEffectManagerImpl(HQLogStream *stream, bool f
 	//check if we are using OpenGL
 	const char *renderer = m_pRDevice->GetDeviceDesc();
 	if (strncmp(renderer, "OpenGL", 6) == 0)
+	{
+		m_platformController = HQ_NEW HQPlatformControllerGL();
 		m_isGL = true;
+	}
 	else
+	{
+		if (strcmp(renderer, "Direct3D11") == 0)
+			m_platformController = HQ_NEW HQPlatformControllerD3D11();
+		else
+			m_platformController = HQ_NEW HQPlatformControllerD3D();
 		m_isGL = false;
-
+	}
 	/*------------init string to value mapping table--------------*/
 	//none/cw/ccw
 	m_cullModeMap.Add("none", HQ_CULL_NONE);
@@ -770,6 +941,7 @@ HQEngineEffectManagerImpl::HQEngineEffectManagerImpl(HQLogStream *stream, bool f
 
 HQEngineEffectManagerImpl::~HQEngineEffectManagerImpl()
 {
+	delete m_platformController;
 	Log("Released!");
 }
 
@@ -889,36 +1061,64 @@ HQReturnVal HQEngineEffectManagerImpl::LoadEffect(const HQEngineEffectParserNode
 		return HQ_FAILED_RESOURCE_EXISTS;
 	}
 
-	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderPassImpl> > passesTable;//rendering pass mapping table. TO DO: find a more efficient way to initialize the effect's passes
+	HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineBaseRenderPassImpl> > passesTable;//rendering pass mapping table. TO DO: find a more efficient way to initialize the effect's passes
 
-	const HQEngineEffectParserNode * pass = effectItem->GetFirstChild("pass");
-	for (; pass != NULL; pass = pass->GetNextSibling("pass"))
+	const HQEngineEffectParserNode * pass = effectItem->GetFirstChild();
+	for (; pass != NULL; pass = pass->GetNextSibling())
 	{
+		HQEngineBaseRenderPassImpl * newPass = NULL;
+		const char *node_type = pass->GetType();
 		const char *pass_name = pass->GetStrAttribute("name");
 		int pass_line = pass->GetSourceLine();
-		if (pass_name == NULL)
-		{
-			Log("Error : %d : Could not load a rendering pass from '%s' effect without any name!", pass_line, effect_name);
+
+		if (!strcmp(node_type, "pass")){
+
+			//now start loading the pass
+			HQEngineRenderPassImpl* newPassImpl = HQ_NEW HQEngineRenderPassImpl(pass_name, m_platformController);
+
+			if (HQFailed(this->LoadPass(pass, newPassImpl)))
+			{
+				delete newPassImpl;
+				return HQ_FAILED;
+			}
+
+			newPass = newPassImpl;
+
+		}//if (!strcmp(pass->GetType(), "pass"))
+		else if (!strcmp(node_type, "compute_pass")){
+			//now start loading the pass
+			HQEngineComputePassImpl* newPassImpl = HQ_NEW HQEngineComputePassImpl(pass_name, m_platformController);
+
+			if (HQFailed(this->LoadComputePass(pass, newPassImpl)))
+			{
+				delete newPassImpl;
+				return HQ_FAILED;
+			}
+
+			newPass = newPassImpl;
+		}
+		else {
+			Log("Error : %d : Effect '%s' has invalid node '%s'!", pass_line, effect_name, node_type);
 			return HQ_FAILED;
 		}
-		if (passesTable.GetItemPointer(pass_name) != NULL)
-		{
-			Log("Error : %d : Effect '%s' already has a pass named '%s'!", pass_line, effect_name, pass_name);
-			return HQ_FAILED;
-		}
-
-		//now start loading the pass
-		HQSharedPtr<HQEngineRenderPassImpl> newPass; 
-		if (m_isGL) 
-			newPass = HQ_NEW HQEngineRenderPassGL(pass_name);
-		else
-			newPass = HQ_NEW HQEngineRenderPassD3D(pass_name);
-
-		if (HQFailed(this->LoadPass(pass, newPass)) )
-			return HQ_FAILED;
-
 		//insert to table
-		passesTable.Add(pass_name, newPass);
+		if (newPass != NULL)
+		{
+			if (pass_name == NULL)
+			{
+				delete newPass;
+				Log("Error : %d : Could not load a rendering pass from '%s' effect without any name!", pass_line, effect_name);
+				return HQ_FAILED;
+			}
+			if (passesTable.GetItemPointer(pass_name) != NULL)
+			{
+				delete newPass;
+				Log("Error : %d : Effect '%s' already has a pass named '%s'!", pass_line, effect_name, pass_name);
+				return HQ_FAILED;
+			}
+
+			passesTable.Add(pass_name, newPass);
+		}
 	}//for (; attribute != NULL; attribute = attribute->GetNextSibling("pass"))
 
 	//add new effect to table
@@ -930,7 +1130,7 @@ HQReturnVal HQEngineEffectManagerImpl::LoadEffect(const HQEngineEffectParserNode
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* passItem, HQSharedPtr<HQEngineRenderPassImpl> &newPass)
+HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* passItem, HQEngineRenderPassImpl* newPass)
 {
 	const char emptyName[] = "";
 	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
@@ -951,49 +1151,21 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* 
 		int elem_line = elem->GetSourceLine();
 		if (!strncmp(elemName, "texture", 7))
 		{
-			//get texture unit's index
-			hquint32 textureIdx = 0;
-			if (sscanf(elemName, "texture%u",  &textureIdx) == 0)
+			hquint32 textureIdx;
+			if (sscanf(elemName, "texture%u", &textureIdx) == 0)
 			{
 				Log("Error : %d : invalid token %s!", elem_line, elemName);
 				return HQ_FAILED;
 			}
 
-			//get sampler state
-			HQEngineSamplerStateWrapper::CreationParams samplerParams;
-			if (HQFailed(this->ParseSamplerState(elem, samplerParams)) )
-				return HQ_FAILED;
-			
-			HQSharedPtr<HQEngineSamplerStateWrapper> samplerState = this->CreateOrGetSamplerState(samplerParams);
-			if (samplerState == NULL)
-				return HQ_FAILED;
-
-			
-			//get texture resource
-			const HQEngineEffectParserNode* textureResNameInfo = elem->GetFirstChild("source");
-			if (textureResNameInfo == NULL)
-			{
-				Log("Error: %d : texture unit missing texture resource!", elem_line);
-				return HQ_FAILED;
-			}
-
-			const char * textureResName = textureResNameInfo->GetStrAttribute("value");
-			if (textureResName == NULL)
-				textureResName = emptyName;
-
-			const HQSharedPtr<HQEngineTextureResImpl> texture = resManager->GetTextureResourceSharedPtr(textureResName);
-			if (texture == NULL)
-			{
-				Log("Error: %d : invalid texture resource named %s!", elem_line, textureResName);
-				return HQ_FAILED;
-			}
-			//controlled texture unit
 			HQEngineTextureUnit texunit;
-
 			if (m_isGL)
-				texunit.InitGL(textureIdx, texture, samplerState);
+				texunit.unitIndex = textureIdx;
 			else
-				texunit.InitD3D(HQ_PIXEL_SHADER, textureIdx, texture, samplerState);
+				texunit.unitIndex = HQ_PIXEL_SHADER | textureIdx;
+
+			if (HQFailed(this->ParseTextureUnit(elem, texunit)))
+				return HQ_FAILED;
 
 			newPass->AddTextureUnit(texunit);
 		}//if (!strncmp(elemName, "texture", 7))
@@ -1099,6 +1271,255 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* 
 
 	//face culling mode
 	newPass->faceCullingMode = faceCullMode;
+
+	//finalize
+	newPass->Finalize();
+
+	return HQ_OK;
+}
+
+HQReturnVal HQEngineEffectManagerImpl::LoadComputePass(const HQEngineEffectParserNode* passItem, HQEngineComputePassImpl *newPass)
+{
+	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
+	const char emptyName[] = "";
+	const HQEngineEffectParserNode * elem = passItem->GetFirstChild();
+	for (; elem != NULL; elem = elem->GetNextSibling())
+	{
+		const char *elemName = elem->GetType();
+		int elem_line = elem->GetSourceLine();
+		if (!strncmp(elemName, "texture_uav", 11))//texture UAV slot
+		{
+			hquint32 textureIdx;
+			if (sscanf(elemName, "texture_uav%u", &textureIdx) == 0)
+			{
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
+				return HQ_FAILED;
+			}
+
+			HQEngineTextureUAVUnit texunit;
+			texunit.unitIndex = textureIdx;
+
+			if (HQFailed(this->ParseTextureUAVUnit(elem, texunit)))
+				return HQ_FAILED;
+
+			newPass->AddTextureUAVUnit(texunit);
+		}//if (!strncmp(elemName, "texture_uav", 11))
+		else if (!strncmp(elemName, "texture", 7))//texture unit
+		{
+			hquint32 textureIdx;
+			if (sscanf(elemName, "texture%u", &textureIdx) == 0)
+			{
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
+				return HQ_FAILED;
+			}
+
+			HQEngineTextureUnit texunit;
+			if (m_isGL)
+				texunit.unitIndex = textureIdx;
+			else
+				texunit.unitIndex = HQ_COMPUTE_SHADER | textureIdx;
+
+			if (HQFailed(this->ParseTextureUnit(elem, texunit)))
+				return HQ_FAILED;
+
+			newPass->AddTextureUnit(texunit);
+		}//else if (!strncmp(elemName, "texture", 7))
+		else if (!strncmp(elemName, "buffer_uav", 10))//bufer UAV slot
+		{
+			hquint32 bufferIdx;
+			if (sscanf(elemName, "buffer_uav%u", &bufferIdx) == 0)
+			{
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
+				return HQ_FAILED;
+			}
+
+			HQEngineShaderBufferUAVSlot bufferSlot;
+			bufferSlot.slotIndex = bufferIdx;
+
+			if (HQFailed(this->ParseShaderBufferUAVUnit(elem, bufferSlot)))
+				return HQ_FAILED;
+
+			newPass->AddBufferUAVSlot(bufferSlot);
+		}//else if (!strncmp(elemName, "buffer_uav", 10))
+		else if (!strcmp(elemName, "shader"))//compute shader
+		{
+			const char *shader_res_name = elem->GetStrAttribute("value");
+			if (shader_res_name == NULL)
+				shader_res_name = emptyName;
+			HQSharedPtr<HQEngineShaderResImpl> shader = resManager->GetShaderResourceSharedPtr(shader_res_name);
+			if (shader == NULL)
+			{
+				Log("Error : %d : invalid shader=%s!", elem_line, shader_res_name);
+				return HQ_FAILED;
+			}
+			else if (shader->GetShaderType() != HQ_COMPUTE_SHADER){
+				Log("Error : %d : shader=%s is not compute shader!", elem_line, shader_res_name);
+				return HQ_FAILED;
+			}
+
+			newPass->SetShader(shader);
+		}//else if (!strcmp(elemName, "shader"))
+	}//for (; elem != NULL; elem = elem->GetNextSibling())
+
+	if (!newPass->Validate(this))
+		return HQ_FAILED;
+	return HQ_OK;
+}
+
+HQReturnVal HQEngineEffectManagerImpl::ParseTextureUnit(const HQEngineEffectParserNode* textureUnitElem, HQEngineTextureUnit& texunit)
+{
+	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
+	const char emptyName[] = "";
+	int elem_line = textureUnitElem->GetSourceLine();
+
+	//get sampler state
+	HQEngineSamplerStateWrapper::CreationParams samplerParams;
+	if (HQFailed(this->ParseSamplerState(textureUnitElem, samplerParams)))
+		return HQ_FAILED;
+
+	HQSharedPtr<HQEngineSamplerStateWrapper> samplerState = this->CreateOrGetSamplerState(samplerParams);
+	if (samplerState == NULL)
+		return HQ_FAILED;
+
+
+	//get texture resource
+	const HQEngineEffectParserNode* textureResNameInfo = textureUnitElem->GetFirstChild("source");
+	if (textureResNameInfo == NULL)
+	{
+		Log("Error: %d : texture unit missing texture resource!", elem_line);
+		return HQ_FAILED;
+	}
+
+	const char * textureResName = textureResNameInfo->GetStrAttribute("value");
+	if (textureResName == NULL)
+		textureResName = emptyName;
+
+	const HQSharedPtr<HQEngineTextureResImpl> texture = resManager->GetTextureResourceSharedPtr(textureResName);
+	if (texture == NULL)
+	{
+		Log("Error: %d : invalid texture resource named %s!", elem_line, textureResName);
+		return HQ_FAILED;
+	}
+	//controlled texture unit
+	texunit.texture = texture;
+	texunit.samplerState = samplerState;
+
+	return HQ_OK;
+}
+
+HQReturnVal HQEngineEffectManagerImpl::ParseTextureUAVUnit(const HQEngineEffectParserNode* textureUnitElem, HQEngineTextureUAVUnit& texUAVUnit)
+{
+	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
+	int elem_line = textureUnitElem->GetSourceLine();
+	hquint32 mipLevel = 0;
+	const char * textureResName = NULL;
+
+	const HQEngineEffectParserNode * attribute = textureUnitElem->GetFirstChild();
+	for (; attribute != NULL; attribute = attribute->GetNextSibling())
+	{
+		int attriLine = attribute->GetSourceLine();
+		const char* attriName = attribute->GetType();
+		const HQEngineEffectParserNode::ValueType& attriVal = attribute->GetAttribute("value");
+		const char* attriValStr = attriVal.GetAsStringEmptyIfNone();
+
+		if (!strcmp(attriName, "source"))
+		{
+			textureResName = attriValStr;
+		}
+		else if (!strcmp(attriName, "mip_level"))
+		{
+			const hqint32* valPtr = attriVal.GetAsIntPt();
+			if (valPtr == NULL)
+			{
+				Log("Error: %d : invalid mip_level='%s'!", attriValStr);
+				return HQ_FAILED;
+			}
+
+			mipLevel = *valPtr;
+		}//else if (!strcmp(attriName, "mip_level"))
+	}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
+
+	//get texture resource
+	if (textureResName == NULL)
+	{
+		Log("Error: %d : texture UAV unit missing texture resource!", elem_line);
+		return HQ_FAILED;
+	}
+	const HQSharedPtr<HQEngineTextureResImpl> texture = resManager->GetTextureResourceSharedPtr(textureResName);
+	if (texture == NULL)
+	{
+		Log("Error: %d : invalid texture resource named %s!", elem_line, textureResName);
+		return HQ_FAILED;
+	}
+
+	//store texture UAV unit
+	texUAVUnit.texture = texture;
+	texUAVUnit.mipLevel = mipLevel;
+
+	return HQ_OK;
+}
+
+HQReturnVal HQEngineEffectManagerImpl::ParseShaderBufferUAVUnit(const HQEngineEffectParserNode* bufferSlotElem, HQEngineShaderBufferUAVSlot& bufferUAVUnit)
+{
+	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
+	int elem_line = bufferSlotElem->GetSourceLine();
+	hquint32 firstElement = 0;
+	hquint32 numElements = 1;
+	const char * bufferResName = NULL;
+
+	const HQEngineEffectParserNode * attribute = bufferSlotElem->GetFirstChild();
+	for (; attribute != NULL; attribute = attribute->GetNextSibling())
+	{
+		int attriLine = attribute->GetSourceLine();
+		const char* attriName = attribute->GetType();
+		const HQEngineEffectParserNode::ValueType& attriVal = attribute->GetAttribute("value");
+		const char* attriValStr = attriVal.GetAsStringEmptyIfNone();
+
+		if (!strcmp(attriName, "source"))
+		{
+			bufferResName = attriValStr;
+		}
+		else if (!strcmp(attriName, "first_element"))
+		{
+			const hqint32* valPtr = attriVal.GetAsIntPt();
+			if (valPtr == NULL)
+			{
+				Log("Error: %d : invalid first element index='%s'!", attriValStr);
+				return HQ_FAILED;
+			}
+
+			firstElement = *valPtr;
+		}//else if (!strcmp(attriName, "first_element"))
+		else if (!strcmp(attriName, "num_elements"))
+		{
+			const hqint32* valPtr = attriVal.GetAsIntPt();
+			if (valPtr == NULL)
+			{
+				Log("Error: %d : invalid number of elements='%s'!", attriValStr);
+				return HQ_FAILED;
+			}
+
+			numElements = *valPtr;
+		}
+	}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
+
+	//get buffer resource
+	if (bufferResName == NULL)
+	{
+		Log("Error: %d : buffer UAV slot missing buffer resource!", elem_line);
+		return HQ_FAILED;
+	}
+	const HQSharedPtr<HQEngineShaderBufferResImpl> buffer = resManager->GetShaderBufferResourceSharedPtr(bufferResName);
+	if (buffer == NULL)
+	{
+		Log("Error: %d : invalid buffer resource named %s!", elem_line, bufferResName);
+		return HQ_FAILED;
+	}
+
+	//store texture UAV unit
+	bufferUAVUnit.buffer = buffer;
+	bufferUAVUnit.firstElement = firstElement;
+	bufferUAVUnit.numElements = numElements;
 
 	return HQ_OK;
 }

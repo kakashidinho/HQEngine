@@ -64,6 +64,7 @@ I           [uUlL]
 "techniques"				{SAVE_LINE;  return (TECHNIQUES_GROUP_KEYWORD);}
 "technique"					{SAVE_LINE;  return (TECHNIQUE_KEYWORD);}
 "pass"						{SAVE_LINE;  return (PASS_KEYWORD);}
+"compute_pass"				{SAVE_LINE;  return (COMPUTE_PASS_KEYWORD);}
 "blend"						{SAVE_LINE;  return (BLEND_KEYWORD);}
 "stencil"					{SAVE_LINE;	 return (STENCIL_KEYWORD); }
 "outputs"					{SAVE_LINE;  return (OUTPUTS_KEYWORD);}
@@ -71,7 +72,8 @@ I           [uUlL]
 
 texture{D}			  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (TEXUNIT);}	
 output{D}			  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (OUTPUT);}
-
+texture_uav{D}		  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (TEX_UAV_UNIT);}	
+buffer_uav{D}		  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (BUFFER_UAV_UNIT);}	
 
 "="					  { SAVE_LINE; return (EQUAL);}	
 ("+"|"-")(x|y|z)	  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng);  return (CUBE_FACE);}

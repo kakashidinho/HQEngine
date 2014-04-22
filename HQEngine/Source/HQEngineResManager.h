@@ -40,6 +40,26 @@ protected:
 	virtual ~HQEngineShaderResource() {}
 };
 
+//buffer
+enum HQEngineShaderBufferType{
+	HQ_ESBT_VERTEX,
+	HQ_ESBT_INDEX,
+	HQ_ESBT_DRAW_INDIRECT,
+	HQ_ESBT_DRAW_INDEXED_INDIRECT,
+	HQ_ESBT_COMPUTE_INDIRECT,
+	HQ_ESBT_SHADER_USE_ONLY,
+};
+
+class HQEngineShaderBufferResource : public virtual HQEngineNamedObj{
+public:
+	virtual HQEngineShaderBufferType GetType() const = 0;
+	virtual HQBufferUAV* GetBuffer() const = 0;
+	virtual hquint32 GetNumElements() const = 0;
+	virtual hquint32 GetElementSize() const = 0;
+protected:
+	virtual ~HQEngineShaderBufferResource() {}
+};
+
 
 class HQEngineResLoadSession {
 protected:
@@ -126,6 +146,19 @@ public:
 
 
 	///
+	///create unordered access supported buffer to be able to be read and written in shader. 
+	///Note that {elementSize} is only relevant in HQ_ESBT_SHADER_USE_ONLY/HQ_ESBT_VERTEX/HQ_ESBT_INDEX 
+	///type
+	///
+	virtual HQReturnVal AddShaderBufferResource(
+			const char *name,
+			HQEngineShaderBufferType type,
+			hquint32 numElements,
+			hquint32 elementSize,
+			void * initData = NULL
+		) = 0;
+
+	///
 	///{vertexShaderResourceName} is ignored in D3D9 device. if {vertexShaderResourceName} = NULL, this method will create 
 	///input layout for fixed function shader. D3D11 & GL only accepts the following layout: 
 	///position (x,y,z); color (r,g,b,a); normal (x,y,z); texcoords (u,v)
@@ -137,9 +170,11 @@ public:
 
 	virtual HQEngineTextureResource * GetTextureResource(const char* name) = 0;
 	virtual HQEngineShaderResource * GetShaderResource(const char* name) = 0;
+	virtual HQEngineShaderBufferResource * GetShaderBufferResource(const char *name) = 0;
 
 	virtual HQReturnVal RemoveTextureResource(HQEngineTextureResource* res) = 0;
 	virtual HQReturnVal RemoveShaderResource(HQEngineShaderResource* res) = 0;
+	virtual HQReturnVal RemoveShaderBufferResource(HQEngineShaderBufferResource* res) = 0;
 	virtual void RemoveAllResources() = 0;
 protected:
 	virtual ~HQEngineResManager() {}

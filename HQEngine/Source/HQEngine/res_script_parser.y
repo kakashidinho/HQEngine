@@ -52,7 +52,8 @@ COPYING.txt included with this distribution for more information.
 }
 
 %token <lex> IDENTIFIER FLOATCONSTANT INTCONSTANT STRING_CONST
-%token <lex> LBRACE RBRACE RES_KEYWORD TEX_KEYWORD TEX_UAV_KEYWORD RENDER_TARGET_KEYWORD SHADER_KEYWORD DEF EQUAL SEMI_COLON
+%token <lex> LBRACE RBRACE RES_KEYWORD TEX_KEYWORD TEX_UAV_KEYWORD RENDER_TARGET_KEYWORD SHADER_KEYWORD BUFFER_UAV_KEYWORD 
+%token <lex> DEF EQUAL SEMI_COLON
 
 %type  <lex>  string_or_identifier
 %type  <node> root resource_blocks resource_block block child_elems single_child assignment definition
@@ -129,6 +130,12 @@ single_child:
 	| TEX_UAV_KEYWORD string_or_identifier block {
 		$$ = $3;
 		$$->SetType("texture_uav");
+		$$->SetSourceLine($1.line);
+		$$->SetAttribute("name", $2.string);
+	}
+	| BUFFER_UAV_KEYWORD string_or_identifier block {
+		$$ = $3;
+		$$->SetType("buffer_uav");
 		$$->SetSourceLine($1.line);
 		$$->SetAttribute("name", $2.string);
 	}

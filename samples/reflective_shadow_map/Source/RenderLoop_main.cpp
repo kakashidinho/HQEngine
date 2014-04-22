@@ -286,8 +286,7 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	HQVertexAttribDescArray<2> vAttrDescs;
 	vAttrDescs.SetPosition(0, 0, 0, HQ_VADT_FLOAT4);
 	vAttrDescs.SetTexcoord(1, 0, 4 * sizeof(float), HQ_VADT_FLOAT2, 0);
-	HQEngineShaderResource* vshader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("noise_decoding_vs");
-	HQEngineApp::GetInstance()->GetEffectManager()->CreateVertexInputLayout(vAttrDescs, 2, vshader, &vInputLayout);
+	HQEngineApp::GetInstance()->GetResourceManager()->CreateVertexInputLayout(vAttrDescs, 2, "noise_decoding_vs", &vInputLayout);
 	
 	//now begin the decoding process. read the encoded noise factors from texture and render the decoded factors to a float render target.
 	HQEngineRenderEffect* effect = HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("decode_random_factors");
@@ -324,6 +323,9 @@ void RenderLoop::ComputeShaderDecodeNoiseMap()
 	HQEngineTextureResource * decoded = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("decoded_random_factors_img");
 	HQEngineShaderResource* computeShader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("noise_decoding_cs");
 
+	hquint32 width, height;
+	encoded->GetTexture2DSize(width, height);
+
 	if (m_renderAPI_type == HQ_RA_OGL)
 	{
 		//set encoded texture
@@ -348,11 +350,9 @@ void RenderLoop::ComputeShaderDecodeNoiseMap()
 	if (m_renderAPI_type == HQ_RA_OGL)
 	{
 		m_pRDevice->GetTextureManager()->SetTexture(0, NULL);
-		m_pRDevice->GetTextureManager()->SetTextureUAV(0, NULL);
 	}
 	else{
 		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER | 0, NULL);
-		m_pRDevice->GetTextureManager()->SetTextureUAV(HQ_COMPUTE_SHADER | 0, NULL);
 	}
 	m_pRDevice->GetShaderManager()->ActiveComputeShader(NULL);
 	HQEngineApp::GetInstance()->GetResourceManager()->RemoveTextureResource(encoded);

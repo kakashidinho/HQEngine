@@ -2,11 +2,27 @@ Basic Format:
 resources {
 	texture 
 	shader 
+	uav_buffer
 	.
 	.
 	.
 }
 
+Unordered access supported buffer resource format:
+	buffer_uav name {
+		//if not specifying type, shader-use-only buffer is assumed
+		type=vertex/index/draw_indirect/draw_indexed_indirect/compute_indirect
+		
+		num_elements=1   //number of elements. default is 1
+		
+		
+		element_size=20  //element size in bytes, default is 4. ignored in "draw_indirect/draw_indexed_indirect/compute_indirect" buffer
+		/*Note: in index buffer case, element_size determines index data type.
+		For example, "element_size = 4" will create 32 bit "unsigned int" index buffer, while 
+		"element_size = 2" will create 16 bit "unsigned short" index buffer
+		*/
+	}
+	
 Texture resource format, can be one of the following:
 	render_target name {
 		type=2d/cube // default to 2D if not specified 
@@ -35,7 +51,7 @@ Texture resource format, can be one of the following:
 		negative_z="img6.bmp"
 	}
 	
-	//unordered access texture
+	//unordered access supported texture
 	texture_uav name
 	{
 		width=100

@@ -50,9 +50,10 @@
      TEX_UAV_KEYWORD = 266,
      RENDER_TARGET_KEYWORD = 267,
      SHADER_KEYWORD = 268,
-     DEF = 269,
-     EQUAL = 270,
-     SEMI_COLON = 271
+     BUFFER_UAV_KEYWORD = 269,
+     DEF = 270,
+     EQUAL = 271,
+     SEMI_COLON = 272
    };
 #endif
 
@@ -80,7 +81,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 84 "gen_res_script_parser.hpp"
+#line 85 "gen_res_script_parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

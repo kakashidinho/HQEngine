@@ -35,19 +35,19 @@ Game::Game()
 	m_app->GetResourceManager()->AddResourcesFromFile("resources.script");//API specific resources script
 	m_app->GetResourceManager()->AddResourcesFromFile("resourcesCommon.script");
 
-	m_app->GetEffectManager()->AddEffectsFromFile("effects.script");
-
-	//create UAV indirect draw buffer buffer to be written by compute shader
-	m_pRDevice->GetShaderManager()->CreateDrawIndirectArgs(2, NULL, &m_indirectDrawBuffer);
 
 	//create counter buffer
 	hquint32 zero = 0;
-	m_pRDevice->GetShaderManager()->CreateBufferUAV(1, sizeof(hquint32), &zero, &m_counterBuffer);
+	m_app->GetResourceManager()->AddShaderBufferResource("counter_buffer", HQ_ESBT_SHADER_USE_ONLY, 1, sizeof(hquint32), &zero);
+	m_counterBuffer = m_app->GetResourceManager()->GetShaderBufferResource("counter_buffer")->GetBuffer();
+
+	//create UAV indirect draw buffer buffer to be written by compute shader
+	m_indirectDrawBuffer = m_app->GetResourceManager()->GetShaderBufferResource("indirect_draw_buffer")->GetBuffer();
 
 	//create UAV vertex buffer to be written by compute shader.
 	//vertex format is {float2 position; float2 texcoords}
-	m_pRDevice->GetVertexStreamManager()->CreateVertexBufferUAV(NULL, 4 * sizeof(float), 4, &m_vertexBuffer);
-
+	m_vertexBuffer = m_app->GetResourceManager()->GetShaderBufferResource("vertex_buffer")->GetBuffer();
+	
 	//create vertex layout
 	HQVertexAttribDescArray<2> vAttribsDesc;
 
@@ -63,21 +63,16 @@ Game::Game()
 		m_pRDevice->GetShaderManager()->SetUniformBuffer(0, m_uBuffer);
 	else
 		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 0, m_uBuffer);
+
+	//load effect 
+	m_app->GetEffectManager()->AddEffectsFromFile("effects.script");
 }
 
 void Game::Render(HQTime dt){
 	HQTexture* colorTexture = m_app->GetResourceManager()->GetTextureResource("color_texture")->GetTexture();
 	/*--------------------use compute shader to generate texture, vertex buffer and draw arguments----------------------------------*/
-	//prepare UAV buffers and texture in compute sahder
-	HQEngineShaderResource* computeShader = m_app->GetResourceManager()->GetShaderResource("compute-shader-cs");
-
-	m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(2, colorTexture);
-
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(0, m_indirectDrawBuffer, 0, 2);
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(1, m_vertexBuffer, 0, 4);
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(3, m_counterBuffer, 0, 1);
-
-	m_pRDevice->GetShaderManager()->ActiveComputeShader(computeShader->GetShader());
+	m_app->GetEffectManager()->GetEffect("draw")->GetPassByName("compute")->Apply();
+	
 	m_pRDevice->DispatchCompute(1, 1, 1);//run compute shader
 
 	//place a barrier for UAV buffers and texture access
@@ -85,7 +80,7 @@ void Game::Render(HQTime dt){
 	m_pRDevice->TextureUAVBarrier();
 
 	/*-------------now draw-------------------*/
-	m_app->GetEffectManager()->GetEffect("draw")->GetPass(0)->Apply();
+	m_app->GetEffectManager()->GetEffect("draw")->GetPassByName("draw")->Apply();
 	m_pRDevice->GetVertexStreamManager()->SetVertexBuffer(m_vertexBuffer, 0, 4 * sizeof(float));
 	m_pRDevice->GetVertexStreamManager()->SetVertexInputLayout(m_vertexLayout);
 

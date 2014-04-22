@@ -122,17 +122,41 @@ public:
 	hquint32 stateID;
 };
 
-//texture unit
-struct HQEngineTextureUnit {
-	void InitD3D(HQShaderType shaderStage, hquint32 textureIdx, const HQSharedPtr<HQEngineTextureResImpl>& texture, const HQSharedPtr<HQEngineSamplerStateWrapper>& samplerState);
-	void InitGL(hquint32 textureIdx, const HQSharedPtr<HQEngineTextureResImpl>& texture, const HQSharedPtr<HQEngineSamplerStateWrapper>& samplerState);
+/*--------------texture units-----------------------*/
+//generic texture unit: canbe normal unit or UAV unit
+struct HQEngineBaseTextureUnit{
+	virtual ~HQEngineBaseTextureUnit() {}
 
-	hquint32 unitIndex;//different between D3D and GL. D3D: index = shaderStage bitwise or-ed with texture stage index
+	hquint32 unitIndex;//there many be different between D3D and GL. D3D: index = shaderStage bitwise or-ed with texture stage index
 	HQSharedPtr<HQEngineTextureResImpl> texture;//texture
+};
+
+//texture sampler unit
+struct HQEngineTextureUnit : public HQEngineBaseTextureUnit {
+	
 	HQSharedPtr<HQEngineSamplerStateWrapper> samplerState;// sampling state
 };
 
-//depth stencil buffer
+//texture UAV unit
+struct HQEngineTextureUAVUnit : public HQEngineBaseTextureUnit {
+
+	hquint32 mipLevel;
+};
+
+/*------------buffer slot---------------*/
+struct HQEngineBaseShaderBufferSlot {
+	hquint32 slotIndex;
+	HQSharedPtr<HQEngineShaderBufferResImpl> buffer;
+};
+
+//UAV buffer slot
+struct HQEngineShaderBufferUAVSlot : public HQEngineBaseShaderBufferSlot {
+	hquint32 firstElement;
+	hquint32 numElements;
+};
+
+
+/*----------depth stencil buffer-----------*/
 class HQEngineDSBufferWrapper: public HQGraphicsRelatedObj {
 public:
 	struct CreationParams{
@@ -197,42 +221,36 @@ public:
 #	pragma warning( disable : 4250 )//dominance inheritance of GetName()
 #endif
 
-//rendering pass
-struct HQEngineRenderPassImpl : public HQNamedGraphicsRelatedObj, public HQEngineRenderPass{
-	HQEngineRenderPassImpl(const char* name);
-	virtual ~HQEngineRenderPassImpl();
-	virtual HQReturnVal Apply();
-	virtual HQReturnVal ApplyTextureStates() = 0;
+
+/*----------rendering pass-------------*/
+//platform specific controller
+class HQEngineRenderPassPlatformController;
+//base rendering pass class
+struct HQEngineBaseRenderPassImpl : public HQNamedGraphicsRelatedObj, public HQEngineRenderPass {
+
+	HQEngineBaseRenderPassImpl(const char *name, HQEngineRenderPassPlatformController* platformController);
+	virtual ~HQEngineBaseRenderPassImpl();
 
 	void AddTextureUnit(const HQEngineTextureUnit& texunit);
 
-	HQSharedPtr<HQEngineShaderProgramWrapper> shaderProgram;//shader program
-	HQSharedPtr<HQEngineRTGroupWrapper> renderTargetGroup;//render targets. 
-	HQSharedPtr<HQEngineBlendStateWrapper> blendState;//blend state
-	HQSharedPtr<HQEngineDSStateWrapper> dsState;//depth stencil state
+	void ApplyTextureStates();
 	
-	HQLinkedList<HQEngineTextureUnit> textureUnits; //controlled texture units in this pass
-	HQCullMode faceCullingMode;
 
+	HQLinkedList<HQEngineTextureUnit > textureUnits; //controlled texture units in this pass
+protected:
+	HQEngineRenderPassPlatformController* platformController;
 };
 
-struct HQEngineRenderPassD3D : public HQEngineRenderPassImpl
-{
-	HQEngineRenderPassD3D(const char *name);
-	virtual HQReturnVal ApplyTextureStates();
-};
-
-struct HQEngineRenderPassGL : public HQEngineRenderPassImpl
-{
-	HQEngineRenderPassGL(const char* name);
-	virtual HQReturnVal ApplyTextureStates();
-};
+//normal rendering pipeline pass
+struct HQEngineRenderPassImpl;
+//compute pass
+struct HQEngineComputePassImpl;
 
 //rendering effect
 class HQEngineRenderEffectImpl: public HQNamedGraphicsRelatedObj, public HQEngineRenderEffect {
 public:
 	HQEngineRenderEffectImpl(const char* name, 
-		HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineRenderPassImpl> >& passes);
+		HQClosedStringPrimeHashTable<HQSharedPtr<HQEngineBaseRenderPassImpl> >& passes);
 	virtual ~HQEngineRenderEffectImpl() ;
 	virtual hquint32 GetNumPasses() const {return m_numPasses;}
 	virtual HQEngineRenderPass* GetPassByName(const char* name);
@@ -241,9 +259,10 @@ public:
 private:
 	typedef HQClosedStringPrimeHashTable<hquint32> PassIndexMapTable;
 	PassIndexMapTable m_passIdxMap;//render pass index mapping table
-	HQSharedPtr<HQEngineRenderPassImpl> * m_passes;//render passes
+	HQSharedPtr<HQEngineBaseRenderPassImpl> * m_passes;//render passes
 	hquint32 m_numPasses;
 };
+
 
 #ifdef WIN32
 #	pragma warning( pop )
@@ -296,12 +315,16 @@ public:
 
 private:
 	HQReturnVal LoadEffect(const HQEngineEffectParserNode * effectItem);
-	HQReturnVal LoadPass(const HQEngineEffectParserNode* passItem, HQSharedPtr<HQEngineRenderPassImpl> &newPass);
+	HQReturnVal LoadPass(const HQEngineEffectParserNode* passItem, HQEngineRenderPassImpl *newPass);
+	HQReturnVal LoadComputePass(const HQEngineEffectParserNode* passItem, HQEngineComputePassImpl *newPass);
 	HQReturnVal ParseStencilState(const HQEngineEffectParserNode *stencilElem, HQEngineDSStateWrapper::CreationParams &params);
 	HQReturnVal ParseBlendState(const HQEngineEffectParserNode* blendElem, HQEngineBlendStateWrapper::CreationParams &params);
 	HQReturnVal ParseSamplerState(const HQEngineEffectParserNode* textureElem, HQEngineSamplerStateWrapper::CreationParams &params);
 	HQReturnVal ParseDepthStencilBuffer(const HQEngineEffectParserNode* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params);
 	HQReturnVal ParseRTGroup(const HQEngineEffectParserNode* rtGroupElem, HQEngineRTGroupWrapper::CreationParams &params);
+	HQReturnVal ParseTextureUnit(const HQEngineEffectParserNode* textureUnitElem, HQEngineTextureUnit& textureUnit);
+	HQReturnVal ParseTextureUAVUnit(const HQEngineEffectParserNode* textureUnitElem, HQEngineTextureUAVUnit& texUAVUnit);
+	HQReturnVal ParseShaderBufferUAVUnit(const HQEngineEffectParserNode* bufferSlotElem, HQEngineShaderBufferUAVSlot& bufferUAVUnit);
 
 	//these methods will create new or return existing object
 	HQSharedPtr<HQEngineRTGroupWrapper> CreateOrGetRTGroup(const HQEngineRTGroupWrapper::CreationParams& params);
@@ -327,6 +350,8 @@ private:
 	BlendStateTable m_blendStates;//blend states
 	DSStateTable m_dsStates;//depth stencil states
 	SamplerStateTable m_samplerStates;//sampler states
+
+	HQEngineRenderPassPlatformController * m_platformController;
 
 	EffectTable m_effects;//rendering effects
 
