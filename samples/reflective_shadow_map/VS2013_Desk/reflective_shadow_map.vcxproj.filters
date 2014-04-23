@@ -59,53 +59,53 @@
     <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaGLBinding.h">
       <Filter>Source Files\cuda</Filter>
     </ClInclude>
-    <ClInclude Include="..\Data\common_shader_code.h">
+    <ClInclude Include="..\..\Data\reflective_shadow_map\common_shader_code.h">
       <Filter>Source Files\shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\Data\depth-pass.cg">
+    <CustomBuild Include="..\..\Data\reflective_shadow_map\depth-pass.cg">
       <Filter>Source Files\shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Data\final-gathering.cg">
+    <CustomBuild Include="..\..\Data\reflective_shadow_map\final-gathering.cg">
       <Filter>Source Files\shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Data\lowres-pass.cg">
+    <CustomBuild Include="..\..\Data\reflective_shadow_map\lowres-pass.cg">
       <Filter>Source Files\shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Data\noise_decoding.cg">
+    <CustomBuild Include="..\..\Data\reflective_shadow_map\noise_decoding.cg">
       <Filter>Source Files\shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\Data\noise_generator.cu">
+    <CustomBuild Include="..\..\Data\reflective_shadow_map\noise_generator.cu">
       <Filter>Source Files\cuda</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Data\rsm_resourcesCommon.script">
+    <None Include="..\..\Data\reflective_shadow_map\rsm_resourcesCommon.script">
       <Filter>Source Files\scripts</Filter>
     </None>
-    <None Include="..\Data\rsm_resourcesD3D9.script">
+    <None Include="..\..\Data\reflective_shadow_map\rsm_resourcesD3D9.script">
       <Filter>Source Files\scripts</Filter>
     </None>
-    <None Include="..\Data\rsm_resourcesD3D11.script">
+    <None Include="..\..\Data\reflective_shadow_map\rsm_resourcesD3D11.script">
       <Filter>Source Files\scripts</Filter>
     </None>
-    <None Include="..\Data\rsm_resourcesGL.script">
+    <None Include="..\..\Data\reflective_shadow_map\rsm_resourcesGL.script">
       <Filter>Source Files\scripts</Filter>
     </None>
-    <None Include="..\Data\rsm_effects.script">
+    <None Include="..\..\Data\reflective_shadow_map\rsm_effects.script">
       <Filter>Source Files\scripts</Filter>
     </None>
-    <None Include="..\Data\rsm_resourcesD3D11_compute_shader.script">
+    <None Include="..\..\Data\reflective_shadow_map\rsm_resourcesD3D11_compute_shader.script">
       <Filter>Source Files\scripts</Filter>
     </None>
-    <None Include="..\Data\noise_decoding.hlslcs">
+    <None Include="..\..\Data\reflective_shadow_map\noise_decoding.hlslcs">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="..\Data\rsm_resourcesGL_compute_shader.script">
+    <None Include="..\..\Data\reflective_shadow_map\rsm_resourcesGL_compute_shader.script">
       <Filter>Source Files\scripts</Filter>
     </None>
-    <None Include="..\Data\noise_decoding.glslcs">
+    <None Include="..\..\Data\reflective_shadow_map\noise_decoding.glslcs">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>

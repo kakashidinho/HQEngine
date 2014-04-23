@@ -69,6 +69,7 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 
 	m_guiPlatform->initialise();
 	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../Data", true);
+	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../../Data", true);
 
 	m_myGUI = new MyGUI::Gui();
 	m_myGUI->initialise();
@@ -180,20 +181,10 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(LightProperties), NULL, true, &this->m_uniformLightProtBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(LightView), NULL, true, &this->m_uniformLightViewBuffer);
 
-	if (m_renderAPI_type == HQ_RA_OGL)
-	{
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(0, m_uniformTransformBuffer);
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(1, m_uniformLightViewBuffer);
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(2, m_uniformMaterialBuffer);
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(3, m_uniformLightProtBuffer);
-	}
-	else
-	{
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 0, m_uniformTransformBuffer);
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 1, m_uniformLightViewBuffer);
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER | 2, m_uniformMaterialBuffer);
-		m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER | 3, m_uniformLightProtBuffer);
-	}
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 0, m_uniformTransformBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 1, m_uniformLightViewBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 2, m_uniformMaterialBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 3, m_uniformLightProtBuffer);
 
 
 }

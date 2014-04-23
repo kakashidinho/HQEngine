@@ -61,6 +61,9 @@ int HQEngineMain(int argc, char **argv)
 		);
 	HQEngineApp::GetInstance()->CreateInstanceAndWindow(&params, false, NULL);
 	HQEngineApp::GetInstance()->AddFileSearchPath("../Data");
+	HQEngineApp::GetInstance()->AddFileSearchPath("../Data/reflective_shadow_map");
+	HQEngineApp::GetInstance()->AddFileSearchPath("../../Data");
+	HQEngineApp::GetInstance()->AddFileSearchPath("../../Data/reflective_shadow_map");
 
 	HQEngineApp::GetInstance()->GetRenderDevice()->SetDisplayMode(600, 600, true);
 	HQViewPort viewport = {0, 0, 600, 600};

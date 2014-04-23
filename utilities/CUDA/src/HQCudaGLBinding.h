@@ -72,14 +72,9 @@ namespace HQCudaBinding {
 		return cudaGraphicsGLRegisterBuffer(cudaResource, glHandle, flags);
 	}
 	
-	inline cudaError_t cudaGraphicsGLRegisterResource(struct cudaGraphicsResource **cudaResource, HQVertexBuffer* vBuffer, unsigned int flags)
+	inline cudaError_t cudaGraphicsGLRegisterResource(struct cudaGraphicsResource **cudaResource, HQGraphicsBufferRawRetrievable* buffer, unsigned int flags)
 	{
-		return cudaGraphicsGLRegisterBuffer(cudaResource, vBuffer, flags);
-	}
-	
-	inline cudaError_t cudaGraphicsGLRegisterResource(struct cudaGraphicsResource **cudaResource, HQIndexBuffer* iBuffer, unsigned int flags)
-	{
-		return cudaGraphicsGLRegisterBuffer(cudaResource, iBuffer, flags);
+		return cudaGraphicsGLRegisterBuffer(cudaResource, buffer, flags);
 	}
 	
 };//namespace HQCudaBinding
