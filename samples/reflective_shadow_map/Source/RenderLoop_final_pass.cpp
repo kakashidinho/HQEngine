@@ -18,7 +18,7 @@ void RenderLoop::FinalPassRender(HQTime dt){
 	const HQViewPort viewport = {0, 0, 600, 600};
 	m_pRDevice->SetViewPort(viewport);
 
-	Material * material;
+	DiffuseMaterial * material;
 
 	//start rendering
 	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE);

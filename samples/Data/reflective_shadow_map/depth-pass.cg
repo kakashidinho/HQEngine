@@ -8,8 +8,7 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#pragma pack_matrix(column_major)
-#include "common_shader_code.h"
+#include "../common_shader_code.h"
 
 uniform transform {
 	float4x3 worldMat;
@@ -21,11 +20,6 @@ uniform lightView {
 }: BUFFER[1];
 
 #define HALF_PIXEL_OFFSET 0.5 / 512
-
-struct vIn{
-	float3 iPos: VPOSITION;
-	float3 iNormal: VNORMAL;
-};
 
 struct vOut{
 	float4 oPos : POSITION;
@@ -41,22 +35,23 @@ float2 offsetPostion(float4 position){
 
 //offset by half a pixel, because of  the way the texel map to pixel in D3D9.
 vs_2_0 vs_3_0 float2 offsetPostion(float4 position){
-	return position + float2(-HALF_PIXEL_OFFSET, HALF_PIXEL_OFFSET) * position.w * 2.0;
+	return position.xy + float2(-HALF_PIXEL_OFFSET, HALF_PIXEL_OFFSET) * position.w * 2.0;
 }
 
 
 //vertex shader
-vOut VS(in vIn input){
+vOut VS(in vPNIn input){
 	vOut output;
 	
-	float3 posW = mul(float4(input.iPos, 1.0), worldMat);
-	float3 normalW = mul(float4(input.iNormal, 0.0), worldMat );
-	normalW = normalize(normalW);
+	float3 posW;
+	float4 posH;
+	float3 normalW; 
 	
-	float4 posV = mul(float4(posW, 1.0), lightViewMat);
+	transformWVP(input.iPos, worldMat, lightViewMat, lightProjMat, posW, posH);
+	normalW = worldTransformNormal(input.iNormal, worldMat );
 	
 	//projected position
-	output.oPos = mul(posV, lightProjMat);
+	output.oPos = posH;
 	output.oPos.xy = offsetPostion(output.oPos);//API dependent function
 	
 	//depth

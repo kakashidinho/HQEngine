@@ -48,4 +48,23 @@ private:
 	HQCamera* _lightCam;//light camera
 };
 
+/*-------structures that match those in shader--------*/
+
+struct DiffuseMaterial {
+	float materialDiffuse[4];
+};
+
+struct DiffuseLightProperties {
+
+	float lightPosition[4];
+	float lightDirection[4];
+	float lightDiffuse[4];
+	float lightFalloff_lightPCosHalfAngle[2];
+};
+
+struct LightView {
+	HQBaseMatrix4 lightViewMat;//light camera's view matrix
+	HQBaseMatrix4 lightProjMat;//light camera's projection matrix
+};
+
 #endif

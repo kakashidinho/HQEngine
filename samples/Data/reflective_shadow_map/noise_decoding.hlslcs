@@ -1,6 +1,6 @@
 /*-----------compute shader------------*/
 
-#include "common_shader_code.h"
+#include "../common_shader_code.h"
 
 #define WIDTH 20
 #define HEIGHT 20

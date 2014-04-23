@@ -565,7 +565,7 @@ call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(Sol
     <ClInclude Include="..\..\BaseSource\BaseApp.h" />
     <ClInclude Include="..\..\BaseSource\BaseCommon.h" />
     <ClInclude Include="..\..\BaseSource\Light.h" />
-    <ClInclude Include="..\..\Data\reflective_shadow_map\common_shader_code.h" />
+    <ClInclude Include="..\..\Data\common_shader_code.h" />
     <ClInclude Include="..\Source\RenderLoop.h" />
   </ItemGroup>
   <ItemGroup>

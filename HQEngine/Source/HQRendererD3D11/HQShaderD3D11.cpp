@@ -24,7 +24,7 @@ COPYING.txt included with this distribution for more information.
 
 
 /*------------------------------------------------------*/
-static char *cgSemantics[] = {
+static char *cgPredefinedMacrosArray[] = {
 #if HQ_DEFINE_SEMANTICS
 	"-DVPOSITION=POSITION",
 	"-DVCOLOR=COLOR",
@@ -43,11 +43,12 @@ static char *cgSemantics[] = {
 	"-DVBLENDINDICES=BLENDINDICES",
 	"-DVPSIZE=PSIZE",
 #endif
+	"-DHQEXT_CG",
 	NULL
 };
 
-static const size_t cgSemanticsSize = sizeof(cgSemantics) / sizeof(char*);
-static const size_t numCgPreDefined = cgSemanticsSize - 1;
+static const size_t cgPredefinedMacrosArraySize = sizeof(cgPredefinedMacrosArray) / sizeof(char*);
+static const size_t numCgPreDefined = cgPredefinedMacrosArraySize - 1;
 
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 static D3D10_SHADER_MACRO hlslSemantics[] =
@@ -740,7 +741,7 @@ int HQShaderManagerD3D11::GetNumMacros(const HQShaderMacro * pDefines)
 char ** HQShaderManagerD3D11::GetPredefineMacroArgumentsCg(const HQShaderMacro * pDefines)
 {
 	if(pDefines == NULL)
-		return cgSemantics;
+		return cgPredefinedMacrosArray;
 	int numDefines ;
 	int nameLen = 0;
 	int definitionLen = 0;
@@ -749,11 +750,11 @@ char ** HQShaderManagerD3D11::GetPredefineMacroArgumentsCg(const HQShaderMacro *
 	numDefines = this->GetNumMacros(pDefines);
 
 	if(numDefines == 0)
-		return cgSemantics;
+		return cgPredefinedMacrosArray;
 	/*------create arguments---------*/
-	char ** args = HQ_NEW char *[numDefines + cgSemanticsSize];
+	char ** args = HQ_NEW char *[numDefines + cgPredefinedMacrosArraySize];
 	for (int i = 0 ; i < numCgPreDefined ; ++i)
-		args[i] = cgSemantics[i];
+		args[i] = cgPredefinedMacrosArray[i];
 
 	args[numDefines + numCgPreDefined] = NULL;
 
@@ -785,7 +786,7 @@ char ** HQShaderManagerD3D11::GetPredefineMacroArgumentsCg(const HQShaderMacro *
 
 void HQShaderManagerD3D11::DeAllocArgsCg(char **ppC)
 {
-	if(ppC == NULL || ppC == cgSemantics)
+	if(ppC == NULL || ppC == cgPredefinedMacrosArray)
 		return;
 	char ** ppD = ppC + numCgPreDefined;
 	while(*ppD != NULL)

@@ -127,8 +127,8 @@ RenderLoop::RenderLoop(const char* rendererAPI,
 
 	/*---------create and bind uniform buffers--*/
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(Transform), NULL, true, &this->m_uniformTransformBuffer);
-	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(Material), NULL, true, &this->m_uniformMaterialBuffer);
-	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(LightProperties), NULL, true, &this->m_uniformLightProtBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(DiffuseMaterial), NULL, true, &this->m_uniformMaterialBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(DiffuseLightProperties), NULL, true, &this->m_uniformLightProtBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(LightView), NULL, true, &this->m_uniformLightViewBuffer);
 
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 0, m_uniformTransformBuffer);
@@ -310,7 +310,7 @@ void RenderLoop::Update(HQTime dt)
 	//send scene data to shader
 	Transform * transform;
 	LightView * lightView;
-	LightProperties * lightProt;
+	DiffuseLightProperties * lightProt;
 
 	//send transform data
 	m_uniformTransformBuffer->Map(&transform);

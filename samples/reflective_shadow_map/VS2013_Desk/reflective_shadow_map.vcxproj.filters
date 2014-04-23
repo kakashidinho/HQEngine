@@ -65,9 +65,6 @@
     <ClInclude Include="..\..\..\utilities\CUDA\src\HQCudaGLBinding.h">
       <Filter>Source Files\cuda</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Data\reflective_shadow_map\common_shader_code.h">
-      <Filter>Source Files\shaders</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\BaseSource\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="..\..\BaseSource\BaseCommon.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Data\common_shader_code.h">
+      <Filter>Source Files\shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

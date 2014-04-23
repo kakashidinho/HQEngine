@@ -72,27 +72,47 @@ void MOJOSHADER_includeCloseHandler(const char *data,
 HQShaderVarParserD3D9::HQShaderVarParserD3D9(const char *src, const HQShaderMacro* pDefines, HQFileManager* includeFileManager)
 : m_isColMajor (false)
 {
-	int numDefines = 0;
+	int numDefines = 0;//number of macro definition in {pDefines}
+	int mojoNumDefines = 0;
 	const HQShaderMacro *pD = pDefines;
-	
 	//calculate number of macros
 	while (pD != NULL && pD->name != NULL && pD->definition != NULL)
 	{
 		numDefines++;
 		pD++;
 	}
+	mojoNumDefines = numDefines + 1;
+	/*---------create mojo preprocessor defines---------*/
+	MOJOSHADER_preprocessorDefine * mojoDefines = HQ_NEW MOJOSHADER_preprocessorDefine[mojoNumDefines];
+	//predefined macro
+	mojoDefines[0].identifier = "HQEXT_CG";
+	mojoDefines[0].definition = "";
+	//copy macros
+	{
+		hquint32 i = 1;
+		pD = pDefines;
+		while (pD != NULL && pD->name != NULL && pD->definition != NULL)
+		{
+			mojoDefines[i].identifier = pD->name;
+			mojoDefines[i].definition = pD->definition;
+			pD++;
+			i++;
+		}
+	}
 
 	//preprocess source first
 	const MOJOSHADER_preprocessData * preprocessedData = MOJOSHADER_preprocess("source",
 												src,
 												strlen(src),
-												(const MOJOSHADER_preprocessorDefine*)pDefines,
-												numDefines,
+												mojoDefines,
+												mojoNumDefines,
 												MOJOSHADER_includeOpenHandler,
 												MOJOSHADER_includeCloseHandler,
 												NULL,
 												NULL,
 												includeFileManager);
+
+	delete[] mojoDefines;
 
 	if (preprocessedData->output != NULL)
 	{

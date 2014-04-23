@@ -7,9 +7,7 @@ COPYING.txt included with this distribution for more information.
 
 
 */
-
-#pragma pack_matrix(column_major)
-#include "common_shader_code.h"
+#include "../common_shader_code.h"
 
 /*---------------vertex shader-------------*/
 uniform transform {
@@ -23,11 +21,6 @@ uniform lightView {
 	float4x4 lightProjMat;//light camera's projection matrix
 }: BUFFER[1];
 
-
-struct vIn{
-	float3 iPos: VPOSITION;
-	float3 iNormal: VNORMAL;
-};
 
 struct vOut{
 	float4 oPos : POSITION;//clip space position
@@ -59,7 +52,7 @@ glslv glslf float2 scaleToTexcoord(float2 normalizeCoords){
 }
 
 //vertex shader
-vOut VS(in vIn input){
+vOut VS(in vPNIn input){
 	vOut output;
 	
 	float3 posW = mul(float4(input.iPos, 1.0), worldMat);

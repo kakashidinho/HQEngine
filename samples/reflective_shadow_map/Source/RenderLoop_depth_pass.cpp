@@ -19,7 +19,7 @@ void RenderLoop::DepthPassRender(HQTime dt){
 	const HQViewPort viewport = {0, 0, DEPTH_PASS_RT_WIDTH, DEPTH_PASS_RT_HEIGHT};
 	m_pRDevice->SetViewPort(viewport);
 
-	Material * material;
+	DiffuseMaterial * material;
 	
 	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE);
 	//render the scene

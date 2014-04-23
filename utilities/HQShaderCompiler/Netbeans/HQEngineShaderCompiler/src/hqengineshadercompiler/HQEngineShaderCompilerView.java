@@ -784,6 +784,7 @@ public class HQEngineShaderCompilerView extends FrameView {
                     args.add(profile);
                     args.add("-entry");
                     args.add(this.entryNameTextField.getText());
+                    args.add("-DHQEXT_CG");
 
                     st = new StringTokenizer(this.profileOptionTextField.getText());
                     if (st.hasMoreTokens())

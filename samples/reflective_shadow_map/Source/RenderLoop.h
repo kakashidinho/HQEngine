@@ -27,30 +27,6 @@ COPYING.txt included with this distribution for more information.
 
 
 
-/*-------structures that match those in shader--------*/
-struct Transform {
-	HQBaseMatrix3x4 worldMat;
-	HQBaseMatrix4 viewMat;
-	HQBaseMatrix4 projMat;
-};
-
-struct Material {
-	float materialDiffuse[4];
-};
-
-struct LightProperties {
-	
-	float lightPosition[4];
-	float lightDirection[4];
-	float lightDiffuse[4];
-	float lightFalloff_lightPCosHalfAngle[2];
-};
-
-struct LightView {
-	HQBaseMatrix4 lightViewMat;//light camera's view matrix
-	HQBaseMatrix4 lightProjMat;//light camera's projection matrix
-};
-
 /*-------rendering loop-----------*/
 class RenderLoop : public BaseApp
 {

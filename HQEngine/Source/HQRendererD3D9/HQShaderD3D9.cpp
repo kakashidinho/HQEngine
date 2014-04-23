@@ -16,10 +16,10 @@ COPYING.txt included with this distribution for more information.
 #include <string.h>
 #include <sstream>
 
-#define NUM_PREDEFINED_ARGS 16
+#define NUM_PREDEFINED_ARGS 17
 
 
-static char *semantics[17]= {
+static char *g_predefined[18]= {
 	"-DVPOSITION=POSITION",
 	"-DVCOLOR=COLOR",
 	"-DVNORMAL=NORMAL",
@@ -36,6 +36,7 @@ static char *semantics[17]= {
 	"-DVBLENDWEIGHT=BLENDWEIGHT",
 	"-DVBLENDINDICES=BLENDINDICES",
 	"-DVPSIZE=PSIZE",
+	"-DHQEXT_CG",
 	NULL
 };
 
@@ -666,7 +667,7 @@ void HQShaderManagerD3D9::RemoveAllShader()
 char ** HQShaderManagerD3D9::GetCompileArguments(const HQShaderMacro * pDefines, bool debug)
 {
 	if(pDefines == NULL)
-		return semantics;
+		return g_predefined;
 	int numDefines = 0;
 	int nameLen = 0;
 	int definitionLen = 0;
@@ -679,12 +680,12 @@ char ** HQShaderManagerD3D9::GetCompileArguments(const HQShaderMacro * pDefines,
 		pD++;
 	}
 	if(numDefines == 0)
-		return semantics;
+		return g_predefined;
 	/*------create arguments---------*/
 	//first argument is reserved for preprocess option
 	char ** args = new char *[numDefines + NUM_PREDEFINED_ARGS + 3];
 	for (int i = 0 ; i < NUM_PREDEFINED_ARGS ; ++i)
-		args[i] = semantics[i];
+		args[i] = g_predefined[i];
 
 	//optimization's option
 	args[numDefines + NUM_PREDEFINED_ARGS] = HQ_NEW char[4];
@@ -734,7 +735,7 @@ char ** HQShaderManagerD3D9::GetCompileArguments(const HQShaderMacro * pDefines,
 
 void HQShaderManagerD3D9::DeAlloc(char **ppC)
 {
-	if(ppC == NULL || ppC == semantics)
+	if(ppC == NULL || ppC == g_predefined)
 		return;
 	char ** ppD = ppC + NUM_PREDEFINED_ARGS;
 	while(*ppD != NULL)

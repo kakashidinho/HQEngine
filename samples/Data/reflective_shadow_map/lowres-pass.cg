@@ -8,8 +8,7 @@ COPYING.txt included with this distribution for more information.
 
 */
 
-#pragma pack_matrix(column_major)
-#include "common_shader_code.h"
+#include "../common_shader_code.h"
 
 /*---------------vertex shader-------------*/
 uniform transform {
@@ -23,11 +22,6 @@ uniform lightView {
 	float4x4 lightProjMat;//light camera's projection matrix
 }: BUFFER[1];
 
-struct vIn{
-	float3 iPos: VPOSITION;
-	float3 iNormal: VNORMAL;
-};
-
 struct vOut{
 	float4 oPos : POSITION;//clip space position
 	float3 oPosW : TEXCOORD0;//world space position
@@ -37,27 +31,17 @@ struct vOut{
 
 
 //vertex shader
-vOut VS(in vIn input){
+vOut VS(in vPNIn input){
 	vOut output;
 	
-	float3 posW = mul(float4(input.iPos, 1.0), worldMat);
-	float3 normalW = mul(float4(input.iNormal, 0.0), worldMat );
-	normalW = normalize(normalW);
-	
-	float4 posV = mul(float4(posW, 1.0), viewMat);
-	
-	//projected position
-	output.oPos = mul(posV, projMat);
-	
-	//world space position
-	output.oPosW = posW;
+	//world space position and projected position
+	transformWVP(input.iPos, worldMat, viewMat, projMat, output.oPosW, output.oPos);
 	
 	//world space normal
-	output.oNormalW = normalW;
+	output.oNormalW = worldTransformNormal(input.iNormal, worldMat);
 	
 	//light camera's clip space position
-	float4 posLightV = mul(float4(posW, 1.0), lightViewMat);
-	output.oPosLight = mul(posLightV, lightProjMat);
+	output.oPosLight = clipTransformCoords(output.oPosW, lightViewMat, lightProjMat);
 	
 	return output;
 };

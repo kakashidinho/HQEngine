@@ -1,6 +1,0 @@
-#ifndef COMMON_SHADER_CODE_H
-#define COMMON_SHADER_CODE_H
-
-#define PI 3.141592654f
-
-#endif

@@ -2,13 +2,15 @@
 #define BASE_APP_H
 
 #include "BaseCommon.h"
-
 #include "../../HQEngine/Source/HQEngineApp.h"
 #include "../../HQEngine/Source/HQCamera.h"
 
 #include "../../ThirdParty-mod/MyGUI/include/MyGUI.h"
 #include "../../ThirdParty-mod/MyGUI/include/MyGUI_HQEnginePlatform.h"
 
+
+
+/*----------BaseApp-------------------------*/
 class BaseApp : public HQEngineRenderDelegate {
 public:
 	BaseApp(const char* rendererAPI, 
