@@ -25,7 +25,7 @@ Pass format:
 		texture0{
 			min_filter=linear/point/anisotropic
 			mag_filter=linear/point/anisotropic
-			mipmap_filter=linear/point/none/anisotropic
+			mipmap_filter=none/linear/point/anisotropic
 			address_u=wrap/mirror/clamp/border
 			address_v=wrap/mirror/clamp/border
 			max_anisotropy=1
@@ -104,7 +104,7 @@ Pass format:
 		texture0{
 			min_filter=linear/point/anisotropic
 			mag_filter=linear/point/anisotropic
-			mipmap_filter=linear/point/none/anisotropic
+			mipmap_filter=none/linear/point/anisotropic
 			address_u=wrap/mirror/clamp/border
 			address_v=wrap/mirror/clamp/border
 			max_anisotropy=1

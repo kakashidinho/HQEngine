@@ -274,6 +274,7 @@ bool HQDeviceD3D11::IsRTTFormatSupported(HQRenderTargetFormat format , HQTexture
 		masks |=  D3D11_FORMAT_SUPPORT_MIP;
 	switch (textureType)
 	{
+	case HQ_TEXTURE_2D_UAV:
 	case HQ_TEXTURE_2D:
 		masks |= D3D11_FORMAT_SUPPORT_TEXTURE2D;
 		break;
@@ -318,6 +319,18 @@ bool HQDeviceD3D11::IsDSFormatSupported(HQDepthStencilFormat format)
 }
 bool HQDeviceD3D11::IsRTTMultisampleTypeSupported(HQRenderTargetFormat format , HQMultiSampleType multisampleType , HQTextureType textureType)
 {
+#if 0
+	switch (textureType){
+	case HQ_TEXTURE_2D: case HQ_TEXTURE_CUBE:
+		break;
+	case HQ_TEXTURE_2D_UAV:
+		return multisampleType == HQ_MST_NONE;//no support for multisample UAV texture for now
+	default:
+		//TO DO
+		return false;
+	}
+#endif
+
 	UINT sampleCount = (multisampleType > 0)? multisampleType : 1;
 	UINT quality;
 	DXGI_FORMAT D3Dformat = HQRenderTargetManagerD3D11::GetD3DFormat(format);

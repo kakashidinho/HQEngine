@@ -483,6 +483,30 @@ HQReturnVal HQBaseTextureManager::AddCubeTexture(HQDataReaderStream* dataStreams
 	return HQ_OK;
 }
 
+
+//get equivalent UAV texture format
+HQTextureUAVFormat HQBaseTextureManager::GetTextureUAVFormat(HQRenderTargetFormat format)
+{
+	switch (format)
+	{
+	case HQ_RTFMT_R_FLOAT32:
+		return HQ_UAVTFMT_R32_FLOAT;
+	case HQ_RTFMT_R_FLOAT16:
+		return HQ_UAVTFMT_R16_FLOAT;
+	case HQ_RTFMT_RGBA_32:
+		return HQ_UAVTFMT_R8G8B8A8_UNORM;
+	case HQ_RTFMT_RGBA_FLOAT64:
+		return HQ_UAVTFMT_R16G16B16A16_FLOAT;
+	case HQ_RTFMT_RG_FLOAT32:
+		return HQ_UAVTFMT_R16G16_FLOAT;
+	case HQ_RTFMT_RGBA_FLOAT128:
+		return HQ_UAVTFMT_R32G32B32A32_FLOAT;
+	case HQ_RTFMT_RG_FLOAT64:
+		return HQ_UAVTFMT_R32G32_FLOAT;
+	}
+	return HQ_UAVTFMT_FORCE_DWORD;
+}
+
 bool HQBaseTextureManager::IsPowerOfTwo(const hq_uint32 d,hq_uint32 *pExponent)
 {
 	hq_uint32 i=d;
@@ -562,7 +586,7 @@ void HQBaseTextureManager::ChangePixelData( HQBaseTexture *pTex )
 }
 
 
-HQSharedPtr<HQBaseTexture> HQBaseTextureManager::CreateEmptyTexture(HQTextureType textureType, HQTexture** pTextureID)
+HQSharedPtr<HQBaseTexture> HQBaseTextureManager::AddEmptyTexture(HQTextureType textureType, HQTexture** pTextureID)
 {
 	HQBaseTexture * pNewTex = this->CreateNewTextureObject( textureType);
 

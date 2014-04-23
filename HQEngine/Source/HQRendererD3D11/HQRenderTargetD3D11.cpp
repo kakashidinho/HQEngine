@@ -34,7 +34,7 @@ struct HQDepthStencilBufferD3D : public HQBaseDepthStencilBufferView
 		return pDSView;
 	}
 
-	int Init()
+	HQReturnVal Init()
 	{
 		UINT multisampleQuality;
 		UINT sampleCount = (this->multiSampleType > 0 )?(UINT)this->multiSampleType : 1;
@@ -101,7 +101,7 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 		this->pD3DDevice = pD3DDevice;
 		switch (pTex->type)
 		{
-		case HQ_TEXTURE_2D:
+		case HQ_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
 			this->ppRTView = HQ_NEW ID3D11RenderTargetView *[1];
 			this->ppRTView[0] = NULL;
 			break;
@@ -134,62 +134,62 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 		return ppRTView;
 	}
 
-	int Init()
+	HQReturnVal Init()
 	{
-		HRESULT hr ; 
-		/*------get multisample quality------------*/
-		UINT multisampleQuality;
-		UINT sampleCount = (this->multiSampleType > 0 )?(UINT)this->multiSampleType : 1;
-		pD3DDevice->CheckMultisampleQualityLevels(this->format ,
-			sampleCount ,&multisampleQuality);
-
-		D3D11_TEXTURE2D_DESC rtDesc;
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-		
-		//texture desc
-		rtDesc.Width = this->width;
-		rtDesc.Height = this->height;
-		rtDesc.MipLevels = this->numMipmaps;
-		rtDesc.Format = this->format;
-		rtDesc.SampleDesc.Count = sampleCount;
-		rtDesc.SampleDesc.Quality = multisampleQuality - 1;
-		rtDesc.Usage = D3D11_USAGE_DEFAULT;
-		rtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-		rtDesc.CPUAccessFlags = 0;
-		if (this->numMipmaps != 1)
-			rtDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-		else
-			rtDesc.MiscFlags = 0;
-
-		//resource view desc
-		srvDesc.Format = this->format;
-		//render target view desc
-		rtvDesc.Format = this->format;
-		
 		HQTextureResourceD3D11* pTex = (HQTextureResourceD3D11 *)pTexture->pData;
-		switch(this->pTexture->type)
+
+		//this method will create texture and render target view
+		//Note: future improvement should move texture creation to texture manager
+		if (pTex->pTexture == NULL)//make sure texture resource hasn't been created
 		{
-		case HQ_TEXTURE_2D:
+			HRESULT hr;
+			/*------get multisample quality------------*/
+			UINT multisampleQuality;
+			UINT sampleCount = (this->multiSampleType > 0) ? (UINT)this->multiSampleType : 1;
+			pD3DDevice->CheckMultisampleQualityLevels(this->format,
+				sampleCount, &multisampleQuality);
+
+			D3D11_TEXTURE2D_DESC rtDesc;
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+
+			//texture desc
+			rtDesc.Width = this->width;
+			rtDesc.Height = this->height;
+			rtDesc.MipLevels = this->numMipmaps;
+			rtDesc.Format = this->format;
+			rtDesc.SampleDesc.Count = sampleCount;
+			rtDesc.SampleDesc.Quality = multisampleQuality - 1;
+			rtDesc.Usage = D3D11_USAGE_DEFAULT;
+			rtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+			rtDesc.CPUAccessFlags = 0;
+			if (this->numMipmaps != 1)
+				rtDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+			else
+				rtDesc.MiscFlags = 0;
+
+			//resource view desc
+			srvDesc.Format = this->format;
+
+			switch (this->pTexture->type)
+			{
+			case HQ_TEXTURE_2D:
 			{
 				//texture desc
 				rtDesc.ArraySize = 1;
 				//create texture
-				hr = pD3DDevice->CreateTexture2D(&rtDesc , NULL , (ID3D11Texture2D**)&pTex->pTexture);
+				hr = pD3DDevice->CreateTexture2D(&rtDesc, NULL, (ID3D11Texture2D**)&pTex->pTexture);
 
-				if(FAILED(hr))
+				if (FAILED(hr))
 				{
 					pTex->pTexture = NULL;
 					pTex->pResourceView = NULL;
 					break;
 				}
-				
+
 				if (sampleCount > 1)//multisample texture
 				{
 					//resource view desc
 					srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
-					//render target view desc
-					rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
 				}
 				else
 				{
@@ -197,85 +197,149 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 					srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 					srvDesc.Texture2D.MipLevels = this->numMipmaps;
 					srvDesc.Texture2D.MostDetailedMip = 0;
-
-					//render target view desc
-					rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-					rtvDesc.Texture2D.MipSlice = 0;
 				}
 				//create shader resource view
-				hr = pD3DDevice->CreateShaderResourceView(pTex->pTexture , &srvDesc , &pTex->pResourceView);
+				hr = pD3DDevice->CreateShaderResourceView(pTex->pTexture, &srvDesc, &pTex->pResourceView);
 				if (FAILED(hr))
 				{
 					SafeRelease(pTex->pTexture);
 					pTex->pResourceView = NULL;
 					break;
 				}
-				//create render target view
-				hr = pD3DDevice->CreateRenderTargetView(pTex->pTexture , &rtvDesc , &this->ppRTView[0]);
-				if (FAILED(hr))
-				{
-					SafeRelease(pTex->pTexture);
-					SafeRelease(pTex->pResourceView);
-					break;
-				}
-					
 			}
-			break;
-		case HQ_TEXTURE_CUBE:
+				break;
+			case HQ_TEXTURE_CUBE:
 			{
 				//texture desc
 				rtDesc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE;
 				rtDesc.ArraySize = 6;
 
 				//create texture
-				hr = pD3DDevice->CreateTexture2D(&rtDesc , NULL , (ID3D11Texture2D**)&pTex->pTexture);
+				hr = pD3DDevice->CreateTexture2D(&rtDesc, NULL, (ID3D11Texture2D**)&pTex->pTexture);
 
-				if(FAILED(hr))
+				if (FAILED(hr))
 				{
 					pTex->pTexture = NULL;
 					pTex->pResourceView = NULL;
 					break;
 				}
-				
+
 				//resource view desc
 				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 				srvDesc.TextureCube.MipLevels = this->numMipmaps;
 				srvDesc.TextureCube.MostDetailedMip = 0;
 
-				//render target view desc
-				rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-				rtvDesc.Texture2DArray.MipSlice = 0;
-				rtvDesc.Texture2DArray.ArraySize = 1;
-				
 				//create shader resource view
-				hr = pD3DDevice->CreateShaderResourceView(pTex->pTexture , &srvDesc , &pTex->pResourceView);
+				hr = pD3DDevice->CreateShaderResourceView(pTex->pTexture, &srvDesc, &pTex->pResourceView);
 				if (FAILED(hr))
 				{
 					SafeRelease(pTex->pTexture);
 					pTex->pResourceView = NULL;
 					break;
 				}
-				//create 6 render target views for 6 faces
-				for (int i = 0; i < 6 ; ++i)
+			}
+				break;
+			}//switch texture's type
+
+			if (FAILED(hr))
+				return HQ_FAILED;
+		}//if (pTex->pTexture == NULL)
+
+		return this->InitRenderTargetView();
+	}
+
+	HQReturnVal InitRenderTargetView()
+	{
+		//this method will create only render target view
+		HRESULT hr;
+
+		D3D11_TEXTURE2D_DESC rtDesc;
+		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+
+		//render target view desc
+		rtvDesc.Format = this->format;
+
+		HQTextureResourceD3D11* pTex = (HQTextureResourceD3D11 *)pTexture->pData;
+		switch (this->pTexture->type)
+		{
+		case HQ_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
+		{
+			//texture desc
+			((ID3D11Texture2D*)pTex->pTexture)->GetDesc(&rtDesc);
+
+			if (rtDesc.SampleDesc.Count > 1)//multisample texture
+			{
+				//render target view desc
+				rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
+			}
+			else
+			{
+				//render target view desc
+				rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+				rtvDesc.Texture2D.MipSlice = 0;
+			}
+			//create render target view
+			hr = pD3DDevice->CreateRenderTargetView(pTex->pTexture, &rtvDesc, &this->ppRTView[0]);
+			if (FAILED(hr))
+			{
+				SafeRelease(pTex->pTexture);
+				SafeRelease(pTex->pResourceView);
+				break;
+			}
+
+		}
+			break;
+		case HQ_TEXTURE_CUBE:
+		{
+			//texture desc
+			((ID3D11Texture2D*)pTex->pTexture)->GetDesc(&rtDesc);
+
+#if 0
+			/*-----------View as 2D texture array----------------*/
+			//render target view desc
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+			rtvDesc.Texture2DArray.MipSlice = 0;
+			rtvDesc.Texture2DArray.ArraySize = 1;
+
+			//create 6 render target views for 6 faces
+			for (int i = 0; i < 6; ++i)
+			{
+				rtvDesc.Texture2DArray.FirstArraySlice = i;
+				hr = pD3DDevice->CreateRenderTargetView(pTex->pTexture, &rtvDesc, &this->ppRTView[i]);
+				if (FAILED(hr))
 				{
-					rtvDesc.Texture2DArray.FirstArraySlice = i;
-					hr = pD3DDevice->CreateRenderTargetView(pTex->pTexture , &rtvDesc , &this->ppRTView[i]);
-					if (FAILED(hr))
-					{
-						SafeRelease(pTex->pTexture);
-						SafeRelease(pTex->pResourceView);
-						break;
-					}
+					SafeRelease(pTex->pTexture);
+					SafeRelease(pTex->pResourceView);
+					break;
 				}
 			}
+#else
+			/*-----------View as 2D texture----------------*/
+			//render target view desc
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+
+			//create 6 render target views for 6 faces
+			for (int i = 0; i < 6; ++i)
+			{
+				rtvDesc.Texture2D.MipSlice = D3D11CalcSubresource(0, i, rtDesc.MipLevels);
+				hr = pD3DDevice->CreateRenderTargetView(pTex->pTexture, &rtvDesc, &this->ppRTView[i]);
+				if (FAILED(hr))
+				{
+					SafeRelease(pTex->pTexture);
+					SafeRelease(pTex->pResourceView);
+					break;
+				}
+			}
+#endif
+		}
 			break;
 		}//switch texture's type
 
 		if (FAILED(hr))
 			return HQ_FAILED;
 		return HQ_OK;
-	}
 
+	}
 	DXGI_FORMAT format;
 	ID3D11RenderTargetView **ppRTView;//can be one pointer if texture is 2D or 6 pointers if texture is cube
 	ID3D11Device* pD3DDevice;
@@ -298,7 +362,6 @@ public:
 };
 
 /*------------HQRenderTargetManagerD3D11------------------*/
-
 DXGI_FORMAT HQRenderTargetManagerD3D11::GetD3DFormat(HQRenderTargetFormat format)
 {
 	switch(format)
@@ -382,9 +445,16 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 											   HQRenderTargetView **pRenderTargetID_Out, 
 											   HQTexture **pTextureID_Out)
 {
+	HQTextureManagerD3D11* pTextureManagerD3D11 = static_cast<HQTextureManagerD3D11*>(this->pTextureManager);
+	bool isTextureUAV = false;
+	HQTextureUAVFormat uavFormat;
 	switch (textureType)
 	{
-	case HQ_TEXTURE_2D:
+	case HQ_TEXTURE_2D: 
+		break;
+	case HQ_TEXTURE_2D_UAV:
+		isTextureUAV = true;
+		uavFormat = HQBaseTextureManager::GetTextureUAVFormat(format);
 		break;
 	case HQ_TEXTURE_CUBE:
 		break;
@@ -394,7 +464,8 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 	}
 
 	char str[256];
-	if (!g_pD3DDev->IsRTTFormatSupported(format , textureType , hasMipmaps))
+	if (!g_pD3DDev->IsRTTFormatSupported(format , textureType , hasMipmaps)
+		|| (isTextureUAV && !g_pD3DDev->IsUAVTextureFormatSupported(uavFormat, textureType, hasMipmaps)))
 	{
 		HQBaseRenderTargetManager::GetString(format , str);
 		if(!hasMipmaps)
@@ -411,10 +482,11 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 		return HQ_FAILED_MULTISAMPLE_TYPE_NOT_SUPPORT;
 	}
 	HQTexture* textureID = 0;
-	HQSharedPtr<HQBaseTexture> pNewTex = this->pTextureManager->CreateEmptyTexture(textureType , &textureID);
+	HQSharedPtr<HQBaseTexture> pNewTex = pTextureManagerD3D11->AddEmptyTexture(textureType, &textureID);
 	if (pNewTex == NULL)
 		return HQ_FAILED_MEM_ALLOC;
 
+	/*---------texture type specific config------------*/
 	if (textureType == HQ_TEXTURE_CUBE)
 	{
 		height = width;
@@ -422,6 +494,30 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 		{
 			Log("warning : create render target cube texture with multisample is not supported, texture will be created with no multisample");
 			multisampleType = HQ_MST_NONE;
+		}
+	}
+	else if (isTextureUAV)//unordered access supported texture
+	{
+		if (multisampleType != HQ_MST_NONE)
+		{
+			Log("warning : create render target UAV texture with multisample is not supported, texture will be created with no multisample");
+			multisampleType = HQ_MST_NONE;
+		}
+		HQReturnVal re = HQ_FAILED_INVALID_PARAMETER;
+		switch (textureType)
+		{
+		case HQ_TEXTURE_2D_UAV:
+			//create texture from texture manager side, there is almost need for further config, since non-power of two,etc are guaranteed to be supported
+			re = pTextureManagerD3D11->InitTextureUAVEx(pNewTex.GetRawPointer(), uavFormat, width, height, hasMipmaps, true);
+			break;
+		default:
+			//TO DO
+			break;
+		}
+		if (HQFailed(re))
+		{
+			pTextureManager->RemoveTexture(textureID);
+			return re;
 		}
 	}
 	

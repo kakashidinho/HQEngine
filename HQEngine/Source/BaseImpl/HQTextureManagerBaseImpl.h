@@ -137,14 +137,26 @@ public:
 
 	const HQSharedPtr<HQBaseTexture> GetTextureSharedPtr(HQTexture* ID);
 	const HQSharedPtr<HQBaseTexture> GetTextureSharedPtrAt(hquint32 resourceIndex);
-	HQSharedPtr<HQBaseTexture> CreateEmptyTexture(HQTextureType textureType, HQTexture** pTextureID);
+	HQSharedPtr<HQBaseTexture> AddEmptyTexture(HQTextureType textureType, HQTexture** pTextureID);
 
 
 	HQRawPixelBuffer* CreatePixelBuffer(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
 
 	HQReturnVal AddTexture(const HQRawPixelBuffer* color, bool generateMipmap, HQTexture** pTextureID);
 
+	/*--------implement dependent----------*/
+	virtual HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex) = 0;
+	virtual HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6], HQBaseTexture * pTex) = 0;
+	virtual HQReturnVal InitSingleColorTexture(HQBaseTexture *pTex, HQColorui color) = 0;
 
+	virtual HQReturnVal InitTextureBuffer(HQBaseTexture *pTex, HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic) { return HQ_FAILED; }
+
+	virtual HQReturnVal InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap) { return HQ_FAILED; }
+
+	virtual HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color) = 0;
+
+	/*------------static methods----------------*/
+	static HQTextureUAVFormat GetTextureUAVFormat(HQRenderTargetFormat format);//get equivalent UAV texture format
 	static bool HasFace(SurfaceComplexity complex , int face);
 	//*************************************************************************************************************************
 	//kiểm tra số nguyên có phải là 1 lũy thừa cũa 2 không,lưu số mũ của lũy thừa của 2 nhỏ nhất kế tiếp số nguyên cần kiểm tra
@@ -165,17 +177,8 @@ protected:
 
 	/*--------implement dependent----------*/
 	virtual HQBaseTexture * CreateNewTextureObject(HQTextureType type) = 0;
-
-	virtual HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex) = 0;
-	virtual HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6] , HQBaseTexture * pTex) = 0;
-	virtual HQReturnVal InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color) = 0;
-
-	virtual HQReturnVal InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  , void *initData,bool isDynamic) { return HQ_FAILED ;}
-
-	virtual HQReturnVal InitTextureUAV(HQBaseTexture *pTex,  HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap) { return HQ_FAILED; }
-
 	virtual HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height) = 0;
-	virtual HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color) = 0;
+
 	/*--------attributes-------------------*/
 
 	HQIDItemManager<HQBaseTexture> textures;//danh sách texture

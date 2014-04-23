@@ -359,7 +359,7 @@ HQReturnVal HQRenderTargetManagerD3D9::CreateRenderTargetTexture(hq_uint32 width
 		Log("CreateRenderTargetTexture() failed : %s is not supported!" , str);
 		return HQ_FAILED_MULTISAMPLE_TYPE_NOT_SUPPORT;
 	}
-	HQSharedPtr<HQBaseTexture> pNewTex = this->pTextureManager->CreateEmptyTexture(textureType , NULL);
+	HQSharedPtr<HQBaseTexture> pNewTex = this->pTextureManager->AddEmptyTexture(textureType , NULL);
 	if (pNewTex == NULL)
 		return HQ_FAILED_MEM_ALLOC;
 

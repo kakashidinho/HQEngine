@@ -60,6 +60,7 @@ bool HQDeviceGL::IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTextur
 	case HQ_UAVTFMT_R32_UINT:
 	case HQ_UAVTFMT_R32G32_UINT:
 	case HQ_UAVTFMT_R32G32B32A32_UINT:
+	case HQ_UAVTFMT_R8G8B8A8_UNORM:
 		return GLEW_VERSION_4_2 == GL_TRUE;
 	}
 	return false;

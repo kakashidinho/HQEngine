@@ -1869,10 +1869,11 @@ HQReturnVal HQEngineEffectManagerImpl::ParseSamplerState(const HQEngineEffectPar
 {
 	HQTexAddressMode tAddrMode;
 	const char defaultfilter[] = "linear";
+	const char defaultMipfilter[] = "none";
 	const char anisotropicStr[] = "anisotropic";
 	const char *min_filter_str = defaultfilter;
 	const char *mag_filter_str = defaultfilter;
-	const char *mip_filter_str = defaultfilter;
+	const char *mip_filter_str = defaultMipfilter;
 	bool mappedValueFound = false;
 
 	//initialize default values

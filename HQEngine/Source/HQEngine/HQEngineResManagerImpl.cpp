@@ -334,6 +334,15 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 		{
 			if (strcmp(valueStr, "cube") == 0 )
 				textureType = HQ_TEXTURE_CUBE;
+			else if (renderTarget && strcmp(valueStr, "2d_uav") == 0)
+				textureType = HQ_TEXTURE_2D_UAV;
+			else if (strcmp(valueStr, "2d") == 0)
+				textureType = HQ_TEXTURE_2D;
+			else
+			{
+				Log("Error : %d : invalid type='%s'!", typeInfo->GetSourceLine(), valueStr);
+				return HQ_FAILED;
+			}
 		}
 	}
 	//

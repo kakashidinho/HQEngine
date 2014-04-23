@@ -1,11 +1,13 @@
 resources {
 	texture "random_factors_img" {
+		type=2d
 		image="random_factors_20x20.tga"
 	}
 	
 	/*---------------- for depth pass -------------------------*/
 	render_target "depth_img" {
 		/* info for render target. "has_mipmap" default is false. */
+		type=2d	//type default is 2d
 			 
 		width=512
 		height=512

@@ -1,5 +1,6 @@
 resources {
-	texture_uav "color_texture" {
+	render_target "color_texture" {
+		type = 2d_uav
 		width=2
 		height=2
 			

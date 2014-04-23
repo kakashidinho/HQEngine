@@ -204,28 +204,33 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 	/*---------------not support multisample texture yet------*/
 	HQReturnVal Init()
 	{
-		HQTextureManagerGL *pTextureMan = (HQTextureManagerGL *)g_pOGLDev->GetTextureManager();
-		GLint internalFormat; 
-		GLenum format, type;//get texture's pixel format and pixel data type
-		HQRenderTargetManagerFBO::GetGLImageFormat(this->hqFormat, internalFormat , format , type);
-#if 0 && !defined HQ_OPENGLES
-		GLclampf priority = 1.0f;
-		glPrioritizeTextures(1 , (GLuint*)this->pTexture->pData , &priority);
-#endif
-		glGetError();//reset error flag
-
-		GLuint *pTextureGL = (GLuint*)this->pTexture->pData;
-		switch(pTexture->type)
+		HQTextureGL* pTextureGL = static_cast<HQTextureGL*>(this->pTexture.GetRawPointer());
+		if (pTextureGL->textureDesc == NULL)//make sure texture resource hasn't been created. It is in the case of UAV texture
 		{
-		case HQ_TEXTURE_2D:
+			/*--------------create texture-------------------*/
+			//Note: this should be done in texture manager side in future
+			HQTextureManagerGL *pTextureMan = (HQTextureManagerGL *)g_pOGLDev->GetTextureManager();
+			GLint internalFormat;
+			GLenum format, type;//get texture's pixel format and pixel data type
+			HQRenderTargetManagerFBO::GetGLImageFormat(this->hqFormat, internalFormat, format, type);
+			GLuint *pTextureGLHandle = (GLuint*)pTextureGL->pData;
+#if 0 && !defined HQ_OPENGLES
+			GLclampf priority = 1.0f;
+			glPrioritizeTextures(1, pTextureGLHandle, &priority);
+#endif
+			glGetError();//reset error flag
+
+			switch (pTexture->type)
 			{
-				glBindTexture(GL_TEXTURE_2D , *pTextureGL);
+			case HQ_TEXTURE_2D:
+			{
+				glBindTexture(GL_TEXTURE_2D, *pTextureGLHandle);
 				int w = this->width;
 				int h = this->height;
-				for(hq_uint32 i = 0; i < this->numMipmaps ; ++i)
+				for (hq_uint32 i = 0; i < this->numMipmaps; ++i)
 				{
-					glTexImage2D(GL_TEXTURE_2D , i , internalFormat , w , h,
-						0 , format , type , NULL);
+					glTexImage2D(GL_TEXTURE_2D, i, internalFormat, w, h,
+						0, format, type, NULL);
 
 					if (w > 1)
 						w >>= 1;
@@ -236,35 +241,36 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 				//re-bind old texture
 				glBindTexture(GL_TEXTURE_2D, pTextureMan->GetActiveTextureUnitInfo().GetTexture2DGL());
 				//since we created a texture outside texture managet. we need to tell texture manager about the size of this texture
-				pTextureMan->DefineTexture2DSize(this->pTexture.GetRawPointer(), this->width, this->height);
-		
+				pTextureMan->DefineTexture2DSize(pTextureGL, this->width, this->height);
+
 			}
-			break;
-		case HQ_TEXTURE_CUBE:
+				break;
+			case HQ_TEXTURE_CUBE:
 
-			glBindTexture(GL_TEXTURE_CUBE_MAP , *pTextureGL);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, *pTextureGLHandle);
 
-			for (int face = 0; face < 6 ; ++face)
-			{
-				int w = this->width;
-				for(hq_uint32 i = 0; i < this->numMipmaps ; ++i)
+				for (int face = 0; face < 6; ++face)
 				{
-					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face , i , internalFormat , w , w,
-						0 , format , type , NULL);
+					int w = this->width;
+					for (hq_uint32 i = 0; i < this->numMipmaps; ++i)
+					{
+						glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, i, internalFormat, w, w,
+							0, format, type, NULL);
 
-					if (w > 1)
-						w >>= 1;
+						if (w > 1)
+							w >>= 1;
+					}
 				}
+				//re-bind old texture
+				glBindTexture(GL_TEXTURE_CUBE_MAP, pTextureMan->GetActiveTextureUnitInfo().GetTextureCubeGL());
+				//since we created a texture outside texture managet. we need to tell texture manager about the size of this texture
+				pTextureMan->DefineTexture2DSize(pTextureGL, this->width, this->width);
+				break;
 			}
-			//re-bind old texture
-			glBindTexture(GL_TEXTURE_CUBE_MAP, pTextureMan->GetActiveTextureUnitInfo().GetTextureCubeGL());
-			//since we created a texture outside texture managet. we need to tell texture manager about the size of this texture
-			pTextureMan->DefineTexture2DSize(this->pTexture.GetRawPointer(), this->width, this->width);
-			break;
-		}
 
-		if (glGetError() != GL_NO_ERROR)
-			return HQ_FAILED;
+			if (glGetError() != GL_NO_ERROR)
+				return HQ_FAILED;
+		}//if (pTextureGL->textureDesc == NULL)
 		return HQ_OK;
 	}
 
@@ -620,8 +626,14 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 	}
 #endif
 	const Caps &caps = g_pOGLDev->GetDeviceCaps();
+	bool isTextureUAV = false;
+	HQTextureUAVFormat uavFormat;
 	switch (textureType)
 	{
+		case HQ_TEXTURE_2D_UAV:
+			isTextureUAV = true;
+			uavFormat = HQBaseTextureManager::GetTextureUAVFormat(format);
+
 		case HQ_TEXTURE_2D:
 			if (width > caps.maxTextureSize || height > caps.maxTextureSize) {
 				Log("CreateRenderTargetTexture() failed : %u x %u is too large!" , width , height);
@@ -640,7 +652,8 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 	}
 
 	char str[256];
-	if (!g_pOGLDev->IsRTTFormatSupported(format , textureType , hasMipmaps))
+	if (!g_pOGLDev->IsRTTFormatSupported(format , textureType , hasMipmaps)
+		|| (isTextureUAV && !g_pOGLDev->IsUAVTextureFormatSupported(uavFormat, textureType, hasMipmaps)))
 	{
 		HQBaseRenderTargetManager::GetString(format , str);
 		if(!hasMipmaps)
@@ -657,7 +670,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 		return HQ_FAILED_MULTISAMPLE_TYPE_NOT_SUPPORT;
 	}
 	HQTexture* textureID = 0;
-	HQSharedPtr<HQBaseTexture> pNewTex = this->pTextureManager->CreateEmptyTexture(textureType , &textureID);
+	HQSharedPtr<HQBaseTexture> pNewTex = this->pTextureManager->AddEmptyTexture(textureType , &textureID);
 	if (pNewTex == NULL)
 		return HQ_FAILED_MEM_ALLOC;
 
@@ -667,6 +680,33 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 	hq_uint32 numMipmaps = 1;
 	if (hasMipmaps)
 		numMipmaps = HQBaseTextureManager::CalculateFullNumMipmaps(width , height);
+
+	//unoredered access supported texture
+	if (isTextureUAV)
+	{
+		if (multisampleType != HQ_MST_NONE)
+		{
+			Log("warning : create render target UAV texture with multisample is not supported, texture will be created with no multisample");
+			multisampleType = HQ_MST_NONE;
+		}
+
+		//create texture from texture manager side
+		HQReturnVal re = HQ_FAILED_INVALID_PARAMETER;
+		switch (textureType)
+		{
+		case HQ_TEXTURE_2D_UAV:
+			re = this->pTextureManager->InitTextureUAV(pNewTex.GetRawPointer(), uavFormat, width, height, hasMipmaps);
+			break;
+		default:
+			//TO DO
+			break;
+		}
+		if (HQFailed(re))
+		{
+			pTextureManager->RemoveTexture(textureID);
+			return re;
+		}
+	}
 
 	HQRenderTargetTextureGL *pNewRenderTarget =
 		new HQRenderTargetTextureGL(width , height ,

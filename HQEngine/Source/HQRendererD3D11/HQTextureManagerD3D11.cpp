@@ -1574,6 +1574,11 @@ HQReturnVal HQTextureManagerD3D11::InitTextureBuffer(HQBaseTexture *pTex ,HQText
 
 HQReturnVal HQTextureManagerD3D11::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmaps)
 {
+	return this->InitTextureUAVEx(pTex, format, width, height, hasMipmaps, false);
+}
+
+HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmaps, bool renderTarget)
+{
 	if (this->pMasterDevice->IsUAVTextureFormatSupported(format, pTex->type, hasMipmaps) == false)
 	{
 		Log("Error : UAV Texture creation with format = %u is not supported", (hquint32)format);
@@ -1603,6 +1608,8 @@ HQReturnVal HQTextureManagerD3D11::InitTextureUAV(HQBaseTexture *pTex, HQTexture
 	this->t2DDesc.SampleDesc.Quality = 0;
 	this->t2DDesc.Usage = D3D11_USAGE_DEFAULT;
 	this->t2DDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	if (renderTarget)
+		this->t2DDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
 	this->t2DDesc.CPUAccessFlags = 0;
 	this->t2DDesc.MiscFlags = 0;
 
