@@ -42,6 +42,12 @@
     <ClCompile Include="..\..\..\utilities\CUDA\src\HQCudaBinding.cpp">
       <Filter>Source Files\cuda</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\BaseSource\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\BaseSource\BaeApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\RenderLoop.h">
@@ -61,6 +67,15 @@
     </ClInclude>
     <ClInclude Include="..\..\Data\reflective_shadow_map\common_shader_code.h">
       <Filter>Source Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\BaseSource\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\BaseSource\BaseApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\BaseSource\BaseCommon.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

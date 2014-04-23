@@ -11,12 +11,10 @@ COPYING.txt included with this distribution for more information.
 #ifndef RENDER_LOOP_H
 #define RENDER_LOOP_H
 
-#include "HQEngineApp.h"
 #include "HQMeshNode.h"
-#include "HQCamera.h"
 
-#include "../../../ThirdParty-mod/MyGUI/include/MyGUI.h"
-#include "../../../ThirdParty-mod/MyGUI/include/MyGUI_HQEnginePlatform.h"
+#include "../../BaseSource/BaseApp.h"
+#include "../../BaseSource/Light.h"
 
 #if defined HQ_USE_CUDA
 #include "../../../utilities/CUDA/src/HQCudaBinding.h"
@@ -27,46 +25,6 @@ COPYING.txt included with this distribution for more information.
 #define LOWRES_RT_WIDTH 128 //offscreen render target size
 #define LOWRES_RT_HEIGHT 128 //offscreen render target size
 
-
-/*------basic light structure---------*/
-struct BaseLight{
-	BaseLight(const HQColor& diffuse,
-			hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ)
-		:	diffuseColor(diffuse),
-			_position(HQVector4::New(posX, posY, posZ, 1.0f)) 
-	{}
-	virtual ~BaseLight() {delete _position;}
-
-	HQVector4& position() {return *_position;}
-
-	HQColor diffuseColor;
-private:
-	HQVector4* _position;//vector4 object needs to be aligned in memory, that's why we need to dynamically allocate it
-};
-
-/*------------spot light--------*/
-struct SpotLight: public BaseLight{
-	SpotLight(
-			const HQColor& diffuse,
-			hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
-			hqfloat32 dirX, hqfloat32 dirY, hqfloat32 dirZ,
-			hqfloat32 angle,//cone angle in radian
-			hqfloat32 falloff,
-			hqfloat32 maxRange,
-			HQRenderAPI renderApi
-		);
-	~SpotLight();
-
-	HQVector4& direction() {return *_direction;}
-	HQBaseCamera& lightCam() {return *_lightCam;}
-
-	hqfloat32 angle;//cone's angle
-	hqfloat32 falloff;//falloff factor
-	hqfloat32 maxRange;
-private:
-	HQVector4* _direction;//vector4 object needs to be aligned in memory, that's why we need to dynamically allocate it
-	HQBaseCamera* _lightCam;//light camera
-};
 
 
 /*-------structures that match those in shader--------*/
@@ -94,12 +52,18 @@ struct LightView {
 };
 
 /*-------rendering loop-----------*/
-class RenderLoop: public HQEngineRenderDelegate{
+class RenderLoop : public BaseApp
+{
 public:
-	RenderLoop(const char* renderAPI);
+	RenderLoop(const char* rendererAPI,
+				HQLogStream *logStream,
+				const char * additionalAPISettings);
 	~RenderLoop();
 
-	void Render(HQTime dt);
+	
+	//implement BaseApp
+	virtual void Update(HQTime dt);
+	virtual void RenderImpl(HQTime dt);
 
 private:
 #ifdef HQ_USE_CUDA
@@ -114,26 +78,16 @@ private:
 	void FinalPassRender(HQTime dt);
 
 	HQMeshNode* m_model;
-	HQRenderDevice *m_pRDevice;
-	HQCamera * m_camera;
-	HQSceneNode* m_scene;//the whole scene
 
-	SpotLight * m_light;
+	DiffuseSpotLight * m_light;
 
 	HQEngineRenderEffect* rsm_effect;
-
-	char m_renderAPI_name[6];//"D3D9" or "GL"
-	HQRenderAPI m_renderAPI_type;
 
 	HQUniformBuffer* m_uniformTransformBuffer;
 	HQUniformBuffer* m_uniformLightProtBuffer;
 	HQUniformBuffer* m_uniformMaterialBuffer;
 	HQUniformBuffer* m_uniformLightViewBuffer;
 
-	//GUI 
-	MyGUI::HQEnginePlatform* m_guiPlatform;
-	MyGUI::Gui *m_myGUI;
-	MyGUI::TextBox* m_fpsTextBox;
 };
 
 #endif

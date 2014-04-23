@@ -10,7 +10,9 @@ COPYING.txt included with this distribution for more information.
 
 #include "RenderLoop.h"
 
-#if _MSC_VER >= 1800 && defined _DEBUG && defined USE_D3D11
+#define DEBUG_DX 0
+
+#if _MSC_VER >= 1800 && defined _DEBUG && defined USE_D3D11 && DEBUG_DX
 #	define DONT_SAVE_VSGLOG_TO_TEMP
 #	define VSG_DEFAULT_RUN_FILENAME L"graphics-capture.vsglog"
 //#	define VSG_NODEFAULT_INSTANCE
@@ -18,73 +20,20 @@ COPYING.txt included with this distribution for more information.
 #	define DX_FRAME_CAPTURE
 #endif
 
-/*--------SpotLight----------*/
-SpotLight::SpotLight(
-					 const HQColor& diffuse,
-					hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
-					hqfloat32 dirX, hqfloat32 dirY, hqfloat32 dirZ,
-					hqfloat32 _angle,
-					hqfloat32 _falloff,
-					hqfloat32 _maxRange,
-					HQRenderAPI renderApi
-					 )
-:	BaseLight(diffuse, posX, posY, posZ),
-	_direction(HQVector4::New(dirX, dirY, dirZ, 0.0f)),
-	angle(_angle), falloff(_falloff), maxRange(_maxRange)
-{
-	HQFloat4 upVec;//up vector for light camera
-	if (posX == 0.f && posY == 0.0f)
-		upVec.Set(0.0f, -posZ, posY);
-	else
-		upVec.Set(posY, -posX, 0.0f);
-
-	_lightCam = new HQBasePerspectiveCamera(
-			posX, posY, posZ,
-			upVec.x, upVec.y, upVec.z,
-			dirX, dirY, dirZ,
-			angle,
-			1.0f,
-			1.0f,
-			maxRange,
-			renderApi
-		);
-}
-
-SpotLight::~SpotLight()
-{
-	delete _direction;
-	delete _lightCam;
-}
 
 /*----------RenderLoop----------*/
 //constructor
-RenderLoop::RenderLoop(const char* _renderAPI)
+RenderLoop::RenderLoop(const char* rendererAPI,
+					HQLogStream *logStream,
+					const char * additionalAPISettings)
+					: BaseApp(rendererAPI, logStream, additionalAPISettings)
 {
 	bool use_compute_shader = false;
 
-	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
-
-	//prepare GUI engine
-	m_guiPlatform = new MyGUI::HQEnginePlatform();
-
-	m_guiPlatform->initialise();
-	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../Data", true);
-	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../../Data", true);
-
-	m_myGUI = new MyGUI::Gui();
-	m_myGUI->initialise();
-
-	MyGUI::LayoutManager::getInstance().loadLayout("sample.layout");
-	MyGUI::PointerManager::getInstance().setVisible(false);
-
-	m_fpsTextBox = m_myGUI->findWidget<MyGUI::TextBox>("FPS-Info");
-
 	/*-------loading resources--------*/
-	strcpy(this->m_renderAPI_name, _renderAPI);
 	char apiResNamXML[256];
 	if (strcmp(m_renderAPI_name, "GL") == 0)
 	{
-		this->m_renderAPI_type = HQ_RA_OGL;
 #ifndef HQ_USE_CUDA
 		if (this->m_pRDevice->IsShaderSupport(HQ_COMPUTE_SHADER, "4.3"))
 		{
@@ -97,7 +46,6 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	}
 	else if (strcmp(m_renderAPI_name, "D3D11") == 0)
 	{
-		this->m_renderAPI_type = HQ_RA_D3D;
 #ifndef HQ_USE_CUDA
 		if (this->m_pRDevice->IsShaderSupport(HQ_COMPUTE_SHADER, "5.0"))
 		{
@@ -110,9 +58,14 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	}
 	else
 	{
-		this->m_renderAPI_type = HQ_RA_D3D;
 		strcpy(apiResNamXML, "rsm_resourcesD3D9.script");
 	}
+
+	//add resource search paths
+	HQEngineApp::GetInstance()->AddFileSearchPath("../Data");
+	HQEngineApp::GetInstance()->AddFileSearchPath("../Data/reflective_shadow_map");
+	HQEngineApp::GetInstance()->AddFileSearchPath("../../Data");
+	HQEngineApp::GetInstance()->AddFileSearchPath("../../Data/reflective_shadow_map");
 
 
 	//init resources
@@ -122,10 +75,6 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 
 	//retrieve main effect
 	rsm_effect = HQEngineApp::GetInstance()->GetEffectManager()->GetEffect("rsm");
-
-
-	//create scene container
-	m_scene = new HQSceneNode("scene_root");
 
 	//create model
 	m_model = new HQMeshNode(
@@ -148,9 +97,9 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 		);
 
 	//create light object
-	m_light = new SpotLight(
+	m_light = new DiffuseSpotLight(
 			HQColorRGBA(1, 1, 1, 1),
-			3.43f, 5.478f , -2.27f,
+			343.f, 547.8f , -227.f,
 			0, -1, 0,
 			HQToRadian(90),
 			2.0f,
@@ -160,6 +109,7 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 	//add all to containers
 	m_scene->AddChild(m_model);
 	m_scene->AddChild(m_camera);
+	m_scene->AddChild(&m_light->lightCam());
 
 #ifdef HQ_USE_CUDA
 	CudaGenerateNoiseMap();
@@ -192,16 +142,8 @@ RenderLoop::RenderLoop(const char* _renderAPI)
 //destructor
 RenderLoop::~RenderLoop()
 {
-	m_myGUI->shutdown();
-	delete m_myGUI;
-	m_guiPlatform->shutdown();
-	delete m_guiPlatform;
-
 	delete m_model;
-	delete m_camera;
 	delete m_light;
-
-	delete m_scene;
 }
 
 #ifdef HQ_USE_CUDA
@@ -359,13 +301,8 @@ void RenderLoop::ComputeShaderDecodeNoiseMap()
 #endif//#ifdef HQ_USE_CUDA
 
 //rendering loop
-void RenderLoop::Render(HQTime dt){
-	{
-		//update fps
-		char fps_text[256];
-		sprintf(fps_text, "fps:%.3f", HQEngineApp::GetInstance()->GetFPS());
-		m_fpsTextBox->setCaption(fps_text);
-	}
+void RenderLoop::Update(HQTime dt)
+{
 	//update scene
 	m_scene->SetUniformScale(0.01f);
 	m_scene->Update(dt);
@@ -374,7 +311,7 @@ void RenderLoop::Render(HQTime dt){
 	Transform * transform;
 	LightView * lightView;
 	LightProperties * lightProt;
-	
+
 	//send transform data
 	m_uniformTransformBuffer->Map(&transform);
 	transform->worldMat = m_model->GetWorldTransform();
@@ -396,10 +333,9 @@ void RenderLoop::Render(HQTime dt){
 	lightProt->lightFalloff_lightPCosHalfAngle[0] = m_light->falloff;
 	lightProt->lightFalloff_lightPCosHalfAngle[1] = pow(cosf(m_light->angle * 0.5f), m_light->falloff);
 	m_uniformLightProtBuffer->Unmap();
-	
-	//start rendering
-	m_pRDevice->BeginRender(HQ_TRUE, HQ_TRUE, HQ_FALSE);
+}
 
+void RenderLoop::RenderImpl(HQTime dt){
 	//depth pass rendering
 	DepthPassRender(dt);
 
@@ -408,9 +344,4 @@ void RenderLoop::Render(HQTime dt){
 
 	//final rendering pass
 	FinalPassRender(dt);
-
-	//draw GUI
-	m_guiPlatform->getRenderManagerPtr()->drawOneFrame();
-
-	m_pRDevice->EndRender();
 }

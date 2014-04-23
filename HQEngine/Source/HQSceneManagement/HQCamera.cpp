@@ -48,9 +48,9 @@ HQBasePerspectiveCamera::HQBasePerspectiveCamera(
 
 	//calculate view matrix
 	HQMatrix4cLookAtLH(&pos, &at, &up, this->m_viewMatrix);
-	m_xAxis->Set(this->m_viewMatrix->_11, this->m_viewMatrix->_21, this->m_viewMatrix->_31, 0.f);
-	m_yAxis->Set(this->m_viewMatrix->_12, this->m_viewMatrix->_22, this->m_viewMatrix->_32, 0.f);
-	m_zAxis->Set(this->m_viewMatrix->_13, this->m_viewMatrix->_23, this->m_viewMatrix->_33, 0.f);
+	m_xAxis->Set(this->m_viewMatrix->_11, this->m_viewMatrix->_12, this->m_viewMatrix->_13, 0.f);
+	m_yAxis->Set(this->m_viewMatrix->_21, this->m_viewMatrix->_22, this->m_viewMatrix->_23, 0.f);
+	m_zAxis->Set(this->m_viewMatrix->_31, this->m_viewMatrix->_32, this->m_viewMatrix->_33, 0.f);
 
 	//calculate projection matrix
 	HQMatrix4cPerspectiveProjLH(fov, aspect_ratio, nearPlane, farPlane, this->m_projMatrix, m_renderAPI);
@@ -71,25 +71,25 @@ HQBasePerspectiveCamera::~HQBasePerspectiveCamera(){
 
 /*---------HQCamera---------*/
 HQCamera::HQCamera(
-		    const char* name,
-			hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,//position
-			hqfloat32 upX, hqfloat32 upY, hqfloat32 upZ,//up direction
-			hqfloat32 directX, hqfloat32 directY, hqfloat32 directZ,//direction
-			hqfloat32 fov, //field of view
-			hqfloat32 aspect_ratio,//width/height
-			hqfloat32 nearPlane, hqfloat32 farPlane, //near and far plane
-			HQRenderAPI renderAPI//renderer API (D3D or OpenGL)
-		)
-		: HQSceneNode(name,
-					posX, posY, posZ,
-					1, 1, 1,
-					0, 0, 0, 1
-					),
-		  HQBasePerspectiveCamera(posX, posY, posZ,
-								  upX, upY, upZ,
-								  directX, directY, directZ,
-								  fov, aspect_ratio, nearPlane, farPlane,
-								  renderAPI)
+	const char* name,
+	hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,//position
+	hqfloat32 upX, hqfloat32 upY, hqfloat32 upZ,//up direction
+	hqfloat32 directX, hqfloat32 directY, hqfloat32 directZ,//direction
+	hqfloat32 fov, //field of view
+	hqfloat32 aspect_ratio,//width/height
+	hqfloat32 nearPlane, hqfloat32 farPlane, //near and far plane
+	HQRenderAPI renderAPI//renderer API (D3D or OpenGL)
+	)
+	: HQSceneNode(name,
+		posX, posY, posZ,
+		1, 1, 1,
+		0, 0, 0, 1
+		),
+	HQBasePerspectiveCamera(posX, posY, posZ,
+		upX, upY, upZ,
+		directX, directY, directZ,
+		fov, aspect_ratio, nearPlane, farPlane,
+		renderAPI)
 {
 }
 
@@ -122,4 +122,11 @@ void HQCamera::Update(hqfloat32 dt ,bool updateChilds, bool parentChanged  )
 
 	//calculate view frustum
 	HQMatrix4cGetFrustum(m_viewProjMat, m_frustumPlanes, m_renderAPI);
+}
+
+void HQCamera::GetWorldDirection(HQVector4& directionOut) const
+{
+	//get world transformed direction
+	HQVector4TransformNormal(m_zAxis, &this->GetWorldTransform(), &directionOut);
+	directionOut.Normalize();
 }

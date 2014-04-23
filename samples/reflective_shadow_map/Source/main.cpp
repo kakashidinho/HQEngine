@@ -51,42 +51,15 @@ int HQEngineMain(int argc, char **argv)
 #else
 	const char additionalOptions[] = "";
 #endif
-	HQEngineApp::WindowInitParams params = HQEngineApp::WindowInitParams::Construct(
-			NULL,
-			renderAPI,
-			NULL,
-			additionalOptions,
-			logStream,
-			true
-		);
-	HQEngineApp::GetInstance()->CreateInstanceAndWindow(&params, false, NULL);
-	HQEngineApp::GetInstance()->AddFileSearchPath("../Data");
-	HQEngineApp::GetInstance()->AddFileSearchPath("../Data/reflective_shadow_map");
-	HQEngineApp::GetInstance()->AddFileSearchPath("../../Data");
-	HQEngineApp::GetInstance()->AddFileSearchPath("../../Data/reflective_shadow_map");
-
-	HQEngineApp::GetInstance()->GetRenderDevice()->SetDisplayMode(600, 600, true);
-	HQViewPort viewport = {0, 0, 600, 600};
-	HQEngineApp::GetInstance()->GetRenderDevice()->SetViewPort(viewport);
-
-
-
-	//create rendering loop
-	RenderLoop* loop = new RenderLoop(renderAPI);
-
-	//prepare engine 
-	HQEngineApp::GetInstance()->SetRenderDelegate(*loop);
 	
-	//show window
-	HQEngineApp::GetInstance()->ShowWindow();
-
+	//create rendering loop
+	RenderLoop* loop = new RenderLoop(renderAPI, logStream, additionalOptions);
 
 	//start rendering loop
-	HQEngineApp::GetInstance()->Run();
+	loop->Run();
 
 	//clean up
 	delete loop;
-	HQEngineApp::Release();
 
 	logStream->Close();
 

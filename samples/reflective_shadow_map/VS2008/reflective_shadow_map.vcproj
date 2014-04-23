@@ -460,6 +460,30 @@
 					</FileConfiguration>
 				</File>
 			</Filter>
+			<Filter
+				Name="base"
+				>
+				<File
+					RelativePath="..\..\BaseSource\BaeApp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\BaseSource\BaseApp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\BaseSource\BaseCommon.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\BaseSource\Light.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\BaseSource\Light.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

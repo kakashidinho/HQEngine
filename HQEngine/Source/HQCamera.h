@@ -52,6 +52,7 @@ public :
 	const HQMatrix4 * GetViewProjMatrix() const { return m_viewProjMat;}
 
 protected:
+
 	HQMatrix4* m_viewProjMat;//view x projection matrix
 	HQVector4* m_xAxis;//camera's local x axix
 	HQVector4* m_yAxis;//camera's local y axis
@@ -78,7 +79,9 @@ public:
 	~HQCamera();
 
 	//override HQSceneNode's update
-	void Update(hqfloat32 dt ,bool updateChilds = true, bool parentChanged = false );
+	void Update(hqfloat32 dt, bool updateChilds = true, bool parentChanged = false);
+
+	void GetWorldDirection(HQVector4& directionOut) const;
 private:
 };
 
