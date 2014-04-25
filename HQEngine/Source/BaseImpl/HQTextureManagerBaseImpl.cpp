@@ -264,6 +264,7 @@ void HQBaseRawPixelBuffer::MakeWrapperBitmap( Bitmap &bitmap) const
 	}
 
 	SurfaceComplexity complex;
+	memset(&complex, 0, sizeof(SurfaceComplexity));
 	complex.nMipMap = 1;
 
 	bitmap.Wrap((hqubyte8*)GetPixelData(), 

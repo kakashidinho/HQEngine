@@ -90,6 +90,11 @@ public:
 											bool generateMipmap,
 											HQTextureType type
 											) = 0;
+
+	///
+	///return HQ_FAILED_RESOURCE_EXISTS if there is an existing resource with the same name
+	///
+	virtual HQReturnVal AddTextureResource(const char *name, HQTexture* pTexture) = 0;
 	///
 	///return HQ_FAILED_RESOURCE_EXISTS if there is an existing resource with the same name
 	///

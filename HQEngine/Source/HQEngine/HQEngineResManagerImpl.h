@@ -121,6 +121,9 @@ public:
 											bool generateMipmap,
 											HQTextureType type
 											) ;
+
+	virtual HQReturnVal AddTextureResource(const char *name, HQTexture* pTexture);
+
 	virtual HQReturnVal AddCubeTextureResource(const char *name,
 											const char * image_files[6],
 											bool generateMipmap

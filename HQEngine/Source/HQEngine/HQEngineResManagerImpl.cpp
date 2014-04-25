@@ -862,6 +862,23 @@ HQReturnVal HQEngineResManagerImpl::AddTextureResource(const char *name,
 	return HQ_OK;
 }
 
+HQReturnVal HQEngineResManagerImpl::AddTextureResource(const char *name, HQTexture* pTexture)
+{
+	if (m_textures.GetItemPointer(name) != NULL)
+	{
+		this->Log("Error : could not create already existing texture resource named %s", name);
+		return HQ_FAILED_RESOURCE_EXISTS;
+	}
+
+	//succeeded, now create resource
+	m_textures.Add(name, HQ_NEW HQEngineTextureResImpl(name));
+	HQEngineTextureResImpl *newRes = (HQEngineTextureResImpl*) this->GetTextureResource(name);
+
+	newRes->Init(pTexture);
+
+	return HQ_OK;
+}
+
 HQReturnVal HQEngineResManagerImpl::AddCubeTextureResource(const char *name,
 											const char * image_files[6],
 											bool generateMipmap
