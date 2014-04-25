@@ -1850,7 +1850,13 @@ HQTextureCompressionSupport HQTextureManagerD3D11::IsCompressionSupported(HQText
 
 HQBaseRawPixelBuffer* HQTextureManagerD3D11::CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height)
 {
-	return HQ_NEW HQBaseRawPixelBuffer(HQ_RPFMT_R8G8B8A8, width, height);//only 32 bit pixel buffer is supported
+	switch (intendedFormat)
+	{
+	case HQ_RPFMT_R32_FLOAT: case HQ_RPFMT_R32G32_FLOAT: case HQ_RPFMT_R32G32B32A32_FLOAT:
+		return HQ_NEW HQBaseRawPixelBuffer(intendedFormat, width, height);
+	default:
+		return HQ_NEW HQBaseRawPixelBuffer(HQ_RPFMT_R8G8B8A8, width, height);//only 32 bit pixel buffer is supported
+	}
 }
 
 HQReturnVal HQTextureManagerD3D11::InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color)
