@@ -11,22 +11,24 @@ struct vPNIn{
 	float3 iNormal : VNORMAL;
 };
 
-
+//world transformation of position
 float3 worldTransformCoords(float3 posL, float4x3 worldMatrix){
 	return mul(float4(posL, 1.0), worldMatrix);
 }
 
+//world transformation of normal
 float3 worldTransformNormal(float3 normalL, float4x3 worldMatrix){
 	float3 normalW = mul(float4(normalL, 0.0), worldMatrix);
 	return normalize(normalW);
 }
-
+//clip space transformation
 float4 clipTransformCoords(float3 posW, float4x4 viewMatrix, float4x4 projMatrix)
 {
 	float4 posV = mul(float4(posW, 1.0), viewMatrix);
 	return mul(posV, projMatrix);
 }
 
+//clip space transformation
 void transformWVP(float3 posL, 
 	float4x3 worldMatrix, 
 	float4x4 viewMatrix, 
@@ -38,6 +40,71 @@ void transformWVP(float3 posL,
 	posW = worldTransformCoords(posL, worldMatrix);
 	posH = clipTransformCoords(posW, viewMatrix, projMatrix);
 }
+
+
+//get normalized depth in range [0..1]
+float getNormDepth(float2 clipDepth){
+	return clipDepth.x / clipDepth.y;
+}
+
+//get normalized depth in range [0..1]. OpenGL version 
+glslf float getNormDepth(float2 clipDepth){
+	return 0.5 * (clipDepth.x / clipDepth.y) + 0.5;
+}
+
+//get normalized depth in range [0..1]
+float getNormDepth(float4 clipPos){
+	return getNormDepth(clipPos.zw);
+}
+
+//scale normalized coordinate to a texcoord value between [0..1]
+float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = -normalizeCoords.y * 0.5 + 0.5;
+
+	return scaled;
+}
+
+//scale normalized coordinate to a texcoord value between [0..1]. OpenGL version
+glslv glslf float2 scaleToTexcoord(float2 normalizeCoords){
+	float2 scaled;
+
+	scaled.x = normalizeCoords.x * 0.5 + 0.5;
+	scaled.y = normalizeCoords.y * 0.5 + 0.5;
+
+	return scaled;
+}
+
+//compute shadow factor
+float computeShadowFactor(
+	sampler2D depthMap, 
+	int depthMapSize,
+	float2 depthMapTexcoords, 
+	float fragmentDepth,
+	float depthBias)
+{
+	float2 texelPos = depthMapTexcoords * depthMapSize;
+	const float dx = 1.0 / depthMapSize;
+
+	//filtering between 4 nearest neighbors
+	float2 lerpFactor = frac(texelPos);
+
+	float s0 = (tex2D(depthMap, depthMapTexcoords).r + depthBias) < fragmentDepth ? 0.0 : 1.0;
+	float s1 = (tex2D(depthMap, depthMapTexcoords + float2(dx, 0.0)).r + depthBias) < fragmentDepth ? 0.0 : 1.0;
+	float s2 = (tex2D(depthMap, depthMapTexcoords + float2(0.0, dx)).r + depthBias) < fragmentDepth ? 0.0 : 1.0;
+	float s3 = (tex2D(depthMap, depthMapTexcoords + float2(dx, dx)).r + depthBias) < fragmentDepth ? 0.0 : 1.0;
+
+	float shadowFactor = lerp(
+		lerp(s0, s1, lerpFactor.x),
+		lerp(s2, s3, lerpFactor.x),
+		lerpFactor.y);
+
+
+	return shadowFactor;
+}
+
 
 #else
 //TO DO

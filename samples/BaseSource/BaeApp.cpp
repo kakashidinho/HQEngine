@@ -1,9 +1,48 @@
 #include "BaseApp.h"
 
+#include <string>
+#include <iostream>
+#include <fstream>
+
+struct HQPointerClose{
+	template <class T>
+	static inline void Release(T *&ptr) { if (ptr != NULL) ptr->Close(); ptr = NULL; }
+};
+
+HQBaseSharedPtr<HQLogStream, HQPointerClose> defaultLogStream;
+
 BaseApp::BaseApp(const char* rendererAPI,
+	HQLogStream *logStream,
+	const char * additionalAPISettings,
+	hquint32 width, hquint32 height)
+	: m_camera(NULL)
+{
+	Init(rendererAPI, logStream, additionalAPISettings, width, height);
+}
+
+BaseApp::BaseApp(hquint32 width, hquint32 height)
+	: m_camera(NULL)
+{
+	//read renderer API config from "API.txt"
+	std::string rendererAPI = "D3D11";
+	std::ifstream stream("API.txt");
+	if (stream.good())
+	{
+		stream >> rendererAPI;
+	}
+
+	stream.close();
+
+	//create default log stream
+	defaultLogStream = HQCreateFileLogStream("log.txt");
+
+	Init(rendererAPI.c_str(), defaultLogStream.GetRawPointer(), NULL, width, height);
+}
+
+void BaseApp::Init(const char* rendererAPI,
 				HQLogStream *logStream,
-				const char * additionalAPISettings)
-: m_camera(NULL)
+				const char * additionalAPISettings,
+				hquint32 width, hquint32 height)
 {
 	strcpy(this->m_renderAPI_name, rendererAPI);
 	if (strcmp(m_renderAPI_name, "GL") == 0)
@@ -35,7 +74,7 @@ BaseApp::BaseApp(const char* rendererAPI,
 
 	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
 
-	m_pRDevice->SetDisplayMode(600, 600, true);
+	m_pRDevice->SetDisplayMode(width, height, true);
 	m_pRDevice->SetFullViewPort();
 
 	//prepare GUI engine

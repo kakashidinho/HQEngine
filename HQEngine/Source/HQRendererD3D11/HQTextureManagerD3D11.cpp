@@ -31,13 +31,221 @@ COPYING.txt included with this distribution for more information.
 using namespace pvrtexlib;
 #endif //#if HQ_USE_PVR_TEX_LIB
 
-/*------------HQUAVTextureResourceD3D11-----------*/
+
+/*--------------HQUAVTextureResourceD3D11---------------*/
+struct HQUAVTextureResourceD3D11 : public HQTextureResourceD3D11
+{
+	struct LayerViewKey{
+		UINT mipLevel;
+		hquint32 flags;
+		hquint32 hashCode;
+
+		bool Equal(const LayerViewKey * key2) const { return mipLevel == key2->mipLevel && flags == key2->flags; }
+		hquint32 HashCode() const{ return hashCode; }
+
+		void cacheHashCode(){ hashCode = mipLevel * 29 + flags; }
+	};
+
+	struct LayerView {
+		LayerView() : pD3DView(NULL){}
+		~LayerView(){
+			SafeRelease(pD3DView);
+		}
+
+		LayerViewKey key;
+		ID3D11UnorderedAccessView* pD3DView;
+	};
+
+	ID3D11UnorderedAccessView * GetOrCreateNewUAV(ID3D11Device* creator, HQTextureType type, UINT miplevel, bool read);
+
+	HQUAVTextureResourceD3D11();
+	~HQUAVTextureResourceD3D11();
+
+	typedef HQClosedPtrKeyHashTable<const LayerViewKey*, HQSharedPtr<LayerView> > LayeredViewTableType;
+	LayeredViewTableType layeredViews;
+
+	LayerViewKey cachedKey;
+	ID3D11UnorderedAccessView * cachedView;
+
+	HQTextureUAVFormat hqFormat;
+
+	static DXGI_FORMAT GetD3DResFormat(HQTextureUAVFormat format);//get resource format
+	static DXGI_FORMAT GetD3DViewFormat(HQTextureUAVFormat format);//get resource view format
+
+private:
+	DXGI_FORMAT GetNoReadUAViewFormat();//get UAV format that doesn't support read
+	DXGI_FORMAT GetUAViewFormat();//get UAV format that supports read
+};
+
+HQUAVTextureResourceD3D11::HQUAVTextureResourceD3D11()
+: cachedView(NULL)
+{
+}
+
 HQUAVTextureResourceD3D11::~HQUAVTextureResourceD3D11()
 {
-	LayeredViewTableType::Iterator ite;
-	for (this->layeredViews.GetIterator(ite); !ite.IsAtEnd(); ++ite){
-		ID3D11UnorderedAccessView* view = (*ite);
-		SafeRelease(view);
+}
+
+HQ_FORCE_INLINE DXGI_FORMAT HQUAVTextureResourceD3D11::GetNoReadUAViewFormat(){
+	switch (this->hqFormat) {
+	case HQ_UAVTFMT_R8G8B8A8_UNORM://sepcial case, we created typeless texture, so we need to create formatted UAV view
+		return DXGI_FORMAT_R32_UINT;
+	default:
+		return HQUAVTextureResourceD3D11::GetD3DViewFormat(this->hqFormat);//usa same format as resource view
+	}
+}
+
+//return format that support read
+HQ_FORCE_INLINE DXGI_FORMAT HQUAVTextureResourceD3D11::GetUAViewFormat()
+{
+	switch (this->hqFormat) {
+	case HQ_UAVTFMT_R8G8B8A8_UNORM://sepcial case, we created typeless texture, so we need to create formatted UAV view
+		return DXGI_FORMAT_R32_UINT;
+	case HQ_UAVTFMT_R16_FLOAT:
+	case HQ_UAVTFMT_R16G16_FLOAT:
+	case HQ_UAVTFMT_R16G16B16A16_FLOAT:
+		return DXGI_FORMAT_R16_FLOAT;
+	case HQ_UAVTFMT_R32_FLOAT:
+	case HQ_UAVTFMT_R32G32_FLOAT:
+	case HQ_UAVTFMT_R32G32B32A32_FLOAT:
+		return DXGI_FORMAT_R32_FLOAT;
+	case HQ_UAVTFMT_R32_INT:
+	case HQ_UAVTFMT_R32G32_INT:
+	case HQ_UAVTFMT_R32G32B32A32_INT:
+		return DXGI_FORMAT_R32_SINT;
+	case HQ_UAVTFMT_R32_UINT:
+	case HQ_UAVTFMT_R32G32_UINT:
+	case HQ_UAVTFMT_R32G32B32A32_UINT:
+		return DXGI_FORMAT_R32_UINT;
+	default:
+		return DXGI_FORMAT_UNKNOWN;
+	}
+}
+
+HQ_FORCE_INLINE ID3D11UnorderedAccessView * HQUAVTextureResourceD3D11::GetOrCreateNewUAV(ID3D11Device* creator, HQTextureType type, UINT miplevel, bool read)
+{
+	//try to return cached value first
+	hquint32 l_flags = read ? 1 : 0;
+	if (this->cachedView != NULL && this->cachedKey.mipLevel == miplevel && this->cachedKey.flags == l_flags)
+		return this->cachedView;
+
+	//try to find in table
+	this->cachedKey.mipLevel = miplevel;
+	this->cachedKey.flags = l_flags;
+	this->cachedKey.cacheHashCode();
+	bool found = false;
+	HQSharedPtr<LayerView> view = this->layeredViews.GetItem(&this->cachedKey, found);
+	if (!found){
+		//create new view
+		view = HQ_NEW LayerView();
+		view->key = this->cachedKey;
+
+		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+		switch (type)
+		{
+		case HQ_TEXTURE_2D_UAV:
+		{
+								  //texture desc
+								  D3D11_TEXTURE2D_DESC l_t2DDesc;
+								  static_cast<ID3D11Texture2D*>(this->pTexture)->GetDesc(&l_t2DDesc);
+								  //UAV desc
+								  if (read)
+									  uavDesc.Format = this->GetUAViewFormat();
+								  else
+									  uavDesc.Format = this->GetNoReadUAViewFormat();
+								  uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+								  if (miplevel >= l_t2DDesc.MipLevels)
+									  uavDesc.Texture2D.MipSlice = l_t2DDesc.MipLevels - 1;// mip level view
+								  else
+									  uavDesc.Texture2D.MipSlice = miplevel;// mip level view
+		}
+			break;
+		}//switch (type)
+
+		//create  UAV view
+		HRESULT hr = creator->CreateUnorderedAccessView(this->pTexture, &uavDesc, &view->pD3DView);
+		if (FAILED(hr))
+			return NULL;
+
+		this->layeredViews.Add(&view->key, view);//add to layered view table
+
+	}//if (!found)
+
+	//cache view
+	this->cachedView = view->pD3DView;
+
+	return view->pD3DView;
+}
+
+//get resource format
+DXGI_FORMAT HQUAVTextureResourceD3D11::GetD3DResFormat(HQTextureUAVFormat format)
+{
+	switch (format)
+	{
+	case HQ_UAVTFMT_R16_FLOAT:
+		return DXGI_FORMAT_R16_TYPELESS;
+	case HQ_UAVTFMT_R16G16_FLOAT:
+		return DXGI_FORMAT_R16G16_TYPELESS;
+	case HQ_UAVTFMT_R16G16B16A16_FLOAT:
+		return DXGI_FORMAT_R16G16B16A16_TYPELESS;
+	case HQ_UAVTFMT_R32_FLOAT:
+		return DXGI_FORMAT_R32_TYPELESS;
+	case HQ_UAVTFMT_R32G32_FLOAT:
+		return DXGI_FORMAT_R32G32_TYPELESS;
+	case HQ_UAVTFMT_R32G32B32A32_FLOAT:
+		return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+	case HQ_UAVTFMT_R32_INT:
+		return DXGI_FORMAT_R32_TYPELESS;
+	case HQ_UAVTFMT_R32G32_INT:
+		return DXGI_FORMAT_R32G32_TYPELESS;
+	case HQ_UAVTFMT_R32G32B32A32_INT:
+		return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+	case HQ_UAVTFMT_R32_UINT:
+		return DXGI_FORMAT_R32_TYPELESS;
+	case HQ_UAVTFMT_R32G32_UINT:
+		return DXGI_FORMAT_R32G32_TYPELESS;
+	case HQ_UAVTFMT_R32G32B32A32_UINT:
+		return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+	case HQ_UAVTFMT_R8G8B8A8_UNORM:
+		return DXGI_FORMAT_R8G8B8A8_TYPELESS;
+	default:
+		return DXGI_FORMAT_UNKNOWN;
+	}
+}
+
+//get resource view format
+DXGI_FORMAT HQUAVTextureResourceD3D11::GetD3DViewFormat(HQTextureUAVFormat format)
+{
+	switch (format)
+	{
+	case HQ_UAVTFMT_R16_FLOAT:
+		return DXGI_FORMAT_R16_FLOAT;
+	case HQ_UAVTFMT_R16G16_FLOAT:
+		return DXGI_FORMAT_R16G16_FLOAT;
+	case HQ_UAVTFMT_R16G16B16A16_FLOAT:
+		return DXGI_FORMAT_R16G16B16A16_FLOAT;
+	case HQ_UAVTFMT_R32_FLOAT:
+		return DXGI_FORMAT_R32_FLOAT;
+	case HQ_UAVTFMT_R32G32_FLOAT:
+		return DXGI_FORMAT_R32G32_FLOAT;
+	case HQ_UAVTFMT_R32G32B32A32_FLOAT:
+		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case HQ_UAVTFMT_R32_INT:
+		return DXGI_FORMAT_R32_SINT;
+	case HQ_UAVTFMT_R32G32_INT:
+		return DXGI_FORMAT_R32G32_SINT;
+	case HQ_UAVTFMT_R32G32B32A32_INT:
+		return DXGI_FORMAT_R32G32B32A32_SINT;
+	case HQ_UAVTFMT_R32_UINT:
+		return DXGI_FORMAT_R32_UINT;
+	case HQ_UAVTFMT_R32G32_UINT:
+		return DXGI_FORMAT_R32G32_UINT;
+	case HQ_UAVTFMT_R32G32B32A32_UINT:
+		return DXGI_FORMAT_R32G32B32A32_UINT;
+	case HQ_UAVTFMT_R8G8B8A8_UNORM:
+		return DXGI_FORMAT_R8G8B8A8_UNORM;
+	default:
+		return DXGI_FORMAT_UNKNOWN;
 	}
 }
 
@@ -199,6 +407,7 @@ HQReturnVal HQTextureBufferD3D11::GenericMap(void ** ppData, HQMapType mapType, 
 	return HQ_OK;
 }
 
+
 //************************************************************
 //định dạng của texture tương ứng với định dạng của pixel ảnh
 //************************************************************
@@ -308,37 +517,7 @@ DXGI_FORMAT GetTextureBufferFormat(HQTextureBufferFormat format , hq_uint32 &tex
 //translate from UAV texture format to DXGI format
 DXGI_FORMAT HQTextureManagerD3D11::GetD3DFormat(HQTextureUAVFormat format)
 {
-	switch (format)
-	{
-	case HQ_UAVTFMT_R16_FLOAT:
-		return DXGI_FORMAT_R16_FLOAT;
-	case HQ_UAVTFMT_R16G16_FLOAT:
-		return DXGI_FORMAT_R16G16_FLOAT;
-	case HQ_UAVTFMT_R16G16B16A16_FLOAT:
-		return DXGI_FORMAT_R16G16B16A16_FLOAT;
-	case HQ_UAVTFMT_R32_FLOAT:
-		return DXGI_FORMAT_R32_FLOAT;
-	case HQ_UAVTFMT_R32G32_FLOAT:
-		return DXGI_FORMAT_R32G32_FLOAT;
-	case HQ_UAVTFMT_R32G32B32A32_FLOAT:
-		return DXGI_FORMAT_R32G32B32A32_FLOAT;
-	case HQ_UAVTFMT_R32_INT:
-		return DXGI_FORMAT_R32_SINT;
-	case HQ_UAVTFMT_R32G32_INT:
-		return DXGI_FORMAT_R32G32_SINT;
-	case HQ_UAVTFMT_R32G32B32A32_INT:
-		return DXGI_FORMAT_R32G32B32A32_SINT;
-	case HQ_UAVTFMT_R32_UINT:
-		return DXGI_FORMAT_R32_UINT;
-	case HQ_UAVTFMT_R32G32_UINT:
-		return DXGI_FORMAT_R32G32_UINT;
-	case HQ_UAVTFMT_R32G32B32A32_UINT:
-		return DXGI_FORMAT_R32G32B32A32_UINT;
-	case HQ_UAVTFMT_R8G8B8A8_UNORM:
-		return DXGI_FORMAT_R8G8B8A8_UNORM;
-	default:
-		return DXGI_FORMAT_UNKNOWN;
-	}
+	return HQUAVTextureResourceD3D11::GetD3DViewFormat(format);
 }
 
 /*
@@ -599,7 +778,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSl
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel)
+HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read)
 {
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 
@@ -618,7 +797,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* text
 	{
 		//retrieve UAV
 		HQUAVTextureResourceD3D11* pTextureUAVResD3D11 = (HQUAVTextureResourceD3D11 *)pTextureD3D11->pData;
-		pUAV = GetOrCreateNewUAV(pTextureD3D11->type, pTextureUAVResD3D11, mipLevel);
+		pUAV = pTextureUAVResD3D11-> GetOrCreateNewUAV(this->pD3DDevice, pTextureD3D11->type, mipLevel, read);
 
 		//first unbind texture from all shader resource view slots
 		this->UnbindTextureFromAllTextureSlots(pTexture);
@@ -677,7 +856,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* text
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSlot, HQTexture* textureID, hq_uint32 mipLevel)
+HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSlot, HQTexture* textureID, hq_uint32 mipLevel, bool read)
 {
 #if defined _DEBUG || defined DEBUG
 	if (uavSlot >= this->pMasterDevice->GetCaps().maxComputeUAVSlots)
@@ -700,7 +879,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSl
 	{
 		//retrieve UAV
 		HQUAVTextureResourceD3D11* pTextureUAVResD3D11 = (HQUAVTextureResourceD3D11 *)pTextureD3D11->pData;
-		pUAV = GetOrCreateNewUAV(pTextureD3D11->type, pTextureUAVResD3D11, mipLevel);
+		pUAV = pTextureUAVResD3D11->GetOrCreateNewUAV(this->pD3DDevice, pTextureD3D11->type, mipLevel, read);;
 
 		//first unbind texture from all shader resource view slots
 		this->UnbindTextureFromAllTextureSlots(pTexture);
@@ -1589,18 +1768,10 @@ HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextu
 	if (hasMipmaps)
 		numMipmaps = HQBaseTextureManager::CalculateFullNumMipmaps(width, height);//full range mipmap level
 
-	DXGI_FORMAT d3dformat = HQTextureManagerD3D11::GetD3DFormat(format);
+	DXGI_FORMAT d3dformat = HQUAVTextureResourceD3D11::GetD3DResFormat(format);
 
 	//texture desc
-	switch (format) {
-	case HQ_UAVTFMT_R8G8B8A8_UNORM://sepcial case, we need to create typeless texture
-		this->t2DDesc.Format = DXGI_FORMAT_R8G8B8A8_TYPELESS;
-		break;
-	default:
-		this->t2DDesc.Format = d3dformat;
-		break;
-	}
-
+	this->t2DDesc.Format = d3dformat;
 	this->t2DDesc.Width = width;
 	this->t2DDesc.Height = height;
 	this->t2DDesc.MipLevels = numMipmaps;
@@ -1615,6 +1786,7 @@ HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextu
 
 	//create texture and UAV view
 	HQUAVTextureResourceD3D11* pTexResD3D = (HQUAVTextureResourceD3D11 *)pTex->pData;
+	pTexResD3D->hqFormat = format;
 	HRESULT hr;
 	switch (pTex->type)
 	{
@@ -1627,7 +1799,7 @@ HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextu
 		if (!FAILED(hr))
 		{
 			//create first level UAV view
-			if (GetOrCreateNewUAV(pTex->type, pTexResD3D, 0) == NULL)
+			if (pTexResD3D->GetOrCreateNewUAV(this->pD3DDevice, pTex->type, 0, false) == NULL)
 			{
 				return HQ_FAILED;
 			}
@@ -1641,61 +1813,12 @@ HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextu
 	if (FAILED(hr))
 		return HQ_FAILED;
 
-	switch (this->t2DDesc.Format) {
-	case DXGI_FORMAT_R8G8B8A8_TYPELESS://sepcial case, we have created typeless texture, so we need to create formatted resource view
-		this->t2DDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		break;
-	default:
-		break;
-	}
+	//get view format
+	this->t2DDesc.Format = HQUAVTextureResourceD3D11::GetD3DViewFormat(format);
+
 	return this->CreateShaderResourceView(pTex);
 }
 
-ID3D11UnorderedAccessView * HQTextureManagerD3D11::GetOrCreateNewUAV(HQTextureType type, HQUAVTextureResourceD3D11 * pTexResD3D, hquint32 mipLevel)
-{
-	bool found = false;
-	ID3D11UnorderedAccessView *view = pTexResD3D->layeredViews.GetItem(mipLevel, found);
-	if (found)
-		return view;
-
-	//not found, create new one
-	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-	switch (type)
-	{
-	case HQ_TEXTURE_2D_UAV:
-	{
-		//texture desc
-		D3D11_TEXTURE2D_DESC l_t2DDesc;
-		static_cast<ID3D11Texture2D*>(pTexResD3D->pTexture)->GetDesc(&l_t2DDesc);
-		//UAV desc
-		switch (l_t2DDesc.Format) {
-		case DXGI_FORMAT_R8G8B8A8_TYPELESS://sepcial case, we created typeless texture, so we need to create formatted UAV view
-			uavDesc.Format = DXGI_FORMAT_R32_UINT;
-			break;
-		default:
-			uavDesc.Format = l_t2DDesc.Format;
-			break;
-		}
-		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
-		if (mipLevel >= l_t2DDesc.MipLevels)
-			uavDesc.Texture2D.MipSlice = l_t2DDesc.MipLevels - 1;// level view
-		else
-			uavDesc.Texture2D.MipSlice = mipLevel;// level view
-
-		//create mip level UAV view
-		HRESULT hr = pD3DDevice->CreateUnorderedAccessView(pTexResD3D->pTexture, &uavDesc, &view);
-		if (FAILED(hr))
-			return NULL;
-
-		pTexResD3D->layeredViews.Add(mipLevel, view);//add to layered view table
-
-		return view;
-	}
-	default:
-		//TO DO: other type of texture
-		return NULL;
-	}
-}
 
 HQTextureCompressionSupport HQTextureManagerD3D11::IsCompressionSupported(HQTextureType textureType,HQTextureCompressionFormat type)
 {

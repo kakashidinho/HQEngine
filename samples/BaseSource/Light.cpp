@@ -49,9 +49,9 @@ DiffuseSpotLight::DiffuseSpotLight(
 	_lightCam->SetListener(this);
 
 	//get world position
-	_lightCam->GetWorldPosition(*_position);
+	_lightCam->GetWorldPositionVec(*_position);
 	//get world direction
-	_lightCam->GetWorldDirection(*_direction);
+	_lightCam->GetWorldDirectionVec(*_direction);
 }
 
 DiffuseSpotLight::~DiffuseSpotLight()
@@ -63,7 +63,7 @@ DiffuseSpotLight::~DiffuseSpotLight()
 void DiffuseSpotLight::OnUpdated(const HQSceneNode * node, hqfloat32 dt)
 {
 	//get world position
-	_lightCam->GetWorldPosition(*_position);
+	_lightCam->GetWorldPositionVec(*_position);
 	//get world direction
-	_lightCam->GetWorldDirection(*_direction);
+	_lightCam->GetWorldDirectionVec(*_direction);
 }

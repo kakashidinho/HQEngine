@@ -17,9 +17,6 @@ COPYING.txt included with this distribution for more information.
 #include "HQShaderD3D11.h"
 
 #define MAX_VERTEX_ATTRIBS 16
-#ifndef D3D11_1_UAV_SLOT_COUNT
-#	define D3D11_1_UAV_SLOT_COUNT 64
-#endif
 
 
 #ifdef WIN32

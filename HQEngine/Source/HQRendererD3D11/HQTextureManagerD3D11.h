@@ -15,9 +15,6 @@ COPYING.txt included with this distribution for more information.
 
 #include <d3d11.h>
 
-#ifndef D3D11_1_UAV_SLOT_COUNT
-#	define D3D11_1_UAV_SLOT_COUNT 64
-#endif
 #define HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER 0
 
 #ifndef HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
@@ -44,16 +41,7 @@ struct HQTextureResourceD3D11
 
 };
 
-struct HQUAVTextureResourceD3D11 : public HQTextureResourceD3D11
-{
-	HQUAVTextureResourceD3D11()
-	{
-	}
-	~HQUAVTextureResourceD3D11();
-
-	typedef HQClosedPrimeHashTable<UINT, ID3D11UnorderedAccessView*> LayeredViewTableType;
-	LayeredViewTableType layeredViews;
-};
+struct HQUAVTextureResourceD3D11;
 
 
 struct HQTextureD3D11 :public HQBaseTexture
@@ -88,8 +76,8 @@ public:
 	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
 	HQReturnVal SetTexture(HQShaderType shaderStage, hq_uint32 slot, HQTexture* textureID);
 
-	HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel);
-	HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel);
+	HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read);
+	HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read);
 	
 	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
 	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);
@@ -117,9 +105,7 @@ public:
 
 	static DXGI_FORMAT GetD3DFormat(HQTextureUAVFormat format);
 private:
-	//create UAV for a certain mip level or get existing one
-	ID3D11UnorderedAccessView * GetOrCreateNewUAV(HQTextureType type, HQUAVTextureResourceD3D11 * pTexResD3D, hquint32 mipLevel);
-
+	
 	HQDeviceD3D11 * pMasterDevice;
 
 	ID3D11Device* pD3DDevice;
@@ -134,7 +120,7 @@ private:
 	};
 	TextureSlot textureSlots[4][D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
 
-	TextureSlot textureUAVSlots[2][D3D11_1_UAV_SLOT_COUNT];
+	TextureSlot textureUAVSlots[2][D3D11_PS_CS_UAV_REGISTER_COUNT];
 
 };
 #endif

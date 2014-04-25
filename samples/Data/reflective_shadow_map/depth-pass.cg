@@ -86,16 +86,6 @@ struct pOut{
 	float4 flux: COLOR3;//flux
 };
 
-//get normalized depth in range [0..1]
-float getNormDepth(float2 clipDepth){
-	return clipDepth.x / clipDepth.y;
-}
-
-//get normalized depth in range [0..1]. OpenGL version 
-glslf float getNormDepth(float2 clipDepth){
-	return 0.5 * (clipDepth.x / clipDepth.y) + 0.5;
-}
-
 //pixel shader
 pOut PS(
 	in float4 vPos : POSITION,

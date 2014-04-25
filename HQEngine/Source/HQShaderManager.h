@@ -361,7 +361,7 @@ public:
 
 	///
 	///Set UAV buffer to be read and written by compute shader. 
-	///Direct3D 11: {slot} is UAV slot. max number of slots is 64. 
+	///Direct3D 11: {slot} is UAV slot. max number of slots is 8. 
 	///			Note: setting this will unset previously bound UAV texture from the same slot as well as unset the buffer from every vertes stream's slots 
 	///				  indirect compute/draw buffer is viewed as RWBuffer<uint> in shader, while vertex/index is viewed as RWByteAddressBuffer
 	///OpenGL: {slot} is shader storage slot. max number of slots is obtained by HQRenderDevice::GetMaxShaderBufferUAVs(). 

@@ -7,7 +7,18 @@
 #	define __FINAL__
 #endif
 
+#include "../../HQEngine/Source/HQSharedPointer.h"
+#include "../../HQEngine/Source/HQMeshNode.h"
+
 #include "../../HQEngine/Source/HQ3DMathBasics.h"
+
+#ifndef min
+#	define min(a,b) (((a) > (b)? (b) : (a))
+#endif
+
+#ifndef max
+#	define max(a,b) (((a) > (b)? (a) : (b))
+#endif
 /*----------------------------------*/
 struct Transform {
 	HQBaseMatrix3x4 worldMat;
@@ -15,5 +26,8 @@ struct Transform {
 	HQBaseMatrix4 projMat;
 };
 
+struct ModelViewInfo : public Transform{
+	HQFloat4 cameraPosition;
+};
 
 #endif

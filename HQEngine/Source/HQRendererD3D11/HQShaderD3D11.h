@@ -392,7 +392,7 @@ private:
 	HQSharedPtr<HQShaderObjectD3D11> activeVShader, activeGShader, activePShader, activeCShader;
 
 	HQSharedPtr<HQShaderConstBufferD3D11> uBufferSlots[4][D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
-	HQGenericBufferD3D11::BufferSlot uavBufferSlots[2][D3D11_1_UAV_SLOT_COUNT];
+	HQGenericBufferD3D11::BufferSlot uavBufferSlots[2][D3D11_PS_CS_UAV_REGISTER_COUNT];
 
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	CGcontext cgContext;

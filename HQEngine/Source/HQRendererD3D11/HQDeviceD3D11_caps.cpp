@@ -47,11 +47,11 @@ void HQDeviceD3D11::InitFeatureCaps()
 		featureCaps.maxPixelSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 		featureCaps.maxComputeSamplers = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 #if HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER
-		featureCaps.maxPixelUAVSlots = D3D11_1_UAV_SLOT_COUNT;
+		featureCaps.maxPixelUAVSlots = D3D11_PS_CS_UAV_REGISTER_COUNT;
 #else
 		featureCaps.maxPixelUAVSlots = 0;
 #endif
-		featureCaps.maxComputeUAVSlots = D3D11_1_UAV_SLOT_COUNT;
+		featureCaps.maxComputeUAVSlots = D3D11_PS_CS_UAV_REGISTER_COUNT;
 
 		featureCaps.maxComputeGroupsX = featureCaps.maxComputeGroupsY = featureCaps.maxComputeGroupsZ = D3D11_CS_DISPATCH_MAX_THREAD_GROUPS_PER_DIMENSION;
 

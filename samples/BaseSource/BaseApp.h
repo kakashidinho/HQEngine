@@ -15,7 +15,10 @@ class BaseApp : public HQEngineRenderDelegate {
 public:
 	BaseApp(const char* rendererAPI, 
 			HQLogStream *logStream,
-			const char * additionalAPISettings = NULL);
+			const char * additionalAPISettings = NULL,
+			hquint32 width = 600, hquint32 height = 600);
+	//create app and render device using renderer API read from "API.txt" and default log file stream "log.txt"
+	BaseApp(hquint32 width = 600, hquint32 height = 600);
 	~BaseApp();
 
 	void Run();
@@ -37,6 +40,11 @@ protected:
 	MyGUI::TextBox* m_fpsTextBox;
 
 private:
+	void Init(const char* rendererAPI,
+			HQLogStream *logStream,
+			const char * additionalAPISettings,
+			hquint32 width, hquint32 height);
+
 	//implement HQEngineRenderDelegate
 	virtual void Render(HQTime dt) __FINAL__;
 };

@@ -67,26 +67,6 @@ struct pOut{
 	float4 normalW: COLOR2;//world space normal
 };
 
-//scale normalized coordinate to a texcoord value between [0..1]
-float2 scaleToTexcoord(float2 normalizeCoords){
-	float2 scaled;
-	
-	scaled.x = normalizeCoords.x * 0.5 + 0.5;
-	scaled.y = - normalizeCoords.y * 0.5 + 0.5;
-	
-	return scaled;
-}
-
-//scale normalized coordinate to a texcoord value between [0..1]. OpenGL version
-glslf float2 scaleToTexcoord(float2 normalizeCoords){
-	float2 scaled;
-	
-	scaled.x = normalizeCoords.x * 0.5 + 0.5;
-	scaled.y = normalizeCoords.y * 0.5 + 0.5;
-	
-	return scaled;
-}
-
 //pixel shader
 pOut PS(
 	in float4 position: POSITION, //clip space position

@@ -81,7 +81,8 @@ public:
 	//override HQSceneNode's update
 	void Update(hqfloat32 dt, bool updateChilds = true, bool parentChanged = false);
 
-	void GetWorldDirection(HQVector4& directionOut) const;
+	void GetWorldDirectionVec(HQVector4& directionOut) const;
+	void GetWorldDirection(HQFloat4& directionOut) const;
 private:
 };
 

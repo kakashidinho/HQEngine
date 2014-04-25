@@ -845,7 +845,7 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQText
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerGL::SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel)
+HQReturnVal HQTextureManagerGL::SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read)
 {
 #if defined _DEBUG || defined DEBUG
 	if (slot >= this->maxImageUnits)
@@ -889,12 +889,12 @@ HQReturnVal HQTextureManagerGL::SetTextureUAV(hq_uint32 slot, HQTexture* texture
 
 	GLuint textureName = *((GLuint*)pTexture->pData);
 
-	glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, GL_READ_WRITE, pTextureRawPtr->internalFormat);
+	glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, read ? GL_READ_WRITE : GL_WRITE_ONLY, pTextureRawPtr->internalFormat);
 
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerGL::SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel)
+HQReturnVal HQTextureManagerGL::SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read)
 {
 #if defined _DEBUG || defined DEBUG
 	if (slot >= this->maxImageUnits)
@@ -938,7 +938,7 @@ HQReturnVal HQTextureManagerGL::SetTextureUAVForComputeShader(hq_uint32 slot, HQ
 
 	GLuint textureName = *((GLuint*)pTexture->pData);
 
-	glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, GL_READ_WRITE, pTextureRawPtr->internalFormat);
+	glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, read ? GL_READ_WRITE : GL_WRITE_ONLY, pTextureRawPtr->internalFormat);
 
 	return HQ_OK;
 }

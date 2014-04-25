@@ -12,5 +12,5 @@ endlocal
 exit /b
 
 :Compile
-call compile_cg_2_hlsl.bat %1 %~n1-compiled-cg.hlslv %~n1-compiled-cg.hlslf
+call ..\compile_cg_2_hlsl.bat %1 %~n1-compiled-cg.hlslv %~n1-compiled-cg.hlslf
 exit /b

@@ -124,9 +124,16 @@ void HQCamera::Update(hqfloat32 dt ,bool updateChilds, bool parentChanged  )
 	HQMatrix4cGetFrustum(m_viewProjMat, m_frustumPlanes, m_renderAPI);
 }
 
-void HQCamera::GetWorldDirection(HQVector4& directionOut) const
+void HQCamera::GetWorldDirectionVec(HQVector4& directionOut) const
 {
 	//get world transformed direction
 	HQVector4TransformNormal(m_zAxis, &this->GetWorldTransform(), &directionOut);
 	directionOut.Normalize();
+}
+
+void HQCamera::GetWorldDirection(HQFloat4& directionOut) const
+{
+	HQ_DECL_STACK_VECTOR4(tempVec);
+	this->GetWorldDirectionVec(tempVec);
+	memcpy(&directionOut, &tempVec, sizeof(HQFloat4));
 }

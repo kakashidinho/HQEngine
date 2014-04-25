@@ -366,7 +366,7 @@ void HQSceneNode::UpdateLocalTransform()
 }
 
 
-void HQSceneNode::GetWorldPosition(HQVector4 &positionOut) const
+void HQSceneNode::GetWorldPositionVec(HQVector4 &positionOut) const
 {
 	if (this->m_pParent != NULL)
 	{
@@ -374,4 +374,12 @@ void HQSceneNode::GetWorldPosition(HQVector4 &positionOut) const
 	}
 	else
 		memcpy(&positionOut, m_localPosition,sizeof(HQVector4));
+}
+
+
+void HQSceneNode::GetWorldPosition(HQFloat4 &positionOut) const
+{
+	HQ_DECL_STACK_VECTOR4(tempVec);
+	this->GetWorldPositionVec(tempVec);
+	memcpy(&positionOut, &tempVec, sizeof(HQFloat4));
 }

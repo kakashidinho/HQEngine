@@ -75,7 +75,8 @@ public:
 	const HQVector4 & GetLocalPosition() const {return *m_localPosition;}
 	const HQFloat3 & GetScaleFactors() const {return m_scale;}
 	const HQQuaternion & GetLocalRotation() const {return *m_localRotation;}
-	void GetWorldPosition(HQVector4 &positionOut) const ;
+	void GetWorldPositionVec(HQVector4 &positionOut) const ;
+	void GetWorldPosition(HQFloat4 &positionOut) const;
 	const HQMatrix3x4 & GetWorldTransform() const {return *m_worldTransform;}
 
 	///

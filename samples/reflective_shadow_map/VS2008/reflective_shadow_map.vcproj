@@ -287,7 +287,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -296,7 +296,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -305,7 +305,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -318,7 +318,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -327,7 +327,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -336,7 +336,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -349,7 +349,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -358,7 +358,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -367,7 +367,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -380,7 +380,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -389,7 +389,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
@@ -398,7 +398,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\reflective_shadow_map\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
+							CommandLine="call $(SolutionDir)\..\..\Data\compile_cg_2_glsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf&#x0D;&#x0A;call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl.bat $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName).cg $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv $(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf&#x0D;&#x0A;&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\reflective_shadow_map\$(InputName)-compiled-cg.glslf"
 						/>
 					</FileConfiguration>
