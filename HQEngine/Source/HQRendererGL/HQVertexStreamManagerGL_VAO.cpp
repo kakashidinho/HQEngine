@@ -213,14 +213,30 @@ HQVertexArrayObjGL::HQVertexArrayObjGL(const Params &_params)
 
 			glEnableVertexAttribArray(attrib.attribIndex);
 			glBindBuffer(GL_ARRAY_BUFFER, streamSource.fromWhichBO);
-			glVertexAttribPointer(
-				attrib.attribIndex,
-				attrib.size,
-				attrib.dataType,
-				attrib.normalized,
-				streamSource.stride,
-				attrib.offset
-				);
+
+			if ((attrib.dataType == GL_UNSIGNED_INT
+				|| attrib.dataType == GL_INT
+				|| attrib.dataType == GL_UNSIGNED_SHORT
+				|| attrib.dataType == GL_SHORT
+				|| attrib.dataType == GL_UNSIGNED_BYTE
+				|| attrib.dataType == GL_BYTE) 
+				&& attrib.normalized == GL_FALSE)
+				glVertexAttribIPointer(
+					attrib.attribIndex,
+					attrib.size,
+					attrib.dataType,
+					streamSource.stride,
+					attrib.offset
+					);
+			else
+				glVertexAttribPointer(
+					attrib.attribIndex,
+					attrib.size,
+					attrib.dataType,
+					attrib.normalized,
+					streamSource.stride,
+					attrib.offset
+					);
 		}
 	}
 
