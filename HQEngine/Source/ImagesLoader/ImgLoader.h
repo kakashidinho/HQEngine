@@ -59,7 +59,10 @@ enum SurfaceFormat{
 	FMT_PVRTC_RGB_4BPP=18,//dạng nén PVRTC RGB 4 bit
 	FMT_PVRTC_RGB_2BPP=19,//dạng nén PVRTC RGB 2 bit
 	FMT_PVRTC_RGBA_4BPP=20,//dạng nén PVRTC RGBA 4 bit
-	FMT_PVRTC_RGBA_2BPP=21//dạng nén PVRTC RGBA 2 bit
+	FMT_PVRTC_RGBA_2BPP=21,//dạng nén PVRTC RGBA 2 bit
+	FMT_R32_FLOAT = 22,//32 bit floating point
+	FMT_R32G32_FLOAT = 23,//32 bit floating point, memory layout in increasing address order= {red}, {green}
+	FMT_R32G32B32A32_FLOAT = 24,//32 bit floating point, memory layout in increasing address order= {red}, {green}, {blue}, {alpha}
 };
 
 enum OutputRGBLayout

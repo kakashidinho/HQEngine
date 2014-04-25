@@ -229,6 +229,57 @@ namespace helper
 	{
 		switch (imgFmt)
 		{
+		case FMT_R32G32B32A32_FLOAT:
+			if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
+			{
+				return GL_RGBA32F;
+			}
+			else if (GLEW_OES_texture_float)
+			{
+				return GL_RGBA;
+			}
+			break;
+		case FMT_R32G32_FLOAT:
+			if (GLEW_VERSION_3_0)
+			{
+				return GL_RG32F;
+			}
+			else if (GLEW_ARB_texture_float)
+			{
+				if (GLEW_ARB_texture_rg)
+				{
+					return GL_RG32F;
+				}
+			}
+			else if (GLEW_OES_texture_half_float && GLEW_EXT_texture_rg)
+			{
+				return GL_RG_EXT;
+			}
+			break;
+		case FMT_R32_FLOAT:
+			if (GLEW_VERSION_3_0)
+			{
+				return GL_R32F;
+			}
+			else if (GLEW_ARB_texture_float)
+			{
+				if (GLEW_ARB_texture_rg)
+				{
+					return GL_R32F;
+				}
+				else
+				{
+					return GL_LUMINANCE32F_ARB;
+				}
+			}
+			else if (GLEW_OES_texture_float)
+			{
+				if (GLEW_EXT_texture_rg)
+					return GL_RED_EXT;
+				else
+					return GL_LUMINANCE;
+			}
+			break;
 		case FMT_R8G8B8: case FMT_B8G8R8:
 			return GL_RGB8;
 		case FMT_A8R8G8B8:
@@ -265,15 +316,68 @@ namespace helper
 		case FMT_PVRTC_RGBA_4BPP:
 			return GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
 #endif
-		default:
-			return -1;
 		}
+		return -1;
 	}
 
 	void GetImageDataInfo(const SurfaceFormat imgFmt,GLenum &format,GLenum &dataType)
 	{
 		switch (imgFmt)
 		{
+		case FMT_R32G32B32A32_FLOAT:
+			if (GLEW_VERSION_3_0 || GLEW_ARB_texture_float)
+			{
+				format = GL_RGBA; dataType = GL_FLOAT;
+			}
+			else if (GLEW_OES_texture_float)
+			{
+				format = GL_RGBA;
+				dataType = GL_FLOAT;
+			}
+			break;
+		case FMT_R32G32_FLOAT:
+			if (GLEW_VERSION_3_0)
+			{
+				format = GL_RG; dataType = GL_FLOAT;
+			}
+			else if (GLEW_ARB_texture_float)
+			{
+				if (GLEW_ARB_texture_rg)
+				{
+					format = GL_RG; dataType = GL_FLOAT;
+				}
+			}
+			else if (GLEW_OES_texture_half_float && GLEW_EXT_texture_rg)
+			{
+				format = GL_RG_EXT;
+				dataType = GL_FLOAT;
+			}
+			break;
+		case FMT_R32_FLOAT:
+			if (GLEW_VERSION_3_0)
+			{
+				format = GL_RED; dataType = GL_FLOAT;
+			}
+			else if (GLEW_ARB_texture_float)
+			{
+				if (GLEW_ARB_texture_rg)
+				{
+					format = GL_RED; dataType = GL_FLOAT;
+				}
+				else
+				{
+					format = GL_LUMINANCE; dataType = GL_FLOAT;
+				}
+			}
+			else if (GLEW_OES_texture_float)
+			{
+				if (GLEW_EXT_texture_rg)
+					format = GL_RED_EXT;
+				else
+					format = GL_LUMINANCE;
+				dataType = GL_FLOAT;
+			}
+			break;
 		case FMT_R8G8B8: case FMT_B8G8R8:
 			format=GL_RGB;
 			dataType = GL_UNSIGNED_BYTE;

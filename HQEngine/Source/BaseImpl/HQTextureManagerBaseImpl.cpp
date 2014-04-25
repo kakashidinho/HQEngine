@@ -46,8 +46,15 @@ HQBaseRawPixelBuffer::HQBaseRawPixelBuffer(HQRawPixelFormat format, hquint32 wid
 {
 	switch (format)
 	{
+	case HQ_RPFMT_R32G32B32A32_FLOAT:
+		m_pixelSize = 16;
+		break;
+	case HQ_RPFMT_R32G32_FLOAT:
+		m_pixelSize = 8;
+		break;
 	case HQ_RPFMT_R8G8B8A8:
 	case HQ_RPFMT_B8G8R8A8:
+	case HQ_RPFMT_R32_FLOAT:
 		m_pixelSize = 4;
 		break;
 	case HQ_RPFMT_R5G6B5:
@@ -75,6 +82,14 @@ void HQBaseRawPixelBuffer::SetPixelf(hquint32 x, hquint32 y, float r, float g, f
 
 	switch (m_format)
 	{
+	case HQ_RPFMT_R32G32B32A32_FLOAT:
+		*(((float*)pPixel) + 3) = a;
+		*(((float*)pPixel) + 2) = b;
+	case HQ_RPFMT_R32G32_FLOAT:
+		*(((float*)pPixel) + 1) = g;
+	case HQ_RPFMT_R32_FLOAT:
+		*((float*)pPixel) = r;
+		break;
 	case HQ_RPFMT_R8G8B8A8:
 		pPixel[0] = (hqubyte8)(r * 255.0f);
 		pPixel[1] = (hqubyte8)(g * 255.0f);
@@ -109,6 +124,14 @@ void HQBaseRawPixelBuffer::SetPixel(hquint32 x, hquint32 y, hqubyte8 r, hqubyte8
 
 	switch (m_format)
 	{
+	case HQ_RPFMT_R32G32B32A32_FLOAT:
+		*(((float*)pPixel) + 3) = (float)a;
+		*(((float*)pPixel) + 2) = (float)b;
+	case HQ_RPFMT_R32G32_FLOAT:
+		*(((float*)pPixel) + 1) = (float)g;
+	case HQ_RPFMT_R32_FLOAT:
+		*((float*)pPixel) = (float)r;
+		break;
 	case HQ_RPFMT_R8G8B8A8:
 		pPixel[0] = r ;
 		pPixel[1] = g ;
@@ -145,8 +168,18 @@ HQColor HQBaseRawPixelBuffer::GetPixelData(int x, int y) const
 	HQColor color;
 	const hqubyte8 *pPixel = GetPixel(x, y);
 
+	memset(&color, 0, sizeof(HQColor));
+
 	switch (m_format)
 	{
+	case HQ_RPFMT_R32G32B32A32_FLOAT:
+		color.a = *(((float*)pPixel) + 3);
+		color.b = *(((float*)pPixel) + 2);
+	case HQ_RPFMT_R32G32_FLOAT:
+		color.g = *(((float*)pPixel) + 1);
+	case HQ_RPFMT_R32_FLOAT:
+		color.r = *((float*)pPixel);
+		break;
 	case HQ_RPFMT_R8G8B8A8:
 		color.r =  pPixel[0]/ 255.f ;
 		color.g =  pPixel[1]/ 255.f ;
@@ -202,6 +235,15 @@ void HQBaseRawPixelBuffer::MakeWrapperBitmap( Bitmap &bitmap) const
 	SurfaceFormat bitmapFmt;
 	switch (m_format)
 	{
+	case HQ_RPFMT_R32G32B32A32_FLOAT:
+		bitmapFmt = FMT_R32G32B32A32_FLOAT;
+		break;
+	case HQ_RPFMT_R32G32_FLOAT:
+		bitmapFmt = FMT_R32G32_FLOAT;
+		break;
+	case HQ_RPFMT_R32_FLOAT:
+		bitmapFmt = FMT_R32_FLOAT;
+		break;
 	case HQ_RPFMT_R8G8B8A8:
 		bitmapFmt = FMT_A8B8G8R8;
 		break;

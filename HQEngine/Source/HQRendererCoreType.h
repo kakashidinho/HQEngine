@@ -453,6 +453,9 @@ typedef enum _HQRawPixelFormat
 	HQ_RPFMT_R5G6B5 = 2, //each pixel: 16 bits
 	HQ_RPFMT_L8A8 = 3, //each pixel: first byte is luminance value, last byte is alpha
 	HQ_RPFMT_A8 = 4, //each pixel is alpha
+	HQ_RPFMT_R32_FLOAT = 8,//32bit floating point pixel data
+	HQ_RPFMT_R32G32_FLOAT = 9,//32bit floating point pixel data
+	HQ_RPFMT_R32G32B32A32_FLOAT = 10,//32bit floating point pixel data
 	HQ_RPFMT_FORCE_DWORD = 0xffffffff
 }HQRawPixelFormat;
 
@@ -494,8 +497,8 @@ public:
 	virtual hquint32 GetWidth() const = 0;
 	virtual hquint32 GetHeight() const = 0;
 	///
-	///RGB is ignored in A8 pixel buffer. GB is ignored in L8A8 buffer (R is set to luminance value). 
-	///A is ignored in R5G6B5 buffer. Color channel range is 0.0f-1.0f
+	///RGB is ignored in A8 pixel buffer. GB is ignored in L8A8/R32_FLOAT buffer (R is set to luminance value). 
+	///A is ignored in R5G6B5/R32/R32G32_FLOAT buffer. Except floating point format, color channel range is 0.0f-1.0f
 	///
 	virtual void SetPixelf(hquint32 x, hquint32 y, float r, float g, float b, float a) = 0;
 	///

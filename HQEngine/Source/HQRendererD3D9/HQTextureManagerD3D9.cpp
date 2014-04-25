@@ -111,6 +111,12 @@ static D3DFORMAT GetTextureFmt(const SurfaceFormat imgFmt)
 {
 	switch (imgFmt)
 	{
+	case FMT_R32G32B32A32_FLOAT:
+		return D3DFMT_A32B32G32R32F;
+	case FMT_R32G32_FLOAT:
+		return D3DFMT_G32R32F;
+	case FMT_R32_FLOAT:
+		return D3DFMT_R32F;
 	case FMT_R8G8B8: case FMT_B8G8R8: 
 		return D3DFMT_X8R8G8B8;
 	case FMT_A8R8G8B8:case FMT_A8B8G8R8:
