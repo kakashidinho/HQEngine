@@ -49,8 +49,19 @@ HQReturnVal HQShaderStorageBufferGL::Update(hq_uint32 offset, hq_uint32 size, co
 	if (i == 0)//update toàn bộ buffer
 		size = this->size;
 
+#if 0 // verify before update
+	void * data = glMapBufferRange(this->targetName, offset, size, GL_MAP_READ_BIT);
+	glUnmapBuffer(this->targetName);
+#endif
+
 	this->BindBuffer();
 	glBufferSubData(this->targetName, offset, size, pData);
+
+#if 0 // verify
+	data = glMapBufferRange(this->targetName, offset, size, GL_MAP_READ_BIT);
+	glUnmapBuffer(this->targetName);
+#endif
+
 	return HQ_OK;
 }
 HQReturnVal HQShaderStorageBufferGL::Unmap()

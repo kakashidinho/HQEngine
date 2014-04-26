@@ -89,13 +89,13 @@ HQUAVTextureResourceD3D11::~HQUAVTextureResourceD3D11()
 HQ_FORCE_INLINE DXGI_FORMAT HQUAVTextureResourceD3D11::GetNoReadUAViewFormat(){
 	switch (this->hqFormat) {
 	case HQ_UAVTFMT_R8G8B8A8_UNORM://sepcial case, we created typeless texture, so we need to create formatted UAV view
-		return DXGI_FORMAT_R32_UINT;
+		return DXGI_FORMAT_R8G8B8A8_UNORM;
 	default:
 		return HQUAVTextureResourceD3D11::GetD3DViewFormat(this->hqFormat);//usa same format as resource view
 	}
 }
 
-//return format that support read
+//return format that supports read
 HQ_FORCE_INLINE DXGI_FORMAT HQUAVTextureResourceD3D11::GetUAViewFormat()
 {
 	switch (this->hqFormat) {
@@ -574,6 +574,8 @@ HQBaseTexture * HQTextureManagerD3D11::CreateNewTextureObject(HQTextureType type
 /*-------set texture ---------------------*/
 HQReturnVal HQTextureManagerD3D11::SetTexture(HQShaderType shaderStage, hq_uint32 resourceSlot, HQTexture* textureID)
 {
+	//TO DO: unbind from all other slots in the same shader stage
+
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
 	hquint32 unifySlot = shaderStage | resourceSlot;
@@ -738,6 +740,8 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(hq_uint32 slot, HQTexture* texture
 
 HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSlot, HQTexture* textureID)
 {
+	//TO DO: unbind from all other slots in the same shader stage
+
 	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
 
 #if defined _DEBUG || defined DEBUG
@@ -841,6 +845,9 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* text
 
 			if (pTextureD3D11 != NULL)
 			{
+				//unbind from all other UAV slots
+				this->UnbindTextureFromAllUAVSlots(pTexture);
+
 				//link the texture with this slot
 				pTextureUAVSlot->textureLink = pTextureD3D11->uavBoundSlots.PushBack(slot);
 				pTextureUAVSlot->pTexture = pTexture;//hold reference to texture
@@ -909,6 +916,9 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSl
 
 		if (pTextureD3D11 != NULL)
 		{
+			//unbind from all other UAV slots
+			this->UnbindTextureFromAllUAVSlots(pTexture);
+
 			//link the texture with this slot
 			pTextureUAVSlot->textureLink = pTextureD3D11->uavBoundSlots.PushBack(HQ_COMPUTE_SHADER | uavSlot);
 			pTextureUAVSlot->pTexture = pTexture;//hold reference to texture

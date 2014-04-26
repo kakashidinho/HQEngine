@@ -1878,13 +1878,18 @@ HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot,
 
 	UINT uavInitialCount = -1;
 
-	//retrieve UAV
+	pCurrentBufferUAVD3D11Slot = this->uavBufferSlots[1] + uavSlot;
+
 	if (pBuffer != NULL)
 	{
+		//retrieve UAV
 		pUAV = pBuffer->GetOrCreateUAView(pD3DDevice, firstElementIdx, numElements);
-	}
 
-	pCurrentBufferUAVD3D11Slot = this->uavBufferSlots[1] + uavSlot;
+		if (pCurrentBufferUAVD3D11Slot->pBuffer != pBuffer)
+		{
+			this->UnbindBufferFromAllUAVSlots(pGenericD3DBuffer);//make sure this buffer won't be bound to any other UAV slots
+		}
+	}
 	pCurrentBufferUAVD3D11Slot->BindAsUAV(HQ_COMPUTE_SHADER | uavSlot, pBuffer);//hold reference to buffer
 
 	//unbind any bound UAV texture

@@ -60,7 +60,7 @@ public:
 	///			Eg. to set texture to texture slot 3 of compute shader , pass {slot} = (3 | HQ_COMPUTE_SHADER). 
 	///			Direct3d 11 : {texture slot} refers to UAV slot. Each shader stage has number of slots that can be checked by calling HQRenderDevice::GetMaxShaderStageTextureUAVs(). 
 	///						  Note that this will unset the texture from every resource slots as well as unset previously bound UAV buffer from the same slot. 
-	///						  Limit of direct3d11, if {read} = true, texture has more than one channels per pixel will fail to be set.
+	///						  Limit of direct3d11, if {read} = true, texture has more than one channels per pixel will fail to be set (except r8g8b8a8_unorm will be viewed as r32_uint). 
 	///OpenGL : {slot} is slot of texture image unit.{slot} is between  0 and HQRenderDevice::GetMaxShaderTextureUAVs() minus 1. 
 	///Note : passing NULL will unset the current texture out of the slot
 	///
@@ -70,7 +70,7 @@ public:
 	///{read} = true if the texture is to be read from shader. 
 	///Direct3d 11: {slot}  refers to compute shader's UAV slot. It has a max number of slots that can be checked by calling HQRenderDevice::GetMaxShaderStageTextureUAVs()
 	///				Note that this will unset the texture from every resource slots  as well as unset previously bound UAV buffer from the same slot.  
-	///				Limit of direct3d11, if {read} = true, texture has more than one channels per pixel will fail to be set.
+	///				Limit of direct3d11, if {read} = true, texture has more than one channels per pixel will fail to be set (except r8g8b8a8_unorm will be viewed as r32_uint). 
 	///OpenGL : {slot} is slot of texture image unit.{slot} is between  0 and HQRenderDevice::GetMaxShaderTextureUAVs() minus 1. 
 	///Note : passing NULL will unset the current texture out of the slot
 	///
