@@ -1105,21 +1105,21 @@ HQReturnVal HQEngineResManagerImpl::AddShaderBufferResource(
 	case HQ_ESBT_COMPUTE_INDIRECT:
 		elementSize = 0;//ignore
 		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
-			->CreateComputeIndirectArgs(numElements, initData, &buffer);
+			->CreateComputeIndirectArgs(initData, numElements, &buffer);
 		break;
 	case HQ_ESBT_DRAW_INDIRECT:
 		elementSize = 0;//ignore
 		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
-			->CreateDrawIndirectArgs(numElements, initData, &buffer);
+			->CreateDrawIndirectArgs(initData, numElements, &buffer);
 		break;
 	case HQ_ESBT_DRAW_INDEXED_INDIRECT:
 		elementSize = 0;//ignore
 		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
-			->CreateDrawIndexedIndirectArgs(numElements, initData, &buffer);
+			->CreateDrawIndexedIndirectArgs(initData, numElements, &buffer);
 		break;
 	case HQ_ESBT_SHADER_USE_ONLY:
 		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetShaderManager()
-			->CreateBufferUAV(numElements, elementSize, initData, &buffer);
+			->CreateBufferUAV(initData, elementSize, numElements, &buffer);
 		break;
 	}
 

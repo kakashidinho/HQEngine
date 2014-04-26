@@ -590,7 +590,7 @@ void HQBaseShaderManagerGL_FakeUBO::OnDraw()
 	}//if (program != NULL)
 }
 
-HQReturnVal HQBaseShaderManagerGL_FakeUBO::CreateUniformBuffer(hq_uint32 size, void *initData, bool isDynamic, HQUniformBuffer **pBufferIDOut)
+HQReturnVal HQBaseShaderManagerGL_FakeUBO::CreateUniformBuffer(void *initData, hq_uint32 size, bool isDynamic, HQUniformBuffer **pBufferIDOut)
 {
 	HQFakeUniformBufferGL* pNewBuffer = HQ_NEW HQFakeUniformBufferGL(this, size, isDynamic);
 	if (initData != NULL)

@@ -182,7 +182,7 @@ public:
 	}
 
 
-	virtual HQReturnVal CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut)
+	virtual HQReturnVal CreateUniformBuffer(void *initData, hq_uint32 size, bool isDynamic, HQUniformBuffer **pBufferIDOut)
 	{
 		return HQ_FAILED;
 	}
@@ -202,13 +202,13 @@ public:
 		return HQ_FAILED;
 	}
 
-	virtual HQReturnVal CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut) { return HQ_FAILED; }
+	virtual HQReturnVal CreateBufferUAV(void* initData, hquint32 elementSize, hquint32 numElements, HQBufferUAV** ppBufferOut) { return HQ_FAILED; }
 
-	virtual HQReturnVal CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+	virtual HQReturnVal CreateComputeIndirectArgs(void* initData, hquint32 numElements, HQComputeIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
 
-	virtual HQReturnVal CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+	virtual HQReturnVal CreateDrawIndirectArgs(void* initData, hquint32 numElements, HQDrawIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
 
-	virtual HQReturnVal CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
+	virtual HQReturnVal CreateDrawIndexedIndirectArgs(void* initData, hquint32 numElements, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
 
 	virtual HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)  { return HQ_FAILED; }
 

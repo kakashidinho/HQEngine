@@ -443,8 +443,8 @@ void HQMeshNode::CreateIndirectBuffer()
 	if (!m_reloading)
 	{
 		re = m_pRenderDevice->GetShaderManager()->CreateDrawIndexedIndirectArgs(
+			indirectArgs, 
 			m_geoInfo->numGroups,
-			indirectArgs,
 			&m_geoInfo->indirectBuffer
 			);
 	}

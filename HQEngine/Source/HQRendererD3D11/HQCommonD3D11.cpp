@@ -23,14 +23,6 @@ HQReturnVal HQBufferD3D11::Unmap()
 
 HQReturnVal HQBufferD3D11::Update(hq_uint32 offset, hq_uint32 size, const void * pData)
 {
-#if defined _DEBUG || defined DEBUG	
-	if (this->isDynamic == false)
-	{
-		this->pLog->Log("Error : static buffer can't be updated!");
-		return HQ_FAILED_NOT_DYNAMIC_RESOURCE;
-	}
-#endif
-
 	hq_uint32 i = offset + size;
 	if (i > this->size)
 		return HQ_FAILED_INVALID_SIZE;
@@ -43,13 +35,27 @@ HQReturnVal HQBufferD3D11::Update(hq_uint32 offset, hq_uint32 size, const void *
 	else if (offset == 0 && size == this->size)
 		mapType = D3D11_MAP_WRITE_DISCARD;
 
-	D3D11_MAPPED_SUBRESOURCE mapped;
-
-	if (SUCCEEDED(pD3DContext->Map(this->pD3DBuffer, 0, mapType, 0, &mapped)))
+	if (this->isDynamic == true)
 	{
-		memcpy((hq_ubyte8*)mapped.pData + offset, pData, size);
+		D3D11_MAPPED_SUBRESOURCE mapped;
 
-		pD3DContext->Unmap(this->pD3DBuffer, 0);
+		if (SUCCEEDED(pD3DContext->Map(this->pD3DBuffer, 0, mapType, 0, &mapped)))
+		{
+			memcpy((hq_ubyte8*)mapped.pData + offset, pData, size);
+
+			pD3DContext->Unmap(this->pD3DBuffer, 0);
+		}
+	}
+	else{
+		D3D11_BOX box;
+		box.top = 0;
+		box.bottom = 1;
+		box.front = 0;
+		box.back = 1;
+		box.left = offset;
+		box.right = offset + size;
+
+		pD3DContext->UpdateSubresource(this->pD3DBuffer, 0, &box, pData, this->size, this->size);
 	}
 
 	return HQ_OK;

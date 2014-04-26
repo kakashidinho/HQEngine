@@ -1898,7 +1898,7 @@ HQReturnVal HQShaderManagerD3D9::SetUniformMatrix(hq_uint32 parameterIndex,
 	return HQ_OK;
 }
 
-HQReturnVal HQShaderManagerD3D9::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut)
+HQReturnVal HQShaderManagerD3D9::CreateUniformBuffer(void *initData, hq_uint32 size, bool isDynamic, HQUniformBuffer **pBufferIDOut)
 {
 	HQShaderConstBufferD3D9* pNewBuffer = HQ_NEW HQShaderConstBufferD3D9(this, isDynamic, size); 
 	if (initData != NULL)

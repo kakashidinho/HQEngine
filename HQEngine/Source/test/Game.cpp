@@ -223,13 +223,13 @@ Game::Game()
 
 	if (API == OGL_RENDERER)
 	{
-		pDevice->GetShaderManager()->CreateUniformBuffer(sizeof(BUFFER2) , NULL , true , &this->uniformBuffer[1]);
+		pDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(BUFFER2) , true , &this->uniformBuffer[1]);
 		pDevice->GetShaderManager()->SetUniformBuffer(11 , this->uniformBuffer[0]);
 		pDevice->GetShaderManager()->SetUniformBuffer(10 , this->uniformBuffer[1]);
 	}
 	else if (API == D3D9_RENDERER || API == D3D11_RENDERER)
 	{
-		pDevice->GetShaderManager()->CreateUniformBuffer(sizeof(BUFFER2) , NULL , true , &this->uniformBuffer[1]);
+		pDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(BUFFER2) , true , &this->uniformBuffer[1]);
 		pDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 11 , this->uniformBuffer[0]);
 		pDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER | 10 , this->uniformBuffer[1]);
 	}

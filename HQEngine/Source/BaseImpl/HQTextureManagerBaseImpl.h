@@ -131,7 +131,7 @@ public:
 	//tạo texture mà chỉ chứa 1 màu
 	HQReturnVal AddSingleColorTexture(HQColorui color, HQTexture** pTextureID);
 
-	HQReturnVal AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID);
+	HQReturnVal AddTextureBuffer(void *initData, hq_uint32 size, bool isDynamic, HQTextureBufferFormat format, HQTextureBuffer** pTextureID);
 
 	HQReturnVal AddTextureUAV(HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap, HQTexture ** ppTexture);
 

@@ -164,7 +164,7 @@ void HQBaseShaderManagerGL_StorageBlockSupprted::RemoveAllBufferUAVs()
 }
 
 
-HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut)
+HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateBufferUAV(void* initData, hquint32 elementSize, hquint32 numElements, HQBufferUAV** ppBufferOut)
 {
 	HQGeneralPurposeStorageBufferGL* newBuffer = HQ_NEW HQGeneralPurposeStorageBufferGL(elementSize, numElements);
 
@@ -178,7 +178,7 @@ HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateBufferUAV(hquint32
 	return HQ_OK;
 }
 
-HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)
+HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateComputeIndirectArgs(void* initData, hquint32 numElements, HQComputeIndirectArgsBuffer** ppBufferOut)
 {
 	//element structure 
 	struct Element {
@@ -199,7 +199,7 @@ HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateComputeIndirectArg
 	return HQ_OK;
 }
 
-HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut)
+HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateDrawIndirectArgs(void* initData, hquint32 numElements, HQDrawIndirectArgsBuffer** ppBufferOut)
 {
 	//element structure 
 	struct Element {
@@ -221,7 +221,7 @@ HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateDrawIndirectArgs(h
 	return HQ_OK;
 }
 
-HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)
+HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::CreateDrawIndexedIndirectArgs(void* initData, hquint32 numElements, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)
 {
 	//element structure 
 	struct Element {
@@ -273,6 +273,9 @@ HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::SetBufferUAVForComputeSh
 			break;
 		}
 	}
+
+	if (numElements == 0)
+		numElements = pBuffer->totalElements - firstElementIdx;
 
 	HQSharedPtr< HQBufferGL>* pCurrentBufferSlot;
 

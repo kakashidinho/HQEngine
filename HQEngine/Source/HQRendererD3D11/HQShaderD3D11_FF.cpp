@@ -418,7 +418,7 @@ void HQShaderManagerD3D11::InitFFEmu()
 
 	/*---------create constant buffer--------------------*/
 
-	this->CreateUniformBuffer(sizeof(HQFixedFunctionParamenters), NULL, false, &pFFEmu->m_constantBuffer);
+	this->CreateUniformBuffer(NULL, sizeof(HQFixedFunctionParamenters), false, &pFFEmu->m_constantBuffer);
 	
 	pFFEmu->m_constantBufferPtr = this->shaderConstBuffers.GetItemPointer(pFFEmu->m_constantBuffer);//cache the pointer
 

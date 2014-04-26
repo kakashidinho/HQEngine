@@ -118,7 +118,7 @@ public:
 	///
 	///tạo texture buffer
 	///
-	virtual HQReturnVal AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID) = 0;
+	virtual HQReturnVal AddTextureBuffer(void *initData, hq_uint32 size, bool isDynamic, HQTextureBufferFormat format, HQTextureBuffer** pTextureID) = 0;
 	
 	
 	///

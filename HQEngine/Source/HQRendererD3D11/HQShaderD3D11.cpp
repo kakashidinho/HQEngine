@@ -464,7 +464,7 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 	SafeRelease(pError);
 
 	HQUniformBuffer * pBuffer = 0;
-	this->CreateUniformBuffer(sizeof(ClearBufferParameters), NULL, true, &pBuffer);
+	this->CreateUniformBuffer(NULL, sizeof(ClearBufferParameters), true, &pBuffer);
 	this->clearShaderParameters = static_cast<HQShaderConstBufferD3D11*>(pBuffer);
 #endif//#if HQ_D3D_CLEAR_VP_USE_GS
 
@@ -1538,7 +1538,7 @@ HQReturnVal HQShaderManagerD3D11::SetUniformMatrix(hq_uint32 parameterIndex,
 }
 
 /*------------------------*/
-HQReturnVal HQShaderManagerD3D11::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut)
+HQReturnVal HQShaderManagerD3D11::CreateUniformBuffer(void *initData, hq_uint32 size, bool isDynamic, HQUniformBuffer **pBufferIDOut)
 {
 	D3D11_BUFFER_DESC cbDesc;
     cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -1717,7 +1717,7 @@ void HQShaderManagerD3D11::EndClearViewport()
 }
 
 
-HQReturnVal HQShaderManagerD3D11::CreateGenericDrawIndirectBuffer(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut)
+HQReturnVal HQShaderManagerD3D11::CreateGenericDrawIndirectBuffer(void* initData, hquint32 elementSize, hquint32 numElements, HQBufferUAV** ppBufferOut)
 {
 	hquint32 size = elementSize * numElements;
 	HQDrawIndirectBufferD3D11* newBuffer = HQ_NEW HQDrawIndirectBufferD3D11(size);
@@ -1760,7 +1760,7 @@ void HQShaderManagerD3D11::RemoveAllBufferUAVs()
 }
 
 //buffer created from this method can only be used by shader
-HQReturnVal HQShaderManagerD3D11::CreateBufferUAV(hquint32 numElements, hquint32 elementSize, void *initData, HQBufferUAV** ppBufferOut)
+HQReturnVal HQShaderManagerD3D11::CreateBufferUAV(void* initData, hquint32 elementSize, hquint32 numElements, HQBufferUAV** ppBufferOut)
 {
 	hquint32 size = elementSize * numElements;
 	HQShaderUseOnlyBufferD3D11* newBuffer = HQ_NEW HQShaderUseOnlyBufferD3D11(size);
@@ -1793,7 +1793,7 @@ HQReturnVal HQShaderManagerD3D11::CreateBufferUAV(hquint32 numElements, hquint32
 	return HQ_OK;
 }
 
-HQReturnVal HQShaderManagerD3D11::CreateComputeIndirectArgs(hquint32 numElements, void *initData, HQComputeIndirectArgsBuffer** ppBufferOut)
+HQReturnVal HQShaderManagerD3D11::CreateComputeIndirectArgs(void* initData, hquint32 numElements, HQComputeIndirectArgsBuffer** ppBufferOut)
 {
 	//element structure 
 	struct Element {
@@ -1802,10 +1802,10 @@ HQReturnVal HQShaderManagerD3D11::CreateComputeIndirectArgs(hquint32 numElements
 		hquint32 groupZ;
 	};
 
-	return this->CreateGenericDrawIndirectBuffer(numElements, sizeof(Element), initData, ppBufferOut);
+	return this->CreateGenericDrawIndirectBuffer(initData, sizeof(Element), numElements, ppBufferOut);
 }
 
-HQReturnVal HQShaderManagerD3D11::CreateDrawIndirectArgs(hquint32 numElements, void *initData, HQDrawIndirectArgsBuffer** ppBufferOut)
+HQReturnVal HQShaderManagerD3D11::CreateDrawIndirectArgs(void* initData, hquint32 numElements, HQDrawIndirectArgsBuffer** ppBufferOut)
 {
 	//element structure 
 	struct Element { 
@@ -1815,10 +1815,10 @@ HQReturnVal HQShaderManagerD3D11::CreateDrawIndirectArgs(hquint32 numElements, v
 		hquint32 first_instance;
 	};
 
-	return this->CreateGenericDrawIndirectBuffer(numElements, sizeof(Element), initData, ppBufferOut);
+	return this->CreateGenericDrawIndirectBuffer(initData, sizeof(Element), numElements, ppBufferOut);
 }
 
-HQReturnVal HQShaderManagerD3D11::CreateDrawIndexedIndirectArgs(hquint32 numElements, void *initData, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)
+HQReturnVal HQShaderManagerD3D11::CreateDrawIndexedIndirectArgs(void* initData, hquint32 numElements, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)
 {
 	//element structure 
 	struct Element { 
@@ -1829,7 +1829,7 @@ HQReturnVal HQShaderManagerD3D11::CreateDrawIndexedIndirectArgs(hquint32 numElem
 		hquint32 first_instance;
 	};
 
-	return this->CreateGenericDrawIndirectBuffer(numElements, sizeof(Element), initData, ppBufferOut);
+	return this->CreateGenericDrawIndirectBuffer(initData, sizeof(Element), numElements, ppBufferOut);
 }
 
 HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)
@@ -1874,6 +1874,8 @@ HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot,
 	HQGenericBufferD3D11::BufferSlot * pCurrentBufferUAVD3D11Slot;
 
 	UINT uavInitialCount = -1;
+	if (numElements == 0)
+		numElements = pBuffer->totalElements - firstElementIdx;
 
 	//retrieve UAV
 	if (pBuffer != NULL)

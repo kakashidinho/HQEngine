@@ -57,7 +57,7 @@ Game::Game()
 	m_app->GetResourceManager()->CreateVertexInputLayout(vAttribsDesc, vAttribsDesc.GetNumAttribs(), "draw-shader-vs", &m_vertexLayout);
 
 	//create uniform buffer
-	m_pRDevice->GetShaderManager()->CreateUniformBuffer(sizeof(UniformBlock), NULL, true, &m_uBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(UniformBlock), true, &m_uBuffer);
 
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 0, m_uBuffer);
 

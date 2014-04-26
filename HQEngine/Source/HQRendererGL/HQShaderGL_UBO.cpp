@@ -87,7 +87,7 @@ HQBaseShaderManagerGL_UBO::HQBaseShaderManagerGL_UBO(HQLogStream* logFileStream 
 	this->currentBoundUBuffer = 0;
 }
 
-HQReturnVal HQBaseShaderManagerGL_UBO::CreateUniformBuffer(hq_uint32 size , void *initData , bool isDynamic , HQUniformBuffer **pBufferIDOut)
+HQReturnVal HQBaseShaderManagerGL_UBO::CreateUniformBuffer(void *initData, hq_uint32 size, bool isDynamic, HQUniformBuffer **pBufferIDOut)
 {
 	HQUniformBufferGL *newBuffer = new HQUniformBufferGL(this , size , _GL_DRAW_BUFFER_USAGE(isDynamic));
 	if (newBuffer == NULL)

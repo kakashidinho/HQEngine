@@ -347,7 +347,7 @@ HQReturnVal HQBaseTextureManager::AddSingleColorTexture(HQColorui color, HQTextu
 	return HQ_OK;
 }
 
-HQReturnVal HQBaseTextureManager::AddTextureBuffer(HQTextureBufferFormat format, hq_uint32 size, void *initData, bool isDynamic, HQTextureBuffer** pTextureID)
+HQReturnVal HQBaseTextureManager::AddTextureBuffer(void *initData, hq_uint32 size, bool isDynamic, HQTextureBufferFormat format, HQTextureBuffer** pTextureID)
 {
 	HQBaseTexture *pNewTex = this->CreateNewTextureObject(HQ_TEXTURE_BUFFER);
 
