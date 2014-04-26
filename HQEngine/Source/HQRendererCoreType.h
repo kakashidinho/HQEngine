@@ -318,7 +318,7 @@ typedef enum HQTexAddressMode
 
 typedef struct HQSamplerStateDesc
 {
-	HQSamplerStateDesc(	HQFilterMode filterMode = HQ_FM_MIN_MAG_MIP_LINEAR,
+	HQSamplerStateDesc(	HQFilterMode filterMode = HQ_FM_MIN_MAG_LINEAR,
 						HQTexAddressMode addressU = HQ_TAM_WRAP,
 						HQTexAddressMode addressV = HQ_TAM_WRAP,
 						hq_uint32 maxAnisotropy = 1,

@@ -70,7 +70,7 @@ public:
 	///			-Số sampler slot mỗi shader stage có tùy vào giá trị method GetMaxShaderStageSamplers() của render device trả về. 
 	///			-pixel shader dùng chung sampler slot với fixed function sampler. 
 	///OpenGL : -{index} là resource index của texture, truy van qua GetResourceIndex(). 
-	///truyền {samplerStateID} = 0 nếu muốn set sampler state mặc định.Sampler state mặc định có filter mode là linear
+	///truyền {samplerStateID} = 0 nếu muốn set sampler state mặc định.Sampler state mặc định có filter mode là linear (no mipmap)
 	///
 	virtual HQReturnVal SetSamplerState(hq_uint32 index , hq_uint32 samplerStateID) = 0;
 	///
