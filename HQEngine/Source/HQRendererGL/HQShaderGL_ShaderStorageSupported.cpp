@@ -115,6 +115,12 @@ HQDispatchIndirectBufferGL::~HQDispatchIndirectBufferGL(){
 void HQDispatchIndirectBufferGL::BindBuffer()
 {
 	pMasterDevice->BindDispatchIndirectBuffer(this->bufferName);
+#if 0
+	//verify
+	GLint currentBuffer;
+	glGetIntegerv(GL_DISPATCH_INDIRECT_BUFFER_BINDING, &currentBuffer);
+	HQ_ASSERT(currentBuffer == this->bufferName);
+#endif
 }
 
 /*--------------HQGeneralPurposeStorageBufferGL-------------------*/
@@ -286,13 +292,20 @@ HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::SetBufferUAVForComputeSh
 
 	//now bind buffer
 	if (pBuffer == NULL)
+	{
 		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, uavSlot, 0, 0, 0);
+		this->boundStorageBuffer = 0;
+	}
 	else
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 
-						uavSlot, 
-						pBuffer->bufferName, 
-						pBuffer->elementSize * firstElementIdx, 
-						pBuffer->elementSize * numElements);
+	{
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER,
+			uavSlot,
+			pBuffer->bufferName,
+			pBuffer->elementSize * firstElementIdx,
+			pBuffer->elementSize * numElements);
+
+		this->boundStorageBuffer = pBuffer->bufferName;
+	}
 
 
 
