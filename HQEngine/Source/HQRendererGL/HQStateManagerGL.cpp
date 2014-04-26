@@ -607,7 +607,7 @@ HQReturnVal HQStateManagerGL::SetSamplerState(hq_uint32 index , hq_uint32 sample
 		GLenum target = pTextureGL->textureTarget;
 		GLuint currentBoundTex;
 
-		HQSharedPtr<HQBaseTexture> currentTexture = this->pTextureMan->GetActiveTextureUnitInfo().texture[pTextureGL->type];
+		HQSharedPtr<HQBaseTexture> currentTexture = this->pTextureMan->GetActiveTextureUnitInfo().GetTexture(pTextureGL->type);
 		if (currentTexture == NULL)
 			currentBoundTex = 0;
 		else

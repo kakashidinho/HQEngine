@@ -217,6 +217,31 @@ struct HQTextureUAVGL : public HQTextureGL{
 	GLenum internalFormat;
 };
 
+/*--------------HQTextureUnitInfoGL-----------------*/
+HQSharedPtr<HQBaseTexture> & HQTextureUnitInfoGL::GetTexture(HQTextureType type)
+{
+	switch (type)
+	{
+	case HQ_TEXTURE_2D_UAV://same slot as HQ_TEXTURE_2D
+		type = HQ_TEXTURE_2D;
+		break;
+	}
+
+	return this->texture[type];
+}
+
+const HQSharedPtr<HQBaseTexture> & HQTextureUnitInfoGL::GetTexture(HQTextureType type) const
+{
+	switch (type)
+	{
+	case HQ_TEXTURE_2D_UAV://same slot as HQ_TEXTURE_2D
+		type = HQ_TEXTURE_2D;
+		break;
+	}
+
+	return this->texture[type];
+}
+
 /*---------helper functions--------*/
 
 namespace helper
@@ -817,14 +842,14 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , HQTexture* textureID
 		this->ActiveTextureUnit(slot);
 		for (hquint32 i = 0; i < HQTextureUnitInfoGL::numTexUnitTargets; ++i)
 		{
-			texUnitInfo.texture[i].ToNull();
+			texUnitInfo.GetTexture((HQTextureType)i).ToNull();
 		}
 		return HQ_OK;
 	}
 
 
 #if 1
-	HQSharedPtr<HQBaseTexture> &currentTexture = texUnitInfo.texture[ pTextureRawPtr->type ];
+	HQSharedPtr<HQBaseTexture> &currentTexture = texUnitInfo.GetTexture( pTextureRawPtr->type);
 	if (pTexture != currentTexture)
 	{
 		GLuint &textureName = *((GLuint*)pTextureRawPtr->pData);
@@ -837,27 +862,27 @@ HQReturnVal HQTextureManagerGL::SetTexture(hq_uint32 slot , HQTexture* textureID
 	switch (pTexture->type)
 	{
 	case GL_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
-		if (pTexture != texUnitInfo.texture[HQ_TEXTURE_2D])
+		if (pTexture != texUnitInfo.GetTexture(HQ_TEXTURE_2D))
 		{
 			GLuint textureName = *((GLuint*)pTexture->pData);
 			this->BindTexture(slot , GL_TEXTURE_2D , textureName);
-			texUnitInfo.texture[HQ_TEXTURE_2D] = pTexture;
+			texUnitInfo.GetTexture(HQ_TEXTURE_2D) = pTexture;
 		}
 		break;
 	case GL_TEXTURE_CUBE:
-		if (pTexture != texUnitInfo.texture[HQ_TEXTURE_CUBE])
+		if (pTexture != texUnitInfo.GetTexture(HQ_TEXTURE_CUBE))
 		{
 			GLuint textureName = *((GLuint*)pTexture->pData);
 			this->BindTexture(slot , GL_TEXTURE_CUBE_MAP , textureName);
-			texUnitInfo.texture[HQ_TEXTURE_CUBE] = pTexture;
+			texUnitInfo.GetTexture(HQ_TEXTURE_CUBE) = pTexture;
 		}
 		break;
 	case GL_TEXTURE_BUFFER:
-		if (pTexture != texUnitInfo.texture[HQ_TEXTURE_BUFFER])
+		if (pTexture != texUnitInfo.GetTexture(HQ_TEXTURE_BUFFER))
 		{
 			GLuint textureName = *((GLuint*)pTexture->pData);
 			this->BindTexture(slot , GL_TEXTURE_BUFFER , textureName);
-			texUnitInfo.texture[HQ_TEXTURE_BUFFER] = pTexture;
+			texUnitInfo.GetTexture(HQ_TEXTURE_BUFFER) = pTexture;
 		}
 		break;
 	}
@@ -902,13 +927,13 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQText
 		this->ActiveTextureUnit(slot);
 		for (hquint32 i = 0; i < HQTextureUnitInfoGL::numTexUnitTargets; ++i)
 		{
-			texUnitInfo.texture[i].ToNull();
+			texUnitInfo.GetTexture((HQTextureType)i).ToNull();
 		}
 		return HQ_OK;
 	}
 
 #if 1
-	HQSharedPtr<HQBaseTexture> &currentTexture = texUnitInfo.texture[ pTextureRawPtr->type ];
+	HQSharedPtr<HQBaseTexture> &currentTexture = texUnitInfo.GetTexture( pTextureRawPtr->type);
 	if (pTexture != currentTexture)
 	{
 		GLuint &textureName = *((GLuint*)pTextureRawPtr->pData);
@@ -921,27 +946,27 @@ HQReturnVal HQTextureManagerGL::SetTextureForPixelShader(hq_uint32 slot , HQText
 	switch (pTexture->type)
 	{
 	case GL_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
-		if (pTexture != texUnitInfo.texture[HQ_TEXTURE_2D])
+		if (pTexture != texUnitInfo.GetTexture(HQ_TEXTURE_2D))
 		{
 			GLuint textureName = *((GLuint*)pTexture->pData);
 			this->BindTexture(slot , GL_TEXTURE_2D , textureName);
-			texUnitInfo.texture[HQ_TEXTURE_2D] = pTexture;
+			texUnitInfo.GetTexture(HQ_TEXTURE_2D) = pTexture;
 		}
 		break;
 	case GL_TEXTURE_CUBE:
-		if (pTexture != texUnitInfo.texture[HQ_TEXTURE_CUBE])
+		if (pTexture != texUnitInfo.GetTexture(HQ_TEXTURE_CUBE))
 		{
 			GLuint textureName = *((GLuint*)pTexture->pData);
 			this->BindTexture(slot , GL_TEXTURE_CUBE_MAP , textureName);
-			texUnitInfo.texture[HQ_TEXTURE_CUBE] = pTexture;
+			texUnitInfo.GetTexture(HQ_TEXTURE_CUBE) = pTexture;
 		}
 		break;
 	case GL_TEXTURE_BUFFER:
-		if (pTexture != texUnitInfo.texture[HQ_TEXTURE_BUFFER])
+		if (pTexture != texUnitInfo.GetTexture(HQ_TEXTURE_BUFFER))
 		{
 			GLuint textureName = *((GLuint*)pTexture->pData);
 			this->BindTexture(slot , GL_TEXTURE_BUFFER , textureName);
-			texUnitInfo.texture[HQ_TEXTURE_BUFFER] = pTexture;
+			texUnitInfo.GetTexture(HQ_TEXTURE_BUFFER) = pTexture;
 		}
 		break;
 	}
@@ -1872,8 +1897,8 @@ HQReturnVal HQTextureManagerGL::RemoveTexture(HQTexture* ID)
 	//check if this texture is bound to any texture unit
 	for (hquint32 i = 0; i < this->maxTextureUnits ; ++i)
 	{
-		if (this->texUnits[i].texture[pTextureRawPtr->type] == pTex)
-			this->texUnits[i].texture[pTextureRawPtr->type] = HQSharedPtr<HQBaseTexture>::null;
+		if (this->texUnits[i].GetTexture(pTextureRawPtr->type) == pTex)
+			this->texUnits[i].GetTexture(pTextureRawPtr->type) = HQSharedPtr<HQBaseTexture>::null;
 	}
 
 	return HQBaseTextureManager::RemoveTexture(ID);
@@ -1882,9 +1907,9 @@ void HQTextureManagerGL::RemoveAllTexture()
 {
 	for (hquint32 i = 0; i < this->maxTextureUnits ; ++i)
 	{
-		this->texUnits[i].texture[HQ_TEXTURE_2D] = HQSharedPtr<HQBaseTexture>::null;
-		this->texUnits[i].texture[HQ_TEXTURE_CUBE] = HQSharedPtr<HQBaseTexture>::null;
-		this->texUnits[i].texture[HQ_TEXTURE_BUFFER] = HQSharedPtr<HQBaseTexture>::null;
+		this->texUnits[i].GetTexture(HQ_TEXTURE_2D) = HQSharedPtr<HQBaseTexture>::null;
+		this->texUnits[i].GetTexture(HQ_TEXTURE_CUBE) = HQSharedPtr<HQBaseTexture>::null;
+		this->texUnits[i].GetTexture(HQ_TEXTURE_BUFFER) = HQSharedPtr<HQBaseTexture>::null;
 	}
 	HQBaseTextureManager::RemoveAllTexture();
 }

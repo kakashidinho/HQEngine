@@ -52,12 +52,16 @@ struct HQTextureUnitInfoGL
 {
 	static const hquint32 numTexUnitTargets = 3;
 
-	HQSharedPtr<HQBaseTexture> texture[numTexUnitTargets];//current bound textures (2d , cube , buffer)
-
 	GLuint GetTexture2DGL() const {if (texture[HQ_TEXTURE_2D] != NULL) return *(GLuint*)texture[HQ_TEXTURE_2D]->pData ; return 0;}
 	GLuint GetTextureCubeGL() const {if (texture[HQ_TEXTURE_CUBE] != NULL) return *(GLuint*)texture[HQ_TEXTURE_CUBE]->pData ; return 0;}
 	GLuint GetTextureBufferGL() const {if (texture[HQ_TEXTURE_BUFFER] != NULL) return *(GLuint*)texture[HQ_TEXTURE_BUFFER]->pData ; return 0;}
-	
+
+	HQSharedPtr<HQBaseTexture> & GetTexture(HQTextureType type);
+
+	const HQSharedPtr<HQBaseTexture> & GetTexture(HQTextureType type) const;
+
+private:
+	HQSharedPtr<HQBaseTexture> texture[numTexUnitTargets];//current bound textures (2d , cube , buffer)
 };
 
 class HQTextureManagerGL:public HQBaseTextureManager
