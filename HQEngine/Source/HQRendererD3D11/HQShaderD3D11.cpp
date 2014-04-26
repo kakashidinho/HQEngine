@@ -1868,14 +1868,15 @@ HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot,
 			pBuffer = this->uavBuffers.GetItemPointer(pGenericD3DBuffer);
 			break;
 		}
+		//entire buffer is going to be bound
+		if (numElements == 0)
+			numElements = pBuffer->totalElements - firstElementIdx;
 	}
 
 	ID3D11UnorderedAccessView *pUAV = NULL;
 	HQGenericBufferD3D11::BufferSlot * pCurrentBufferUAVD3D11Slot;
 
 	UINT uavInitialCount = -1;
-	if (numElements == 0)
-		numElements = pBuffer->totalElements - firstElementIdx;
 
 	//retrieve UAV
 	if (pBuffer != NULL)

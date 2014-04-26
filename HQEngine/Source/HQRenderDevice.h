@@ -278,14 +278,12 @@ public:
 	virtual HQReturnVal DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32 primitiveCount , hq_uint32 firstIndex ) = 0;
 
 	///
-	///Draw instances using arguments comming from element {elementIndex}th in {buffer}. 
-	///Note: Direct3D 11 will unset this buffer from every UAV slots
+	///Draw instances using arguments comming from element {elementIndex}th in {buffer}.
 	///
 	virtual HQReturnVal DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
 
 	///
 	///Draw indexed instances using arguments coming from element {elementIndex}th in {buffer} 
-	///Note: Direct3D 11 will unset this buffer from every UAV slots
 	///
 	virtual HQReturnVal DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
 	
@@ -296,7 +294,6 @@ public:
 
 	///
 	///dispatch commands from compute shader with arguments coming from element {elementIndex}th in {buffer} 
-	///Note: Direct3D 11 will unset this buffer from every UAV slots
 	///
 	virtual HQReturnVal DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buffer, hquint32 elementIndex = 0) = 0;
 

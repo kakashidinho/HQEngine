@@ -272,10 +272,11 @@ HQReturnVal HQBaseShaderManagerGL_StorageBlockSupprted::SetBufferUAVForComputeSh
 			pBuffer = this->shaderStorageBuffers.GetItemPointer(pGenericGLBuffer).UpCast<HQBufferGL>();
 			break;
 		}
+
+		if (numElements == 0)
+			numElements = pBuffer->totalElements - firstElementIdx;
 	}
 
-	if (numElements == 0)
-		numElements = pBuffer->totalElements - firstElementIdx;
 
 	HQSharedPtr< HQBufferGL>* pCurrentBufferSlot;
 

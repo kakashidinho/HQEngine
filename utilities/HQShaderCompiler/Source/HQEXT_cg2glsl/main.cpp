@@ -64,9 +64,11 @@ bool optimizeGLSL(const char *source,
 							std::string & optimized_code_out);
 
 //final step
-bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader, bool separate_shader);
+bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader, bool separate_shader, ETargetVersion version);
 
 void insertCode(std::string &inout, const std::string &code);
+
+void emitGLSLUniformBlkElem(std::stringstream& stream, const UniformBlkElemInfo & blkElem);
 
 void printUsage(FILE* outStream = stdout);
 
@@ -395,7 +397,7 @@ bool compileSrc(const char* src_file, const char *entry,
 		else
 		{
 			compiled_code_out += opt_code;
-			if (!postProcess(parser, compiled_code_out, glShaderType == EShLangVertex, separate_shader))
+			if (!postProcess(parser, compiled_code_out, glShaderType == EShLangVertex, separate_shader, etVersion))
 				success = false;
 		}
 	}
@@ -463,7 +465,7 @@ bool optimizeGLSL(const char *source,
 }
 
 //final step, add some HQEngine semantics
-bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader, bool separate_shader)
+bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader, bool separate_shader, ETargetVersion etVersion)
 {
 	if (vertexShader)
 	{
@@ -529,23 +531,29 @@ out gl_PerVertex{\n\
 
 	//add uniform blocks
 	char uniformBlockPrologue[] = "uniform ubuffer9999999999\n{\n       ";
-	char uniformBlockEpilogue[] = ";\n};\n";
+	char uniformBlockEpilogue[] = "};\n";
+	std::stringstream block_decl_stream;
 	HQLinkedList<UniformBlock>::Iterator ite;
 	size_t search_pos = 0;
 	for (g_preprocessor->uniformBlocks.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 	{
-		sprintf(uniformBlockPrologue, "uniform ubuffer%d\n{\n       ", ite->index);
+		sprintf(uniformBlockPrologue, "uniform ubuffer%d\n{\n", ite->index);
+		block_decl_stream.str("");
+		block_decl_stream << uniformBlockPrologue;
+
 		HQLinkedList<UniformBlkElemInfo>::Iterator elemIte;
-		bool firstElem = true;
-		bool validBlock = false;
+		size_t insertPoint = std::string::npos;
+
 		for (ite->blockElems.GetIterator(elemIte); !elemIte.IsAtEnd(); ++elemIte)
 		{
+			//emit uniform block's element declaration
+			emitGLSLUniformBlkElem(block_decl_stream, *elemIte);
+
 			//find in the constant table
 			bool found;
 			bool active = activeUniforms.GetItem(elemIte->name, found);
 			if (found)//found
 			{
-				validBlock = true;
 				search_pos = inout.find(elemIte->name, search_pos);
 				if (search_pos == std::string::npos)
 				{
@@ -553,26 +561,24 @@ out gl_PerVertex{\n\
 					return false;
 				}
 				size_t uniform_pos = inout.rfind("uniform", search_pos);
-				if (firstElem)
+				if (insertPoint == std::string::npos)//uniform block declaration's insert point
 				{
-					firstElem = false;
-					//write uniform block prologue
-					
-					inout.replace(uniform_pos, 7, uniformBlockPrologue);
-				}//if (firstElem)
-				else
-				{
-					//remove "uniform" keyword
-					for (int i = 0; i < 7; ++i)
-						inout[i + uniform_pos] = ' ';
+					insertPoint = uniform_pos;
 				}
+				
+				size_t semicolon_pos = inout.find(";", search_pos);
+				//remove "uniform" declaration because we will insert uniform block declaration
+				for (size_t i = uniform_pos; i <= semicolon_pos; ++i)
+					inout[i] = ' ';
+
 			}//if (found)
 		}//for (ite->blockElems.GetIterator(elemIte); !elemIte.IsAtEnd(); ++elemIte)
+		
+		block_decl_stream << uniformBlockEpilogue;//close block declaration
 
-		if (validBlock)//write block epilogue
+		if (insertPoint != std::string::npos)//this block is active so we write block declaration
 		{
-			size_t semi_colon_pos = inout.find(";", search_pos);
-			inout.replace(semi_colon_pos, 1, uniformBlockEpilogue);
+			inout.replace(insertPoint, 1, block_decl_stream.str());
 		}
 	}//for (g_preprocessor->uniformBlocks.GetIterator(ite); !ite.IsAtEnd(); ++ite)
 
@@ -649,4 +655,46 @@ void insertCode(std::string &inout, const std::string &code){
 		inout.insert(insert_pos, code);
 	}
 	
+}
+
+void emitGLSLUniformBlkElem(std::stringstream& stream, const UniformBlkElemInfo & blkElem)
+{
+	stream << "\t";
+	if (blkElem.row > 1)//matrix
+	{
+		if (blkElem.row != blkElem.col)//non squared matrix is transformed to array of vectors by hlsl2glsl
+		{
+			stream << "vec" << blkElem.col;
+		}
+		else {
+			stream << "mat" << blkElem.col;
+		}
+	}
+	else {
+		//vector
+		if (blkElem.integer)
+		{
+			if (blkElem.col == 1)
+				stream << "int";
+			else
+				stream << "ivec" << blkElem.col;
+		}
+		else
+		{
+			if (blkElem.col == 1)
+				stream << "float";
+			else
+				stream << "vec" << blkElem.col;
+		}
+	}
+
+	stream << " " << blkElem.name;
+	if (blkElem.row > 1 && blkElem.row != blkElem.col)//non squared matrix is transformed to array of vectors by hlsl2glsl
+	{
+		stream << "[" << blkElem.arraySize * blkElem.row << "]";
+	}
+	else if (blkElem.arraySize > 1)
+		stream << "[" << blkElem.arraySize << "]";
+
+	stream << ";\n";
 }
