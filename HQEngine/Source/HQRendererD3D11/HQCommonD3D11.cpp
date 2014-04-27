@@ -101,17 +101,18 @@ HQReturnVal HQBufferD3D11::GenericMap(void ** ppData, HQMapType mapType, hquint3
 
 HQReturnVal HQBufferD3D11::CopyContent(void *dest)
 {
-	return CopyD3D11ResourceContent(dest, this->pD3DBuffer, this->size);
+	return CopyD3D11BufferContent(dest, this->pD3DBuffer);
 }
 
 
-HQReturnVal CopyD3D11ResourceContent(void *dest, ID3D11Resource * resource, UINT resourceSize)
+HQReturnVal CopyD3D11BufferContent(void *dest, ID3D11Buffer * resource)
 {
 	//create temp readable buffer to copy the content to
 	D3D11_BUFFER_DESC vbd;
+	resource->GetDesc(&vbd);//copy buffer size from {resource}
+
 	vbd.Usage = D3D11_USAGE_STAGING;
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	vbd.ByteWidth = resourceSize;
 	vbd.BindFlags = 0;
 	vbd.MiscFlags = 0;
 	vbd.StructureByteStride = 0;
@@ -137,12 +138,59 @@ HQReturnVal CopyD3D11ResourceContent(void *dest, ID3D11Resource * resource, UINT
 	//now copy from temp buffer to {dest}
 	if (SUCCEEDED(pD3DContext->Map(tempBuffer, 0, D3D11_MAP_READ, 0, &mappedSubResource)))
 	{
-		memcpy(dest, mappedSubResource.pData, resourceSize);
+		memcpy(dest, mappedSubResource.pData, vbd.ByteWidth);
 		pD3DContext->Unmap(tempBuffer, 0);
 
 		re = HQ_OK;
 	}
 	
+
+	pD3DContext->Release();
+	pD3DDevice->Release();
+	tempBuffer->Release();
+
+	return re;
+}
+
+
+HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, size_t sizeToCopy)
+{
+	//create temp readable texture  to copy the content to
+	D3D11_TEXTURE2D_DESC desc;
+	resource->GetDesc(&desc);//copy texture format and size from {resource}
+
+	desc.Usage = D3D11_USAGE_STAGING;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	desc.BindFlags = 0;
+	desc.MiscFlags = 0;
+
+	ID3D11Texture2D *tempBuffer = NULL;
+	ID3D11Device *pD3DDevice;
+	ID3D11DeviceContext *pD3DContext;
+	resource->GetDevice(&pD3DDevice);
+	pD3DDevice->GetImmediateContext(&pD3DContext);
+
+	if (FAILED(pD3DDevice->CreateTexture2D(&desc, NULL, &tempBuffer)))
+	{
+		pD3DContext->Release();
+		pD3DDevice->Release();
+		return HQ_FAILED_MEM_ALLOC;
+	}
+
+	//copy content
+	pD3DContext->CopyResource(tempBuffer, resource);
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+	HQReturnVal re = HQ_FAILED;
+	//now copy from temp buffer to {dest}
+	if (SUCCEEDED(pD3DContext->Map(tempBuffer, 0, D3D11_MAP_READ, 0, &mappedSubResource)))
+	{
+		memcpy(dest, mappedSubResource.pData, sizeToCopy);
+		pD3DContext->Unmap(tempBuffer, 0);
+
+		re = HQ_OK;
+	}
+
 
 	pD3DContext->Release();
 	pD3DDevice->Release();

@@ -32,6 +32,148 @@ using namespace pvrtexlib;
 #endif //#if HQ_USE_PVR_TEX_LIB
 
 
+//************************************************************
+//định dạng của texture tương ứng với định dạng của pixel ảnh
+//************************************************************
+static DXGI_FORMAT GetTextureFmt(const SurfaceFormat imgFmt)
+{
+	switch (imgFmt)
+	{
+	case FMT_R32G32B32A32_FLOAT:
+		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case FMT_R32G32_FLOAT:
+		return DXGI_FORMAT_R32G32_FLOAT;
+	case FMT_R32_FLOAT:
+		return DXGI_FORMAT_R32_FLOAT;
+	case FMT_R8G8B8:
+	case FMT_B8G8R8:
+	case FMT_A8R8G8B8:
+	case FMT_X8R8G8B8:
+	case FMT_R5G6B5:
+	case FMT_B5G6R5:
+	case FMT_L8:
+	case FMT_A8L8:
+	case FMT_A8B8G8R8:
+	case FMT_X8B8G8R8:
+	case FMT_R8G8B8A8:
+	case FMT_B8G8R8A8:
+		return DXGI_FORMAT_R8G8B8A8_UNORM;
+	case FMT_A8:
+		return DXGI_FORMAT_A8_UNORM;
+	case FMT_S3TC_DXT1:
+		return DXGI_FORMAT_BC1_UNORM;
+	case FMT_S3TC_DXT3:
+		return DXGI_FORMAT_BC2_UNORM;
+	case FMT_S3TC_DXT5:
+		return DXGI_FORMAT_BC3_UNORM;
+	default:
+		return DXGI_FORMAT_UNKNOWN;
+	}
+}
+
+
+static DXGI_FORMAT GetTextureBufferFormat(HQTextureBufferFormat format, hq_uint32 &texelSize)
+{
+	switch (format)
+	{
+	case HQ_TBFMT_R16_FLOAT:
+		texelSize = 2;
+		return DXGI_FORMAT_R16_FLOAT;
+	case HQ_TBFMT_R16G16B16A16_FLOAT:
+		texelSize = 8;
+		return DXGI_FORMAT_R16G16B16A16_FLOAT;
+	case HQ_TBFMT_R32_FLOAT:
+		texelSize = 4;
+		return DXGI_FORMAT_R32_FLOAT;
+	case HQ_TBFMT_R32G32B32_FLOAT:
+		texelSize = 12;
+		return DXGI_FORMAT_R32G32B32_FLOAT;
+	case HQ_TBFMT_R32G32B32A32_FLOAT:
+		texelSize = 16;
+		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case HQ_TBFMT_R8_INT:
+		texelSize = 1;
+		return DXGI_FORMAT_R8_SINT;
+	case HQ_TBFMT_R8G8B8A8_INT:
+		texelSize = 4;
+		return DXGI_FORMAT_R8G8B8A8_SINT;
+	case HQ_TBFMT_R8_UINT:
+		texelSize = 1;
+		return DXGI_FORMAT_R8_UINT;
+	case HQ_TBFMT_R8G8B8A8_UINT:
+		texelSize = 4;
+		return DXGI_FORMAT_R8G8B8A8_UINT;
+	case HQ_TBFMT_R16_INT:
+		texelSize = 2;
+		return DXGI_FORMAT_R16_SINT;
+	case HQ_TBFMT_R16G16B16A16_INT:
+		texelSize = 8;
+		return DXGI_FORMAT_R16G16B16A16_SINT;
+	case HQ_TBFMT_R16_UINT:
+		texelSize = 2;
+		return DXGI_FORMAT_R16_UINT;
+	case HQ_TBFMT_R16G16B16A16_UINT:
+		texelSize = 8;
+		return DXGI_FORMAT_R16G16B16A16_UINT;
+	case HQ_TBFMT_R32_INT:
+		texelSize = 4;
+		return DXGI_FORMAT_R32_SINT;
+	case HQ_TBFMT_R32G32B32A32_INT:
+		texelSize = 16;
+		return DXGI_FORMAT_R32G32B32A32_SINT;
+	case HQ_TBFMT_R32_UINT:
+		texelSize = 4;
+		return DXGI_FORMAT_R32_UINT;
+	case HQ_TBFMT_R32G32B32A32_UINT:
+		texelSize = 16;
+		return DXGI_FORMAT_R32G32B32A32_UINT;
+	case HQ_TBFMT_R8_UNORM:
+		texelSize = 1;
+		return DXGI_FORMAT_R8_UNORM;
+	case HQ_TBFMT_R8G8B8A8_UNORM:
+		texelSize = 4;
+		return DXGI_FORMAT_R8G8B8A8_UNORM;
+	case HQ_TBFMT_R16_UNORM:
+		texelSize = 2;
+		return DXGI_FORMAT_R16_UNORM;
+	case HQ_TBFMT_R16G16B16A16_UNORM:
+		texelSize = 8;
+		return DXGI_FORMAT_R16G16B16A16_UNORM;
+	default:
+		return DXGI_FORMAT_UNKNOWN;
+	}
+}
+
+
+static hquint32 GetTexelSize(DXGI_FORMAT format)
+{
+	switch (format)
+	{
+	case DXGI_FORMAT_R8G8B8A8_UNORM: case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+	case DXGI_FORMAT_R8G8B8A8_SINT: case DXGI_FORMAT_R8G8B8A8_SNORM:
+	case DXGI_FORMAT_R8G8B8A8_UINT:
+	case DXGI_FORMAT_R32_FLOAT: case DXGI_FORMAT_R32_SINT:
+	case DXGI_FORMAT_R32_UINT: case DXGI_FORMAT_R32_TYPELESS:
+	case DXGI_FORMAT_R16G16_FLOAT: case DXGI_FORMAT_R16G16_TYPELESS:
+		return 4;
+	case DXGI_FORMAT_R16_FLOAT: case DXGI_FORMAT_R16_TYPELESS:
+		return 2;
+	case DXGI_FORMAT_R16G16B16A16_FLOAT: case DXGI_FORMAT_R16G16B16A16_TYPELESS:
+	case DXGI_FORMAT_R32G32_FLOAT:
+	case DXGI_FORMAT_R32G32_SINT:
+	case DXGI_FORMAT_R32G32_UINT: case DXGI_FORMAT_R32G32_TYPELESS:
+		return 8;
+	case DXGI_FORMAT_R32G32B32A32_FLOAT:
+	case DXGI_FORMAT_R32G32B32A32_SINT:
+	case DXGI_FORMAT_R32G32B32A32_UINT:
+	case DXGI_FORMAT_R32G32B32A32_TYPELESS:
+		return 16;
+	default:
+		//TO DO
+		return 0;
+	}
+}
+
 /*--------------HQUAVTextureResourceD3D11---------------*/
 struct HQUAVTextureResourceD3D11 : public HQTextureResourceD3D11
 {
@@ -317,6 +459,28 @@ hquint32 HQTextureD3D11::GetHeight() const
 	}
 }
 
+HQReturnVal HQTextureD3D11::CopyTextureContent(void *data)
+{
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D_UAV:
+	{
+		HQUAVTextureResourceD3D11* pD3Dres = (HQUAVTextureResourceD3D11*)this->pData;
+		D3D11_TEXTURE2D_DESC desc;
+		ID3D11Texture2D* pTexture = static_cast<ID3D11Texture2D*>(pD3Dres->pTexture);
+		pTexture->GetDesc(&desc);
+		hquint32 texelSize = GetTexelSize(desc.Format);
+		if (texelSize != 0)
+		{
+			return CopyD3D11Texture2DContent(data, pTexture, desc.Width * desc.Height * texelSize);
+		}
+	}
+	default:
+		//TO DO
+		return HQ_FAILED;
+	}
+}
+
 //implement HQGraphicsResourceRawRetrievable
 void * HQTextureD3D11::GetRawHandle()
 {
@@ -412,128 +576,11 @@ HQReturnVal HQTextureBufferD3D11::GenericMap(void ** ppData, HQMapType mapType, 
 HQReturnVal HQTextureBufferD3D11::CopyContent(void *dest)
 {
 	ID3D11Resource * pD3DBuffer = ((HQTextureResourceD3D11*)this->pData)->pTexture;
-	return CopyD3D11ResourceContent(dest, pD3DBuffer, this->size);
+	return CopyD3D11BufferContent(dest, static_cast<ID3D11Buffer*>(pD3DBuffer));
 }
 
 
 
-//************************************************************
-//định dạng của texture tương ứng với định dạng của pixel ảnh
-//************************************************************
-static DXGI_FORMAT GetTextureFmt(const SurfaceFormat imgFmt)
-{
-	switch (imgFmt)
-	{
-	case FMT_R32G32B32A32_FLOAT:
-		return DXGI_FORMAT_R32G32B32A32_FLOAT;
-	case FMT_R32G32_FLOAT:
-		return DXGI_FORMAT_R32G32_FLOAT;
-	case FMT_R32_FLOAT:
-		return DXGI_FORMAT_R32_FLOAT;
-	case FMT_R8G8B8:
-	case FMT_B8G8R8:
-	case FMT_A8R8G8B8:
-	case FMT_X8R8G8B8:
-	case FMT_R5G6B5:
-	case FMT_B5G6R5:
-	case FMT_L8:
-	case FMT_A8L8:
-	case FMT_A8B8G8R8:
-	case FMT_X8B8G8R8:
-	case FMT_R8G8B8A8:
-	case FMT_B8G8R8A8:
-		return DXGI_FORMAT_R8G8B8A8_UNORM;
-	case FMT_A8:
-		return DXGI_FORMAT_A8_UNORM;
-	case FMT_S3TC_DXT1:
-		return DXGI_FORMAT_BC1_UNORM;
-	case FMT_S3TC_DXT3:
-		return DXGI_FORMAT_BC2_UNORM;
-	case FMT_S3TC_DXT5:
-		return DXGI_FORMAT_BC3_UNORM;
-	default:
-		return DXGI_FORMAT_UNKNOWN;
-	}
-}
-
-
-DXGI_FORMAT GetTextureBufferFormat(HQTextureBufferFormat format , hq_uint32 &texelSize)
-{
-	switch (format)
-	{
-	case HQ_TBFMT_R16_FLOAT :
-		texelSize = 2 ;
-		return DXGI_FORMAT_R16_FLOAT;
-	case HQ_TBFMT_R16G16B16A16_FLOAT  :
-		texelSize = 8;
-		return DXGI_FORMAT_R16G16B16A16_FLOAT;
-	case HQ_TBFMT_R32_FLOAT  :
-		texelSize = 4;
-		return DXGI_FORMAT_R32_FLOAT;
-	case HQ_TBFMT_R32G32B32_FLOAT:
-		texelSize = 12;
-		return DXGI_FORMAT_R32G32B32_FLOAT;
-	case HQ_TBFMT_R32G32B32A32_FLOAT  :
-		texelSize = 16;
-		return DXGI_FORMAT_R32G32B32A32_FLOAT;
-	case HQ_TBFMT_R8_INT :
-		texelSize = 1;
-		return DXGI_FORMAT_R8_SINT;
-	case HQ_TBFMT_R8G8B8A8_INT :
-		texelSize = 4;
-		return DXGI_FORMAT_R8G8B8A8_SINT;
-	case HQ_TBFMT_R8_UINT  :
-		texelSize = 1;
-		return DXGI_FORMAT_R8_UINT;
-	case HQ_TBFMT_R8G8B8A8_UINT  :
-		texelSize = 4;
-		return DXGI_FORMAT_R8G8B8A8_UINT;
-	case HQ_TBFMT_R16_INT :
-		texelSize = 2;
-		return DXGI_FORMAT_R16_SINT;
-	case HQ_TBFMT_R16G16B16A16_INT :
-		texelSize = 8;
-		return DXGI_FORMAT_R16G16B16A16_SINT;
-	case HQ_TBFMT_R16_UINT :
-		texelSize = 2;
-		return DXGI_FORMAT_R16_UINT;
-	case HQ_TBFMT_R16G16B16A16_UINT :
-		texelSize = 8;
-		return DXGI_FORMAT_R16G16B16A16_UINT;
-	case HQ_TBFMT_R32_INT :
-		texelSize = 4;
-		return DXGI_FORMAT_R32_SINT;
-	case HQ_TBFMT_R32G32B32A32_INT :
-		texelSize = 16;
-		return DXGI_FORMAT_R32G32B32A32_SINT;
-	case HQ_TBFMT_R32_UINT :
-		texelSize = 4;
-		return DXGI_FORMAT_R32_UINT;
-	case HQ_TBFMT_R32G32B32A32_UINT :
-		texelSize = 16;
-		return DXGI_FORMAT_R32G32B32A32_UINT;
-	case HQ_TBFMT_R8_UNORM  : 
-		texelSize = 1;
-		return DXGI_FORMAT_R8_UNORM;
-	case HQ_TBFMT_R8G8B8A8_UNORM  :
-		texelSize = 4;
-		return DXGI_FORMAT_R8G8B8A8_UNORM;
-	case HQ_TBFMT_R16_UNORM :
-		texelSize = 2;
-		return DXGI_FORMAT_R16_UNORM;
-	case HQ_TBFMT_R16G16B16A16_UNORM :
-		texelSize = 8;
-		return DXGI_FORMAT_R16G16B16A16_UNORM;
-	default:
-		return DXGI_FORMAT_UNKNOWN;
-	}
-}
-
-//translate from UAV texture format to DXGI format
-DXGI_FORMAT HQTextureManagerD3D11::GetD3DFormat(HQTextureUAVFormat format)
-{
-	return HQUAVTextureResourceD3D11::GetD3DViewFormat(format);
-}
 
 /*
 //HQTextureManagerD3D11 class
@@ -571,6 +618,13 @@ Destructor
 HQTextureManagerD3D11::~HQTextureManagerD3D11()
 {
 	Log("Released!");
+}
+
+
+//translate from UAV texture format to DXGI format
+DXGI_FORMAT HQTextureManagerD3D11::GetD3DFormat(HQTextureUAVFormat format)
+{
+	return HQUAVTextureResourceD3D11::GetD3DViewFormat(format);
 }
 
 /*-------create new texture object---------*/

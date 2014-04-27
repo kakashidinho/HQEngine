@@ -44,6 +44,7 @@ struct HQTextureGL:public HQBaseTexture
 	virtual hquint32 GetWidth() const;
 	virtual hquint32 GetHeight() const;
 
+
 	//implement HQGraphicsResourceRawRetrievable
 	virtual void * GetRawHandle();
 };

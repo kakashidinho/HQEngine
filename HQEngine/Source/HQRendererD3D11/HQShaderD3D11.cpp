@@ -329,7 +329,7 @@ HQReturnVal HQShaderConstBufferD3D11::GenericMap(void ** ppData, HQMapType mapTy
 
 HQReturnVal HQShaderConstBufferD3D11::CopyContent(void *dest)
 {
-	return CopyD3D11ResourceContent(dest, this->pD3DBuffer, this->size);
+	return CopyD3D11BufferContent(dest, this->pD3DBuffer);
 }
 
 /*------------------shader program ---------------*/

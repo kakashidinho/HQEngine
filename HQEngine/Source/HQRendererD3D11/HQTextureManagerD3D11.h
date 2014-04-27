@@ -51,6 +51,7 @@ struct HQTextureD3D11 :public HQBaseTexture
 
 	virtual hquint32 GetWidth() const;
 	virtual hquint32 GetHeight() const;
+	virtual HQReturnVal CopyTextureContent(void *data);
 
 	//implement HQGraphicsResourceRawRetrievable
 	virtual void * GetRawHandle();

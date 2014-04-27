@@ -1736,7 +1736,7 @@ HQReturnVal HQDeviceGL::DispatchComputeIndirect(HQComputeIndirectArgsBuffer* buf
 void HQDeviceGL::TextureUAVBarrier()
 {
 #ifdef GL_SHADER_IMAGE_ACCESS_BARRIER_BIT
-	glMemoryBarrierWrapper(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+	glMemoryBarrierWrapper(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT | GL_TEXTURE_UPDATE_BARRIER_BIT);
 #endif
 }
 

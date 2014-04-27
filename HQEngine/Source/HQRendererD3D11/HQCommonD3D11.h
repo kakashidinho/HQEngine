@@ -32,7 +32,8 @@ COPYING.txt included with this distribution for more information.
 #	endif
 #endif
 
-HQReturnVal CopyD3D11ResourceContent(void *dest, ID3D11Resource * resource, UINT resourceSize);
+HQReturnVal CopyD3D11BufferContent(void *dest, ID3D11Buffer * resource);
+HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, size_t sizeToCopy);
 
 //base buffer object. Note: D3D11 resource's creation is done outside this class
 struct HQBufferD3D11 : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable, public HQBaseIDObject
