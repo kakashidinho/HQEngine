@@ -220,8 +220,56 @@ struct HQTextureUAVGL : public HQTextureGL{
 	{
 	}
 
+	//implement HQTexture
+	virtual HQReturnVal CopyTextureContent(void *data);
+
 	GLenum internalFormat;
 };
+
+HQReturnVal HQTextureUAVGL::CopyTextureContent(void *data)
+{
+	GLenum format, type;
+	switch (this->internalFormat){
+#ifndef HQ_OPENGLES
+	case GL_RGBA32F:
+		format = GL_RGBA; type = GL_FLOAT;
+		break;
+	case GL_RG32F:
+		format = GL_RG; type = GL_FLOAT;
+		break;
+	case GL_R32F:
+		format = GL_RED; type = GL_FLOAT;
+		break;
+	case GL_RGBA8:
+		format = GL_RGBA; type = GL_UNSIGNED_BYTE;
+		break;
+#endif//#ifndef HQ_OPENGLES
+	default:
+		//TO DO
+		return HQ_FAILED;
+	}
+
+	GLint oldTexture;
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D_UAV:
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &oldTexture);
+		break;
+	default:
+		//TO DO
+		return HQ_FAILED;
+	}
+
+#ifndef HQ_OPENGLES
+	GLuint textureName = *(GLuint*)this->pData;
+	glBindTexture(this->textureTarget, textureName);
+	glGetTexImage(this->textureTarget, 0, format, type, data);
+
+	glBindTexture(this->textureTarget, oldTexture);
+#endif
+
+	return HQ_OK;
+}
 
 /*--------------HQTextureUnitInfoGL-----------------*/
 HQSharedPtr<HQBaseTexture> & HQTextureUnitInfoGL::GetTexture(HQTextureType type)

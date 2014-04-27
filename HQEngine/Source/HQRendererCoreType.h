@@ -585,6 +585,7 @@ public:
 	///get first level's size
 	///
 	virtual hquint32 GetHeight() const = 0;
+	virtual HQReturnVal CopyTextureContent(void *data) = 0; //Copy content of first mipmap level. This method may not be supported in some platform
 protected:
 	virtual ~HQTexture() {}
 };
