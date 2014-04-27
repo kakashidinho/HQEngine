@@ -32,6 +32,8 @@ COPYING.txt included with this distribution for more information.
 #	endif
 #endif
 
+HQReturnVal CopyD3D11ResourceContent(void *dest, ID3D11Resource * resource, UINT resourceSize);
+
 //base buffer object. Note: D3D11 resource's creation is done outside this class
 struct HQBufferD3D11 : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable, public HQBaseIDObject
 {
@@ -50,6 +52,7 @@ struct HQBufferD3D11 : public virtual HQMappableResource, public virtual HQGraph
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+	virtual HQReturnVal CopyContent(void *dest);
 
 	//implement HQGraphicsResourceRawRetrievable
 	virtual void * GetRawHandle() { return pD3DBuffer; }

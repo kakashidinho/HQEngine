@@ -12,6 +12,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "glHeaders.h"
 #include "HQShaderGL_UBO.h"
+#include "HQCommonGL.h"
 
 #ifdef HQ_GL_UNIFORM_BUFFER_DEFINED
 
@@ -78,6 +79,11 @@ HQReturnVal HQUniformBufferGL::GenericMap(void ** ppData, HQMapType mapType, hqu
 	*ppData = glMapBufferRange(GL_UNIFORM_BUFFER, 0, this->size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
 	return HQ_OK;
+}
+
+HQReturnVal HQUniformBufferGL::CopyContent(void *dest)
+{
+	return CopyGLBufferContent(dest, this->size, this->buffer, GL_UNIFORM_BUFFER, GL_UNIFORM_BUFFER_BINDING);
 }
 
 /*--------------HQBaseShaderManagerGL_UBO-----------*/

@@ -47,6 +47,7 @@ struct HQMappableVertexBufferGL : public HQVertexBufferGL {
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+	virtual HQReturnVal CopyContent(void *dest);
 };
 
 
@@ -97,6 +98,7 @@ struct HQMappableIndexBufferGL : public HQIndexBufferGL {
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+	virtual HQReturnVal CopyContent(void *dest);
 };
 
 //unmappable index buffer

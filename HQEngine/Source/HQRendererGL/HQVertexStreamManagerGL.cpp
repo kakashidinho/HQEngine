@@ -69,6 +69,11 @@ HQReturnVal HQMappableVertexBufferGL::GenericMap(void ** ppData, HQMapType mapTy
 	return HQ_OK;
 }
 
+HQReturnVal HQMappableVertexBufferGL::CopyContent(void *dest)
+{
+	return CopyGLBufferContent(dest, this->size, this->bufferName, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER_BINDING);
+}
+
 
 //unmappable vertexbuffer---------------------------------------------------
 HQUnmappableVertexBufferGL::HQUnmappableVertexBufferGL(HQVertexStreamManagerGL *manager, hq_uint32 size, GLenum usage)
@@ -218,6 +223,11 @@ HQReturnVal HQMappableIndexBufferGL::GenericMap(void ** ppData, HQMapType mapTyp
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, activeIndexBuffer != NULL ? activeIndexBuffer->bufferName : 0);
 
 	return HQ_OK;
+}
+
+HQReturnVal HQMappableIndexBufferGL::CopyContent(void *dest)
+{
+	return CopyGLBufferContent(dest, this->size, this->bufferName, GL_ELEMENT_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER_BINDING);
 }
 
 //unmappable index buffer---------------------------------------------------

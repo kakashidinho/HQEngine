@@ -88,6 +88,19 @@ HQReturnVal HQVertexBufferD3D9::GenericMap(void ** ppData, HQMapType mapType, hq
 	return HQ_OK;
 }
 
+HQReturnVal HQVertexBufferD3D9::CopyContent(void * dest)
+{
+	void *lockedData;
+	if (FAILED(this->pD3DBuffer->Lock(0, 0, &lockedData, D3DLOCK_READONLY)))
+		return HQ_FAILED;
+
+	memcpy(dest, lockedData, this->size);
+
+	this->pD3DBuffer->Unlock();
+
+	return HQ_OK;
+}
+
 //-------------------HQIndexBufferD3D9-------------------------
 void HQIndexBufferD3D9::OnResetDevice()
 {
@@ -172,6 +185,19 @@ HQReturnVal HQIndexBufferD3D9::GenericMap(void ** ppData, HQMapType mapType, hqu
 
 	if (FAILED(this->pD3DBuffer->Lock(offset, size, ppData, lockFlags)))
 		return HQ_FAILED;
+
+	return HQ_OK;
+}
+
+HQReturnVal HQIndexBufferD3D9::CopyContent(void * dest)
+{
+	void *lockedData;
+	if (FAILED(this->pD3DBuffer->Lock(0, 0, &lockedData, D3DLOCK_READONLY)))
+		return HQ_FAILED;
+
+	memcpy(dest, lockedData, this->size);
+
+	this->pD3DBuffer->Unlock();
 
 	return HQ_OK;
 }

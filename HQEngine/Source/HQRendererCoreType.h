@@ -567,6 +567,7 @@ public:
 	}
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData) = 0;
 	virtual HQReturnVal Unmap() = 0;
+	virtual HQReturnVal CopyContent(void * dest) = 0;///copy content of buffer to {dest}. This method may not be supported in some platform
 protected:
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType = HQ_MAP_DISCARD, hquint32 offset = 0, hquint32 size = 0) = 0;
 };

@@ -72,6 +72,7 @@ struct HQShaderConstBufferD3D11 : public HQUniformBuffer, public HQBaseIDObject
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+	virtual HQReturnVal CopyContent(void *dest);
 
 	ID3D11DeviceContext *pD3DContext;
 	ID3D11Buffer *pD3DBuffer;

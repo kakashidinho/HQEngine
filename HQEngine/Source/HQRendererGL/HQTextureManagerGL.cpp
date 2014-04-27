@@ -152,6 +152,7 @@ struct HQTextureBufferGL : public HQTextureGL
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+	virtual HQReturnVal CopyContent(void *dest);
 
 	GLuint buffer;
 	HQTextureManagerGL * manager;
@@ -204,6 +205,11 @@ HQReturnVal HQTextureBufferGL::GenericMap(void ** ppData, HQMapType mapType, hqu
 	*ppData = glMapBufferRange(GL_TEXTURE_BUFFER, 0, this->size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
 	return HQ_OK;
+}
+
+HQReturnVal HQTextureBufferGL::CopyContent(void *dest)
+{
+	return CopyGLBufferContent(dest, this->size, this->buffer, GL_TEXTURE_BUFFER, GL_TEXTURE_BINDING_BUFFER);
 }
 
 #endif

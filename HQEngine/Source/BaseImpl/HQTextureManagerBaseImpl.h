@@ -92,6 +92,7 @@ struct HQBaseTexture : public HQTextureBuffer, public HQBaseIDObject
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData) { return HQ_FAILED; }
 	virtual HQReturnVal Unmap() { return HQ_FAILED; }
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size) { return HQ_FAILED; }
+	virtual HQReturnVal CopyContent(void *dest) { return HQ_FAILED; }
 
 	HQTextureType type;
 

@@ -341,6 +341,8 @@ struct HQTextureBufferD3D11 : public HQTextureD3D11{
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
+	virtual HQReturnVal CopyContent(void *dest);
+
 
 	ID3D11DeviceContext *pD3DContext;
 	HQLoggableObject *pLog;
@@ -406,6 +408,13 @@ HQReturnVal HQTextureBufferD3D11::GenericMap(void ** ppData, HQMapType mapType, 
 
 	return HQ_OK;
 }
+
+HQReturnVal HQTextureBufferD3D11::CopyContent(void *dest)
+{
+	ID3D11Resource * pD3DBuffer = ((HQTextureResourceD3D11*)this->pData)->pTexture;
+	return CopyD3D11ResourceContent(dest, pD3DBuffer, this->size);
+}
+
 
 
 //************************************************************

@@ -348,7 +348,13 @@ public:
 		return HQ_OK;
 	}
 
+	virtual HQReturnVal CopyContent(void * dest){
+		memcpy(dest, pRawBuffer, this->size);
+		return HQ_OK;
+	}
+
 	const void * GetRawBuffer() const { return pRawBuffer; }
+
 
 protected:
 	virtual void DeallocRawBuffer()

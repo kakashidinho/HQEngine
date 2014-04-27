@@ -55,6 +55,7 @@ struct HQDispatchIndirectBufferGL: public HQShaderStorageBufferGL{
 	~HQDispatchIndirectBufferGL();
 
 	virtual void BindBuffer();
+	virtual HQReturnVal CopyContent(void *dest);
 };
 
 /*----------------------HQDrawIndirectBufferGL---------------------------*/
@@ -63,6 +64,7 @@ struct HQDrawIndirectBufferGL: public HQShaderStorageBufferGL{
 	~HQDrawIndirectBufferGL();
 
 	virtual void BindBuffer();
+	virtual HQReturnVal CopyContent(void *dest);
 };
 
 /*----------------------HQGeneralPurposeStorageBufferGL---------------------------*/
@@ -71,6 +73,7 @@ struct HQGeneralPurposeStorageBufferGL : public HQShaderStorageBufferGL{
 	~HQGeneralPurposeStorageBufferGL();
 
 	virtual void BindBuffer();
+	virtual HQReturnVal CopyContent(void *dest);
 };
 
 /*------------HQBaseShaderManagerGL_StorageBlockSupprted-------------------*/

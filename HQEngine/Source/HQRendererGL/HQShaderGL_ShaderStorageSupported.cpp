@@ -111,6 +111,11 @@ void HQDrawIndirectBufferGL::BindBuffer()
 	pMasterDevice->BindDrawIndirectBuffer(this->bufferName);
 }
 
+HQReturnVal HQDrawIndirectBufferGL::CopyContent(void *dest)
+{
+	return CopyGLBufferContent(dest, this->size, this->bufferName, GL_DRAW_INDIRECT_BUFFER, GL_DRAW_INDIRECT_BUFFER_BINDING);
+}
+
 /*--------------HQDispatchIndirectBufferGL-------------------*/
 HQDispatchIndirectBufferGL::HQDispatchIndirectBufferGL(hq_uint32 elemSize, hquint32 numElems)
 : HQShaderStorageBufferGL(elemSize, numElems, GL_DISPATCH_INDIRECT_BUFFER)
@@ -134,6 +139,11 @@ void HQDispatchIndirectBufferGL::BindBuffer()
 #endif
 }
 
+HQReturnVal HQDispatchIndirectBufferGL::CopyContent(void *dest)
+{
+	return CopyGLBufferContent(dest, this->size, this->bufferName, GL_DISPATCH_INDIRECT_BUFFER, GL_DISPATCH_INDIRECT_BUFFER_BINDING);
+}
+
 /*--------------HQGeneralPurposeStorageBufferGL-------------------*/
 HQGeneralPurposeStorageBufferGL::HQGeneralPurposeStorageBufferGL(hq_uint32 elemSize, hquint32 numElems)
 : HQShaderStorageBufferGL(elemSize, numElems, GL_SHADER_STORAGE_BUFFER)
@@ -155,6 +165,11 @@ void HQGeneralPurposeStorageBufferGL::BindBuffer()
 		static_cast <HQBaseShaderManagerGL_StorageBlockSupprted*> (pMasterDevice->GetShaderManager());
 
 	pManager->BindShaderStorageBuffer(this->bufferName);
+}
+
+HQReturnVal HQGeneralPurposeStorageBufferGL::CopyContent(void *dest)
+{
+	return CopyGLBufferContent(dest, this->size, this->bufferName, GL_SHADER_STORAGE_BUFFER, GL_SHADER_STORAGE_BUFFER_BINDING);
 }
 
 /*----------------HQBaseShaderManagerGL_StorageBlockSupprted------------------------*/

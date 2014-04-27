@@ -12,6 +12,9 @@ COPYING.txt included with this distribution for more information.
 #define HQ_COMMON_GL_H
 
 
+//copy buffer content to cpu. Note: buffer must be mappable
+HQReturnVal CopyGLBufferContent(void *dest, size_t size, GLuint buffer, GLenum targetName, GLenum targetBindingPoint);
+
 /*-------------generic buffer------------------------------*/
 struct HQBufferGL : public HQGraphicsBufferRawRetrievable, public HQBaseIDObject
 {

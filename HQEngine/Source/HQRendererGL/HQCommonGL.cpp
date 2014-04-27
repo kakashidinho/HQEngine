@@ -36,3 +36,32 @@ HQBufferGL::~HQBufferGL()
 			glDeleteBuffers(1, &this->bufferName);
 	}
 }
+
+HQReturnVal CopyGLBufferContent(void *dest, size_t size, GLuint buffer, GLenum targetName, GLenum targetBindingPoint)
+{
+	//save current bound buffer
+	GLint oldBoundBuffer;
+	glGetIntegerv(targetBindingPoint, &oldBoundBuffer);
+
+	//bind buffer
+	glBindBuffer(targetName, buffer);
+
+	void *mappedData = glMapBuffer(targetName, GL_READ_ONLY);
+
+	HQReturnVal re = HQ_FAILED;
+#ifdef HQ_OPENGLES
+	if (mappedData != NULL)
+	{
+		memcpy(dest, mappedData, size);
+		re = HQ_OK;
+	}
+#else
+	glGetBufferSubData(targetName, 0, size, dest);
+	re = HQ_OK;
+#endif
+	//restore old bound buffer
+	glBindBuffer(targetName, oldBoundBuffer);
+
+
+	return re;
+}
