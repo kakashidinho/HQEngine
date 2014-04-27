@@ -46,13 +46,14 @@ HQReturnVal CopyGLBufferContent(void *dest, size_t size, GLuint buffer, GLenum t
 	//bind buffer
 	glBindBuffer(targetName, buffer);
 
-	void *mappedData = glMapBuffer(targetName, GL_READ_ONLY);
 
 	HQReturnVal re = HQ_FAILED;
 #ifdef HQ_OPENGLES
+	void *mappedData = glMapBuffer(targetName, GL_READ_ONLY);
 	if (mappedData != NULL)
 	{
 		memcpy(dest, mappedData, size);
+		glUnmapBuffer(targetName);
 		re = HQ_OK;
 	}
 #else
