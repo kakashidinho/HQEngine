@@ -96,8 +96,11 @@ public:
 
 	virtual void SetUniformScale(hqfloat32 factor);
 	virtual void SetNonUniformScale(const HQFloat3 &factor);
+	virtual void SetNonUniformScale(hqfloat32 factorX, hqfloat32 factorY, hqfloat32 factorZ);
 	virtual void SetPosition(const HQFloat3 &position);//set postion of this node in parent space
+	virtual void SetPosition(hqfloat32 x, hqfloat32 y, hqfloat32 z);//set postion of this node in parent space
 	virtual void Translate(const HQFloat3 &offset);//translate this node relative to parent node
+	virtual void Translate(hqfloat32 dx, hqfloat32 dy, hqfloat32 dz);//translate this node relative to parent node
 	virtual void RotateX(hqfloat32 angle);//rotate around Ox axis of node local space
 	virtual void RotateY(hqfloat32 angle);//rotate around Oy axis of node local space
 	virtual void RotateZ(hqfloat32 angle);//rotate around Oz axis of node local space

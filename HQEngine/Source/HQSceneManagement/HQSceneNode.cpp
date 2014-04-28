@@ -208,11 +208,25 @@ void HQSceneNode::SetNonUniformScale(const HQFloat3 &factor)
 	m_localTransformNeedUpdate = true;
 	m_scale = factor;
 }
+
+void HQSceneNode::SetNonUniformScale(hqfloat32 factorX, hqfloat32 factorY, hqfloat32 factorZ)
+{
+	HQFloat3 scale; scale.Set(factorX, factorY, factorZ);
+	this->SetNonUniformScale(scale);
+}
+
 void HQSceneNode::SetPosition(const HQFloat3 &position)//set postion of this node in parent space
 {
 	m_localTransformNeedUpdate = true;
 	m_localPosition->Set( position.x, position.y, position.z);
 }
+
+void HQSceneNode::SetPosition(hqfloat32 x, hqfloat32 y, hqfloat32 z)
+{
+	HQFloat3 pos; pos.Set(x, y, z);
+	this->SetPosition(pos);
+}
+
 void HQSceneNode::Translate(const HQFloat3 &offset)//translate this node relative to parent node
 {
 	m_localTransformNeedUpdate = true;
@@ -220,6 +234,13 @@ void HQSceneNode::Translate(const HQFloat3 &offset)//translate this node relativ
 	m_localPosition->y += offset.y;
 	m_localPosition->z += offset.z;
 }
+
+void HQSceneNode::Translate(hqfloat32 dx, hqfloat32 dy, hqfloat32 dz)
+{
+	HQFloat3 trans; trans.Set(dx, dy, dz);
+	this->Translate(trans);
+}
+
 void HQSceneNode::RotateX(float angle)//rotate around Ox axis of node local space
 {
 	m_localTransformNeedUpdate = true;
