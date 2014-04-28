@@ -55,13 +55,6 @@ GLboolean GLEW_OES_texture_half_float;
 GLboolean GLEW_OES_texture_float;
 
 
-#ifndef GL_UNIFORM_BUFFER
-PFNGLBINDBUFFERBASEPROC glBindBufferBase = NULL;
-PFNGLGETUNIFORMBLOCKINDEXPROC glGetUniformBlockIndex = NULL;
-PFNGLUNIFORMBLOCKBINDINGPROC glUniformBlockBinding = NULL;
-#endif
-
-
 #ifdef HQ_IPHONE_PLATFORM
 GLboolean gluCheckExtension(const GLubyte* ext , const GLubyte *strExt)
 {
@@ -195,14 +188,6 @@ int glewInit()
 	GLEW_EXT_packed_depth_stencil = gl_CheckExtension ((const GLubyte*)"GL_EXT_packed_depth_stencil");
 #endif
     
-#ifndef GL_UNIFORM_BUFFER
-    if (GLEW_VERSION_3_1 || GLEW_ARB_uniform_buffer_object)
-    {
-        glBindBufferBase = (PFNGLBINDBUFFERBASEPROC) gl_GetProcAddress("glBindBufferBase");
-        glGetUniformBlockIndex = (PFNGLGETUNIFORMBLOCKINDEXPROC)gl_GetProcAddress("glGetUniformBlockIndex");
-        glUniformBlockBinding = (PFNGLUNIFORMBLOCKBINDINGPROC)gl_GetProcAddress("glUniformBlockBinding");
-    }
-#endif
     
 	return GLEW_OK;
 }

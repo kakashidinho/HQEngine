@@ -45,6 +45,10 @@
 		D682AE9B18CDC6AB004E3C6F /* HQEngineEffectManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AE9318CDC6AB004E3C6F /* HQEngineEffectManagerImpl.h */; };
 		D682AE9C18CDC6AB004E3C6F /* HQEngineResManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AE9418CDC6AB004E3C6F /* HQEngineResManagerImpl.cpp */; };
 		D682AE9D18CDC6AB004E3C6F /* HQEngineResManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = D682AE9518CDC6AB004E3C6F /* HQEngineResManagerImpl.h */; };
+		D6840419190EC7E000D00679 /* HQCommonGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6840417190EC7E000D00679 /* HQCommonGL.cpp */; };
+		D684041A190EC7E000D00679 /* HQCommonGL.h in Headers */ = {isa = PBXBuildFile; fileRef = D6840418190EC7E000D00679 /* HQCommonGL.h */; };
+		D6840420190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D684041E190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.cpp */; };
+		D6840421190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.h in Headers */ = {isa = PBXBuildFile; fileRef = D684041F190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.h */; };
 		D6C660EC18DDA10C00471BD0 /* gen_effect_script_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C660E218DDA10C00471BD0 /* gen_effect_script_parser.cpp */; };
 		D6C660ED18DDA10C00471BD0 /* gen_effect_script_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D6C660E318DDA10C00471BD0 /* gen_effect_script_parser.hpp */; };
 		D6C660EE18DDA10C00471BD0 /* gen_effect_script_tokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C660E418DDA10C00471BD0 /* gen_effect_script_tokens.cpp */; };
@@ -385,6 +389,10 @@
 		D682AE9318CDC6AB004E3C6F /* HQEngineEffectManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineEffectManagerImpl.h; path = ../../../Source/HQEngine/HQEngineEffectManagerImpl.h; sourceTree = "<group>"; };
 		D682AE9418CDC6AB004E3C6F /* HQEngineResManagerImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQEngineResManagerImpl.cpp; path = ../../../Source/HQEngine/HQEngineResManagerImpl.cpp; sourceTree = "<group>"; };
 		D682AE9518CDC6AB004E3C6F /* HQEngineResManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQEngineResManagerImpl.h; path = ../../../Source/HQEngine/HQEngineResManagerImpl.h; sourceTree = "<group>"; };
+		D6840417190EC7E000D00679 /* HQCommonGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQCommonGL.cpp; path = ../../../Source/HQRendererGL/HQCommonGL.cpp; sourceTree = "<group>"; };
+		D6840418190EC7E000D00679 /* HQCommonGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQCommonGL.h; path = ../../../Source/HQRendererGL/HQCommonGL.h; sourceTree = "<group>"; };
+		D684041E190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQShaderGL_ShaderStorageSupported.cpp; path = ../../../Source/HQRendererGL/HQShaderGL_ShaderStorageSupported.cpp; sourceTree = "<group>"; };
+		D684041F190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQShaderGL_ShaderStorageSupported.h; path = ../../../Source/HQRendererGL/HQShaderGL_ShaderStorageSupported.h; sourceTree = "<group>"; };
 		D6C660E018DDA10C00471BD0 /* effect_script_parser.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = effect_script_parser.y; path = ../../../Source/HQEngine/effect_script_parser.y; sourceTree = "<group>"; };
 		D6C660E118DDA10C00471BD0 /* effect_script_tokens.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = effect_script_tokens.l; path = ../../../Source/HQEngine/effect_script_tokens.l; sourceTree = "<group>"; };
 		D6C660E218DDA10C00471BD0 /* gen_effect_script_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gen_effect_script_parser.cpp; path = ../../../Source/HQEngine/gen_effect_script_parser.cpp; sourceTree = "<group>"; };
@@ -844,6 +852,10 @@
 			isa = PBXGroup;
 			children = (
 				D6FDDB6F18C7BFCD00825C3C /* glew */,
+				D684041E190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.cpp */,
+				D684041F190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.h */,
+				D6840417190EC7E000D00679 /* HQCommonGL.cpp */,
+				D6840418190EC7E000D00679 /* HQCommonGL.h */,
 				D652FC6618E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.cpp */,
 				D652FC6718E5D3CE007F43E2 /* HQVertexStreamManagerGL_VAO.h */,
 				D6FDD90818C7A7CE00825C3C /* Apple.h */,
@@ -1450,6 +1462,7 @@
 				D6FDD9B918C7A8ED00825C3C /* HQCamera.h in Headers */,
 				D6FDD9DE18C7A8ED00825C3C /* HQRendererCoreTypeInline.h in Headers */,
 				D6FDD9E118C7A8ED00825C3C /* HQRenderTargetManager.h in Headers */,
+				D684041A190EC7E000D00679 /* HQCommonGL.h in Headers */,
 				D6FDD9BE18C7A8ED00825C3C /* HQDefaultHashFunction.h in Headers */,
 				D6FDD96518C7A7CE00825C3C /* HQTextureManagerGL.h in Headers */,
 				D6FDDB0518C7AF7D00825C3C /* jmorecfg.h in Headers */,
@@ -1463,6 +1476,7 @@
 				D6FDDAE218C7AF7D00825C3C /* jconfig.h in Headers */,
 				D682AE9718CDC6AB004E3C6F /* HQDefaultFileManager.h in Headers */,
 				D6FDD94518C7A7CE00825C3C /* HQCommonVertexStreamManGL.h in Headers */,
+				D6840421190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.h in Headers */,
 				D6FDD94B18C7A7CE00825C3C /* HQDeviceGLPCH.h in Headers */,
 				D6FDD9D518C7A8ED00825C3C /* HQPair.h in Headers */,
 				D6FDD9C718C7A8ED00825C3C /* HQHashTable.h in Headers */,
@@ -1672,6 +1686,7 @@
 				D6FDDB3018C7B0BC00825C3C /* pngrio.c in Sources */,
 				D6C660F618DDA12300471BD0 /* HQEngineResParserCommon.cpp in Sources */,
 				D6FDDA9818C7ACD600825C3C /* PNGImg.cpp in Sources */,
+				D6840419190EC7E000D00679 /* HQCommonGL.cpp in Sources */,
 				D6FDDAEB18C7AF7D00825C3C /* jdatasrc.c in Sources */,
 				D6FDD95B18C7A7CE00825C3C /* HQShaderGL_GLSLController.cpp in Sources */,
 				D6FDDAF918C7AF7D00825C3C /* jerror.c in Sources */,
@@ -1684,6 +1699,7 @@
 				D6FDDAE818C7AF7D00825C3C /* jdapistd.c in Sources */,
 				D6FDDB2418C7B0BC00825C3C /* png.c in Sources */,
 				D6FDDB6D18C7B13900825C3C /* zutil.c in Sources */,
+				D6840420190ECF6C00D00679 /* HQShaderGL_ShaderStorageSupported.cpp in Sources */,
 				D6FDD95818C7A7CE00825C3C /* HQShaderGL_GLSL_VarParser.cpp in Sources */,
 				D6FDDB5D18C7B13900825C3C /* gzlib.c in Sources */,
 				D6FDDA3318C7A9E800825C3C /* HQRay.cpp in Sources */,

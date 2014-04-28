@@ -97,21 +97,6 @@ extern GLboolean GLEW_OES_texture_float;
 #		define GL_RG_EXT                  0x8227
 #	endif
 
-#ifndef GL_UNIFORM_BUFFER
-
-#define GL_MAX_UNIFORM_BUFFER_BINDINGS 0x8A2F
-#define GL_UNIFORM_BUFFER 0x8A11
-#define GL_INVALID_INDEX 0xFFFFFFFF
-
-typedef GLuint (* PFNGLGETUNIFORMBLOCKINDEXPROC) (GLuint program, const GLchar* uniformBlockName);
-typedef void (* PFNGLUNIFORMBLOCKBINDINGPROC) (GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
-typedef void (*PFNGLBINDBUFFERBASEPROC) (GLenum target, GLuint index, GLuint buffer);
-extern PFNGLBINDBUFFERBASEPROC glBindBufferBase;
-extern PFNGLGETUNIFORMBLOCKINDEXPROC glGetUniformBlockIndex;
-extern PFNGLUNIFORMBLOCKBINDINGPROC glUniformBlockBinding;
-
-#endif//#ifndef GL_UNIFORM_BUFFER
-
 #ifdef HQ_IPHONE_PLATFORM 
 
 #	ifdef SIMULATOR
@@ -196,7 +181,7 @@ void nullGlUniformMatrixNonSquare(
 #define glUniformMatrix4x2fv nullGlUniformMatrixNonSquare
 #define glUniformMatrix4x3fv nullGlUniformMatrixNonSquare
 
-#endif
+#endif //#ifdef HQ_IPHONE_PLATFORM 
 
 
 #ifndef GL_READ_ONLY

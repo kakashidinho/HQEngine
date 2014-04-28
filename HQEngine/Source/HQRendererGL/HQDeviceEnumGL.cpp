@@ -1539,12 +1539,19 @@ void HQDeviceEnumGL::EnumAllDisplayModes()
 			continue;
 
 		//chọn kiểu siêu lấy mẫu tốt nhất
-		for(int l=numMulSample-1; l>=0; --l)
-		{
-			binfo.maxMulSampleLevel=MulSample[l];
-			if(CheckMultisample(binfo))
-				break;
-		}
+#ifdef HQ_MAC_PLATFORM
+        if (!caps.hardwareAccel)
+            binfo.maxMulSampleLevel = 1;
+        else
+#endif
+        {
+            for(int l=numMulSample-1; l>=0; --l)
+            {
+                binfo.maxMulSampleLevel=MulSample[l];
+                if(CheckMultisample(binfo))
+                    break;
+            }
+        }
 
 		bufferInfoList.PushBack(binfo);
 	}//for(k)

@@ -194,6 +194,7 @@
 		D682AEC518CDD8CA004E3C6F /* HQEngineCommonInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEBE18CDD8CA004E3C6F /* HQEngineCommonInternal.cpp */; };
 		D682AEC618CDD8CA004E3C6F /* HQEngineEffectManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEC018CDD8CA004E3C6F /* HQEngineEffectManagerImpl.cpp */; };
 		D682AEC718CDD8CA004E3C6F /* HQEngineResManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D682AEC218CDD8CA004E3C6F /* HQEngineResManagerImpl.cpp */; };
+		D684041D190EC9DA00D00679 /* HQCommonGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D684041B190EC9DA00D00679 /* HQCommonGL.cpp */; };
 		D6C6617E18DDA77400471BD0 /* gen_effect_script_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C6617218DDA77400471BD0 /* gen_effect_script_parser.cpp */; };
 		D6C6617F18DDA77400471BD0 /* gen_effect_script_tokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C6617418DDA77400471BD0 /* gen_effect_script_tokens.cpp */; };
 		D6C6618018DDA77400471BD0 /* gen_res_script_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6C6617518DDA77400471BD0 /* gen_res_script_parser.cpp */; };
@@ -293,6 +294,8 @@
 		D682AED118CDDB49004E3C6F /* HQEngineAppAndroid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQEngineAppAndroid.cpp; path = ../../../Source/HQEngine/android/HQEngineAppAndroid.cpp; sourceTree = "<group>"; };
 		D682AED218CDDB49004E3C6F /* HQEngineJNI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQEngineJNI.cpp; path = ../../../Source/HQEngine/android/HQEngineJNI.cpp; sourceTree = "<group>"; };
 		D682AED318CDDB49004E3C6F /* HQEngineWindowAndroid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HQEngineWindowAndroid.cpp; path = ../../../Source/HQEngine/android/HQEngineWindowAndroid.cpp; sourceTree = "<group>"; };
+		D684041B190EC9DA00D00679 /* HQCommonGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HQCommonGL.cpp; path = ../../../Source/HQRendererGL/HQCommonGL.cpp; sourceTree = "<group>"; };
+		D684041C190EC9DA00D00679 /* HQCommonGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQCommonGL.h; path = ../../../Source/HQRendererGL/HQCommonGL.h; sourceTree = "<group>"; };
 		D6C6617018DDA77400471BD0 /* effect_script_parser.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = effect_script_parser.y; path = ../../../Source/HQEngine/effect_script_parser.y; sourceTree = "<group>"; };
 		D6C6617118DDA77400471BD0 /* effect_script_tokens.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = effect_script_tokens.l; path = ../../../Source/HQEngine/effect_script_tokens.l; sourceTree = "<group>"; };
 		D6C6617218DDA77400471BD0 /* gen_effect_script_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = gen_effect_script_parser.cpp; path = ../../../Source/HQEngine/gen_effect_script_parser.cpp; sourceTree = "<group>"; };
@@ -817,6 +820,8 @@
 			isa = PBXGroup;
 			children = (
 				D6FDDB6F18C7BFCD00825C3C /* glew */,
+				D684041B190EC9DA00D00679 /* HQCommonGL.cpp */,
+				D684041C190EC9DA00D00679 /* HQCommonGL.h */,
 				D6FDD90818C7A7CE00825C3C /* Apple.h */,
 				D6FDD90918C7A7CE00825C3C /* Apple.mm */,
 				D6FDD91418C7A7CE00825C3C /* glHeaders.h */,
@@ -1452,6 +1457,7 @@
 				D606EE7018C8E7B3009F9A67 /* pngwtran.c in Sources */,
 				D606EE6618C8E7B3009F9A67 /* pngmem.c in Sources */,
 				D606EE8B18C8E7B3009F9A67 /* jdhuff.c in Sources */,
+				D684041D190EC9DA00D00679 /* HQCommonGL.cpp in Sources */,
 				D606EE8418C8E7B3009F9A67 /* jdapistd.c in Sources */,
 				D606EE7718C8E7B3009F9A67 /* jccolor.c in Sources */,
 				D606EE6B18C8E7B3009F9A67 /* pngrutil.c in Sources */,
