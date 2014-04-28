@@ -593,6 +593,9 @@
     <ClInclude Include="..\..\..\..\Source\HQ3DMathBasics.h">
       <Filter>Source\HQUtilMath</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQCommonD3D11.h">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQAABB.cpp">
@@ -1065,6 +1068,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQEngine\HQEngineResParserCommon.cpp">
       <Filter>Source\HQEngine\res_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQCommonD3D11.cpp">
+      <Filter>Source\HQRenderDeviceD3D11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

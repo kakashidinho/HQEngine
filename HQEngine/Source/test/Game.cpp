@@ -443,13 +443,17 @@ void Game::Render(HQTime dt)
 
 #if	defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
-void Game::KeyPressed(HQKeyCodeType keycode)
+void Game::KeyPressed(HQKeyCodeType keycode, bool isRepeat)
 {
 	static bool playmusic = true; 
 	static bool pauseMusic = false;
+	if (isRepeat)
+		OutputDebugStringA("key is repeated\n");
 	switch(keycode)
 	{
 	case HQKeyCode::M:
+		if (isRepeat)
+			break;
 		playmusic = !playmusic;
 #ifndef DISABLE_AUDIO
 		if (playmusic)
@@ -459,6 +463,8 @@ void Game::KeyPressed(HQKeyCodeType keycode)
 #endif
 		break;
 	case HQKeyCode::P:
+		if (isRepeat)
+			break;
 		pauseMusic = !pauseMusic;
 #ifndef DISABLE_AUDIO
 		if (!pauseMusic)
@@ -468,8 +474,9 @@ void Game::KeyPressed(HQKeyCodeType keycode)
 #endif
 		break;
 	case HQKeyCode::L:
+		if (!isRepeat)
 #ifndef DISABLE_AUDIO
-		audio->GetSourceController(music)->Play(HQ_FALSE);
+			audio->GetSourceController(music)->Play(HQ_FALSE);
 #endif
 		break;
 	case HQKeyCode::LSHIFT:
@@ -495,11 +502,13 @@ void Game::KeyPressed(HQKeyCodeType keycode)
 #if !(defined HQ_OPENGLES || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	case HQKeyCode::SPACE:
 
-		pDevice->SetDisplayMode(800, 600 , !pDevice->IsWindowed());
+		if (!isRepeat)
+			pDevice->SetDisplayMode(800, 600, !pDevice->IsWindowed());
 		OnResetDevice();
 		break;
 	case HQKeyCode::Q:
-		pDevice->SetDisplayMode(1280, 768 , !pDevice->IsWindowed());
+		if (!isRepeat)
+			pDevice->SetDisplayMode(1280, 768 , !pDevice->IsWindowed());
 		OnResetDevice();
 #endif
 		break;

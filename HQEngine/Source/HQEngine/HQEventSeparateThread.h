@@ -60,6 +60,7 @@ struct HQMouseData
 struct HQKeyData
 {
 	HQKeyCodeType keyCode;
+	bool isRepeat;
 };
 
 struct HQEvent : public HQTouchEvent

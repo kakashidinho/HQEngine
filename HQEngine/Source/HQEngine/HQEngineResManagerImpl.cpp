@@ -1076,7 +1076,7 @@ HQReturnVal HQEngineResManagerImpl::AddShaderBufferResource(
 	}
 
 	//create shader buffer
-	HQBufferUAV * buffer;
+	HQBufferUAV * buffer = NULL;
 	HQReturnVal re = HQ_FAILED_INVALID_PARAMETER;
 	switch (type)
 	{

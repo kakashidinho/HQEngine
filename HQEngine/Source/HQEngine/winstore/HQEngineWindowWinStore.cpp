@@ -12,9 +12,11 @@ COPYING.txt included with this distribution for more information.
 #include "../HQEngineWindow.h"
 #include "../HQEventSeparateThread.h"
 #include "HQWinStoreUtil.h"
+
 #include "string.h"
 #include <iostream>
 #include <agile.h>
+#include <unordered_map>
 
 using namespace Windows::UI::Core;
 using namespace Windows::Devices::Input;
@@ -36,6 +38,34 @@ static float ConvertDipsToPixels(float dips)
 	static const float dipsPerInch = 96.0f;
 	return floor(dips * Windows::Graphics::Display:: DisplayProperties::LogicalDpi / dipsPerInch + 0.5f); // Round to nearest integer.
 }
+
+
+/*------------for detecting repeated key--------------*/
+struct KeyPressedFlag{
+	KeyPressedFlag() :
+	pressed(false)
+	{
+	}
+	KeyPressedFlag(bool _pressed)
+		: pressed(_pressed)
+	{
+	}
+
+	operator bool() const { return pressed; }
+	KeyPressedFlag & operator = (KeyPressedFlag& _flag){
+		this->pressed = _flag.pressed;
+		return *this;
+	}
+
+	KeyPressedFlag & operator = (bool _pressed){
+		this->pressed = _pressed;
+		return *this;
+	}
+
+	bool pressed;
+};
+
+static std::unordered_map<UINT, KeyPressedFlag> g_keyPressed;
 
 /*-------window event handlers--------------*/
 HQWindowsEventHandler::HQWindowsEventHandler(Windows::UI::Core::CoreCursor ^ cursor)
@@ -170,6 +200,8 @@ void HQWindowsEventHandler::OnKeyPressed(CoreWindow^ sender, KeyEventArgs^ args)
 	
 	newEvent.type = HQ_KEY_PRESSED;
 	newEvent.keyData.keyCode = (HQKeyCodeType)args->VirtualKey;
+	newEvent.keyData.isRepeat = g_keyPressed[newEvent.keyData.keyCode];
+	g_keyPressed[newEvent.keyData.keyCode] = true;
 	
 	hq_engine_eventQueue_internal->EndAddEvent();
 }
@@ -181,6 +213,7 @@ void HQWindowsEventHandler::OnKeyReleased(CoreWindow^ sender, KeyEventArgs^ args
 	
 	newEvent.type = HQ_KEY_RELEASED;
 	newEvent.keyData.keyCode = (HQKeyCodeType)args->VirtualKey;
+	g_keyPressed[newEvent.keyData.keyCode] = false;
 	
 	hq_engine_eventQueue_internal->EndAddEvent();
 }

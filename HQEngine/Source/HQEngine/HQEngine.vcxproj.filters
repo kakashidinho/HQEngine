@@ -37,6 +37,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Source Files\x11">
+      <UniqueIdentifier>{3296d81c-a564-4c33-befb-4b935187872b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HQDefaultFileManager.cpp">
@@ -113,6 +116,12 @@
     </ClCompile>
     <ClCompile Include="gen_res_script_tokens.cpp">
       <Filter>Source Files\generated_parser_code</Filter>
+    </ClCompile>
+    <ClCompile Include="x11\HQEngineAppX11.cpp">
+      <Filter>Source Files\x11</Filter>
+    </ClCompile>
+    <ClCompile Include="x11\HQEngineWindowX11.cpp">
+      <Filter>Source Files\x11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

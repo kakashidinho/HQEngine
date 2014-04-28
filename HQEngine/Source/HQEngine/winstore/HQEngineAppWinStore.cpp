@@ -251,7 +251,7 @@ bool HQEngineApp::EventHandle()
 				m_mouseListener->MouseWheel(curEvent.mouseData.wheelDelta, curEvent.mouseData.position);
 				break;
 			case HQ_KEY_PRESSED:
-				m_keyListener->KeyPressed(curEvent.keyData.keyCode);
+				m_keyListener->KeyPressed(curEvent.keyData.keyCode, curEvent.keyData.isRepeat);
 				break;
 			case HQ_KEY_RELEASED:
 				m_keyListener->KeyReleased(curEvent.keyData.keyCode);

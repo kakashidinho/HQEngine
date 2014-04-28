@@ -22,9 +22,19 @@ uint colorRGBA8(uint r, uint g, uint b, uint a){
 	return color;
 }
 
+float4 colorRGBA8ToFloat4(uint r, uint g, uint b, uint a){
+	float4 color;
+	color.x = (r & 0xff) / 255.0f;
+	color.y = (g & 0xff) / 255.0f;
+	color.z = (b & 0xff) / 255.0f;
+	color.w = (a & 0xff) / 255.0f;
+
+	return color;
+}
+
 RWBuffer<uint> draw_indirect_buffer : register(u0);
 RWByteAddressBuffer vertex_buffer : register(u1);
-RWTexture2D<uint> color_texture : register(u2);
+RWTexture2D<float4> color_texture : register(u2);
 RWStructuredBuffer<uint> counter_buffer: register (u3);
 
 [numthreads(2, 2, 1)]
@@ -64,9 +74,9 @@ void CS(uint3 threadIdx : SV_GroupThreadID) {
 	uint2 imageCoords = threadIdx.xy;
 	uint vertexIdx = 2 * threadIdx.y + threadIdx.x;
 	float2 texcoords = float2(threadIdx.xy);
-	uint color = colorRGBA8(
-	(vertexIdx * 33 + counter_buffer[0]) % 255,
-	255 - (vertexIdx * 33 + counter_buffer[0]) % 255,
+	float4 color = colorRGBA8ToFloat4(
+		(vertexIdx * 33 + counter_buffer[0]) % 255,
+		255 - (vertexIdx * 33 + counter_buffer[0]) % 255,
 		0, 255);
 	float2 position;
 

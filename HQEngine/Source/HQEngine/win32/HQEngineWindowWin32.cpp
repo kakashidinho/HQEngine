@@ -300,11 +300,8 @@ void RawInputMessage(WPARAM wParam, LPARAM lParam)
 				}
 				else
 				{
-					if (g_keyPressed[keyCode] == false)
-					{
-						g_keyPressed[keyCode] = true;
-						HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode);
-					}
+					HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode, g_keyPressed[keyCode]);
+					g_keyPressed[keyCode] = true;
 				}
 
 			}//else if (rawInput->header.dwType == RIM_TYPEKEYBOARD)
@@ -315,30 +312,29 @@ void RawInputMessage(WPARAM wParam, LPARAM lParam)
 /*--------handle legacy key down message------------------*/
 bool KeyDownMessage(WPARAM wParam, LPARAM lParam)
 {
-	if (lParam & 0x40000000)//this message is repeated
-		return false;//message handling chain will continue
+	bool repeated_msg = (lParam & 0x40000000) != 0;
 	switch (wParam)
 	{
 	case VK_CONTROL:
 		if ((lParam & (0x1 << 24)) == 0)//left
-			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(HQKeyCode::LCONTROL);
+			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(HQKeyCode::LCONTROL, repeated_msg);
 		else//right
-			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(HQKeyCode::RCONTROL);
+			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(HQKeyCode::RCONTROL, repeated_msg);
 		break;
 	case VK_MENU:
 		if ((lParam & (0x1 << 24)) == 0)//left
-			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(HQKeyCode::LALT);
+			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(HQKeyCode::LALT, repeated_msg);
 		else//right
-			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(HQKeyCode::RALT);
+			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(HQKeyCode::RALT, repeated_msg);
 		return 0;
 	case VK_SHIFT:
 		{
 			UINT vkeyCode = MapVirtualKey((lParam & (0xff << 16)) >> 16 , MAPVK_VSC_TO_VK_EX);
-			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(vkeyCode);
+			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(vkeyCode, repeated_msg);
 		}
 		break;
 	default:
-		HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(wParam);
+		HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(wParam, repeated_msg);
 		if(wParam == VK_F10)
 			return true;//message handling chain break at this point
 		break;

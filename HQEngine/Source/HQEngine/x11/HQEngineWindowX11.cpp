@@ -123,12 +123,10 @@ KeyInfo & GetKeyInfo(XKeyEvent* keyEvent)
 void KeyDownMessage(XKeyEvent *event)
 {
 	KeyInfo & kinfo = GetKeyInfo(event);
-	if (kinfo.pressed)
-		return;//ignore repeated key press event
+
+	HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(kinfo.unmodSym, kinfo.pressed);
 
 	kinfo.pressed = true;//mark this key as pressed
-
-	HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(kinfo.unmodSym);
 }
 
 void KeyUpMessage(XKeyEvent *event)

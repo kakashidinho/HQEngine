@@ -462,6 +462,7 @@
     <ClInclude Include="..\..\..\..\Source\HQPair.h" />
     <ClInclude Include="..\..\..\..\Source\HQPlatformDef.h" />
     <ClInclude Include="..\..\..\..\Source\HQReferenceCountObj.h" />
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQCommonD3D11.h" />
     <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11PCH.h" />
     <ClInclude Include="..\..\..\..\Source\HQSceneManagementCommon.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -1056,6 +1057,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\HQEnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)HQEnginePCH.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQCommonD3D11.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">HQDeviceD3D11PCH.h</PrecompiledHeaderFile>

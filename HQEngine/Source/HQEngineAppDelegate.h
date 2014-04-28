@@ -144,9 +144,10 @@ public:
 
 	///
 	///event when a key is pressed. 
-	///{keyCode} can be one of values in HQKeyCode:KeyCodeEnum
+	///{keyCode} can be one of values in HQKeyCode:KeyCodeEnum. 
+	///{isRepeat} tells whether this event is fired because this key is currently being held down or not
 	///
-	virtual void KeyPressed(HQKeyCodeType keyCode) {}
+	virtual void KeyPressed(HQKeyCodeType keyCode, bool isRepeat) {}
 	///
 	///event when a key is released
 	///{keyCode} can be one of values in HQKeyCode:KeyCodeEnum

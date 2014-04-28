@@ -149,8 +149,7 @@ static BOOL g_oldCtrlFlag = NO;
 }
 
 -(void)keyDown:(NSEvent *)theEvent {
-	if ([theEvent isARepeat] == NO)
-		HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed((HQKeyCodeType)[theEvent keyCode]);
+	HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed((HQKeyCodeType)[theEvent keyCode], [theEvent isARepeat] == YES);
     [super keyDown:theEvent];
 }
 
@@ -170,7 +169,7 @@ static BOOL g_oldCtrlFlag = NO;
 	{
 		if (g_oldShiftFlag == NO)//shift key pressed
 		{
-			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode);
+			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode, false);
 		}
 		else {//released
 			HQEngineApp::GetInstance()->GetKeyListener()->KeyReleased(keyCode);
@@ -183,7 +182,7 @@ static BOOL g_oldCtrlFlag = NO;
 	{
 		if (g_oldCtrlFlag == NO)//control key pressed
 		{
-			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode);
+			HQEngineApp::GetInstance()->GetKeyListener()->KeyPressed(keyCode, false);
 		}
 		else {//released
 			HQEngineApp::GetInstance()->GetKeyListener()->KeyReleased(keyCode);

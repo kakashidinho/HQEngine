@@ -455,6 +455,11 @@ void HQMeshNode::CreateIndirectBuffer()
 	delete[] indirectArgs;
 }
 
+HQDrawIndexedIndirectArgsBuffer* HQMeshNode::GetDrawIndirectArgs()
+{
+	return m_geoInfo->indirectBuffer;
+}
+
 void HQMeshNode::Update(hqfloat32 dt ,bool updateChilds , bool parentChanged)
 {
 	TRACE("here %s %d", __FILE__, __LINE__);

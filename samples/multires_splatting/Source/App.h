@@ -19,7 +19,7 @@ public:
 	virtual void Update(HQTime dt);
 	virtual void RenderImpl(HQTime dt);
 private:
-	void KeyPressed(HQKeyCodeType keyCode);//implement HQEngineKeyListener
+	void KeyPressed(HQKeyCodeType keyCode, bool repeat);//implement HQEngineKeyListener
 	void KeyReleased(HQKeyCodeType keyCode);//override BaseApp
 	void InitSamplePattern();
 	void InitSubplatsBuffers();

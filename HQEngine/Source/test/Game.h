@@ -81,7 +81,7 @@ public:
 #if	defined WIN32 || defined HQ_MAC_PLATFORM || defined HQ_LINUX_PLATFORM || (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	bool WindowClosing() {return true;}
 	
-	void KeyPressed(HQKeyCodeType keycode);
+	void KeyPressed(HQKeyCodeType keycode, bool isRepeat);
 	void KeyReleased(HQKeyCodeType keycode);
 	void MousePressed( HQMouseKeyCodeType button, const HQPointi &point) ;
 	void MouseReleased( HQMouseKeyCodeType button, const HQPointi &point) ;

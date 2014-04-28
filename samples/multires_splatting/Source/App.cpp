@@ -582,7 +582,7 @@ void App::FinalPass()
 	m_pRDevice->Draw(4, 0);
 }
 
-void App::KeyPressed(HQKeyCodeType keyCode)
+void App::KeyPressed(HQKeyCodeType keyCode, bool repeat)
 {
 	switch (keyCode)
 	{

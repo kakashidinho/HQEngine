@@ -578,6 +578,7 @@
     <ClInclude Include="..\..\..\..\Source\HQRendererCoreType.h" />
     <ClInclude Include="..\..\..\..\Source\HQRendererCoreTypeFixedFunction.h" />
     <ClInclude Include="..\..\..\..\Source\HQRendererCoreTypeInline.h" />
+    <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQCommonD3D11.h" />
     <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11.h" />
     <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11PCH.h" />
     <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceEnumD3D11.h" />
@@ -1475,6 +1476,7 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">$(IntDir)HQEnginePCH.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">$(IntDir)HQEnginePCH.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQCommonD3D11.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQDeviceD3D11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">Use</PrecompiledHeader>
