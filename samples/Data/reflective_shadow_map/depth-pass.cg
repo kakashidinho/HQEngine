@@ -76,7 +76,7 @@ uniform lightProperties {
 	float3 lightPosition;
 	float3 lightDirection;
 	float4 lightDiffuse;
-	float2 lightFalloff_lightPCosHalfAngle;
+	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
 } : BUFFER[3];
 
 struct pOut{
@@ -105,13 +105,9 @@ pOut PS(
 	
 	//calculate flux
 	float3 lightVec = normalize(posW - lightPosition);
-	float cosLD = dot(lightVec, lightDirection);
-	float spot = pow(max(cosLD, 0), lightFalloff_lightPCosHalfAngle.x);
-	if (spot < lightFalloff_lightPCosHalfAngle.y)
-		//out of light cone
-		output.flux = float4(0.0, 0.0, 0.0, 1.0);
-	else
-		output.flux = spot * lightDiffuse * materialDiffuse / PI;
+	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
+	
+	output.flux = spot * lightDiffuse * materialDiffuse / PI;
 	
 	return output;
 }

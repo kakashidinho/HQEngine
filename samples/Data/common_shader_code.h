@@ -106,6 +106,16 @@ float computeShadowFactor(
 }
 
 
+//{lightToVert} must be normalized
+float calculateSpotLightFactor(float3 lightToVert, float3 lightDirection, float3 lightFalloff_cosHalfAngle_cosHalfTheta)
+{
+	float cosLD = dot(lightToVert, lightDirection);
+	float spot = (max(cosLD, 0) - lightFalloff_cosHalfAngle_cosHalfTheta.y)
+		/ (lightFalloff_cosHalfAngle_cosHalfTheta.z - lightFalloff_cosHalfAngle_cosHalfTheta.y);
+
+	return pow(max(spot, 0.0), lightFalloff_cosHalfAngle_cosHalfTheta.x);
+}
+
 #else
 //TO DO
 #endif//#ifdef HQEXT_CG

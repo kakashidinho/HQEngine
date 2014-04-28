@@ -102,6 +102,7 @@ RenderLoop::RenderLoop(const char* rendererAPI,
 			343.f, 547.8f , -227.f,
 			0, -1, 0,
 			HQToRadian(90),
+			HQToRadian(30),
 			2.0f,
 			1000.f,
 			this->m_renderAPI_type);
@@ -330,8 +331,9 @@ void RenderLoop::Update(HQTime dt)
 	memcpy(lightProt->lightPosition, &m_light->position(), sizeof(HQVector4));
 	memcpy(lightProt->lightDirection, &m_light->direction(), sizeof(HQVector4));
 	memcpy(lightProt->lightDiffuse, &m_light->diffuseColor, sizeof(HQVector4));
-	lightProt->lightFalloff_lightPCosHalfAngle[0] = m_light->falloff;
-	lightProt->lightFalloff_lightPCosHalfAngle[1] = pow(cosf(m_light->angle * 0.5f), m_light->falloff);
+	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[0] = m_light->falloff;
+	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[1] = cosf(m_light->angle * 0.5f);
+	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[2] = cosf(m_light->theta * 0.5f);
 	m_uniformLightProtBuffer->Unmap();
 }
 
