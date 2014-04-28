@@ -23,6 +23,8 @@ class HQLoggableObject
 public :
 	HQLoggableObject(const char *logPrefix , bool flushLog = false ,hq_uint32 bufferSize = 512)
 	{
+        if (bufferSize == 0)
+            bufferSize = 1;
 		this->m_flushLog = flushLog;
 		this->m_pLogStream = NULL;
 		this->m_logPrefix = HQ_NEW char[strlen(logPrefix) + 1];
@@ -32,10 +34,13 @@ public :
 	}
 	HQLoggableObject (HQLogStream *pLogStream ,const char *logPrefix , bool flushLog = false,hq_uint32 bufferSize = 512)
 	{
+        if (bufferSize == 0)
+            bufferSize = 1;
 		this->m_flushLog = flushLog;
 		this->m_pLogStream = pLogStream;
 		this->m_logPrefix = HQ_NEW char[strlen(logPrefix) + 1];
 		this->m_logBuffer = HQ_NEW char[bufferSize];
+        this->m_bufferSize = bufferSize;
 		strcpy(this->m_logPrefix , logPrefix);
 	}
 	~HQLoggableObject()
