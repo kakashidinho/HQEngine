@@ -19,12 +19,13 @@ DiffuseSpotLight::DiffuseSpotLight(
 	hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
 	hqfloat32 dirX, hqfloat32 dirY, hqfloat32 dirZ,
 	hqfloat32 _angle,
+	hqfloat32 _theta,//inner cone angle in radian
 	hqfloat32 _falloff,
 	hqfloat32 _maxRange,
 	HQRenderAPI renderApi
 	)
 	: BaseLight(diffuse, posX, posY, posZ),
-	angle(_angle), falloff(_falloff), maxRange(_maxRange),
+	angle(_angle), theta(_theta), falloff(_falloff), maxRange(_maxRange),
 	_direction(HQVector4::New())
 {
 	HQFloat4 upVec;//up vector for light camera

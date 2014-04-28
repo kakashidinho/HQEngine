@@ -11,7 +11,7 @@
 
 
 /*----------BaseApp-------------------------*/
-class BaseApp : public HQEngineRenderDelegate {
+class BaseApp : public HQEngineRenderDelegate, public HQEngineKeyListener {
 public:
 	BaseApp(const char* rendererAPI, 
 			HQLogStream *logStream,
@@ -19,6 +19,8 @@ public:
 			hquint32 width = 600, hquint32 height = 600);
 	//create app and render device using renderer API read from "API.txt" and default log file stream "log.txt"
 	BaseApp(hquint32 width = 600, hquint32 height = 600);
+	//create app and render device using renderer API read from "API.txt"
+	BaseApp(HQLogStream* logStream, hquint32 width = 600, hquint32 height = 600);
 	~BaseApp();
 
 	void Run();
@@ -34,6 +36,8 @@ protected:
 	HQCamera * m_camera;
 	HQSceneNode* m_scene;//the whole scene
 
+	HQFloat3 m_cameraTransition;//camera's transition per second
+
 	//GUI 
 	MyGUI::HQEnginePlatform* m_guiPlatform;
 	MyGUI::Gui *m_myGUI;
@@ -47,6 +51,9 @@ private:
 
 	//implement HQEngineRenderDelegate
 	virtual void Render(HQTime dt) __FINAL__;
+
+	//implement HQEngineKeyListener
+	virtual void KeyReleased(HQKeyCodeType keyCode);
 };
 
 #endif

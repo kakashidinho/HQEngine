@@ -12,6 +12,8 @@
 
 #include "../../HQEngine/Source/HQ3DMathBasics.h"
 
+#include <stdlib.h>
+
 #ifndef min
 #	define min(a,b) (((a) > (b)? (b) : (a))
 #endif
@@ -29,5 +31,27 @@ struct Transform {
 struct ModelViewInfo : public Transform{
 	HQFloat4 cameraPosition;
 };
+
+struct DispatchComputeArgs {
+	hquint32 numGroupX;
+	hquint32 numGroupY;
+	hquint32 numGroupZ;
+
+	void Set(hquint32 nX, hquint32 nY = 1, hquint32 nZ = 1)
+	{
+		numGroupX = nX;
+		numGroupY = nY;
+		numGroupZ = nZ;
+	}
+};
+
+//uniform random variable between [a..b]
+inline float randf(float a, float b){
+	return (rand() / float(RAND_MAX)) * (b - a) + a;
+}
+
+inline double randd(double a, double b){
+	return (rand() / double(RAND_MAX)) * (b - a) + a;
+}
 
 #endif

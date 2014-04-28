@@ -28,6 +28,7 @@ struct DiffuseSpotLight : public BaseLight, public HQSceneNode::Listener{
 		hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
 		hqfloat32 dirX, hqfloat32 dirY, hqfloat32 dirZ,
 		hqfloat32 angle,//cone angle in radian
+		hqfloat32 theta,//inner cone angle in radian
 		hqfloat32 falloff,
 		hqfloat32 maxRange,
 		HQRenderAPI renderApi
@@ -38,6 +39,7 @@ struct DiffuseSpotLight : public BaseLight, public HQSceneNode::Listener{
 	HQCamera& lightCam() { return *_lightCam; } //light orientation and position can be controlled by controlling this camera
 
 	hqfloat32 angle;//cone's angle
+	hqfloat32 theta;//inner cone's angle
 	hqfloat32 falloff;//falloff factor
 	hqfloat32 maxRange;
 private:
@@ -59,7 +61,7 @@ struct DiffuseLightProperties {
 	float lightPosition[4];
 	float lightDirection[4];
 	float lightDiffuse[4];
-	float lightFalloff_lightPCosHalfAngle[2];
+	float lightFalloff_cosHalfAngle_cosHalfTheta[3];
 };
 
 struct LightView {

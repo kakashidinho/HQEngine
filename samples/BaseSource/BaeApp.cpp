@@ -39,6 +39,21 @@ BaseApp::BaseApp(hquint32 width, hquint32 height)
 	Init(rendererAPI.c_str(), defaultLogStream.GetRawPointer(), NULL, width, height);
 }
 
+BaseApp::BaseApp(HQLogStream* logStream, hquint32 width, hquint32 height)
+{
+	//read renderer API config from "API.txt"
+	std::string rendererAPI = "D3D11";
+	std::ifstream stream("API.txt");
+	if (stream.good())
+	{
+		stream >> rendererAPI;
+	}
+
+	stream.close();
+
+	Init(rendererAPI.c_str(), logStream, NULL, width, height);
+}
+
 void BaseApp::Init(const char* rendererAPI,
 				HQLogStream *logStream,
 				const char * additionalAPISettings,
@@ -71,6 +86,8 @@ void BaseApp::Init(const char* rendererAPI,
 
 	//register renderering delegate
 	HQEngineApp::GetInstance()->SetRenderDelegate(*this);
+	//register key listener
+	HQEngineApp::GetInstance()->SetKeyListener(*this);
 
 	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
 
@@ -81,8 +98,9 @@ void BaseApp::Init(const char* rendererAPI,
 	m_guiPlatform = new MyGUI::HQEnginePlatform();
 
 	m_guiPlatform->initialise();
-	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../Data", true);
-	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../../Data", true);
+	m_guiPlatform->getDataManagerPtr()->addResourceLocation("Data/MyGUI", false);
+	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../Data/MyGUI", false);
+	m_guiPlatform->getDataManagerPtr()->addResourceLocation("../../Data/MyGUI", false);
 
 	m_myGUI = new MyGUI::Gui();
 	m_myGUI->initialise();
@@ -94,6 +112,9 @@ void BaseApp::Init(const char* rendererAPI,
 
 	//create scene container
 	m_scene = new HQSceneNode("scene_root"); 
+
+	//by default, camera will stay still every frame
+	m_cameraTransition.Set(0, 0, 0);
 
 }
 BaseApp::~BaseApp()
@@ -127,6 +148,17 @@ void BaseApp::Render(HQTime dt)
 		sprintf(fps_text, "fps:%.3f", HQEngineApp::GetInstance()->GetFPS());
 		m_fpsTextBox->setCaption(fps_text);
 	}
+	//move camera
+	if (m_camera != NULL)
+	{
+		HQ_DECL_STACK_VECTOR4(scaledTrans);
+		scaledTrans.x = m_cameraTransition.x * dt;
+		scaledTrans.y = m_cameraTransition.y * dt;
+		scaledTrans.z = m_cameraTransition.z * dt;
+
+		m_camera->Translate(scaledTrans);
+	}
+
 	//call update implementation
 	this->Update(dt);
 
@@ -140,4 +172,14 @@ void BaseApp::Render(HQTime dt)
 	m_guiPlatform->getRenderManagerPtr()->drawOneFrame();
 
 	m_pRDevice->EndRender();
+}
+
+void BaseApp::KeyReleased(HQKeyCodeType keyCode)
+{
+	switch (keyCode)
+	{
+	case HQKeyCode::ESCAPE:
+		HQEngineApp::GetInstance()->Stop();
+		break;
+	}
 }
