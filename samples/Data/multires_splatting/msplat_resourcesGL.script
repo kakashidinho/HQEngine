@@ -1,0 +1,138 @@
+resources {
+	
+	/*--------reflective shadow map pass----------*/
+	shader "depth-pass_vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="depth-pass-compiled-cg.glslv" 			/* source file */
+		debug=true
+	}
+	
+	shader "depth-pass_ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="depth-pass-compiled-cg.glslf" 			/* source file */
+		debug=true
+	}
+	
+	/*--------g-buffer pass----------*/
+	shader "gbuffer-pass_vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="gbuffer-pass-compiled-cg.glslv" 			/* source file */
+		debug=true
+	}
+	
+	shader "gbuffer-pass_ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="gbuffer-pass-compiled-cg.glslf" 			/* source file */
+		debug=true
+	}
+
+	/*--------mipmap generator pass----------*/
+
+	shader "mipmap_cs_1st_step" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="mipmap_gen.cshader" 			/* source file */
+		debug=true
+		define FIRST_STEP
+		define version = 430
+	}
+
+	shader "mipmap_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="mipmap_gen.cshader" 			/* source file */
+		debug=true
+
+		define version = 430
+	}
+
+	/*--------subsplats refinement pass----------*/
+	shader "subsplat_refinement_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="subsplats_refine.cshader" 			/* source file */
+		debug=true
+
+		define version = 430
+	}
+
+	shader "subsplat_final_refinement_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="subsplats_refine.cshader" 			/* source file */
+		debug=true
+
+		define version = 430
+		define FINAL_STEP
+	}
+
+	/*-----splatting pass------*/
+	shader "clear_illum_textures_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="clear_illumination_textures.cshader" 			/* source file */
+		debug=true
+		define version = 430
+	}
+
+	shader "multires_splatting_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="multires_splatting.cshader" 			/* source file */
+		debug=true
+		define version = 430
+	}
+
+	/*-----upsample pass----*/
+	shader "upsample_cs_1st_step" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="upsample.cshader" 			/* source file */
+		debug=true
+
+		define version = 430
+		define FIRST_STEP
+	}
+
+	shader "upsample_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="upsample.cshader" 			/* source file */
+		debug=true
+
+		define version = 430
+	}
+
+	/*------final-pass-------*/
+	shader "final-pass_vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="final-pass-compiled-cg.glslv" 			/* source file */
+		debug=true
+	}
+	
+	shader "final-pass_ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=glsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="final-pass-compiled-cg.glslf" 			/* source file */
+		debug=true
+	}
+}

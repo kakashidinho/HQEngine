@@ -1,0 +1,63 @@
+#include "../common_compute_code.h"
+#include "common.cshaderh"
+
+//input textures
+decl_texture2d_4f(illumination_tex, 0);//current level texture containing illumination
+decl_texture2d_4f(lower_interpolated_tex, 1);//coarser level texture containing interpolated illumination
+
+//output textures
+decl_rwtexture2d_4f(interpolated_tex, 0);//texture contains interpolated illumination
+
+//number of subsplats in final list
+decl_structbuffer(uint, numSubsplats, 6);
+//final list of subsplats
+decl_structbuffer(Subsplat, final_subsplat, 7);
+
+
+main_proc(16, 16, 1)
+{
+	const begin_decl_array_with_init(uint2, offset, 8)
+		uint2(-1, -1), uint2(0, -1), uint2(1, -1),
+		uint2(-1, 0), uint2(1, 0),
+		uint2(-1, 1), uint2(0, 1), uint2(1, 1)
+	end_decl_array_with_init;
+
+	const begin_decl_array_with_init(float, weight, 8)
+		1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+		//0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15
+	end_decl_array_with_init;
+
+
+	float totalWeight = 1.0;
+	uint2 texel_coords = globalThreadIdx.xy;
+	float4 color = texture2d_read_4f(illumination_tex, texel_coords, 0);
+#ifndef FIRST_STEP
+	uint2 lower_texel_coords = texel_coords >> 1;
+	color += texture2d_read_4f(lower_interpolated_tex, lower_texel_coords, 0);
+#endif
+
+	for (uint i = 0; i < 8; ++i)
+	{
+		uint2 neighbor_coords = texel_coords + offset[i];
+		float4 neighbor_color = texture2d_read_4f(illumination_tex, neighbor_coords, 0);
+
+		float neighbor_weight = weight[i] * neighbor_color.w;//any color that has zero "w" will be ignored
+		color.xyz +=  neighbor_weight * neighbor_color.xyz;
+		totalWeight += neighbor_weight;
+
+#ifndef FIRST_STEP
+		//fetch neighbor texel from previous level too
+		neighbor_coords >>= 1;
+		neighbor_color = texture2d_read_4f(lower_interpolated_tex, neighbor_coords, 0);
+
+		neighbor_weight = weight[i] * neighbor_color.w;//any color that has zero "w" will be ignored
+		color.xyz +=  neighbor_weight * neighbor_color.xyz;
+		totalWeight += neighbor_weight;
+#endif
+	}
+
+	color.xyz /= totalWeight;
+	color.xyz *= color.w;//invalid texel marked by zero "w" will be ignored
+
+	rwtexture2d_store_4f(interpolated_tex, texel_coords, color);
+}

@@ -1,0 +1,76 @@
+#include "../common_compute_code.h"
+
+#define GROUP_DIM 16
+
+#ifdef FIRST_STEP
+decl_texture2d_2f(depthMatMap, 0);//higher level of texture containing distance to camera and material ID
+decl_texture2d_4f(normalMap, 1);//higher level of texture containing world space normal
+#else
+decl_texture2d_4f(higher_level_depth_normal_min, 0);//higher level of texture containing depth and normal's min values
+decl_texture2d_4f(higher_level_depth_normal_max, 1);//higher level of texture containing depth and normal's max values
+#endif
+decl_rwtexture2d_4f(lower_level_depth_normal_min, 2);//lower level of texture containing depth and normal's min values
+decl_rwtexture2d_4f(lower_level_depth_normal_max, 3);//lower level of texture containing depth and normal's max values
+
+#ifdef FIRST_STEP
+#	define get_output_size(width, height) {texture2d_getsize_4f(normalMap, width, height); width >>= 1; height >>= 1;}
+#else
+#	define get_output_size(width, height) {texture2d_getsize_4f(higher_level_depth_normal_min, width, height); width >>= 1; height >>= 1;}
+#endif
+
+main_proc(GROUP_DIM, GROUP_DIM, 1)
+{
+	uint width, height;//target size
+    
+    get_output_size(width, height);
+        
+    if (globalThreadIdx.x >= width || globalThreadIdx.y >= height)
+        return;
+
+    uint2 higherIdx = globalThreadIdx.xy * 2;
+    float4 depth_norm_min, depth_norm_max;
+#ifdef FIRST_STEP
+    float4 depth_norm[4];//depth and normal value in 4 texels in the higher level
+    
+    //depth value
+    float2 depth_mat = texture2d_read_2f(depthMatMap, higherIdx, 0);
+    depth_norm[0].x = depth_mat.x;
+    depth_norm[1].x = texture2d_read_2f(depthMatMap, higherIdx + int2(1, 0), 0).x;
+    depth_norm[2].x = texture2d_read_2f(depthMatMap, higherIdx + int2(0, 1), 0).x;
+    depth_norm[3].x = texture2d_read_2f(depthMatMap, higherIdx + int2(1, 1), 0).x;
+
+    //normal
+    depth_norm[0].yzw = texture2d_read_4f(normalMap, higherIdx, 0).xyz;
+    depth_norm[1].yzw = texture2d_read_4f(normalMap, higherIdx + int2(1, 0), 0).xyz;
+    depth_norm[2].yzw = texture2d_read_4f(normalMap, higherIdx + int2(0, 1), 0).xyz;
+    depth_norm[3].yzw = texture2d_read_4f(normalMap, higherIdx + int2(1, 1), 0).xyz;
+
+    depth_norm_min = min (min (depth_norm[0], depth_norm[1]), min (depth_norm[2], depth_norm[3]));
+    depth_norm_max = max (max (depth_norm[0], depth_norm[1]), max (depth_norm[2], depth_norm[3]));
+
+#else //#ifdef FIRST_STEP
+    //depth and normal value in 4 texels in the higher level
+    float4 corner_depth_norm_min0, corner_depth_norm_min1, corner_depth_norm_min2, corner_depth_norm_min3;
+    float4 corner_depth_norm_max0, corner_depth_norm_max1, corner_depth_norm_max2, corner_depth_norm_max3;
+
+    corner_depth_norm_min0 = texture2d_read_4f(higher_level_depth_normal_min, higherIdx, 0);
+    corner_depth_norm_min1 = texture2d_read_4f(higher_level_depth_normal_min, higherIdx + int2(1, 0), 0);
+    corner_depth_norm_min2 = texture2d_read_4f(higher_level_depth_normal_min, higherIdx + int2(0, 1), 0);
+    corner_depth_norm_min3 = texture2d_read_4f(higher_level_depth_normal_min, higherIdx + int2(1, 1), 0);
+
+    corner_depth_norm_max0 = texture2d_read_4f(higher_level_depth_normal_max, higherIdx, 0);
+    corner_depth_norm_max1 = texture2d_read_4f(higher_level_depth_normal_max, higherIdx + int2(1, 0), 0);
+    corner_depth_norm_max2 = texture2d_read_4f(higher_level_depth_normal_max, higherIdx + int2(0, 1), 0);
+    corner_depth_norm_max3 = texture2d_read_4f(higher_level_depth_normal_max, higherIdx + int2(1, 1), 0);
+
+    depth_norm_min = min (min (corner_depth_norm_min0, corner_depth_norm_min1), 
+                        min (corner_depth_norm_min2, corner_depth_norm_min3));
+    depth_norm_max = max (max (corner_depth_norm_max0, corner_depth_norm_max1), 
+                        max (corner_depth_norm_max2, corner_depth_norm_max3));
+
+#endif //#ifdef FIRST_STEP
+
+    //store result
+    rwtexture2d_store_4f(lower_level_depth_normal_min, globalThreadIdx.xy, depth_norm_min);
+    rwtexture2d_store_4f(lower_level_depth_normal_max, globalThreadIdx.xy, depth_norm_max);
+}

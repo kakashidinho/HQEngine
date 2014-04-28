@@ -1,0 +1,86 @@
+resources {
+	
+	/*---------------- for depth pass -------------------------*/
+	render_target "rsm_depth_material_img" {
+		/* info for render target. "has_mipmap" default is false. */
+		type=2d	//type default is 2d
+			 
+		width=512
+		height=512
+			
+		format=rg32f
+		
+	}
+	render_target "rsm_world_pos_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=512
+		height=512
+			
+		format=rgba16f
+		
+	}
+	render_target "rsm_world_normal_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=512
+		height=512
+			
+		format=rgba16f
+		
+	}
+	render_target "rsm_flux_img" {
+		/* info for render target. "has_mipmap" default is false. */
+			 
+		width=512
+		height=512
+			
+		format=rgba8ub
+		
+	}
+
+	/*--------for g-buffer pass----------*/
+	render_target "depth_materialID_img" {
+		//this texture contains depth and materialID
+		type=2d	//type default is 2d
+			 
+		width=512
+		height=512
+			
+		format=rg32f
+		
+	}
+	render_target "world_pos_img" {
+		/* info for render target. "has_mipmap" default is false. */
+		type=2d	
+			 
+		width=512
+		height=512
+			
+		format=rgba16f
+		
+	}
+	render_target "world_normal_img" {
+		/* info for render target. "has_mipmap" default is false. */
+		type=2d	
+			 
+		width=512
+		height=512
+			
+		format=rgba16f
+		
+	}
+
+	render_target "direct_flux_img" {
+		/* info for render target. "has_mipmap" default is false. */
+		type=2d	
+			 
+		width=512
+		height=512
+			
+		format=rgba8ub
+		
+	}
+
+	/*--------------------*/
+}

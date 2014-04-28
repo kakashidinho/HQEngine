@@ -1,0 +1,142 @@
+#include "../common_compute_code.h"
+#include "common.cshaderh"
+
+#define DEPTH_THRESHOLD  0.06
+#define NORMAL_THRESHOLD  0.5
+#define VERTEX_STRIDE (4 * 3)
+
+
+begin_decl_uniform_buffer(current_level_info, 10)
+{
+	uint current_level;//current level of refinement step
+};
+
+decl_structbuffer(uint, numSubsplats, 0);
+decl_structbuffer(Subsplat, current_subplats_buffer, 1);//current refinement step's buffer
+decl_structbuffer(Subsplat, finer_subplats_buffer, 2);//finer subsplats refinement step
+decl_structbuffer(Subsplat, final_subsplat, 3);//final list of subsplats
+decl_uintbuffer(indirect_args, 4);//buffer containing number of thread group to dispatch for illumination and refinement steps
+
+decl_texture2d_4f(depth_norm_min_map, 0);//contain min depth and normal for finer subsplats
+decl_texture2d_4f(depth_norm_max_map, 1);//contain max depth and normal for finer subsplats
+
+//insert to finer subsplats list and return number of subsplats
+uint insertToFinerSubsplatsList(Subsplat subsplat)
+{
+	uint index;
+
+	atomic_add(numSubsplats[subsplat.level + 1], 1, index);
+
+	finer_subplats_buffer[index] = subsplat;
+
+	return index + 1;
+}
+
+//insert to final subsplats list and return number of subsplats
+uint insertToFinalSubsplatsList(Subsplat subsplat)
+{
+	uint index;
+
+	atomic_add(numSubsplats[0], 1, index);
+
+	final_subsplat[index] = subsplat;
+
+	return index + 1;
+}
+
+uint setFinerStepDispatchSize(uint value)
+{
+	uint curSize;
+	atomic_max(indirect_args[(2 + current_level) * 3], value, curSize);
+
+	return curSize;
+}
+
+uint setIndirectIllumDispatchSize(uint value)
+{
+	uint curSize;
+	atomic_max(indirect_args[0], value, curSize);
+
+	return curSize;
+}
+
+bool depthDiscontinuity(float min_depth, float max_depth)
+{
+	return (max_depth - min_depth) > DEPTH_THRESHOLD;
+}
+
+bool normalDiscontinuity(float3 min_normal, float3 max_normal)
+{
+	return (max_normal.x - min_normal.x) > NORMAL_THRESHOLD || 
+			(max_normal.y - min_normal.y) > NORMAL_THRESHOLD || 
+			(max_normal.z - min_normal.z) > NORMAL_THRESHOLD ;
+}
+
+uint getDispatchSize(uint numSubsplats)
+{
+	uint re = numSubsplats % GROUP_THREAD_SIZE;
+	uint size = (numSubsplats) / GROUP_THREAD_SIZE;
+	size += (GROUP_THREAD_SIZE  - 1 + re) / GROUP_THREAD_SIZE;
+
+	return size;
+}
+
+#ifdef FINAL_STEP
+	//this is final step, so insert subsplat to final list
+# define append_to_nextstep_list(subsplat) insertToFinalSubsplatsList(subsplat)
+# define set_nextstep_dispatch_size(value) setIndirectIllumDispatchSize(value)
+#else
+	//insert subsplat to buffer for next refinement step
+# define append_to_nextstep_list(subsplat) insertToFinerSubsplatsList(subsplat)
+# define set_nextstep_dispatch_size(value) setFinerStepDispatchSize(value)
+#endif
+
+main_proc(GROUP_THREAD_SIZE, 1, 1)
+{
+	if (globalThreadIdx.x >= numSubsplats[current_level + 1])
+		return;
+
+	uint numSubsplats;
+	Subsplat subsplat;
+
+	//get subsplat
+	subsplat = current_subplats_buffer[globalThreadIdx.x];
+
+	//get min & max depth and normal values of finer subsplat
+	float4 depth_norm_min = texture2d_read_4f(depth_norm_min_map, uint2(subsplat.x, subsplat.y), 0);
+	float4 depth_norm_max = texture2d_read_4f(depth_norm_max_map, uint2(subsplat.x, subsplat.y), 0);
+
+	if (depthDiscontinuity(depth_norm_min.x, depth_norm_max.x)
+	|| normalDiscontinuity(depth_norm_min.yzw, depth_norm_max.yzw))
+	{
+		uint2 finer_location = uint2(subsplat.x, subsplat.y) * 2;
+		subsplat.level ++;
+		//split subsplat to 4 susplats
+		subsplat.x = finer_location.x; subsplat.y = finer_location.y;
+		append_to_nextstep_list(subsplat);
+
+		subsplat.x = finer_location.x + 1; subsplat.y = finer_location.y;
+		append_to_nextstep_list(subsplat);
+
+		subsplat.x = finer_location.x; subsplat.y = finer_location.y + 1;
+		append_to_nextstep_list(subsplat);
+
+		subsplat.x = finer_location.x + 1; subsplat.y = finer_location.y + 1;
+		numSubsplats = append_to_nextstep_list(subsplat);
+
+		//now set dispatch size for next step
+		uint dispatch_size = getDispatchSize(numSubsplats); 
+		set_nextstep_dispatch_size(dispatch_size);
+	}
+	else
+	{
+		//pass to final subsplat list
+		numSubsplats = insertToFinalSubsplatsList(subsplat);
+
+		//now set dispatch size for indirect illumination step
+		uint dispatch_size = getDispatchSize(numSubsplats);
+		setIndirectIllumDispatchSize(dispatch_size);
+	}
+
+
+}

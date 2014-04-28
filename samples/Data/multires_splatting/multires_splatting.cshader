@@ -1,0 +1,139 @@
+#include "../common_compute_code.h"
+#include "common.cshaderh"
+
+
+begin_decl_uniform_buffer(materialInfos, 2)
+{
+	float4 materialDiffuse[7];
+};
+
+begin_decl_uniform_buffer(rsm_samples, 11)
+{
+	uint2 numVPLs;
+};
+
+//input textures
+decl_texture2d_with_sampler_2f(depthMatMap, 0);//texture containing depth and material ID
+decl_texture2d_with_sampler_4f(worldPosMap, 1);//texture containing world space position
+decl_texture2d_with_sampler_4f(worldNormalMap, 2);//texture containing world space normal
+decl_texture2d_with_sampler_2f(rsm_depthMatMap, 3);//texture containing VPL's depth and material ID
+decl_texture2d_with_sampler_4f(rsm_worldPosMap, 4);//texture containing VPL's world space position
+decl_texture2d_with_sampler_4f(rsm_worldNormalMap, 5);//texture containing VPL's world space normal
+decl_texture2d_with_sampler_4f(rsm_fluxMap, 6);//texture containing VPL's flux
+decl_texture2d_2f(rsm_sampleMap, 7);//texture containing VPL's sampling pattern
+
+
+//output textures
+decl_rwtexture2d_4f(illumination_tex0, 0);//coarse level texture containing illumination
+decl_rwtexture2d_4f(illumination_tex1, 1);//coarse level texture containing illumination
+decl_rwtexture2d_4f(illumination_tex2, 2);//coarse level texture containing illumination
+decl_rwtexture2d_4f(illumination_tex3, 3);//coarse level texture containing illumination
+decl_rwtexture2d_4f(illumination_tex4, 4);//coarse level texture containing illumination
+decl_rwtexture2d_4f(illumination_tex5, 5);//finest level texture containing illumination
+
+//number of subsplats in final list
+decl_structbuffer(uint, numSubsplats, 6);
+//final list of subsplats
+decl_structbuffer(Subsplat, final_subsplat, 7);
+
+main_proc(GROUP_THREAD_SIZE, 1, 1)
+{
+	if (globalThreadIdx.x >= numSubsplats[0])
+		return;
+
+	Subsplat subsplat = final_subsplat[globalThreadIdx.x];
+	uint2 gbuffer_size, coarsest_size, current_size;
+
+
+	//gbuffer-size
+	texture2d_getsize_2f(depthMatMap, gbuffer_size.x, gbuffer_size.y);
+	//coarsest size
+	coarsest_size = uint2(COARSEST_SIZE, COARSEST_SIZE);
+	//current level's size
+	current_size = coarsest_size << subsplat.level;
+
+	//size of half texel in this level with respect to finest level
+	const float halfTexelSize = float(gbuffer_size.x / coarsest_size.x) * 0.5;
+
+	//get g-buffer sampling coords
+	uint2 texel_coords = uint2(subsplat.x, subsplat.y);
+
+	float2 gbufferCoords =  (float2(texel_coords) + float2( 0.5, 0.5)) / current_size.x;
+
+	//depth and material ID
+	float2 depthMat = texture2d_sample_lod_2f(depthMatMap, gbufferCoords, 0.0);
+	//material
+	float4 matDiffuse = materialDiffuse[int(depthMat.y)];
+
+	//world position
+	float4 worlPos = texture2d_sample_lod_4f(worldPosMap, gbufferCoords, 0.0);
+
+	//world normal
+	float4 worldNormal = texture2d_sample_lod_4f(worldNormalMap, gbufferCoords, 0.0);
+	worldNormal = normalize(worldNormal);
+
+	float4 total_indirect_illumination = float4(0.0, 0.0, 0.0, 0.0);
+
+	//for each VPL
+	_LOOP_ATTRIB_ _UAV_COND_ATTRIB_
+	for (uint j = 0; j < numVPLs.y; ++j)
+	{
+		_LOOP_ATTRIB_ _UAV_COND_ATTRIB_
+		for (uint i = 0; i < numVPLs.x; ++i)
+		{
+			//get sampling coords
+			float2 vplSampleCoords = texture2d_read_2f(rsm_sampleMap, uint2(i, j), 0);
+			//get VPL material ID
+			int vplMaterialID = int(texture2d_sample_lod_2f(rsm_depthMatMap, vplSampleCoords, 0.0).y);
+			//get VPL position
+			float4 vplPos = texture2d_sample_lod_4f(rsm_worldPosMap, vplSampleCoords, 0.0);
+			//get VPL normal
+			float4 vplNormal = texture2d_sample_lod_4f(rsm_worldNormalMap, vplSampleCoords, 0.0);
+			//get VPL flux
+			float4 vplFlux = texture2d_sample_lod_4f(rsm_fluxMap, vplSampleCoords, 0.0);
+			
+			//VPL's material
+			float4 vplMatDiffuse = materialDiffuse[vplMaterialID];
+
+			//normalize normal
+			vplNormal.xyz = vplNormal.w * normalize(vplNormal.xyz);
+
+			//calculate indirect illumination
+			float3 toVPL = vplPos.xyz - worlPos.xyz;
+			float distanceSqr = dot(toVPL, toVPL);
+			float distance = sqrt(distanceSqr);
+			toVPL = toVPL / distance;
+
+			float pdot = max(dot(toVPL, worldNormal.xyz), 0.0);
+			float ldot = max(dot(-toVPL, vplNormal.xyz), 0.0);
+			float4 indirectI = matDiffuse * vplFlux * pdot * ldot;
+			indirectI /= (2 * distanceSqr + distance + 1.0);
+
+			total_indirect_illumination +=  indirectI ;
+		}//for (uint j = 0; j < numVPLs.y; ++j)
+	}//for (uint i = 0; i < numVPLs.x; ++i)
+
+	//now write to corresponding texture
+	total_indirect_illumination.w = 1.0;//mark as valid texel
+	switch(subsplat.level)
+	{
+	case 0:
+		rwtexture2d_store_4f(illumination_tex0, texel_coords, total_indirect_illumination);
+		break;
+	case 1:
+		rwtexture2d_store_4f(illumination_tex1, texel_coords, total_indirect_illumination);
+		break;
+	case 2:
+		rwtexture2d_store_4f(illumination_tex2, texel_coords, total_indirect_illumination);
+		break;
+	case 3:
+		rwtexture2d_store_4f(illumination_tex3, texel_coords, total_indirect_illumination);
+		break;
+	case 4:
+		rwtexture2d_store_4f(illumination_tex4, texel_coords, total_indirect_illumination);
+		break;
+	case 5:
+		rwtexture2d_store_4f(illumination_tex5, texel_coords, total_indirect_illumination);
+		break;
+	}//switch(subsplat.level)
+}

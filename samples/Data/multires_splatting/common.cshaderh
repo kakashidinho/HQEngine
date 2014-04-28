@@ -1,0 +1,11 @@
+
+struct Subsplat {
+	uint level;
+	uint x, y;
+};
+
+#define GROUP_THREAD_SIZE 64
+#define FINEST_SIZE 512
+#define NUM_RESOLUTIONS 6
+#define COARSEST_SIZE ((FINEST_SIZE) >> (NUM_RESOLUTIONS - 1))
+#define NUM_VPL_PER_DIM 

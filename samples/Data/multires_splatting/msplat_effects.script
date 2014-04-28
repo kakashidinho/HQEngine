@@ -1,0 +1,80 @@
+techniques{
+	technique "multires-splatting" { /*  must specify technique name  */
+		pass "depth-pass" {
+			vertex_shader="depth-pass_vs"
+			pixel_shader="depth-pass_ps"
+			depth=full
+			cull=ccw
+			outputs {  /*  if not specified, default render target is used  */
+				output0=rsm_depth_material_img 
+				output1=rsm_world_pos_img 
+				output2=rsm_world_normal_img 
+				output3=rsm_flux_img 
+				depth_stencil_buffer_format=d24s8
+			}
+		}
+		pass "gbuffer-pass" {
+			vertex_shader="gbuffer-pass_vs"
+			pixel_shader="gbuffer-pass_ps"
+			depth=full
+			cull=ccw
+			texture0 {
+				min_filter="point" mag_filter="point" mipmap_filter="none"
+				address_u="clamp" address_v="clamp"
+				source=rsm_depth_material_img
+			}
+			outputs {  /*  if not specified, default render target is used  */
+				output0=direct_flux_img 
+				output1=world_pos_img 
+				output2=world_normal_img 
+				output3=depth_materialID_img 
+				depth_stencil_buffer_format=d24s8
+			}
+		}
+
+		compute_pass "multires_splatting" {
+			shader = "multires_splatting_cs"
+
+			texture0 {
+				 min_filter="point" mag_filter="point"
+				 source=depth_materialID_img
+			}
+			texture1 {
+				 min_filter="point" mag_filter="point"
+				 source=world_pos_img
+			}
+			texture2 {
+				 min_filter="point" mag_filter="point"
+				 source=world_normal_img
+			}
+			texture3 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_depth_material_img
+			}
+			texture4 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_world_pos_img
+			}
+			texture5 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_world_normal_img
+			}
+			texture6 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_flux_img
+			}
+			texture7 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_sample_map
+			}
+		}
+
+		pass "final-pass" {
+			texture0 = direct_flux_img
+			texture1 = final_interpolated_illum_img
+
+			vertex_shader="final-pass_vs"
+			pixel_shader="final-pass_ps"
+		}
+	}
+}

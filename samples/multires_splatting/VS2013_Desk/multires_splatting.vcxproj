@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\BaseSource\BaeApp.cpp" />
+    <ClCompile Include="..\..\BaseSource\Light.cpp" />
+    <ClCompile Include="..\Source\App.cpp" />
+    <ClCompile Include="..\Source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\BaseSource\BaseApp.h" />
+    <ClInclude Include="..\..\BaseSource\BaseCommon.h" />
+    <ClInclude Include="..\..\BaseSource\Light.h" />
+    <ClInclude Include="..\..\Data\common_compute_code.h" />
+    <ClInclude Include="..\..\Data\common_shader_code.h" />
+    <ClInclude Include="..\Source\App.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass.cg">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl_glsl.bat %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl_glsl.bat %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="API.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\Data\multires_splatting\gbuffer-pass.cg">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl_glsl.bat %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl_glsl.bat %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+    </CustomBuild>
+    <None Include="..\..\Data\multires_splatting\clear_illumination_textures.cshader" />
+    <None Include="..\..\Data\multires_splatting\common.cshaderh" />
+    <CustomBuild Include="..\..\Data\multires_splatting\final-pass.cg">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl_glsl.bat %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\..\Data\compile_cg_2_hlsl_glsl.bat %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.hlslf;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename)-compiled-cg.glslf;%(Outputs)</Outputs>
+    </CustomBuild>
+    <None Include="..\..\Data\multires_splatting\mipmap_gen.cshader" />
+    <None Include="..\..\Data\multires_splatting\msplat_effects.script" />
+    <None Include="..\..\Data\multires_splatting\msplat_resourcesCommon.script" />
+    <None Include="..\..\Data\multires_splatting\msplat_resourcesD3D11.script" />
+    <None Include="..\..\Data\multires_splatting\msplat_resourcesGL.script" />
+    <None Include="..\..\Data\multires_splatting\multires_splatting.cshader" />
+    <None Include="..\..\Data\multires_splatting\subsplats_refine.cshader" />
+    <None Include="..\..\Data\multires_splatting\upsample.cshader" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F8343172-E627-462B-9D79-7660C9611D49}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>multires_splatting</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\bin\VS2013_Desk_bin_$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\bin\VS2013_Desk_bin_$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../HQEngine/Source;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/Win32-vs2013-desktop/lib/$(Configuration);$(SolutionDir)/../../../HQEngine/VS2013/Desktop/Output/$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MyGUIEngine_d.lib;MyGUI.HQEnginePlatform_d.lib;HQEngineD.lib;HQUtilMathD.lib;HQUtilD.lib;HQSceneManagement.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y "$(SolutionDir)\..\..\..\HQEngine\VS2013\Desktop\Output\$(Configuration)\*.dll"  "$(OutDir)"
+xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\bin\$(Configuration)\*.dll"  "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../../HQEngine/Source;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)/../../../ThirdParty-mod/MyGUI/Win32-vs2013-desktop/lib/$(Configuration);$(SolutionDir)/../../../HQEngine/VS2013/Desktop/Output/$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>MyGUIEngine.lib;MyGUI.HQEnginePlatform.lib;HQEngine.lib;HQUtilMath.lib;HQUtil.lib;HQSceneManagement.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /q /y "$(SolutionDir)\..\..\..\HQEngine\VS2013\Desktop\Output\$(Configuration)\*.dll"  "$(OutDir)"
+xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\bin\$(Configuration)\*.dll"  "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

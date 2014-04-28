@@ -1,0 +1,122 @@
+/*
+Copyright (C) 2010-2014  Le Hoang Quyen (lehoangq@gmail.com)
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the MIT license.  See the file
+COPYING.txt included with this distribution for more information.
+
+
+*/
+
+#include "../common_shader_code.h"
+
+#define NORMALIZE_RESULTS 0
+
+
+uniform transform {
+	float4x3 worldMat;
+	float4x4 viewMat;
+	float4x4 projMat;
+	float4 cameraPos;//camera's world position
+}: BUFFER[0];
+
+uniform lightView {
+	float4x4 lightViewMat;//light camera's view matrix
+	float4x4 lightProjMat;//light camera's projection matrix
+}: BUFFER[1];
+
+#define HALF_PIXEL_OFFSET 0.5 / 512
+
+struct vOut{
+	float4 oPos : POSITION;
+	float3 oPosW : TEXCOORD0;//world space position
+	float3 oNormalW: TEXCOORD2;//world space normal
+};
+
+//do nothing in other API
+float2 offsetPostion(float4 position){
+	return position.xy;
+}
+
+//offset by half a pixel, because of  the way the texel map to pixel in D3D9.
+vs_2_0 vs_3_0 float2 offsetPostion(float4 position){
+	return position.xy + float2(-HALF_PIXEL_OFFSET, HALF_PIXEL_OFFSET) * position.w * 2.0;
+}
+
+
+//vertex shader
+vOut VS(in vPNIn input){
+	vOut output;
+	
+	float3 posW;
+	float4 posH;
+	float3 normalW; 
+	
+	transformWVP(input.iPos, worldMat, lightViewMat, lightProjMat, posW, posH);
+	normalW = worldTransformNormal(input.iNormal, worldMat );
+	
+	//projected position
+	output.oPos = posH;
+	output.oPos.xy = offsetPostion(output.oPos);//API dependent function
+	
+	//world space position
+	output.oPosW = posW;
+	
+	//world space normal
+	output.oNormalW = normalW;
+	
+	return output;
+};
+
+
+uniform materials {
+	float4 materialDiffuse[7];
+} : BUFFER[2];
+
+uniform materialIndex {
+	int materialID;
+} : BUFFER[3];
+
+uniform lightProperties {
+	
+	float3 lightPosition;
+	float3 lightDirection;
+	float4 lightDiffuse;
+	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
+} : BUFFER[4];
+
+
+struct pOut{
+	float2 depth_materialID: COLOR0;//distance to camera and material ID
+	float4 posW: COLOR1;//world space position
+	float4 normalW: COLOR2;//world space normal
+	float4 flux: COLOR3;//flux
+};
+
+//pixel shader
+pOut PS(
+	in float4 vPos : POSITION,
+	in float3 posW : TEXCOORD0,//world space position
+	in float3 normalW: TEXCOORD2 //world space normal
+	)
+{
+	pOut output;
+	
+	//re-normalize normal
+	normalW = normalize(normalW);
+
+	output.depth_materialID.x = length(posW - lightPosition.xyz);//distance to light
+	output.depth_materialID.y = materialID;//material ID
+	
+	output.posW = float4(posW, 1.0);//world space position 
+	
+	output.normalW = float4(normalW, 1.0);//world space normal
+
+	//calculate flux
+	float3 lightVec = normalize(posW - lightPosition);
+	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
+	
+	output.flux = spot * lightDiffuse * materialDiffuse[materialID];
+	
+	return output;
+}

@@ -1,0 +1,119 @@
+#include "../common_shader_code.h"
+
+#define NORMALIZE_RESULTS 0
+
+/*---------------vertex shader-------------*/
+uniform transform {
+	float4x3 worldMat;
+	float4x4 viewMat;
+	float4x4 projMat;
+	float4 cameraPos;//camera's world position
+}: BUFFER[0];
+
+uniform lightView {
+	float4x4 lightViewMat;//light camera's view matrix
+	float4x4 lightProjMat;//light camera's projection matrix
+}: BUFFER[1];
+
+
+struct vOut{
+	float4 oPos : POSITION;//clip space position
+	float3 oPosW : TEXCOORD0;//world space position
+	float3 oNormalW: TEXCOORD1;//world space normal
+	float4 oPosLight: TEXCOORD2;//projected position in light camera's clip space
+};
+
+
+
+//vertex shader
+vOut VS(in vPNIn input){
+	vOut output;
+	
+	//world space position and projected position
+	transformWVP(input.iPos, worldMat, viewMat, projMat, output.oPosW, output.oPos);
+	
+	//world space normal
+	output.oNormalW = worldTransformNormal(input.iNormal, worldMat);
+	
+	//light camera's clip space position
+	output.oPosLight = clipTransformCoords(output.oPosW, lightViewMat, lightProjMat);
+	
+	return output;
+};
+
+/*-------fragment shader------------------*/
+#define DEPTH_BIAS 0.02
+#define SHADOW_MAP_SIZE 512
+
+uniform materials {
+	float4 materialDiffuse[7];
+} : BUFFER[2];
+
+uniform materialIndex {
+	int materialID;
+} : BUFFER[3];
+
+uniform lightProperties {
+	
+	float3 lightPosition;
+	float3 lightDirection;
+	float4 lightDiffuse;
+	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
+} : BUFFER[4];
+
+
+struct pIn{
+	float4 position: POSITION; //clip space position
+	float3 posW : TEXCOORD0;//world space position
+	float3 normalW: TEXCOORD1; //world space normal
+	float4 posLight: TEXCOORD2; //projected position in light camera's clip space
+};
+
+struct pOut{
+	float4 direct_flux: COLOR0;//direct illumination's flux
+	float4 posW: COLOR1;//world space position
+	float4 normalW: COLOR2;//world space normal
+	float2 depth_materialID: COLOR3;//distance to camera and materialID
+};
+
+uniform sampler2D rsm_depthMap : TEXUNIT0;//depth texture
+
+
+//compute shadow factor
+float computeShadowFactor(float2 texcoords, float fragmentDepth){
+	return computeShadowFactor(rsm_depthMap, SHADOW_MAP_SIZE, texcoords, fragmentDepth, DEPTH_BIAS);
+}
+
+pOut PS (in pIn input){
+	pOut output;
+
+	//calculate texcoords in shadow map
+	float2 shadowMapUV = input.posLight.xy / input.posLight.w;
+	//scale to [0..1]
+	shadowMapUV = scaleToTexcoord(shadowMapUV);
+	
+	//fragment depth with respect to light source
+	float fragmentDepth = length(input.posW - lightPosition.xyz);
+
+	//shadow factor
+	float shadowFactor = computeShadowFactor(shadowMapUV, fragmentDepth);
+	
+	//re-normalize normal
+	input.normalW = normalize(input.normalW);
+
+	//direct illumination
+	float4 direct_flux;
+	float3 lightVec = normalize(input.posW - lightPosition);
+	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
+	
+	direct_flux = spot * lightDiffuse * shadowFactor * materialDiffuse[materialID];
+
+	//store result
+	output.posW = float4(input.posW, 1.0);
+	output.normalW = float4(input.normalW, 0.0);
+	output.direct_flux = direct_flux;
+	output.depth_materialID.x = length(input.posW - cameraPos.xyz);//distance to camera
+	output.depth_materialID.y = materialID;
+
+	return output;
+}

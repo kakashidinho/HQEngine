@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\settings">
+      <UniqueIdentifier>{dfa9c29b-3a8f-4970-b1dd-d7a04279ce41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\scripts">
+      <UniqueIdentifier>{9d27cec2-4dd5-492b-80ee-93e1ede9bbde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders">
+      <UniqueIdentifier>{489e4756-ee54-4d37-ab7c-e1bd4ba0b394}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\BaseSource\BaeApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\BaseSource\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\BaseSource\BaseApp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\BaseSource\BaseCommon.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\BaseSource\Light.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\App.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Data\common_shader_code.h">
+      <Filter>Resource Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Data\common_compute_code.h">
+      <Filter>Resource Files\shaders</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass.cg">
+      <Filter>Resource Files\shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\Data\multires_splatting\gbuffer-pass.cg">
+      <Filter>Resource Files\shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\Data\multires_splatting\final-pass.cg">
+      <Filter>Resource Files\shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="API.txt">
+      <Filter>Resource Files\settings</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Data\multires_splatting\msplat_effects.script">
+      <Filter>Resource Files\scripts</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\msplat_resourcesCommon.script">
+      <Filter>Resource Files\scripts</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\msplat_resourcesD3D11.script">
+      <Filter>Resource Files\scripts</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\msplat_resourcesGL.script">
+      <Filter>Resource Files\scripts</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\mipmap_gen.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\subsplats_refine.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\common.cshaderh">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\clear_illumination_textures.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\multires_splatting.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\upsample.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
