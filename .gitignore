@@ -9,6 +9,7 @@
 *.cache
 *.temp
 *~
+Backup
 VS_int_files
 ThirdParty-mod/libvorbis/**/Debug
 ThirdParty-mod/libvorbis/**/Release

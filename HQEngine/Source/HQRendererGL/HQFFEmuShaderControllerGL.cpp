@@ -56,10 +56,11 @@ void glUseFixedFunctionProgramPipeline(GLuint program)
 {
 	glBindProgramPipeline(ge_shader_pipeline);
 	const GLbitfield activeStages = GL_VERTEX_SHADER_BIT | GL_FRAGMENT_SHADER_BIT;
-	const GLbitfield inactiveStages = GL_GEOMETRY_SHADER_BIT;
+	const GLbitfield inactiveStages = GL_GEOMETRY_SHADER_BIT
 #ifdef GL_TESS_CONTROL_SHADER_BIT
-    inactiveStages |= GL_TESS_CONTROL_SHADER_BIT | GL_TESS_EVALUATION_SHADER_BIT;
+    | GL_TESS_CONTROL_SHADER_BIT | GL_TESS_EVALUATION_SHADER_BIT
 #endif
+	;
 
 	glUseProgramStages(ge_shader_pipeline, activeStages, program);
 	glUseProgramStages(ge_shader_pipeline, inactiveStages, 0);
