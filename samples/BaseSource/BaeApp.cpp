@@ -20,7 +20,7 @@ BaseApp::BaseApp(const char* rendererAPI,
 	Init(rendererAPI, logStream, additionalAPISettings, width, height);
 }
 
-BaseApp::BaseApp(hquint32 width, hquint32 height)
+BaseApp::BaseApp(const char * additionalAPISettings, hquint32 width, hquint32 height)
 	: m_camera(NULL)
 {
 	//read renderer API config from "API.txt"
@@ -36,10 +36,10 @@ BaseApp::BaseApp(hquint32 width, hquint32 height)
 	//create default log stream
 	defaultLogStream = HQCreateFileLogStream("log.txt");
 
-	Init(rendererAPI.c_str(), defaultLogStream.GetRawPointer(), NULL, width, height);
+	Init(rendererAPI.c_str(), defaultLogStream.GetRawPointer(), additionalAPISettings, width, height);
 }
 
-BaseApp::BaseApp(HQLogStream* logStream, hquint32 width, hquint32 height)
+BaseApp::BaseApp(HQLogStream* logStream, const char * additionalAPISettings, hquint32 width, hquint32 height)
 {
 	//read renderer API config from "API.txt"
 	std::string rendererAPI = "D3D11";
@@ -51,7 +51,7 @@ BaseApp::BaseApp(HQLogStream* logStream, hquint32 width, hquint32 height)
 
 	stream.close();
 
-	Init(rendererAPI.c_str(), logStream, NULL, width, height);
+	Init(rendererAPI.c_str(), logStream, additionalAPISettings, width, height);
 }
 
 void BaseApp::Init(const char* rendererAPI,

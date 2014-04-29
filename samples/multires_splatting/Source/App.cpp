@@ -16,7 +16,7 @@ struct Subsplat {
 
 /*------------App----------------*/
 App::App()
-: BaseApp(WINDOW_SIZE, WINDOW_SIZE),
+: BaseApp("Core-GL4.3", WINDOW_SIZE, WINDOW_SIZE),
 	m_vplsDim(16)
 {
 	//setup resources
