@@ -7,7 +7,7 @@
 #define RSM_DIM 512 //reflective shadow map size
 #define WINDOW_SIZE 512
 #define MIN_MAX_MIPMAP_FIRST_SIZE (WINDOW_SIZE / 2)
-#define NUM_RESOLUTIONS 6
+#define NUM_RESOLUTIONS 5
 
 
 /*---------App-------------*/
@@ -52,6 +52,7 @@ private:
 	HQBufferUAV* m_dispatchArgsBuffer;//buffer containing dispatch's arguments. see {m_initialDispatchArgs}
 	hquint32 m_initialSubsplatsCounts[NUM_RESOLUTIONS];//initial total subsplats count and subsplats count for each refinement step
 	DispatchComputeArgs m_initialDispatchArgs[NUM_RESOLUTIONS];//initial dispatch arguments for indirect illumination step and refinement steps
+	hqfloat32 m_subplatsRefineThreshold[2];
 
 	HQUniformBuffer* m_uniformViewInfoBuffer;
 	HQUniformBuffer* m_uniformLightProtBuffer;
@@ -60,6 +61,7 @@ private:
 	HQUniformBuffer* m_uniformLightViewBuffer;
 	HQUniformBuffer* m_uniformRefineStepBuffer;
 	HQUniformBuffer* m_uniformRSMSamplesBuffer;
+	HQUniformBuffer* m_uniformRefineThresholdBuffer;
 
 	HQVertexBuffer * m_fullscreenQuadBuffer;
 	HQVertexLayout * m_fullscreenQuadVertLayout;

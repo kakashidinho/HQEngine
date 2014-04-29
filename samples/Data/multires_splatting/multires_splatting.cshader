@@ -28,13 +28,12 @@ decl_rwtexture2d_4f(illumination_tex0, 0);//coarse level texture containing illu
 decl_rwtexture2d_4f(illumination_tex1, 1);//coarse level texture containing illumination
 decl_rwtexture2d_4f(illumination_tex2, 2);//coarse level texture containing illumination
 decl_rwtexture2d_4f(illumination_tex3, 3);//coarse level texture containing illumination
-decl_rwtexture2d_4f(illumination_tex4, 4);//coarse level texture containing illumination
-decl_rwtexture2d_4f(illumination_tex5, 5);//finest level texture containing illumination
+decl_rwtexture2d_4f(illumination_tex4, 4);//finest level texture containing illumination
 
 //number of subsplats in final list
-decl_structbuffer(uint, numSubsplats, 6);
+decl_structbuffer(uint, numSubsplats, 5);
 //final list of subsplats
-decl_structbuffer(Subsplat, final_subsplat, 7);
+decl_structbuffer(Subsplat, final_subsplat, 6);
 
 main_proc(GROUP_THREAD_SIZE, 1, 1)
 {
@@ -131,9 +130,6 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 		break;
 	case 4:
 		rwtexture2d_store_4f(illumination_tex4, texel_coords, total_indirect_illumination);
-		break;
-	case 5:
-		rwtexture2d_store_4f(illumination_tex5, texel_coords, total_indirect_illumination);
 		break;
 	}//switch(subsplat.level)
 }

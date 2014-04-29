@@ -9,9 +9,9 @@ decl_texture2d_4f(lower_interpolated_tex, 1);//coarser level texture containing 
 decl_rwtexture2d_4f(interpolated_tex, 0);//texture contains interpolated illumination
 
 //number of subsplats in final list
-decl_structbuffer(uint, numSubsplats, 6);
+decl_structbuffer(uint, numSubsplats, 5);
 //final list of subsplats
-decl_structbuffer(Subsplat, final_subsplat, 7);
+decl_structbuffer(Subsplat, final_subsplat, 6);
 
 
 main_proc(16, 16, 1)

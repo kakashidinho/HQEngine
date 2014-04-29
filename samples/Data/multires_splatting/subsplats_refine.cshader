@@ -1,14 +1,17 @@
 #include "../common_compute_code.h"
 #include "common.cshaderh"
 
-#define DEPTH_THRESHOLD  0.06
-#define NORMAL_THRESHOLD  0.5
 #define VERTEX_STRIDE (4 * 3)
 
 
 begin_decl_uniform_buffer(current_level_info, 10)
 {
 	uint current_level;//current level of refinement step
+};
+
+begin_decl_uniform_buffer(current_level_info, 12)
+{
+	float2 threshold;//discontinuity threshold
 };
 
 decl_structbuffer(uint, numSubsplats, 0);
@@ -62,14 +65,14 @@ uint setIndirectIllumDispatchSize(uint value)
 
 bool depthDiscontinuity(float min_depth, float max_depth)
 {
-	return (max_depth - min_depth) > DEPTH_THRESHOLD;
+	return (max_depth - min_depth) > threshold.x;
 }
 
 bool normalDiscontinuity(float3 min_normal, float3 max_normal)
 {
-	return (max_normal.x - min_normal.x) > NORMAL_THRESHOLD || 
-			(max_normal.y - min_normal.y) > NORMAL_THRESHOLD || 
-			(max_normal.z - min_normal.z) > NORMAL_THRESHOLD ;
+	return (max_normal.x - min_normal.x) > threshold.y || 
+			(max_normal.y - min_normal.y) > threshold.y || 
+			(max_normal.z - min_normal.z) > threshold.y ;
 }
 
 uint getDispatchSize(uint numSubsplats)

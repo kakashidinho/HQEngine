@@ -49,13 +49,13 @@ App::App()
 
 	//create light object
 	m_light = new DiffuseSpotLight(
-		HQColorRGBA(0.8f, 0.65f, 0.23f, 1),
-		343.f, 547.8f, -227.f,
-		0, -1, 0,
+		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),
+		300.f, 547.8f, -180.f,
+		0.1f, -1, -0.2f,
 		HQToRadian(70),
-		HQToRadian(50),
+		HQToRadian(60),
 		2.0f,
-		1000.f,
+		800.f,
 		this->m_renderAPI_type);
 
 	//add all to containers
@@ -75,6 +75,8 @@ App::App()
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(LightView), true, &this->m_uniformLightViewBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32), true, &this->m_uniformRefineStepBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32)* m_vplsDim * m_vplsDim, true, &m_uniformRSMSamplesBuffer);
+	m_subplatsRefineThreshold[0] = 0.06f; m_subplatsRefineThreshold[1] = 0.2f;
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(m_subplatsRefineThreshold, sizeof(hqfloat32)* 2, true, &m_uniformRefineThresholdBuffer);
 
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 0, m_uniformViewInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 0, m_uniformViewInfoBuffer);
@@ -85,6 +87,7 @@ App::App()
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 4, m_uniformLightProtBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 10, m_uniformRefineStepBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 11, m_uniformRSMSamplesBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 12, m_uniformRefineThresholdBuffer);
 
 	//fill material array buffer
 	MaterialArray * materials;
@@ -120,6 +123,9 @@ App::~App(){
 void App::Update(HQTime dt){
 	//update scene
 	m_scene->SetUniformScale(0.01f);
+
+	m_light->lightCam().RotateY(dt);
+
 	m_scene->Update(dt);
 
 	//send scene data to shader
@@ -634,6 +640,16 @@ void App::KeyReleased(HQKeyCodeType keyCode)
 	case HQKeyCode::S:
 		if (m_cameraTransition.z > 0)
 			m_cameraTransition.z = 0;//stop moving in Z direction
+		break;
+	case HQKeyCode::NUM1:
+		m_subplatsRefineThreshold[0] += 0.01f;
+		m_uniformRefineThresholdBuffer->Update(m_subplatsRefineThreshold);
+		break;
+	case HQKeyCode::NUM2:
+		m_subplatsRefineThreshold[0] -= 0.01f;
+		if (m_subplatsRefineThreshold[0] <= 0)
+			m_subplatsRefineThreshold[0] = 0;
+		m_uniformRefineThresholdBuffer->Update(m_subplatsRefineThreshold);
 		break;
 	}
 }
