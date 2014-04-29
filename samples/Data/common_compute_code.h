@@ -32,8 +32,8 @@
 #define rwtexture2d_read_4f(_name, _coords) imageLoad(_name, ivec2(_coords))
 
 //texture sampling
-#define texture2d_sample_lod_4f(_name, _2dcoords, _lod) (texture(_name, vec2(_2dcoords), float(_lod)))
-#define texture2d_sample_lod_2f(_name, _2dcoords, _lod) (texture(_name, vec2(_2dcoords), float(_lod)).xy)
+#define texture2d_sample_lod_4f(_name, _2dcoords, _lod) (textureLod(_name, vec2(_2dcoords), float(_lod)))
+#define texture2d_sample_lod_2f(_name, _2dcoords, _lod) (textureLod(_name, vec2(_2dcoords), float(_lod)).xy)
 
 //query size
 #define texture2d_getsize_4f(_name, width, height) {ivec2 size = textureSize(_name, 0); width = size.x; height = size.y;}

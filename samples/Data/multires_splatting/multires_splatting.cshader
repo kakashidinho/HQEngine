@@ -105,7 +105,7 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 
 			float pdot = max(dot(toVPL, worldNormal.xyz), 0.0);
 			float ldot = max(dot(-toVPL, vplNormal.xyz), 0.0);
-			float4 indirectI = matDiffuse * vplFlux * pdot * ldot;
+			float4 indirectI = vplFlux * pdot * ldot;
 			indirectI /= (2 * distanceSqr + distance + 1.0);
 
 			total_indirect_illumination +=  indirectI ;
@@ -113,6 +113,7 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 	}//for (uint i = 0; i < numVPLs.x; ++i)
 
 	//now write to corresponding texture
+	total_indirect_illumination *= matDiffuse;
 	total_indirect_illumination.w = 1.0;//mark as valid texel
 	switch(subsplat.level)
 	{
