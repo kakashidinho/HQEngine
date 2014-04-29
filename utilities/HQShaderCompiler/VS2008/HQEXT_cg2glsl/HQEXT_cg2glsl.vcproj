@@ -247,6 +247,84 @@
 				CommandLine="xcopy /q /y $(SolutionDir)\Output\$(ConfigurationName)\$(TargetFileName) $(SolutionDir)\..\Netbeans\HQEngineShaderCompiler\  "
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release-static-CRT|Win32"
+			OutputDirectory="$(SolutionDir)\Output\$(ConfigurationName)\"
+			IntermediateDirectory="$(SolutionDir)\VS_int_files\$(ProjectName)\$(ConfigurationName)\"
+			ConfigurationType="1"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\..\..\ThirdParty-mod\hlsl2glsl\include;..\..\..\..\ThirdParty-mod\glsl_optimizer\include"
+				PreprocessorDefinitions="MOJOSHADER_NO_VERSION_INCLUDE;WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="hlsl2glsl.lib glsl_optimizer_lib-win32-static-crt.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\..\..\ThirdParty-mod\hlsl2glsl\lib\win32\Release-static-CRT;..\..\..\..\ThirdParty-mod\glsl_optimizer\lib\win32"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="xcopy /q /y $(SolutionDir)\Output\$(ConfigurationName)\$(TargetFileName) $(SolutionDir)\..\Netbeans\HQEngineShaderCompiler\  "
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -328,6 +406,16 @@
 							Outputs="$(InputDir)$(InputName)_Gen.cpp"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-static-CRT|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="flex $(InputPath)"
+							CommandLine="$(InputDir)../../../utilities/Third-Party/GnuWin32/bin/flex.exe   -Phqengine_shader_d3d9_lexer_ -o$(InputDir)$(InputName)_Gen.cpp  $(InputPath)&#x0D;&#x0A;"
+							Outputs="$(InputDir)$(InputName)_Gen.cpp"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\..\HQEngine\Source\HQRendererD3D9\HQShaderD3D9_Lexer_Gen.cpp"
@@ -350,6 +438,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release_noptimize|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="../../../../ThirdParty-mod/GnuWin32/include"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release-static-CRT|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -413,6 +509,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-static-CRT|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\test_data\combined\final-gathering-in.txt"
@@ -435,6 +539,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_noptimize|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-static-CRT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -469,6 +581,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-static-CRT|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\test_data\combined\noise_decoding-in.txt"
@@ -491,6 +611,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_noptimize|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-static-CRT|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
