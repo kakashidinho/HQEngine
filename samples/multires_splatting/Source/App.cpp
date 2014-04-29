@@ -51,7 +51,7 @@ App::App()
 	m_light = new DiffuseSpotLight(
 		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),
 		300.f, 547.8f, -180.f,
-		0.1f, -1, -0.2f,
+		0.05f, -1, -0.1f,
 		HQToRadian(70),
 		HQToRadian(60),
 		2.0f,

@@ -9,7 +9,7 @@ begin_decl_uniform_buffer(current_level_info, 10)
 	uint current_level;//current level of refinement step
 };
 
-begin_decl_uniform_buffer(current_level_info, 12)
+begin_decl_uniform_buffer(threshold_info, 12)
 {
 	float2 threshold;//discontinuity threshold
 };
