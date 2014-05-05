@@ -317,7 +317,7 @@ void HQRenderTargetManagerD3D9::OnResetDevice()
 	}
 }
 
-HQReturnVal HQRenderTargetManagerD3D9::CreateRenderTargetTexture(hq_uint32 width, hq_uint32 height, bool hasMipmaps, 
+HQReturnVal HQRenderTargetManagerD3D9::CreateRenderTargetTexture(hq_uint32 width, hq_uint32 height, hq_uint32 arraySize, bool hasMipmaps,
 											   HQRenderTargetFormat format, HQMultiSampleType multisampleType, 
 											   HQTextureType textureType, 
 											   HQRenderTargetView **pRenderTargetID_Out, 

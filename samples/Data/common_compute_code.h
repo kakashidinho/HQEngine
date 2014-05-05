@@ -10,6 +10,7 @@
 #define decl_texture2d_4f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
 #define decl_texture2d_with_sampler_4f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
 #define decl_texture2d_with_sampler_2f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
+#define decl_texture2darray_with_sampler_4f(_name, _binding) layout(binding  = _binding) uniform sampler2DArray _name;
 #define decl_rwtexture2d_readable_f(_name, _binding) layout(binding  = _binding, r32f) uniform image2D _name;
 #define decl_rwtexture2d_readable_4f(_name, _binding) layout(binding  = _binding, rgba32f) uniform image2D _name;
 #define decl_rwtexture2d_f(_name, _binding) layout(binding  = _binding) uniform writeonly image2D _name;
@@ -33,6 +34,7 @@
 
 //texture sampling
 #define texture2d_sample_lod_4f(_name, _2dcoords, _lod) (textureLod(_name, vec2(_2dcoords), float(_lod)))
+#define texture2darray_sample_lod_4f(_name, _3dcoords, _lod) (textureLod(_name, vec3(_3dcoords), float(_lod)))
 #define texture2d_sample_lod_2f(_name, _2dcoords, _lod) (textureLod(_name, vec2(_2dcoords), float(_lod)).xy)
 
 //query size
@@ -111,8 +113,12 @@ void rwtexture2d_f_getsize_4f(layout (r32f) image2D _name, out uint width, out u
 #define decl_texture2d_with_sampler(_type, _name, _binding) Texture2D<_type> _name : register(t ## _binding);\
 	SamplerState _name ## _sampler_state : TEXUNIT ## _binding;
 
+#define decl_texture2darray_with_sampler(_type, _name, _binding) Texture2DArray<_type> _name : register(t ## _binding);\
+	SamplerState _name ## _sampler_state : TEXUNIT ## _binding;
+
 #define decl_texture2d_with_sampler_4f(_name, _binding) decl_texture2d_with_sampler(float4, _name, _binding)
 #define decl_texture2d_with_sampler_2f(_name, _binding) decl_texture2d_with_sampler(float2, _name, _binding)
+#define decl_texture2darray_with_sampler_4f(_name, _binding) decl_texture2darray_with_sampler(float4, _name, _binding)
 
 #define decl_rwtexture2d_readable_f(_name, _binding) RWTexture2D<float> _name : register(u ## _binding);
 #define decl_rwtexture2d_readable_4f(_name, _binding) error_float4_is_not_readable
@@ -133,6 +139,7 @@ void rwtexture2d_f_getsize_4f(layout (r32f) image2D _name, out uint width, out u
 #define texture2d_read_4f(_name, _2dcoords, _lod) _name.Load(int3(_2dcoords, _lod))
 //texture sampling
 #define texture2d_sample_lod_4f(_name, _2dcoords, _lod) _name.SampleLevel(_name ## _sampler_state, _2dcoords, _lod)
+#define texture2darray_sample_lod_4f(_name, _3dcoords, _lod) _name.SampleLevel(_name ## _sampler_state, _3dcoords, _lod)
 #define texture2d_sample_lod_2f(_name, _2dcoords, _lod) texture2d_sample_lod_4f(_name, _2dcoords, _lod)
 
 //store float4 to one component float texture being viewed as 4 components one

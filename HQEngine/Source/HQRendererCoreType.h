@@ -79,7 +79,8 @@ typedef enum HQTextureType
 	HQ_TEXTURE_2D = 0,
 	HQ_TEXTURE_CUBE = 1,
 	HQ_TEXTURE_BUFFER = 2,
-	HQ_TEXTURE_2D_UAV = 3,///unordered access texture, supports read and write via shader
+	HQ_TEXTURE_2D_ARRAY = 3,
+	HQ_TEXTURE_2D_UAV = 4,///unordered access texture, supports read and write via shader
 	HQ_TEXTURE_TYPE_FORCE_DWORD = 0xffffffff
 } _HQTextureType;
 
@@ -339,8 +340,11 @@ typedef struct HQRenderTargetDesc
 	HQRenderTargetDesc();
 	HQRenderTargetDesc(HQRenderTargetView* renderTargetID, HQCubeTextureFace cubeFace = HQ_CTF_POS_X);
 
-	HQRenderTargetView* renderTargetID;//id of render target
-	HQCubeTextureFace cubeFace;//if render target is cube texture , this attribute will indicate which face will be used as render target
+	HQRenderTargetView* renderTargetID;//id of render target view of resource
+	union {
+		hquint32 arraySlice;//if resource is array texture, this attribute will specify which slice of array will be used as render target
+		HQCubeTextureFace cubeFace;//if resource is cube texture , this attribute will indicate which face will be used as render target
+	};
 }_HQRenderTargetDesc;
 
 //format của render target

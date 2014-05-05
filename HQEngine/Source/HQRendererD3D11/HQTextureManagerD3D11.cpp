@@ -429,6 +429,7 @@ hquint32 HQTextureD3D11::GetWidth() const
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
 	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_ARRAY:
 		{
 			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *)((HQTextureResourceD3D11*)this->pData)->pTexture;
 			D3D11_TEXTURE2D_DESC desc;
@@ -447,6 +448,7 @@ hquint32 HQTextureD3D11::GetHeight() const
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
 	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_ARRAY:
 		{
 			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *)((HQTextureResourceD3D11*)this->pData)->pTexture;
 			D3D11_TEXTURE2D_DESC desc;

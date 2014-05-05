@@ -84,7 +84,7 @@ I           [uUlL]
 
 \"[^\"]*\"			  { SAVE_LINE;  yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext + 1, yyleng - 2);  return STRING_CONST; }
 
-"3d_uav"|"2d_uav"|"3d"|"2d" {SAVE_LINE;  yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng);  return STRING_CONST; }
+"3d_uav"|"2d_uav"|"2d_array"|"3d"|"2d" {SAVE_LINE;  yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng);  return STRING_CONST; }
 
 .					  {	 
 	char errMsg[256]; 

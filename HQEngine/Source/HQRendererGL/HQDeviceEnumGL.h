@@ -81,6 +81,7 @@ struct Caps//device capabilities
 {
 	hquint32 maxVertexAttribs;
 	hquint32 maxTextureSize;
+	hquint32 maxTextureArraySize;
 	hquint32 maxCubeTextureSize;
 	hquint32 maxAF;//max anisotropic level
 	hquint32 nFFTextureUnits;

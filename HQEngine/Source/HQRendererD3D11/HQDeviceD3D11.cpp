@@ -852,7 +852,7 @@ HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool 
 			for (UINT i = 0 ; i < numViews ; ++i)
 			{
 				if (pCurrentRenderTargetViews[i] != NULL)
-					pDevContext->ClearRenderTargetView(pCurrentRenderTargetViews[0] , this->clearColor);
+					pDevContext->ClearRenderTargetView(pCurrentRenderTargetViews[i] , this->clearColor);
 			}
 		}
 		if(dsflags)

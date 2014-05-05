@@ -25,10 +25,11 @@ Unordered access supported buffer resource format:
 	
 Texture resource format, can be one of the following:
 	render_target name {
-		type=2d/cube/2d_uav // default to 2D if not specified 
+		type=2d/cube/2d_uav/2d_array // default to 2D if not specified 
 		has_mipmap=true/false  //default is false
 		width=100
 		height=100
+		array_size=3   //default is 1
 		
 		format=r32f/r16f/rgba32f/rgba16f/rg32f/rg16f/rgba8ub/r8ui/a8ui
 	}

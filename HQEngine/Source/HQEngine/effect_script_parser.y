@@ -244,6 +244,11 @@ output_assignment:
 		$$->SetAttribute("value", $3.string);
 		$$->SetAttribute("cube_face", $4.string);
 	}
+	| OUTPUT EQUAL string_or_identifier INTCONSTANT {
+		$$ = yynew_node($1.string, $1.line);
+		$$->SetAttribute("value", $3.string);
+		$$->SetAttribute("array_slice", $4.iconst);
+	}
 	;
 
 string_or_identifier_or_value:

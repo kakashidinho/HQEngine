@@ -89,7 +89,7 @@ struct HQDepthStencilBufferD3D : public HQBaseDepthStencilBufferView
 struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 {
 	HQRenderTargetTextureD3D(ID3D11Device* pD3DDevice,
-							hq_uint32 width ,hq_uint32 height ,
+							hq_uint32 width, hq_uint32 height, hq_uint32 arraySize,
 							HQMultiSampleType multiSampleType,
 							DXGI_FORMAT format , hq_uint32 numMipmaps,
 							HQSharedPtr<HQBaseTexture> pTex)
@@ -104,10 +104,18 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 		case HQ_TEXTURE_2D: case HQ_TEXTURE_2D_UAV:
 			this->ppRTView = HQ_NEW ID3D11RenderTargetView *[1];
 			this->ppRTView[0] = NULL;
+			this->numViews = 1;
 			break;
 		case HQ_TEXTURE_CUBE:
+			this->numViews = 6;
 			this->ppRTView = HQ_NEW ID3D11RenderTargetView *[6];
 			for(hq_uint32 i = 0 ; i < 6 ; ++i)
+				this->ppRTView[i] = NULL;
+			break;
+		case HQ_TEXTURE_2D_ARRAY:
+			this->numViews = arraySize;
+			this->ppRTView = HQ_NEW ID3D11RenderTargetView *[this->numViews];
+			for (hq_uint32 i = 0; i < this->numViews; ++i)
 				this->ppRTView[i] = NULL;
 			break;
 		}
@@ -117,13 +125,8 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 	{
 		if (ppRTView != NULL)
 		{
-			if (pTexture->type == HQ_TEXTURE_CUBE)
-			{
-				for(hq_uint32 i = 0 ; i < 6 ; ++i)
-					SafeRelease(this->ppRTView[i]);
-			}
-			else
-				SafeRelease(ppRTView[0]);
+			for (hq_uint32 i = 0; i < this->numViews; ++i)
+				SafeRelease(this->ppRTView[i]);
 
 			delete[] ppRTView;
 		}
@@ -197,6 +200,44 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 					srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 					srvDesc.Texture2D.MipLevels = this->numMipmaps;
 					srvDesc.Texture2D.MostDetailedMip = 0;
+				}
+				//create shader resource view
+				hr = pD3DDevice->CreateShaderResourceView(pTex->pTexture, &srvDesc, &pTex->pResourceView);
+				if (FAILED(hr))
+				{
+					SafeRelease(pTex->pTexture);
+					pTex->pResourceView = NULL;
+					break;
+				}
+			}
+				break;
+			case HQ_TEXTURE_2D_ARRAY:
+			{
+				//texture desc
+				rtDesc.ArraySize = this->numViews;
+				//create texture
+				hr = pD3DDevice->CreateTexture2D(&rtDesc, NULL, (ID3D11Texture2D**)&pTex->pTexture);
+
+				if (FAILED(hr))
+				{
+					pTex->pTexture = NULL;
+					pTex->pResourceView = NULL;
+					break;
+				}
+
+				if (sampleCount > 1)//multisample texture
+				{
+					//resource view desc
+					srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY;
+				}
+				else
+				{
+					//resource view desc
+					srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+					srvDesc.Texture2DArray.ArraySize = rtDesc.ArraySize;
+					srvDesc.Texture2DArray.FirstArraySlice = 0;
+					srvDesc.Texture2DArray.MipLevels = this->numMipmaps;
+					srvDesc.Texture2DArray.MostDetailedMip = 0;
 				}
 				//create shader resource view
 				hr = pD3DDevice->CreateShaderResourceView(pTex->pTexture, &srvDesc, &pTex->pResourceView);
@@ -289,20 +330,20 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 
 		}
 			break;
-		case HQ_TEXTURE_CUBE:
+		case HQ_TEXTURE_CUBE: case HQ_TEXTURE_2D_ARRAY:
 		{
 			//texture desc
 			((ID3D11Texture2D*)pTex->pTexture)->GetDesc(&rtDesc);
 
-#if 0
-			/*-----------View as 2D texture array----------------*/
+#if 1
 			//render target view desc
 			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-			rtvDesc.Texture2DArray.MipSlice = 0;
 			rtvDesc.Texture2DArray.ArraySize = 1;
+			rtvDesc.Texture2DArray.MipSlice = 0;
 
-			//create 6 render target views for 6 faces
-			for (int i = 0; i < 6; ++i)
+
+			//create render target views for each array slices
+			for (hquint32 i = 0; i < this->numViews; ++i)
 			{
 				rtvDesc.Texture2DArray.FirstArraySlice = i;
 				hr = pD3DDevice->CreateRenderTargetView(pTex->pTexture, &rtvDesc, &this->ppRTView[i]);
@@ -318,8 +359,8 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 			//render target view desc
 			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 
-			//create 6 render target views for 6 faces
-			for (int i = 0; i < 6; ++i)
+			//create render target views for each array slices
+			for (hquint32 i = 0; i < this->numViews; ++i)
 			{
 				rtvDesc.Texture2D.MipSlice = D3D11CalcSubresource(0, i, rtDesc.MipLevels);
 				hr = pD3DDevice->CreateRenderTargetView(pTex->pTexture, &rtvDesc, &this->ppRTView[i]);
@@ -341,7 +382,8 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 
 	}
 	DXGI_FORMAT format;
-	ID3D11RenderTargetView **ppRTView;//can be one pointer if texture is 2D or 6 pointers if texture is cube
+	ID3D11RenderTargetView **ppRTView;//can be one pointer if texture is 2D or array of pointers if texture is cube/array
+	hquint32 numViews;//number of elements in {ppRTView} array
 	ID3D11Device* pD3DDevice;
 };
 
@@ -439,7 +481,8 @@ HQRenderTargetManagerD3D11::~HQRenderTargetManagerD3D11()
 
 
 
-HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 width, hq_uint32 height, bool hasMipmaps, 
+HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 width, hq_uint32 height, hq_uint32 arraySize, 
+												bool hasMipmaps,
 											   HQRenderTargetFormat format, HQMultiSampleType multisampleType, 
 											   HQTextureType textureType, 
 											   HQRenderTargetView **pRenderTargetID_Out, 
@@ -450,7 +493,7 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 	HQTextureUAVFormat uavFormat;
 	switch (textureType)
 	{
-	case HQ_TEXTURE_2D: 
+	case HQ_TEXTURE_2D:  case HQ_TEXTURE_2D_ARRAY:
 		break;
 	case HQ_TEXTURE_2D_UAV:
 		isTextureUAV = true;
@@ -539,7 +582,7 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 
 	HQRenderTargetTextureD3D *pNewRenderTarget = 
 		new HQRenderTargetTextureD3D(this->pD3DDevice,
-									width , height ,
+									width , height , arraySize,
 									multisampleType ,D3Dformat , 
 									numMipmaps , pNewTex
 									);
@@ -658,6 +701,11 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetGroupImpl(
 
 			if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
 				newGroup->renderTargetViews[i] = ppRTView [renderTargetDescs[i].cubeFace];
+			else if (pRenderTarget->GetTexture()->type == HQ_TEXTURE_2D_ARRAY)
+			{
+				if (renderTargetDescs[i].arraySlice < static_cast<HQRenderTargetTextureD3D*> (pRenderTarget.GetRawPointer())->numViews)
+					newGroup->renderTargetViews[i] = ppRTView[renderTargetDescs[i].arraySlice];
+			}
 			else
 				newGroup->renderTargetViews[i] = ppRTView[0];
 		}//if (pRenderTarget->IsTexture())

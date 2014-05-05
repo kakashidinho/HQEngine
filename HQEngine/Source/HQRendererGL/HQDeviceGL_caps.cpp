@@ -74,6 +74,7 @@ bool HQDeviceGL::IsNpotTextureFullySupported(HQTextureType textureType)
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
 	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_ARRAY:
 #ifdef HQ_OPENGLES
 		return GLEW_OES_texture_non_power_of_two;
 #else
@@ -90,6 +91,7 @@ bool HQDeviceGL::IsNpotTextureSupported(HQTextureType textureType)
 	case HQ_TEXTURE_2D:
 	case HQ_TEXTURE_CUBE:
 	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_ARRAY:
 #ifdef HQ_OPENGLES
 		return GLEW_OES_texture_non_power_of_two;
 #else
@@ -190,6 +192,15 @@ void HQDeviceGL::GetMaxComputeGroups(hquint32 &nGroupsX, hquint32 &nGroupsY, hqu
 
 bool HQDeviceGL::IsRTTFormatSupported(HQRenderTargetFormat hqformat , HQTextureType textureType ,bool hasMipmaps)
 {
+	switch (textureType)
+	{
+	case HQ_TEXTURE_2D_ARRAY:
+		if (!GLEW_VERSION_3_0) return false;
+		break;
+	case HQ_TEXTURE_2D_UAV:
+		if (!GLEW_VERSION_4_2) return false;
+		break;
+	}
 	GLint internalFormat;
 	GLenum format, type;
 	HQRenderTargetManagerFBO::GetGLImageFormat(hqformat, internalFormat, format, type);

@@ -335,7 +335,9 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 			if (strcmp(valueStr, "cube") == 0 )
 				textureType = HQ_TEXTURE_CUBE;
 			else if (renderTarget && strcmp(valueStr, "2d_uav") == 0)
-				textureType = HQ_TEXTURE_2D_UAV;
+				textureType = HQ_TEXTURE_2D_UAV; 
+			else if (renderTarget && strcmp(valueStr, "2d_array") == 0)
+				textureType = HQ_TEXTURE_2D_ARRAY;
 			else if (strcmp(valueStr, "2d") == 0)
 				textureType = HQ_TEXTURE_2D;
 			else
@@ -359,7 +361,7 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 			Log("Error : %d : Cannot create render target texture resource without name!", texture_info->GetSourceLine());
 			return HQ_FAILED;
 		}
-		hquint32 width, height;
+		hquint32 width, height, arraySize = 1;
 		HQRenderTargetFormat format;
 		bool hasMipmap;
 		const char* hasMipmapStr = texture_info->GetStrAttribute("has_mipmap");
@@ -385,6 +387,16 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 		width = (hquint32)*wPtr;
 		height = (hquint32)*hPtr;
 
+		//array size
+		{
+			const HQEngineResParserNode* arraySizeInfo = texture_info->GetFirstChild("array_size");
+			if (arraySizeInfo != NULL)
+			{
+				const hqint32* arraySizePtr = arraySizeInfo->GetIntAttributePtr("value");
+				if (arraySizePtr != NULL)
+					arraySize = (hquint32)*arraySizePtr;
+			}
+		}
 		//format
 		const HQEngineResParserNode* formatInfo = texture_info->GetFirstChild("format");
 		if (formatInfo == NULL)
@@ -425,7 +437,7 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 		}
 
 		return this->AddRenderTargetTextureResource(res_Name,
-														width, height,
+														width, height, arraySize,
 														hasMipmap,
 														format,
 														HQ_MST_NONE,
@@ -953,7 +965,7 @@ HQReturnVal HQEngineResManagerImpl::AddTextureUAVResource(const char *name,
 
 HQReturnVal HQEngineResManagerImpl::AddRenderTargetTextureResource(
 								  const char *name,
-								  hq_uint32 width , hq_uint32 height,
+								  hq_uint32 width, hq_uint32 height, hq_uint32 arraySize,
 								  bool hasMipmaps,
 								  HQRenderTargetFormat format , 
 								  HQMultiSampleType multisampleType,
@@ -970,7 +982,7 @@ HQReturnVal HQEngineResManagerImpl::AddRenderTargetTextureResource(
 	HQTexture* textureID;
 	HQRenderTargetView* renderTargetID;
 	HQReturnVal re = HQEngineApp::GetInstance()->GetRenderDevice()->GetRenderTargetManager()
-		->CreateRenderTargetTexture(width, height, hasMipmaps, format, multisampleType, textureType, 
+		->CreateRenderTargetTexture(width, height, arraySize, hasMipmaps, format, multisampleType, textureType, 
 									&renderTargetID, &textureID);
 
 	if (HQFailed(re))

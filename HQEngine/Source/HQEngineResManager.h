@@ -119,6 +119,7 @@ public:
 	///{pTextureID_Out} - will store ID of texture in material manager. 
 	///{hasMipmaps} - this texture has full range mipmap or not. 
 	///Note : 
+	///-{arraySize} is ignored when not creating array texture
 	///-if {textureType} = HQ_TEXTURE_CUBE , new texture will be created with size {width} x {width}. 
 	///-openGL ES 2.0 device always create texture with full range mipmap levels. 
 	///-return HQ_FAILED_RESOURCE_EXISTS if there is an existing resource with the same name. 
@@ -127,7 +128,7 @@ public:
 	///
 	virtual HQReturnVal AddRenderTargetTextureResource(
 								  const char *name,
-								  hq_uint32 width , hq_uint32 height,
+								  hq_uint32 width , hq_uint32 height, hq_uint32 arraySize,
 								  bool hasMipmaps,
 								  HQRenderTargetFormat format , 
 								  HQMultiSampleType multisampleType,

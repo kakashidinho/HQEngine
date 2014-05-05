@@ -37,22 +37,24 @@ public:
 
 	///
 	///create render target texture. 
-	///{pRenderTargetID_Out} - will store ID of newly created render target. 
-	///{pTextureID_Out} - will store ID of texture in material manager. 
+	///{pRenderTargetViewID_Out} - will store ID of newly created render target view. 
+	///{pTextureID_Out} - will store ID of texture in texture manager. 
 	///{hasMipmaps} - this texture has full range mipmap or not. 
 	///Note : 
+	///-{arraySize} is only relevant when creating array texture
 	///-if {textureType} = HQ_TEXTURE_CUBE , new texture will be created with size {width} x {width}. 
 	///-openGL ES 2.0 device always create texture with full range mipmap levels. 
 	///-return HQ_FAILED_FORMAT_NOT_SUPPORT if {format} is not supported. 
 	///-return HQ_FAILED_MULTISAMPLE_TYPE_NOT_SUPPORT if {multisampleType} is not supported. 
 	///
 	virtual HQReturnVal CreateRenderTargetTexture(hq_uint32 width , hq_uint32 height,
-								  bool hasMipmaps,
-								  HQRenderTargetFormat format , 
-								  HQMultiSampleType multisampleType,
-								  HQTextureType textureType,
-								  HQRenderTargetView** pRenderTargetID_Out,
-								  HQTexture **pTextureID_Out) = 0;
+									  hq_uint32 arraySize,
+									  bool hasMipmaps,
+									  HQRenderTargetFormat format , 
+									  HQMultiSampleType multisampleType,
+									  HQTextureType textureType,
+									  HQRenderTargetView** pRenderTargetViewID_Out,
+									  HQTexture **pTextureID_Out) = 0;
 	///
 	///create custom depth stencil buffer. 
 	///return HQ_FAILED_FORMAT_NOT_SUPPORT if {format} is not supported. 

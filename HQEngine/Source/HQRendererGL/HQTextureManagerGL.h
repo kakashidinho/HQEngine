@@ -51,11 +51,12 @@ struct HQTextureGL:public HQBaseTexture
 
 struct HQTextureUnitInfoGL
 {
-	static const hquint32 numTexUnitTargets = 3;
+	static const hquint32 numTexUnitTargets = 4;
 
 	GLuint GetTexture2DGL() const {if (texture[HQ_TEXTURE_2D] != NULL) return *(GLuint*)texture[HQ_TEXTURE_2D]->pData ; return 0;}
 	GLuint GetTextureCubeGL() const {if (texture[HQ_TEXTURE_CUBE] != NULL) return *(GLuint*)texture[HQ_TEXTURE_CUBE]->pData ; return 0;}
 	GLuint GetTextureBufferGL() const {if (texture[HQ_TEXTURE_BUFFER] != NULL) return *(GLuint*)texture[HQ_TEXTURE_BUFFER]->pData ; return 0;}
+	GLuint GetTexture2DArrayGL() const { if (texture[HQ_TEXTURE_2D_ARRAY] != NULL) return *(GLuint*)texture[HQ_TEXTURE_2D_ARRAY]->pData; return 0; }
 
 	HQSharedPtr<HQBaseTexture> & GetTexture(HQTextureType type);
 

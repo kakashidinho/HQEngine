@@ -421,7 +421,7 @@ HQReturnVal HQEngineRTGroupWrapper::Init(const CreationParams &params)
 			outputDescs[i].renderTargetID = NULL;
 		else
 			outputDescs[i].renderTargetID = params.outputs[i].outputTexture->GetRenderTargetID();
-		outputDescs[i].cubeFace = params.outputs[i].cubeFace;
+		outputDescs[i].cubeFace = (HQCubeTextureFace) params.outputs[i].cubeFace;
 	}
 
 	HQDepthStencilBufferView* depthstencilBufID = params.dsBuffer != NULL ? params.dsBuffer->bufferID : NULL;
@@ -2037,26 +2037,6 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 				Log("Error : %d : invald token %s!", attriLine, attriName);
 				return HQ_FAILED;
 			}
-			//get cube face
-			const char *scriptCubeFaceAttrStr = attribute->GetStrAttribute("cube_face");
-			if (scriptCubeFaceAttrStr != NULL) cubeFaceStr = scriptCubeFaceAttrStr;
-			
-			if (!strcmp(cubeFaceStr, "+x"))
-				rtOutput.cubeFace = HQ_CTF_POS_X;
-			else if (!strcmp(cubeFaceStr, "-x"))
-				rtOutput.cubeFace = HQ_CTF_NEG_X;
-			else if (!strcmp(cubeFaceStr, "+y"))
-				rtOutput.cubeFace = HQ_CTF_POS_Y;
-			else if (!strcmp(cubeFaceStr, "-y"))
-				rtOutput.cubeFace = HQ_CTF_NEG_Y;
-			else if (!strcmp(cubeFaceStr, "+z"))
-				rtOutput.cubeFace = HQ_CTF_POS_Z;
-			else if (!strcmp(cubeFaceStr, "-z"))
-				rtOutput.cubeFace = HQ_CTF_NEG_Z;
-			else {
-				Log("Error : %d : invald cube_face=%s!", attriLine, cubeFaceStr);
-				return HQ_FAILED;
-			}
 
 			//now get the texture resource
 			rtOutput.outputTexture = resManager->GetTextureResourceSharedPtr(attriValStr);
@@ -2065,7 +2045,43 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 				Log("Error : %d : invald render target resource=%s!", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
-			
+
+			if (rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_CUBE)
+			{
+				//get cube face
+				const char *scriptCubeFaceAttrStr = attribute->GetStrAttribute("cube_face");
+				if (scriptCubeFaceAttrStr != NULL) cubeFaceStr = scriptCubeFaceAttrStr;
+
+				if (!strcmp(cubeFaceStr, "+x"))
+					rtOutput.cubeFace = HQ_CTF_POS_X;
+				else if (!strcmp(cubeFaceStr, "-x"))
+					rtOutput.cubeFace = HQ_CTF_NEG_X;
+				else if (!strcmp(cubeFaceStr, "+y"))
+					rtOutput.cubeFace = HQ_CTF_POS_Y;
+				else if (!strcmp(cubeFaceStr, "-y"))
+					rtOutput.cubeFace = HQ_CTF_NEG_Y;
+				else if (!strcmp(cubeFaceStr, "+z"))
+					rtOutput.cubeFace = HQ_CTF_POS_Z;
+				else if (!strcmp(cubeFaceStr, "-z"))
+					rtOutput.cubeFace = HQ_CTF_NEG_Z;
+				else {
+					Log("Error : %d : invald cube_face=%s!", attriLine, cubeFaceStr);
+					return HQ_FAILED;
+				}
+			}//if (rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_CUBE)
+			else if (rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_2D_ARRAY)
+			{
+				//get array slice
+				rtOutput.arraySlice = 0;
+				const hqint32 *scriptArraySlicePtr = attribute->GetIntAttributePtr("array_slice");
+				if (scriptArraySlicePtr != NULL)
+				{
+					rtOutput.arraySlice = (hquint32)*scriptArraySlicePtr;
+				}
+
+			}//else if (if (rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_2D_ARRAY))
+
+			//get resource size
 			rtOutput.outputTexture->GetTexture2DSize(width, height);
 			if (global_width == 0xffffffff)
 			{

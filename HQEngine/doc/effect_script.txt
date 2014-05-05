@@ -84,7 +84,12 @@ Pass format:
 			cube_face can be "(+/-)(x/y/z)". default is "+x".
 			0 can be any number from 0 to max number of active render targets - 1
 			*/
-			output0 = render_target_resource_name +x
+			output0 = render_target_resource_name0 +x
+			//2nd output is array slice 1 of an array texture. default is array slice 0 
+			output1 = render_target_resource_name1 1
+			.
+			.
+			.
 			
 			depth_stencil_buffer_format = none/d24s8/d16/s8/d32			//default is none
 		}

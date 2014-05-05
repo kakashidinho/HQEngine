@@ -137,7 +137,7 @@ public:
 
 	virtual HQReturnVal AddRenderTargetTextureResource(
 								  const char *name,
-								  hq_uint32 width , hq_uint32 height,
+								  hq_uint32 width, hq_uint32 height, hq_uint32 arraySize,
 								  bool hasMipmaps,
 								  HQRenderTargetFormat format , 
 								  HQMultiSampleType multisampleType,

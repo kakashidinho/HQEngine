@@ -69,6 +69,7 @@ public:
 	//-return HQ_FAILED_FORMAT_NOT_SUPPORT if <format> is not supported
 	//-return HQ_FAILED_MULTISAMPLE_TYPE_NOT_SUPPORT if <multisampleType> is not supported
 	HQReturnVal CreateRenderTargetTexture(hq_uint32 width , hq_uint32 height,
+								  hq_uint32 arraySize,
 								  bool hasMipmaps,
 								  HQRenderTargetFormat format , 
 								  HQMultiSampleType multisampleType,

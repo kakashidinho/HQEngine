@@ -909,6 +909,15 @@ void HQDeviceEnumGL::CheckCapabilities()
 	caps.maxTextureSize = maxVal;
 	glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &maxVal);
 	caps.maxCubeTextureSize = maxVal;
+#ifndef HQ_OPENGLES//TO DO: add to gles 3 later
+	if (GLEW_VERSION_3_0)
+	{
+		glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxVal);
+		caps.maxTextureArraySize = maxVal;
+	}
+	else
+		caps.maxTextureArraySize = 1;
+#endif
 	//get max anosotropic support
 	if(GLEW_EXT_texture_filter_anisotropic)
 	{

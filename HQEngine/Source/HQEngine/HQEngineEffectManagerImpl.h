@@ -187,7 +187,10 @@ struct HQEngineRenderTargetWrapper {
 	bool Equal(const HQEngineRenderTargetWrapper& rt2) const;
 
 	HQSharedPtr<HQEngineTextureResImpl> outputTexture;
-	HQCubeTextureFace cubeFace;
+	union {
+		hquint32 cubeFace;
+		hquint32 arraySlice;
+	};
 };
 
 //render targets group

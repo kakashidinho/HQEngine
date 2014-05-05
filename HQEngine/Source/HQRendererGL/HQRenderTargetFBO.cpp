@@ -182,6 +182,7 @@ struct HQDepthStencilBufferGL : public HQBaseDepthStencilBufferView, public HQRe
 struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQResetable
 {
 	HQRenderTargetTextureGL(hq_uint32 _width ,hq_uint32 _height ,
+							hq_uint32 arraySize,
 							HQMultiSampleType _multiSampleType,
 							HQRenderTargetFormat hqFormat , hq_uint32 _numMipmaps,
 							HQSharedPtr<HQBaseTexture> _pTex)
@@ -190,6 +191,15 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 							_pTex)
 	{
 		this->hqFormat = hqFormat;
+		switch (pTexture->type)
+		{
+		case HQ_TEXTURE_2D_ARRAY:
+			this->arraySize = arraySize;
+			break;
+		default:
+			//ignore arraySize
+			this->arraySize = 1;
+		}
 
 	}
 	~HQRenderTargetTextureGL()
@@ -266,7 +276,20 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 				//since we created a texture outside texture managet. we need to tell texture manager about the size of this texture
 				pTextureMan->DefineTexture2DSize(pTextureGL, this->width, this->width);
 				break;
+			case HQ_TEXTURE_2D_ARRAY:
+#ifndef HQ_OPENGLES//TO DO: add to gles 3 later
+				glBindTexture(GL_TEXTURE_2D_ARRAY, *pTextureGLHandle);
+
+				glTexStorage3D(GL_TEXTURE_2D_ARRAY, this->numMipmaps, internalFormat, this->width, this->height, this->arraySize);
+
+				//re-bind old texture
+				glBindTexture(GL_TEXTURE_2D_ARRAY, pTextureMan->GetActiveTextureUnitInfo().GetTexture2DArrayGL());
+				//since we created a texture outside texture manager. we need to tell texture manager about the size of this texture
+				pTextureMan->DefineTexture2DSize(pTextureGL, this->width, this->width);
+#endif //#ifndef HQ_OPENGLES
+				break;
 			}
+
 
 			if (glGetError() != GL_NO_ERROR)
 				return HQ_FAILED;
@@ -282,6 +305,7 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 	}
 
 	HQRenderTargetFormat hqFormat;
+	hquint32 arraySize;
 };
 
 /*----------------------------------*/
@@ -609,7 +633,8 @@ HQRenderTargetManagerFBO::~HQRenderTargetManagerFBO()
 }
 
 
-HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width, hq_uint32 height, bool hasMipmaps,
+HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width, hq_uint32 height,
+												hq_uint32 arraySize, bool hasMipmaps,
 											   HQRenderTargetFormat format, HQMultiSampleType multisampleType,
 											   HQTextureType textureType,
 											   HQRenderTargetView **pRenderTargetID_Out,
@@ -637,6 +662,13 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 		case HQ_TEXTURE_2D:
 			if (width > caps.maxTextureSize || height > caps.maxTextureSize) {
 				Log("CreateRenderTargetTexture() failed : %u x %u is too large!" , width , height);
+				return HQ_FAILED;
+			}
+			break;
+		case HQ_TEXTURE_2D_ARRAY:
+			if (width > caps.maxTextureSize || height > caps.maxTextureSize || arraySize > caps.maxTextureArraySize)
+			{
+				Log("CreateRenderTargetTexture() failed : %u x %u x%u is too large!", width, height, arraySize);
 				return HQ_FAILED;
 			}
 			break;
@@ -709,7 +741,7 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 	}
 
 	HQRenderTargetTextureGL *pNewRenderTarget =
-		new HQRenderTargetTextureGL(width , height ,
+		new HQRenderTargetTextureGL(width , height , arraySize,
 									multisampleType ,format ,
 									numMipmaps , pNewTex
 									);
@@ -843,11 +875,20 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetGroupImpl(
 
 		if (pRenderTarget->IsTexture())
 		{
-			GLuint *pGLtex = (GLuint *)pRenderTarget->GetData();
-			if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
+			HQRenderTargetTextureGL* pTextureTargetGL = static_cast<HQRenderTargetTextureGL*>(pRenderTarget.GetRawPointer());
+			GLuint *pGLtex = (GLuint *)pTextureTargetGL->GetData();
+			if (pTextureTargetGL->GetTexture()->type == HQ_TEXTURE_CUBE)
 				glFramebufferTexture2D_wrapper(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
 					GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderTargetDescs[i].cubeFace ,
 					*pGLtex , 0);
+#ifndef HQ_OPENGLES //TO DO: add to gles 3 later
+			else if (pTextureTargetGL->GetTexture()->type == HQ_TEXTURE_2D_ARRAY)
+			{
+				if (renderTargetDescs[i].arraySlice < pTextureTargetGL->arraySize)
+					glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i,
+					*pGLtex, 0, renderTargetDescs[i].arraySlice);
+			}
+#endif//#ifndef HQ_OPENGLES
 			else
 				glFramebufferTexture2D_wrapper(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i ,
 					GL_TEXTURE_2D , *pGLtex , 0);

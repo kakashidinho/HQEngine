@@ -58,6 +58,9 @@ HQTextureGL::HQTextureGL(HQTextureType type ):HQBaseTexture()
 	case HQ_TEXTURE_BUFFER:
 		this->textureTarget = GL_TEXTURE_BUFFER;
 		break;
+	case HQ_TEXTURE_2D_ARRAY:
+		this->textureTarget = GL_TEXTURE_2D_ARRAY;
+		break;
 	}
 
 	this->pData = new GLuint();
@@ -85,7 +88,7 @@ hquint32 HQTextureGL::GetWidth() const
 {
 	switch (this->type)
 	{
-	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE: case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE: case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY:
 	{
 		HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)this->textureDesc;
 		return l_textureDesc->width;
@@ -100,7 +103,7 @@ hquint32 HQTextureGL::GetHeight() const
 {
 	switch (this->type)
 	{
-	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:  case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:  case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY:
 	{
 		HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)this->textureDesc;
 		return l_textureDesc->height;
@@ -820,6 +823,9 @@ HQBaseTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 		break;
 	case HQ_TEXTURE_BUFFER:
 		currentBoundTex = this->texUnits[this->activeTexture].GetTextureBufferGL();
+		break;
+	case HQ_TEXTURE_2D_ARRAY:
+		currentBoundTex = this->texUnits[this->activeTexture].GetTexture2DArrayGL();
 		break;
     default:
 		return NULL;
@@ -1961,9 +1967,8 @@ void HQTextureManagerGL::RemoveAllTexture()
 {
 	for (hquint32 i = 0; i < this->maxTextureUnits ; ++i)
 	{
-		this->texUnits[i].GetTexture(HQ_TEXTURE_2D) = HQSharedPtr<HQBaseTexture>::null;
-		this->texUnits[i].GetTexture(HQ_TEXTURE_CUBE) = HQSharedPtr<HQBaseTexture>::null;
-		this->texUnits[i].GetTexture(HQ_TEXTURE_BUFFER) = HQSharedPtr<HQBaseTexture>::null;
+		for (hquint32 j = 0; j < HQTextureUnitInfoGL::numTexUnitTargets; ++j)
+			this->texUnits[i].GetTexture((HQTextureType)j) = HQSharedPtr<HQBaseTexture>::null;
 	}
 	HQBaseTextureManager::RemoveAllTexture();
 }

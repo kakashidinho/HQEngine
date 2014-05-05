@@ -225,6 +225,35 @@ float computeShadowFactor(
 	return shadowFactor;
 }
 
+//compute shadow factor from first layer in depth map
+float computeShadowFactor(
+	Texture2DArray<float4> depthMap,
+	SamplerState samplerState,
+	int depthMapSize,
+	float2 depthMapTexcoords,
+	float fragmentDepth,
+	float depthBias)
+{
+	float2 texelPos = depthMapTexcoords * depthMapSize;
+	const float dx = 1.0 / depthMapSize;
+
+	//filtering between 4 nearest neighbors
+	float2 lerpFactor = frac(texelPos);
+
+	float s0 = (depthMap.Sample(samplerState, float3(depthMapTexcoords, 0.0)).r + depthBias) < fragmentDepth ? 0.0 : 1.0;
+	float s1 = (depthMap.Sample(samplerState, float3(depthMapTexcoords + float2(dx, 0.0), 0.0)).r + depthBias) < fragmentDepth ? 0.0 : 1.0;
+	float s2 = (depthMap.Sample(samplerState, float3(depthMapTexcoords + float2(0.0, dx), 0.0)).r + depthBias) < fragmentDepth ? 0.0 : 1.0;
+	float s3 = (depthMap.Sample(samplerState, float3(depthMapTexcoords + float2(dx, dx), 0.0)).r + depthBias) < fragmentDepth ? 0.0 : 1.0;
+
+	float shadowFactor = lerp(
+		lerp(s0, s1, lerpFactor.x),
+		lerp(s2, s3, lerpFactor.x),
+		lerpFactor.y);
+
+
+	return shadowFactor;
+}
+
 
 //{lightToVert} must be normalized
 float calculateSpotLightFactor(float3 lightToVert, float3 lightDirection, float3 lightFalloff_cosHalfAngle_cosHalfTheta)
