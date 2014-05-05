@@ -3,7 +3,7 @@
 set PREDEFINED=/DUSE_GL_WAY
 set TOOLS_FOLDER=%~dp0..\..\utilities\HQShaderCompiler\Netbeans\HQEngineShaderCompiler
  
-set cmd=%TOOLS_FOLDER%\fxc /nologo %1 /Tvs_5_0 /Zpc /Qstrip_debug /EVS %DUSE_GL_WAY% /Fo%~dp1%~n1.hlslv.bytecode
+set cmd=%TOOLS_FOLDER%\fxc /nologo %1 /Tvs_5_0 /Zpc /Qstrip_debug /EVS %PREDEFINED% /Fo%~dp1%~n1.hlslv.bytecode
 echo.
 echo %cmd%
 %cmd% || set error=1
@@ -12,7 +12,7 @@ echo.
 echo %cmd%
 %cmd% || set error=1
 
-set cmd=%TOOLS_FOLDER%\fxc /nologo %1 /Tps_5_0 /Zpc /Qstrip_debug /EPS %DUSE_GL_WAY% /Fo%~dp1%~n1.hlslf.bytecode
+set cmd=%TOOLS_FOLDER%\fxc /nologo %1 /Tps_5_0 /Zpc /Qstrip_debug /EPS %PREDEFINED% /Fo%~dp1%~n1.hlslf.bytecode
 echo.
 echo %cmd%
 %cmd% || set error=1
