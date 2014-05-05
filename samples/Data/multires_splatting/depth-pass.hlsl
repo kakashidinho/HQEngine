@@ -13,35 +13,22 @@ COPYING.txt included with this distribution for more information.
 #define NORMALIZE_RESULTS 0
 
 
-uniform transform {
+cbuffer transform : register (b0) {
 	float4x3 worldMat;
-	float4x4 viewMat;
-	float4x4 projMat;
-	float4 cameraPos;//camera's world position
-}: BUFFER[0];
+};
 
-uniform lightView {
+cbuffer lightView : register (b1) {
 	float4x4 lightViewMat;//light camera's view matrix
 	float4x4 lightProjMat;//light camera's projection matrix
-}: BUFFER[1];
+};
 
 #define HALF_PIXEL_OFFSET 0.5 / 512
 
 struct vOut{
-	float4 oPos : POSITION;
+	float4 oPos : SV_Position;
 	float3 oPosW : TEXCOORD0;//world space position
 	float3 oNormalW: TEXCOORD2;//world space normal
 };
-
-//do nothing in other API
-float2 offsetPostion(float4 position){
-	return position.xy;
-}
-
-//offset by half a pixel, because of  the way the texel map to pixel in D3D9.
-vs_2_0 vs_3_0 float2 offsetPostion(float4 position){
-	return position.xy + float2(-HALF_PIXEL_OFFSET, HALF_PIXEL_OFFSET) * position.w * 2.0;
-}
 
 
 //vertex shader
@@ -57,7 +44,6 @@ vOut VS(in vPNIn input){
 	
 	//projected position
 	output.oPos = posH;
-	output.oPos.xy = offsetPostion(output.oPos);//API dependent function
 	
 	//world space position
 	output.oPosW = posW;
@@ -69,33 +55,33 @@ vOut VS(in vPNIn input){
 };
 
 
-uniform materials {
+cbuffer materials : register (b2) {
 	float4 materialDiffuse[7];
-} : BUFFER[2];
+} ;
 
-uniform materialIndex {
+cbuffer materialIndex : register (b3) {
 	int materialID;
-} : BUFFER[3];
+};
 
-uniform lightProperties {
+cbuffer lightProperties : register (b4) {
 	
 	float3 lightPosition;
 	float3 lightDirection;
 	float4 lightDiffuse;
 	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
-} : BUFFER[4];
+};
 
 
 struct pOut{
-	float2 depth_materialID: COLOR0;//distance to camera and material ID
-	float4 posW: COLOR1;//world space position
-	float4 normalW: COLOR2;//world space normal
-	float4 flux: COLOR3;//flux
+	float2 depth_materialID: SV_Target00;//distance to camera and material ID
+	float4 posW: SV_Target01;//world space position
+	float4 normalW: SV_Target02;//world space normal
+	float4 flux: SV_Target03;//flux
 };
 
 //pixel shader
 pOut PS(
-	in float4 vPos : POSITION,
+	in float4 vPos : SV_Position,
 	in float3 posW : TEXCOORD0,//world space position
 	in float3 normalW: TEXCOORD2 //world space normal
 	)

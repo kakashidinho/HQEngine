@@ -5,7 +5,7 @@ resources {
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass-compiled-cg.glslv" 			/* source file */
+		src="depth-pass.glslv" 			/* source file */
 		debug=true
 	}
 	
@@ -13,7 +13,7 @@ resources {
 		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass-compiled-cg.glslf" 			/* source file */
+		src="depth-pass.glslf" 			/* source file */
 		debug=true
 	}
 	
@@ -22,7 +22,7 @@ resources {
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="gbuffer-pass-compiled-cg.glslv" 			/* source file */
+		src="gbuffer-pass.glslv" 			/* source file */
 		debug=true
 	}
 	
@@ -30,7 +30,7 @@ resources {
 		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="gbuffer-pass-compiled-cg.glslf" 			/* source file */
+		src="gbuffer-pass.glslf" 			/* source file */
 		debug=true
 	}
 
@@ -124,7 +124,7 @@ resources {
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="final-pass-compiled-cg.glslv" 			/* source file */
+		src="final-pass.glslv" 			/* source file */
 		debug=true
 	}
 	
@@ -132,7 +132,7 @@ resources {
 		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="final-pass-compiled-cg.glslf" 			/* source file */
+		src="final-pass.glslf" 			/* source file */
 		debug=true
 	}
 }

@@ -3,21 +3,21 @@
 #define NORMALIZE_RESULTS 0
 
 /*---------------vertex shader-------------*/
-uniform transform {
+cbuffer transform : register (b0) {
 	float4x3 worldMat;
 	float4x4 viewMat;
 	float4x4 projMat;
 	float4 cameraPos;//camera's world position
-}: BUFFER[0];
+};
 
-uniform lightView {
+cbuffer lightView : register (b1) {
 	float4x4 lightViewMat;//light camera's view matrix
 	float4x4 lightProjMat;//light camera's projection matrix
-}: BUFFER[1];
+};
 
 
 struct vOut{
-	float4 oPos : POSITION;//clip space position
+	float4 oPos : SV_Position;//clip space position
 	float3 oPosW : TEXCOORD0;//world space position
 	float3 oNormalW: TEXCOORD1;//world space normal
 	float4 oPosLight: TEXCOORD2;//projected position in light camera's clip space
@@ -45,43 +45,44 @@ vOut VS(in vPNIn input){
 #define DEPTH_BIAS 0.02
 #define SHADOW_MAP_SIZE 512
 
-uniform materials {
+cbuffer materials : register (b2) {
 	float4 materialDiffuse[7];
-} : BUFFER[2];
+};
 
-uniform materialIndex {
+cbuffer materialIndex : register (b3) {
 	int materialID;
-} : BUFFER[3];
+};
 
-uniform lightProperties {
-	
+cbuffer lightProperties : register (b4) {
+
 	float3 lightPosition;
 	float3 lightDirection;
 	float4 lightDiffuse;
 	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
-} : BUFFER[4];
+};
 
 
 struct pIn{
-	float4 position: POSITION; //clip space position
+	float4 position: SV_Position; //clip space position
 	float3 posW : TEXCOORD0;//world space position
 	float3 normalW: TEXCOORD1; //world space normal
 	float4 posLight: TEXCOORD2; //projected position in light camera's clip space
 };
 
 struct pOut{
-	float4 direct_flux: COLOR0;//direct illumination's flux
-	float4 posW: COLOR1;//world space position
-	float4 normalW: COLOR2;//world space normal
-	float2 depth_materialID: COLOR3;//distance to camera and materialID
+	float4 direct_flux: SV_Target0;//direct illumination's flux
+	float4 posW: SV_Target1;//world space position
+	float4 normalW: SV_Target2;//world space normal
+	float2 depth_materialID: SV_Target3;//distance to camera and materialID
 };
 
-uniform sampler2D rsm_depthMap : TEXUNIT0;//depth texture
+Texture2D<float4> rsm_depthMap: register (t0);//rsm depth texture
+uniform SamplerState rsm_depthMap_sampler: TEXUNIT0;//depth texture
 
 
 //compute shadow factor
 float computeShadowFactor(float2 texcoords, float fragmentDepth){
-	return computeShadowFactor(rsm_depthMap, SHADOW_MAP_SIZE, texcoords, fragmentDepth, DEPTH_BIAS);
+	return computeShadowFactor(rsm_depthMap, rsm_depthMap_sampler, SHADOW_MAP_SIZE, texcoords, fragmentDepth, DEPTH_BIAS);
 }
 
 pOut PS (in pIn input){

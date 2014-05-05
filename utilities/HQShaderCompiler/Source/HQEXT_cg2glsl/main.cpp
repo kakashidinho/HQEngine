@@ -469,7 +469,7 @@ bool postProcess(ShHandle hlsl2glslParser, std::string& inout, bool vertexShader
 {
 	if (vertexShader)
 	{
-		//add HQEngine specific semantic to attributes
+		//add HQEngine specific semantic to vertex attributes
 		for (int i = 0; i < gNumAttriSems ; ++i)
 		{
 			const char *semantic = gAttriSematics[i][0];

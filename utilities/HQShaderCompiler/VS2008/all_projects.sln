@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQEXT_cg2glsl", "HQEXT_cg2g
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQEXT_glsl_compiler", "HQEXT_glsl_compiler\HQEXT_glsl_compiler.vcproj", "{523808E8-71A0-4EDF-BA7C-E5F070BD2064}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HQEXT_hlslasm2glsl", "HQEXT_hlslasm2glsl\HQEXT_hlslasm2glsl.vcproj", "{96F98262-797A-4632-A261-9019E4614A90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -45,6 +47,18 @@ Global
 		{523808E8-71A0-4EDF-BA7C-E5F070BD2064}.ReleaseX64|Win32.Build.0 = ReleaseX64|Win32
 		{523808E8-71A0-4EDF-BA7C-E5F070BD2064}.ReleaseX64|x64.ActiveCfg = ReleaseX64|x64
 		{523808E8-71A0-4EDF-BA7C-E5F070BD2064}.ReleaseX64|x64.Build.0 = ReleaseX64|x64
+		{96F98262-797A-4632-A261-9019E4614A90}.Debug|Win32.ActiveCfg = Debug|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.Debug|Win32.Build.0 = Debug|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.Debug|x64.ActiveCfg = Debug|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.Release_noptimize|Win32.ActiveCfg = Release|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.Release_noptimize|Win32.Build.0 = Release|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.Release_noptimize|x64.ActiveCfg = Release|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.Release|Win32.ActiveCfg = Release|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.Release|Win32.Build.0 = Release|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.Release|x64.ActiveCfg = Release|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.ReleaseX64|Win32.ActiveCfg = Release|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.ReleaseX64|Win32.Build.0 = Release|Win32
+		{96F98262-797A-4632-A261-9019E4614A90}.ReleaseX64|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
