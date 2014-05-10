@@ -70,13 +70,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass.hlsl">
-      <Filter>Resource Files\shaders</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\Data\multires_splatting\final-pass.hlsl">
       <Filter>Resource Files\shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\Data\multires_splatting\gbuffer-pass.hlsl">
+      <Filter>Resource Files\shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass-diffuse.hlsl">
       <Filter>Resource Files\shaders</Filter>
     </CustomBuild>
   </ItemGroup>

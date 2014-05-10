@@ -36,10 +36,12 @@ private:
 	void DrawScene();
 	void FinalPass();
 
+	bool m_giOn;//global illumination on?
+	bool m_dynamicLight;
 	hquint32 m_vplsDim;//number of VPLs per RSM's dimension
 
 	HQSharedPtr<HQMeshNode> m_model;
-	HQSharedPtr<DiffuseSpotLight> m_light;
+	HQSharedPtr<SpecularSpotLight> m_light;
 
 	HQEngineRenderEffect* m_effect;
 

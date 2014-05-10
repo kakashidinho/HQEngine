@@ -1,8 +1,8 @@
 techniques{
 	technique "multires-splatting" { /*  must specify technique name  */
-		pass "depth-pass" {
-			vertex_shader="depth-pass_vs"
-			pixel_shader="depth-pass_ps"
+		pass "depth-pass-diffuse" {
+			vertex_shader="depth-pass-diffuse_vs"
+			pixel_shader="depth-pass-diffuse_ps"
 			depth=full
 			cull=ccw
 			outputs {  /*  if not specified, default render target is used  */

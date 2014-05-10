@@ -42,12 +42,13 @@ vOut VS(in vPNIn input){
 };
 
 /*-------fragment shader------------------*/
-#define DEPTH_BIAS 0.02
+#define DEPTH_BIAS 0.2
 #define SHADOW_MAP_SIZE 512
 
 cbuffer materials : register (b2) {
-	float4 materialDiffuse[7];
+	SpecularMaterial material[7];
 };
+
 
 cbuffer materialIndex : register (b3) {
 	int materialID;
@@ -59,6 +60,7 @@ cbuffer lightProperties : register (b4) {
 	float3 lightDirection;
 	float4 lightDiffuse;
 	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
+	float4 lightSpecular;
 };
 
 
@@ -93,11 +95,14 @@ pOut PS (in pIn input){
 	//scale to [0..1]
 	shadowMapUV = scaleToTexcoord(shadowMapUV);
 	
+	//distance to camera
+	float3 toCameraVec = cameraPos.xyz - input.posW;
+
 	//fragment depth with respect to light source
-	float fragmentDepth = length(input.posW - lightPosition.xyz);
+	float fragmentLightDepth = length(input.posW - lightPosition.xyz);
 
 	//shadow factor
-	float shadowFactor = computeShadowFactor(shadowMapUV, fragmentDepth);
+	float shadowFactor = computeShadowFactor(shadowMapUV, fragmentLightDepth);
 	
 	//re-normalize normal
 	input.normalW = normalize(input.normalW);
@@ -107,13 +112,23 @@ pOut PS (in pIn input){
 	float3 lightVec = normalize(input.posW - lightPosition);
 	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
 	
-	direct_flux = spot * lightDiffuse * shadowFactor * materialDiffuse[materialID];
+	/*------diffuse----------*/
+	direct_flux = lightDiffuse * max(dot(-lightVec, input.normalW), 0.0) * material[materialID].diffuse;
+
+
+	/*------specular----------*/
+	float3 reflectedVec = reflect(lightVec, input.normalW);
+	float spec = pow(max(dot(reflectedVec, normalize(toCameraVec)), 0.0), material[materialID].specPower);
+	direct_flux += lightSpecular * material[materialID].specular * spec;
+
+	//multiply with spot light's factor and shadow factor
+	direct_flux *= spot * shadowFactor;
 
 	//store result
 	output.posW = float4(input.posW, 1.0);
 	output.normalW = float4(input.normalW, 0.0);
 	output.direct_flux = direct_flux;
-	output.depth_materialID.x = length(input.posW - cameraPos.xyz);//distance to camera
+	output.depth_materialID.x = length(toCameraVec);//distance to camera
 	output.depth_materialID.y = materialID;
 
 	return output;

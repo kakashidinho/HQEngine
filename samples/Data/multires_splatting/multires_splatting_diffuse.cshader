@@ -1,10 +1,11 @@
+#include "../common_shader_code.h"
 #include "../common_compute_code.h"
 #include "common.cshaderh"
 
 
 begin_decl_uniform_buffer(materialInfos, 2)
 {
-	float4 materialDiffuse[7];
+	SpecularMaterial material[7];
 };
 
 begin_decl_uniform_buffer(rsm_samples, 11)
@@ -61,7 +62,7 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 	//depth and material ID
 	float2 depthMat = texture2d_sample_lod_2f(depthMatMap, gbufferCoords, 0.0);
 	//material
-	float4 matDiffuse = materialDiffuse[int(depthMat.y)];
+	float4 matDiffuse = material[int(depthMat.y)].diffuse;
 
 	//world position
 	float4 worlPos = texture2d_sample_lod_4f(worldPosMap, gbufferCoords, 0.0);
@@ -81,17 +82,13 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 		{
 			//get sampling coords
 			float2 vplSampleCoords = texture2d_read_2f(rsm_sampleMap, uint2(i, j), 0);
-			//get VPL material ID
-			int vplMaterialID = int(texture2d_sample_lod_2f(rsm_depthMatMap, vplSampleCoords, 0.0).y);
+		
 			//get VPL position
 			float4 vplPos = texture2d_sample_lod_4f(rsm_worldPosMap, vplSampleCoords, 0.0);
 			//get VPL normal
 			float4 vplNormal = texture2d_sample_lod_4f(rsm_worldNormalMap, vplSampleCoords, 0.0);
 			//get VPL flux
 			float4 vplFlux = texture2d_sample_lod_4f(rsm_fluxMap, vplSampleCoords, 0.0);
-			
-			//VPL's material
-			float4 vplMatDiffuse = materialDiffuse[vplMaterialID];
 
 			//normalize normal
 			vplNormal.xyz = vplNormal.w * normalize(vplNormal.xyz);
@@ -105,7 +102,7 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 			float pdot = max(dot(toVPL, worldNormal.xyz), 0.0);
 			float ldot = max(dot(-toVPL, vplNormal.xyz), 0.0);
 			float4 indirectI = vplFlux * pdot * ldot;
-			indirectI /= (2 * distanceSqr + distance + 1.0);
+			indirectI /= (distanceSqr + 1.0);
 
 			total_indirect_illumination +=  indirectI ;
 		}//for (uint j = 0; j < numVPLs.y; ++j)

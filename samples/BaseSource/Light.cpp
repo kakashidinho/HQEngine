@@ -68,3 +68,28 @@ void DiffuseSpotLight::OnUpdated(const HQSceneNode * node, hqfloat32 dt)
 	//get world direction
 	_lightCam->GetWorldDirectionVec(*_direction);
 }
+
+/*----------specular spot light ---------------*/
+SpecularSpotLight::SpecularSpotLight(
+	const HQColor& diffuse,
+	const HQColor& specular,
+	hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
+	hqfloat32 dirX, hqfloat32 dirY, hqfloat32 dirZ,
+	hqfloat32 angle,//cone angle in radian
+	hqfloat32 theta,//inner cone angle in radian
+	hqfloat32 falloff,
+	hqfloat32 maxRange,
+	HQRenderAPI renderApi
+	)
+	: DiffuseSpotLight(diffuse,
+		posX, posY, posZ,
+		dirX, dirY, dirZ,
+		angle, theta, 
+		falloff,
+		maxRange,
+		renderApi
+	),
+	specularColor(specular)
+{
+
+}

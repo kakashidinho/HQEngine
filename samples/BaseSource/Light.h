@@ -50,10 +50,32 @@ private:
 	HQCamera* _lightCam;//light camera
 };
 
+struct SpecularSpotLight : public DiffuseSpotLight {
+	SpecularSpotLight(
+		const HQColor& diffuse,
+		const HQColor& specular,
+		hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
+		hqfloat32 dirX, hqfloat32 dirY, hqfloat32 dirZ,
+		hqfloat32 angle,//cone angle in radian
+		hqfloat32 theta,//inner cone angle in radian
+		hqfloat32 falloff,
+		hqfloat32 maxRange,
+		HQRenderAPI renderApi
+	);
+
+	HQColor specularColor;
+};
+
 /*-------structures that match those in shader--------*/
 
 struct DiffuseMaterial {
 	float materialDiffuse[4];
+};
+
+struct SpecularMaterial : public DiffuseMaterial {
+	float materialSpecular[4];
+	float materialShininess;
+	float padding[3];//due to uniform buffer's restricted layout, three padding floats are added
 };
 
 struct DiffuseLightProperties {
@@ -62,6 +84,11 @@ struct DiffuseLightProperties {
 	float lightDirection[4];
 	float lightDiffuse[4];
 	float lightFalloff_cosHalfAngle_cosHalfTheta[3];
+	float padding;
+};
+
+struct SpecularLightProperties : public DiffuseLightProperties {
+	float lightSpecular[4];
 };
 
 struct LightView {

@@ -8,9 +8,6 @@
 
 const float g_camOffsetPerSec = 100.f;//camra offset per second
 
-struct MaterialArray {
-	HQFloat4 materialDiffuse[7];
-};
 
 struct Subsplat {
 	hquint32 level;//level of illumination texture
@@ -21,7 +18,9 @@ struct Subsplat {
 /*------------App----------------*/
 App::App()
 : BaseApp("Core-GL4.3", WINDOW_SIZE, WINDOW_SIZE),
-	m_vplsDim(16)
+	m_vplsDim(16),
+	m_giOn(true),
+	m_dynamicLight(true)
 {
 	//setup resources
 	HQEngineApp::GetInstance()->AddFileSearchPath("../../Data");
@@ -34,9 +33,9 @@ App::App()
 	//create model
 	m_model = new HQMeshNode(
 		"cornell_box",
-		"cornell_box.hqmesh",
+		"cornell_box_dragon.hqmesh",
 		m_pRDevice,
-		"depth-pass_vs",
+		"depth-pass-diffuse_vs",
 		NULL);
 
 	//init camera
@@ -52,8 +51,11 @@ App::App()
 		);
 
 	//create light object
-	m_light = new DiffuseSpotLight(
-		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),
+	m_light = new SpecularSpotLight(
+		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),//diffuse
+		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),//specular
+		//HQColorRGBA(1.0f, 1.f, 1.f, 1),//diffuse
+		//HQColorRGBA(1.0f, 1.f, 1.f, 1),//specular
 		300.f, 547.8f, -180.f,
 		0.05f, -1, -0.1f,
 		HQToRadian(70),
@@ -73,9 +75,9 @@ App::App()
 
 	/*---------create and bind uniform buffers--*/
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(ModelViewInfo), true, &this->m_uniformViewInfoBuffer);
-	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(MaterialArray), true, &this->m_uniformMaterialArrayBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, 7 * sizeof(SpecularMaterial), true, &this->m_uniformMaterialArrayBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hqint32), true, &this->m_uniformMaterialIndexBuffer);
-	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(DiffuseLightProperties), true, &this->m_uniformLightProtBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(SpecularLightProperties), true, &this->m_uniformLightProtBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(LightView), true, &this->m_uniformLightViewBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32), true, &this->m_uniformLevelInfoBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32)* m_vplsDim * m_vplsDim, true, &m_uniformRSMSamplesBuffer);
@@ -94,11 +96,13 @@ App::App()
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 12, m_uniformRefineThresholdBuffer);
 
 	//fill material array buffer
-	MaterialArray * materials;
-	m_uniformMaterialArrayBuffer->Map(&materials);
+	SpecularMaterial * material;
+	m_uniformMaterialArrayBuffer->Map(&material);
 	for (hquint32 i = 0; i < m_model->GetNumSubMeshes(); ++i)
 	{
-		memcpy(&materials->materialDiffuse[i], &m_model->GetSubMeshInfo(i).colorMaterial.diffuse, sizeof(HQFloat4));
+		memcpy(&material[i].materialDiffuse, &m_model->GetSubMeshInfo(i).colorMaterial.diffuse, sizeof(HQFloat4));
+		memcpy(&material[i].materialSpecular, &m_model->GetSubMeshInfo(i).colorMaterial.specular, sizeof(HQFloat4));
+		material[i].materialShininess = m_model->GetSubMeshInfo(i).colorMaterial.power;
 	}
 	m_uniformMaterialArrayBuffer->Unmap();
 
@@ -128,14 +132,15 @@ void App::Update(HQTime dt){
 	//update scene
 	m_scene->SetUniformScale(0.01f);
 
-	m_light->lightCam().RotateY(dt);
+	if (m_dynamicLight)
+		m_light->lightCam().RotateY(dt);
 
 	m_scene->Update(dt);
 
 	//send scene data to shader
 	ModelViewInfo * viewInfo;
 	LightView * lightView;
-	DiffuseLightProperties * lightProt;
+	SpecularLightProperties * lightProt;
 
 	//send view info data
 	m_uniformViewInfoBuffer->Map(&viewInfo);
@@ -156,6 +161,7 @@ void App::Update(HQTime dt){
 	memcpy(lightProt->lightPosition, &m_light->position(), sizeof(HQVector4));
 	memcpy(lightProt->lightDirection, &m_light->direction(), sizeof(HQVector4));
 	memcpy(lightProt->lightDiffuse, &m_light->diffuseColor, sizeof(HQVector4));
+	memcpy(lightProt->lightSpecular, &m_light->specularColor, sizeof(HQVector4));
 	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[0] = m_light->falloff;
 	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[1] = cosf(m_light->angle * 0.5f);
 	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[2] = cosf(m_light->theta * 0.5f);
@@ -169,7 +175,7 @@ void App::RenderImpl(HQTime dt){
 	viewport.width = RSM_DIM;
 	viewport.height = RSM_DIM;
 	
-	m_effect->GetPassByName("depth-pass")->Apply();
+	m_effect->GetPassByName("depth-pass-diffuse")->Apply();
 	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE, HQ_TRUE);
 
 	this->DrawScene();
@@ -182,20 +188,23 @@ void App::RenderImpl(HQTime dt){
 
 	this->DrawScene();
 
-	/*-------start preprocess step----------*/
-	m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(NULL);
+	if (m_giOn)
+	{
+		/*-------start preprocess step----------*/
+		m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(NULL);
 
-	//generate min-max mipmaps
-	this->GenMipmaps();
+		//generate min-max mipmaps
+		this->GenMipmaps();
 
-	//refine list of subsplats
-	this->RefineSubsplats();
+		//refine list of subsplats
+		this->RefineSubsplats();
 
-	//multiresolution splatting
-	this->MultiresSplat();
+		//multiresolution splatting
+		this->MultiresSplat();
 
-	//interpolating between illumination textures
-	this->Upsample();
+		//interpolating between illumination textures
+		this->Upsample();
+	}//if (m_giOn)
 
 	//final pass, combine direct illumination with indirect illumination
 	this->FinalPass();
@@ -637,6 +646,24 @@ void App::KeyReleased(HQKeyCodeType keyCode)
 		if (m_cameraTransition.z > 0)
 			m_cameraTransition.z = 0;//stop moving in Z direction
 		break;
+	case HQKeyCode::F:
+		m_dynamicLight = !m_dynamicLight;
+		break;
+	case HQKeyCode::G:
+	{
+		m_giOn = !m_giOn;
+		if (!m_giOn)
+		{
+			//clear indirect illumination texture
+			hquint32 *blackColor = new hquint32[WINDOW_SIZE * WINDOW_SIZE];
+			memset(blackColor, 0, WINDOW_SIZE * WINDOW_SIZE * sizeof(hquint32));
+
+			m_subsplatsFinalInterpolatedTexture->SetLevelContent(0, blackColor);
+
+			delete[] blackColor;
+		}
+	}
+		break;
 	case HQKeyCode::NUM1:
 		m_subsplatsRefineThreshold[0] += 0.01f;
 		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
@@ -645,6 +672,17 @@ void App::KeyReleased(HQKeyCodeType keyCode)
 		m_subsplatsRefineThreshold[0] -= 0.01f;
 		if (m_subsplatsRefineThreshold[0] <= 0)
 			m_subsplatsRefineThreshold[0] = 0;
+		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
+		break;
+
+	case HQKeyCode::NUM3:
+		m_subsplatsRefineThreshold[1] += 0.1f;
+		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
+		break;
+	case HQKeyCode::NUM4:
+		m_subsplatsRefineThreshold[1] -= 0.1f;
+		if (m_subsplatsRefineThreshold[1] <= 0)
+			m_subsplatsRefineThreshold[1] = 0;
 		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
 		break;
 #if defined DEBUG_ILLUM_BUFFER

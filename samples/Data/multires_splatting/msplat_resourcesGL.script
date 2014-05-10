@@ -1,19 +1,19 @@
 resources {
 	
 	/*--------reflective shadow map pass----------*/
-	shader "depth-pass_vs" { 			/* name will be default to source file name */
+	shader "depth-pass-diffuse_vs" { 			/* name will be default to source file name */
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass.glslv" 			/* source file */
+		src="depth-pass-diffuse.glslv" 			/* source file */
 		debug=true
 	}
 	
-	shader "depth-pass_ps" { 			/* name will be default to source file name */
+	shader "depth-pass-diffuse_ps" { 			/* name will be default to source file name */
 		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass.glslf" 			/* source file */
+		src="depth-pass-diffuse.glslf" 			/* source file */
 		debug=true
 	}
 	

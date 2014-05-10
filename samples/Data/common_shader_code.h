@@ -259,6 +259,8 @@ float computeShadowFactor(
 float calculateSpotLightFactor(float3 lightToVert, float3 lightDirection, float3 lightFalloff_cosHalfAngle_cosHalfTheta)
 {
 	float cosLD = dot(lightToVert, lightDirection);
+	if (cosLD > lightFalloff_cosHalfAngle_cosHalfTheta.z)//inside innder cone
+		return 1.0;
 	float spot = (max(cosLD, 0) - lightFalloff_cosHalfAngle_cosHalfTheta.y)
 		/ (lightFalloff_cosHalfAngle_cosHalfTheta.z - lightFalloff_cosHalfAngle_cosHalfTheta.y);
 
@@ -266,8 +268,17 @@ float calculateSpotLightFactor(float3 lightToVert, float3 lightDirection, float3
 }
 
 #else
+
+#define float4 vec4
+
 //TO DO
 #endif//#ifdef HQEXT_CG
+
+struct SpecularMaterial {
+	float4 diffuse;
+	float4 specular;
+	float specPower;
+};
 
 
 #endif
