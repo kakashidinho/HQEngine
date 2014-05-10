@@ -589,16 +589,16 @@ public:
 	///get first level's size
 	///
 	virtual hquint32 GetHeight() const = 0;
-	virtual HQReturnVal CopyTextureContent(void *data) = 0; //Copy content of first mipmap level. This method may not be supported in some platform
+
+	/*---------for debugging purpose------------*/
+	virtual HQReturnVal CopyFirstLevelContent(void *data) = 0; //Copy content of first mipmap level. This method may not be supported in some platform
+	virtual HQReturnVal SetLevelContent(hquint32 level, const void *data) = 0;//copy data from system memory to a mipmap level of texture. This method may not be supported in some platform
 protected:
 	virtual ~HQTexture() {}
 };
 
-class HQUpdatableTexture : public HQTexture, public HQMappableResource {
 
-};
-
-class HQTextureBuffer : public HQUpdatableTexture {
+class HQTextureBuffer : public HQTexture, public HQMappableResource {
 };
 
 class HQGraphicsBufferRawRetrievable : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable{

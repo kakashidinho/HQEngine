@@ -461,7 +461,7 @@ hquint32 HQTextureD3D11::GetHeight() const
 	}
 }
 
-HQReturnVal HQTextureD3D11::CopyTextureContent(void *data)
+HQReturnVal HQTextureD3D11::CopyFirstLevelContent(void *data)
 {
 	switch (this->type)
 	{
@@ -481,6 +481,51 @@ HQReturnVal HQTextureD3D11::CopyTextureContent(void *data)
 		//TO DO
 		return HQ_FAILED;
 	}
+}
+
+HQReturnVal HQTextureD3D11::SetLevelContent(hquint32 level, const void *data)
+{
+	HQTextureResourceD3D11* pTex = (HQTextureResourceD3D11 *)pData;
+	
+	hquint32 subresIdx = 0;
+	hquint32 srcRowPitch = 0;
+	hquint32 srcDepthPitch = 0;
+	ID3D11Resource* pD3Dres = pTex->pTexture;
+	ID3D11Device * pD3DDevice; 
+	ID3D11DeviceContext * pD3DContext;
+	pD3Dres->GetDevice(&pD3DDevice);
+
+	pD3DDevice->GetImmediateContext(&pD3DContext);
+
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D_UAV:
+	{
+		HQUAVTextureResourceD3D11* pD3Dres = (HQUAVTextureResourceD3D11*)this->pData;
+		D3D11_TEXTURE2D_DESC desc;
+		ID3D11Texture2D* pTexture = static_cast<ID3D11Texture2D*>(pD3Dres->pTexture);
+		pTexture->GetDesc(&desc);
+
+		if (level >= desc.MipLevels)
+			return HQ_FAILED;
+
+		hquint32 texelSize = GetTexelSize(desc.Format);
+		hquint32 levelWidth = desc.Width >> level;
+		if (levelWidth == 0)
+			levelWidth = 1;
+		srcRowPitch = levelWidth * texelSize;
+		subresIdx = D3D11CalcSubresource(level, 0, desc.MipLevels);
+	}
+	default:
+		//TO DO
+		return HQ_FAILED;
+	}
+
+	pD3DContext->UpdateSubresource(pD3Dres, subresIdx, NULL, data, srcRowPitch, srcDepthPitch);
+
+	pD3DContext->Release();
+	pD3DDevice->Release();
+	return HQ_OK;
 }
 
 //implement HQGraphicsResourceRawRetrievable

@@ -224,12 +224,13 @@ struct HQTextureUAVGL : public HQTextureGL{
 	}
 
 	//implement HQTexture
-	virtual HQReturnVal CopyTextureContent(void *data);
+	virtual HQReturnVal CopyFirstLevelContent(void *data);
+	virtual HQReturnVal SetLevelContent(hquint32 level, const void *data);
 
 	GLenum internalFormat;
 };
 
-HQReturnVal HQTextureUAVGL::CopyTextureContent(void *data)
+HQReturnVal HQTextureUAVGL::CopyFirstLevelContent(void *data)
 {
 	GLenum format, type;
 	switch (this->internalFormat){
@@ -270,6 +271,77 @@ HQReturnVal HQTextureUAVGL::CopyTextureContent(void *data)
 
 	glBindTexture(this->textureTarget, oldTexture);
 #endif
+
+	return HQ_OK;
+}
+
+
+
+HQReturnVal HQTextureUAVGL::SetLevelContent(hquint32 level, const void *data)
+{
+	GLenum format, type;
+	hquint32 pixelSize = 0;//in bytes
+	switch (this->internalFormat){
+#ifndef HQ_OPENGLES
+	case GL_RGBA32F:
+		format = GL_RGBA; type = GL_FLOAT;
+		pixelSize = 16;
+		break;
+	case GL_RG32F:
+		format = GL_RG; type = GL_FLOAT;
+		pixelSize = 8;
+		break;
+	case GL_R32F:
+		format = GL_RED; type = GL_FLOAT;
+		pixelSize = 4;
+		break;
+#endif//#ifndef HQ_OPENGLES
+	case GL_RGBA8:
+		format = GL_RGBA; type = GL_UNSIGNED_BYTE;
+		pixelSize = 4;
+		break;
+	default:
+		//TO DO
+		return HQ_FAILED;
+	}
+
+	GLint oldTexture;
+
+	switch (this->type)
+	{
+	case HQ_TEXTURE_2D_UAV:
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &oldTexture);
+		break;
+	default:
+		//TO DO
+		return HQ_FAILED;
+	}
+
+	GLuint textureName = *(GLuint*)this->pData;
+	glBindTexture(this->textureTarget, textureName);
+	
+	GLint width, height, depth;
+#ifndef HQ_OPENGLES
+	glGetTexLevelParameteriv(this->textureTarget, level, GL_TEXTURE_WIDTH, &width);//get level's width
+	if (width != 0)//valid level
+	{
+		glGetTexLevelParameteriv(this->textureTarget, level, GL_TEXTURE_HEIGHT, &height);//get level's height
+		switch (this->type)
+		{
+		case HQ_TEXTURE_2D_UAV:
+			depth = 1;
+			glTexSubImage2D(this->textureTarget, level, 0, 0, width, height, format, type, data);
+		default:
+			//TO DO
+			break;
+		}
+
+	}//if (width != 0)
+
+
+	glBindTexture(this->textureTarget, oldTexture);
+	glGetError();//clear error
+#endif//#ifndef HQ_OPENGLES
 
 	return HQ_OK;
 }
