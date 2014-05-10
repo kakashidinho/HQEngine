@@ -515,6 +515,7 @@ HQReturnVal HQTextureD3D11::SetLevelContent(hquint32 level, const void *data)
 			levelWidth = 1;
 		srcRowPitch = levelWidth * texelSize;
 		subresIdx = D3D11CalcSubresource(level, 0, desc.MipLevels);
+		break;
 	}
 	default:
 		//TO DO
