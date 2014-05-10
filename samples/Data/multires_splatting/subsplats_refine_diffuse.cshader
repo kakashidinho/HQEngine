@@ -1,8 +1,6 @@
 #include "../common_compute_code.h"
 #include "common.cshaderh"
 
-#define VERTEX_STRIDE (4 * 3)
-
 
 begin_decl_uniform_buffer(current_level_info, 10)
 {
@@ -15,13 +13,17 @@ begin_decl_uniform_buffer(threshold_info, 12)
 };
 
 decl_structbuffer(uint, numSubsplats, 0);
-decl_structbuffer(Subsplat, current_subplats_buffer, 1);//current refinement step's buffer
-decl_structbuffer(Subsplat, finer_subplats_buffer, 2);//finer subsplats refinement step
-decl_structbuffer(Subsplat, final_subsplat, 3);//final list of subsplats
-decl_uintbuffer(indirect_args, 4);//buffer containing number of thread group to dispatch for illumination and refinement steps
+decl_structbuffer(Subsplat, subplats_buffer, 1);//subsplat buffer containing subsplats for every refinement step
+decl_structbuffer(Subsplat, final_subsplat, 2);//final list of subsplats
+decl_uintbuffer(indirect_args, 3);//buffer containing number of thread group to dispatch for illumination and refinement steps
 
 decl_texture2d_4f(depth_norm_min_map, 0);//contain min depth and normal for finer subsplats
 decl_texture2d_4f(depth_norm_max_map, 1);//contain max depth and normal for finer subsplats
+
+//get subplat at current level
+Subsplat getSubsplat(uint index) {
+	return subplats_buffer[index + g_levels_offset[current_level] ];
+}
 
 //insert to finer subsplats list and return number of subsplats
 uint insertToFinerSubsplatsList(Subsplat subsplat)
@@ -30,7 +32,9 @@ uint insertToFinerSubsplatsList(Subsplat subsplat)
 
 	atomic_add(numSubsplats[subsplat.level + 1], 1, index);
 
-	finer_subplats_buffer[index] = subsplat;
+	index += g_levels_offset[subsplat.level];
+
+	subplats_buffer[index] = subsplat;
 
 	return index + 1;
 }
@@ -103,7 +107,7 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 	Subsplat subsplat;
 
 	//get subsplat
-	subsplat = current_subplats_buffer[globalThreadIdx.x];
+	subsplat = getSubsplat(globalThreadIdx.x);
 
 	//get min & max depth and normal values of finer subsplat
 	float4 depth_norm_min = texture2d_read_4f(depth_norm_min_map, uint2(subsplat.x, subsplat.y), 0);

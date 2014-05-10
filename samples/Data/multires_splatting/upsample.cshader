@@ -1,17 +1,20 @@
 #include "../common_compute_code.h"
 #include "common.cshaderh"
 
-//input textures
-decl_texture2d_4f(illumination_tex, 0);//current level texture containing illumination
-decl_texture2d_4f(lower_interpolated_tex, 1);//coarser level texture containing interpolated illumination
+begin_decl_uniform_buffer(current_level_info, 10)
+{
+	uint current_level;//current level of refinement step
+};
 
-//output textures
-decl_rwtexture2d_4f(interpolated_tex, 0);//texture contains interpolated illumination
+/*----------input buffer-------------*/
+//mutires illumination buffer
+decl_structbuffer(uint, illumination_buffer, 0);
 
-//number of subsplats in final list
-decl_structbuffer(uint, numSubsplats, 5);
-//final list of subsplats
-decl_structbuffer(Subsplat, final_subsplat, 6);
+/*----------output buffer------------*/
+decl_structbuffer(uint, interpolated_buffer, 3);//buffer contains multires iterpolated illumination
+/*----------output texture----------*/
+decl_rwtexture2d_4f(final_interpolated_tex, 4);//texture contains final interpolated illumination
+
 
 
 main_proc(16, 16, 1)
@@ -30,25 +33,28 @@ main_proc(16, 16, 1)
 
 	float totalWeight = 1.0;
 	uint2 texel_coords = globalThreadIdx.xy;
-	float4 color = texture2d_read_4f(illumination_tex, texel_coords, 0);
+	float4 color =  readSubsplatColor(illumination_buffer, current_level, texel_coords);
 #ifndef FIRST_STEP
+	uint lower_level = current_level - 1;
 	uint2 lower_texel_coords = texel_coords >> 1;
-	color += texture2d_read_4f(lower_interpolated_tex, lower_texel_coords, 0);
+	//read color from lower interpolated resolution
+	color += readSubsplatColor(interpolated_buffer, lower_level, lower_texel_coords);
 #endif
 
 	for (uint i = 0; i < 8; ++i)
 	{
 		uint2 neighbor_coords = texel_coords + offset[i];
-		float4 neighbor_color = texture2d_read_4f(illumination_tex, neighbor_coords, 0);
+		//fetch neighbor texel from the same level in illumination buffer
+		float4 neighbor_color = readSubsplatColor(illumination_buffer, current_level, neighbor_coords);
 
 		float neighbor_weight = weight[i] * neighbor_color.w;//any color that has zero "w" will be ignored
 		color.xyz +=  neighbor_weight * neighbor_color.xyz;
 		totalWeight += neighbor_weight;
 
 #ifndef FIRST_STEP
-		//fetch neighbor texel from previous level too
+		//fetch neighbor texel from previous interpolated level too
 		neighbor_coords >>= 1;
-		neighbor_color = texture2d_read_4f(lower_interpolated_tex, neighbor_coords, 0);
+		neighbor_color = readSubsplatColor(interpolated_buffer, lower_level, neighbor_coords);
 
 		neighbor_weight = weight[i] * neighbor_color.w;//any color that has zero "w" will be ignored
 		color.xyz +=  neighbor_weight * neighbor_color.xyz;
@@ -59,5 +65,8 @@ main_proc(16, 16, 1)
 	color.xyz /= totalWeight;
 	color.xyz *= color.w;//invalid texel marked by zero "w" will be ignored
 
-	rwtexture2d_store_4f(interpolated_tex, texel_coords, color);
+	if (current_level == NUM_RESOLUTIONS - 1)//final interpolated level
+		rwtexture2d_store_4f(final_interpolated_tex, texel_coords, color);
+	else
+		storeSubsplatColor4f(interpolated_buffer, current_level, texel_coords, color);
 }

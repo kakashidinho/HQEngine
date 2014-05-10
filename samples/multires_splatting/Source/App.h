@@ -9,6 +9,10 @@
 #define MIN_MAX_MIPMAP_FIRST_SIZE (WINDOW_SIZE / 2)
 #define NUM_RESOLUTIONS 5
 
+#if defined _DEBUG
+#	define DEBUG_ILLUM_BUFFER
+#endif
+
 
 /*---------App-------------*/
 class App : public BaseApp{
@@ -44,22 +48,24 @@ private:
 
 	HQTexture * m_samplePatternTexture;
 
-	HQTexture* m_subplatsIllumTexture[NUM_RESOLUTIONS];
-	HQTexture* m_subplatsInterpolatedTexture[NUM_RESOLUTIONS];
-	HQBufferUAV* m_subplatsRefineStepBuffer[NUM_RESOLUTIONS - 1];//subplats' buffers for each refinement step
+	HQBufferUAV* m_subsplatsIllumBuffer;//multires subplat illumination buffer
+	HQBufferUAV* m_subsplatsInterpolatedBuffer;//interpolated illumination buffer for every resolution except final one
+	HQTexture* m_subsplatsFinalInterpolatedTexture;//final interpolated illumination texture
+	HQBufferUAV* m_subsplatsRefineStepsBuffer;//subplats' buffers for every refinement step
 	HQBufferUAV* m_finalSubsplatsBuffer;//buffer contains final list of subsplats
 	HQBufferUAV* m_subsplatsCountBuffer;//buffer containing subsplats count. see {m_initialSubsplatsCounts}
 	HQBufferUAV* m_dispatchArgsBuffer;//buffer containing dispatch's arguments. see {m_initialDispatchArgs}
 	hquint32 m_initialSubsplatsCounts[NUM_RESOLUTIONS];//initial total subsplats count and subsplats count for each refinement step
 	DispatchComputeArgs m_initialDispatchArgs[NUM_RESOLUTIONS];//initial dispatch arguments for indirect illumination step and refinement steps
-	hqfloat32 m_subplatsRefineThreshold[2];
+	hqfloat32 m_subsplatsRefineThreshold[2];
+	hquint32 m_totalSubsplats;//total number of subsplats in all resolutions
 
 	HQUniformBuffer* m_uniformViewInfoBuffer;
 	HQUniformBuffer* m_uniformLightProtBuffer;
 	HQUniformBuffer* m_uniformMaterialArrayBuffer;
 	HQUniformBuffer* m_uniformMaterialIndexBuffer;
 	HQUniformBuffer* m_uniformLightViewBuffer;
-	HQUniformBuffer* m_uniformRefineStepBuffer;
+	HQUniformBuffer* m_uniformLevelInfoBuffer;
 	HQUniformBuffer* m_uniformRSMSamplesBuffer;
 	HQUniformBuffer* m_uniformRefineThresholdBuffer;
 

@@ -72,6 +72,7 @@
 
 #define _LOOP_ATTRIB_
 #define _UAV_COND_ATTRIB_
+#define _GLOBAL_CONST_ const
 
 //store float4 to one component float texture being viewed as 4 components one
 void rwtexture2d_f_store_4f(layout(r32f) image2D _name, uint2 _coords, float4 value)
@@ -203,5 +204,6 @@ void texture2d_getsize_2f(const Texture2D<float2> _name, out uint width, out uin
 
 #define _LOOP_ATTRIB_ [loop]
 #define _UAV_COND_ATTRIB_ [allow_uav_condition]
+#define _GLOBAL_CONST_ static const
 
 #endif

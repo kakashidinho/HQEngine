@@ -23,17 +23,15 @@ decl_texture2d_with_sampler_4f(rsm_fluxMap, 6);//texture containing VPL's flux
 decl_texture2d_2f(rsm_sampleMap, 7);//texture containing VPL's sampling pattern
 
 
-//output textures
-decl_rwtexture2d_4f(illumination_tex0, 0);//coarse level texture containing illumination
-decl_rwtexture2d_4f(illumination_tex1, 1);//coarse level texture containing illumination
-decl_rwtexture2d_4f(illumination_tex2, 2);//coarse level texture containing illumination
-decl_rwtexture2d_4f(illumination_tex3, 3);//coarse level texture containing illumination
-decl_rwtexture2d_4f(illumination_tex4, 4);//finest level texture containing illumination
+/*----------output buffer------------*/
+//mutires illumination buffer
+decl_structbuffer(uint, illumination_buffer, 0);
 
+/*--------input buffer------------*/
 //number of subsplats in final list
-decl_structbuffer(uint, numSubsplats, 5);
+decl_structbuffer(uint, numSubsplats, 1);
 //final list of subsplats
-decl_structbuffer(Subsplat, final_subsplat, 6);
+decl_structbuffer(Subsplat, final_subsplat, 2);
 
 main_proc(GROUP_THREAD_SIZE, 1, 1)
 {
@@ -47,16 +45,17 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 	//gbuffer-size
 	texture2d_getsize_2f(depthMatMap, gbuffer_size.x, gbuffer_size.y);
 	//coarsest size
-	coarsest_size = uint2(COARSEST_SIZE, COARSEST_SIZE);
+	coarsest_size = uint2(COARSEST_DIM_SIZE, COARSEST_DIM_SIZE);
 	//current level's size
 	current_size = coarsest_size << subsplat.level;
 
 	//size of half texel in this level with respect to finest level
 	const float halfTexelSize = float(gbuffer_size.x / coarsest_size.x) * 0.5;
 
-	//get g-buffer sampling coords
+	//output coords
 	uint2 texel_coords = uint2(subsplat.x, subsplat.y);
-
+	
+	//get g-buffer sampling coords
 	float2 gbufferCoords =  (float2(texel_coords) + float2( 0.5, 0.5)) / current_size.x;
 
 	//depth and material ID
@@ -115,22 +114,6 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 	//now write to corresponding texture
 	total_indirect_illumination *= matDiffuse;
 	total_indirect_illumination.w = 1.0;//mark as valid texel
-	switch(subsplat.level)
-	{
-	case 0:
-		rwtexture2d_store_4f(illumination_tex0, texel_coords, total_indirect_illumination);
-		break;
-	case 1:
-		rwtexture2d_store_4f(illumination_tex1, texel_coords, total_indirect_illumination);
-		break;
-	case 2:
-		rwtexture2d_store_4f(illumination_tex2, texel_coords, total_indirect_illumination);
-		break;
-	case 3:
-		rwtexture2d_store_4f(illumination_tex3, texel_coords, total_indirect_illumination);
-		break;
-	case 4:
-		rwtexture2d_store_4f(illumination_tex4, texel_coords, total_indirect_illumination);
-		break;
-	}//switch(subsplat.level)
+
+	storeSubsplatColor4f(illumination_buffer, subsplat.level, texel_coords, total_indirect_illumination);
 }

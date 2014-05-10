@@ -54,7 +54,7 @@ resources {
 		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="subsplats_refine.cshader" 			/* source file */
+		src="subsplats_refine_diffuse.cshader" 			/* source file */
 		debug=true
 	}
 
@@ -62,18 +62,18 @@ resources {
 		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="subsplats_refine.cshader" 			/* source file */
+		src="subsplats_refine_diffuse.cshader" 			/* source file */
 		debug=true
 
 		define FINAL_STEP
 	}
 
 	/*-----splatting pass------*/
-	shader "clear_illum_textures_cs" { 			/* name will be default to source file name */
+	shader "clear_illum_buffer_cs" { 			/* name will be default to source file name */
 		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="clear_illumination_textures.cshader" 			/* source file */
+		src="clear_illumination_buffer.cshader" 			/* source file */
 		debug=true
 	}
 
@@ -81,7 +81,7 @@ resources {
 		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="multires_splatting.cshader" 			/* source file */
+		src="multires_splatting_diffuse.cshader" 			/* source file */
 		debug=true
 	}
 

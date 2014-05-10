@@ -36,6 +36,12 @@
     <ClCompile Include="..\Source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\BaseSource\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\BaseSource\lodepng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\BaseSource\BaseApp.h">
@@ -55,6 +61,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Data\common_compute_code.h">
       <Filter>Resource Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\BaseSource\Utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\BaseSource\lodepng.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -89,19 +101,19 @@
     <None Include="..\..\Data\multires_splatting\mipmap_gen.cshader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="..\..\Data\multires_splatting\subsplats_refine.cshader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
     <None Include="..\..\Data\multires_splatting\common.cshaderh">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="..\..\Data\multires_splatting\clear_illumination_textures.cshader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="..\..\Data\multires_splatting\multires_splatting.cshader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
     <None Include="..\..\Data\multires_splatting\upsample.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\clear_illumination_buffer.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\multires_splatting_diffuse.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\subsplats_refine_diffuse.cshader">
       <Filter>Resource Files\shaders</Filter>
     </None>
   </ItemGroup>

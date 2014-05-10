@@ -1,4 +1,8 @@
 #include "App.h"
+#include "../../BaseSource/lodepng.h"
+
+#include <string>
+#include <sstream>
 
 #define VERIFY_CODE 0
 
@@ -73,10 +77,10 @@ App::App()
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hqint32), true, &this->m_uniformMaterialIndexBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(DiffuseLightProperties), true, &this->m_uniformLightProtBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(LightView), true, &this->m_uniformLightViewBuffer);
-	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32), true, &this->m_uniformRefineStepBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32), true, &this->m_uniformLevelInfoBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32)* m_vplsDim * m_vplsDim, true, &m_uniformRSMSamplesBuffer);
-	m_subplatsRefineThreshold[0] = 0.06f; m_subplatsRefineThreshold[1] = 0.2f;
-	m_pRDevice->GetShaderManager()->CreateUniformBuffer(m_subplatsRefineThreshold, sizeof(hqfloat32)* 2, true, &m_uniformRefineThresholdBuffer);
+	m_subsplatsRefineThreshold[0] = 0.06f; m_subsplatsRefineThreshold[1] = 0.2f;
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(m_subsplatsRefineThreshold, sizeof(hqfloat32)* 2, true, &m_uniformRefineThresholdBuffer);
 
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 0, m_uniformViewInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 0, m_uniformViewInfoBuffer);
@@ -85,7 +89,7 @@ App::App()
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 2, m_uniformMaterialArrayBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 3, m_uniformMaterialIndexBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 4, m_uniformLightProtBuffer);
-	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 10, m_uniformRefineStepBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 10, m_uniformLevelInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 11, m_uniformRSMSamplesBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 12, m_uniformRefineThresholdBuffer);
 
@@ -343,9 +347,52 @@ void App::GenMipmaps()
 
 void App::InitSubplatsBuffers(){
 	const hquint32 dispatchGroupThreads = 64;
-
-	//coarsest subplats buffer 
 	const hquint32 coarsestSize = WINDOW_SIZE >> (NUM_RESOLUTIONS - 1);
+
+	hquint32 totalSizeExceptLastLevel = 0;
+	hquint32 size = coarsestSize;
+	//the first element of this array is final subsplats list count, the subsequent ones are counts for each refinement step
+	m_initialSubsplatsCounts[0] = 0;
+	//the first element of this array is indirect illumination's dispatch's arguments, 
+	//the subsequent ones are arguments for refinement steps' dispatchs
+	m_initialDispatchArgs[0].Set(1);
+
+	for (hquint32 i = 0; i < NUM_RESOLUTIONS - 1; ++i)
+	{
+		//initial subsplats count for each step. Initially, the coarsest res has all of its subsplats,
+		//while other has zero
+		if (i == 0)
+		{
+			m_initialSubsplatsCounts[i + 1] = coarsestSize * coarsestSize;
+			m_initialDispatchArgs[i + 1].Set(max(m_initialSubsplatsCounts[i + 1] / dispatchGroupThreads, 1));
+		}
+		else
+		{
+			m_initialSubsplatsCounts[i + 1] = 0;
+			m_initialDispatchArgs[i + 1].Set(1);
+		}
+		
+		size <<= 1;//next finer resolution
+		totalSizeExceptLastLevel += size * size;//total number of subsplats except finest resolution
+	}
+
+	m_totalSubsplats = totalSizeExceptLastLevel + WINDOW_SIZE * WINDOW_SIZE;
+	
+	//create illumination buffer
+	m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(hquint32), m_totalSubsplats, &m_subsplatsIllumBuffer);
+	
+	//create interpolated illumination buffer
+	m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(hquint32), totalSizeExceptLastLevel, &m_subsplatsInterpolatedBuffer);
+	
+	//create final interpolated texture
+	m_pRDevice->GetTextureManager()->AddTextureUAV(HQ_UAVTFMT_R8G8B8A8_UNORM, WINDOW_SIZE, WINDOW_SIZE, false, &m_subsplatsFinalInterpolatedTexture);
+	//register final interpolated illumination texture to be used by effect manager
+	HQEngineApp::GetInstance()->GetResourceManager()->AddTextureResource("final_interpolated_illum_img", m_subsplatsFinalInterpolatedTexture);
+
+	//create buffer containing subsplats for all refinement steps
+	m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(Subsplat), totalSizeExceptLastLevel, &m_subsplatsRefineStepsBuffer);
+
+	//coarsest subplats 
 	{
 		Subsplat* subsplats = new Subsplat[coarsestSize * coarsestSize];
 		for (hquint32 i = 0; i < coarsestSize; ++i)
@@ -360,45 +407,11 @@ void App::InitSubplatsBuffers(){
 			}
 		}
 
-		m_pRDevice->GetShaderManager()->CreateBufferUAV(subsplats, sizeof(Subsplat), coarsestSize * coarsestSize, &m_subplatsRefineStepBuffer[0]);
+		//write coarsest subsplats to the beginning of buffer
+		m_subsplatsRefineStepsBuffer->Update(0, sizeof(Subsplat) * coarsestSize * coarsestSize, subsplats);
 
 		delete[] subsplats;
 	}
-
-	hquint32 size = coarsestSize;
-	//the first element of this array is final subsplats list count, the subsequent ones are counts for each refinement step
-	m_initialSubsplatsCounts[0] = 0;
-	//the first element of this array is indirect illumination's dispatch's arguments, 
-	//the subsequent ones are arguments for refinement steps' dispatchs
-	m_initialDispatchArgs[0].Set(1);
-
-	for (hquint32 i = 0; i < NUM_RESOLUTIONS; ++i)
-	{
-		//initial subsplats count for each step. Initially, the coarsest res has all of its subsplats,
-		//while other has zero
-		if (i == 0)
-		{
-			m_initialSubsplatsCounts[i + 1] = coarsestSize * coarsestSize;
-			m_initialDispatchArgs[i + 1].Set(max(m_initialSubsplatsCounts[i + 1] / dispatchGroupThreads, 1));
-		}
-		else if(i < NUM_RESOLUTIONS - 1)
-		{
-			m_initialSubsplatsCounts[i + 1] = 0;
-			m_initialDispatchArgs[i + 1].Set(1);
-			
-			m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(Subsplat), size * size, &m_subplatsRefineStepBuffer[i]);
-		}
-		
-		//illumination texture
-		m_pRDevice->GetTextureManager()->AddTextureUAV(HQ_UAVTFMT_R8G8B8A8_UNORM, size, size, false, &m_subplatsIllumTexture[i]);
-		//interpolated illumination texture
-		m_pRDevice->GetTextureManager()->AddTextureUAV(HQ_UAVTFMT_R8G8B8A8_UNORM, size, size, false, &m_subplatsInterpolatedTexture[i]);
-
-		size <<= 1;//next finer resolution
-	}
-
-	//register final interpolated illumination texture to be used by effect manager
-	HQEngineApp::GetInstance()->GetResourceManager()->AddTextureResource("final_interpolated_illum_img", m_subplatsInterpolatedTexture[NUM_RESOLUTIONS - 1]);
 
 	//create buffer containing subsplats' counts.
 	//the first element is final subsplats list count, the subsequent ones are counts for each refinement step
@@ -444,43 +457,35 @@ void App::RefineSubsplats()
 	//subsplat count buffer
 	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(0, m_subsplatsCountBuffer);
 
+	//subsplats buffer
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(1, m_subsplatsRefineStepsBuffer);
+
 	//final subsplats list buffer
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(3, m_finalSubsplatsBuffer);
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(2, m_finalSubsplatsBuffer);
 
 	//indirect compute dispatch's arguments
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(4, m_dispatchArgsBuffer);
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(3, m_dispatchArgsBuffer);
 
 	hquint32 *pCurrentLevel;
 
 	for (hquint32 level = 0; level < NUM_RESOLUTIONS - 1; ++level)
 	{
-		m_uniformRefineStepBuffer->Map(&pCurrentLevel);
+		m_uniformLevelInfoBuffer->Map(&pCurrentLevel);
 		*pCurrentLevel = level;
-		m_uniformRefineStepBuffer->Unmap();
+		m_uniformLevelInfoBuffer->Unmap();
 
 		//mipmap containing min & max depth & normal for finer level
 		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 0, m_mipmapMin[level]);
 		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 1, m_mipmapMax[level]);
 	
 		
-		if (level < NUM_RESOLUTIONS - 2)
-		{
-			//finer subsplats buffer
-			m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(2, m_subplatsRefineStepBuffer[level + 1]);
-		}
-		else
+		if (level == NUM_RESOLUTIONS - 2)
 		{
 			//final step
 			shader = HQEngineApp::GetInstance()->GetResourceManager()
 				->GetShaderResource("subsplat_final_refinement_cs")->GetShader();
 			m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
-
-			//no finer list's buffer is used, instead we will push to final list
-			m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(2, NULL);
 		}
-		
-		//current subsplats buffer
-		m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(1, m_subplatsRefineStepBuffer[level]);
 
 		//dispatch
 		m_pRDevice->DispatchComputeIndirect(m_dispatchArgsBuffer, level + 1);
@@ -491,38 +496,28 @@ void App::RefineSubsplats()
 
 void App::MultiresSplat()
 {
-	//set output textures
-	for (hquint32 level = 0; level < NUM_RESOLUTIONS; ++level)
-	{
-		m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(level, m_subplatsIllumTexture[level]);
-	}
+	//set output buffer
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(0, m_subsplatsIllumBuffer);
 
 	//number of subsplats in final list
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(NUM_RESOLUTIONS, m_subsplatsCountBuffer, 0, 0);
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(1, m_subsplatsCountBuffer, 0, 0);
 	//final subsplats list
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(NUM_RESOLUTIONS + 1, m_finalSubsplatsBuffer, 0, 0);
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(2, m_finalSubsplatsBuffer, 0, 0);
 
-	/*---------------clear illuimination textures first------------------*/
-	HQShaderObject* shader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("clear_illum_textures_cs")->GetShader();
+	/*---------------clear illumination buffer first------------------*/
+	HQShaderObject* shader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("clear_illum_buffer_cs")->GetShader();
 	m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
 	//thread group size
-	const hquint32 threadGroupDim = 16;
+	const hquint32 threadGroupSize = 64;
 
-	m_pRDevice->DispatchCompute(WINDOW_SIZE / threadGroupDim, WINDOW_SIZE / threadGroupDim, 1);
-	m_pRDevice->TextureUAVBarrier();
+	m_pRDevice->DispatchCompute(m_totalSubsplats / threadGroupSize, 1, 1);
+	m_pRDevice->BufferUAVBarrier();
 
 	/*------------now do multiresolution splatting-----------------*/
 	m_effect->GetPassByName("multires_splatting")->Apply();
 
 	m_pRDevice->DispatchComputeIndirect(m_dispatchArgsBuffer);
-	m_pRDevice->TextureUAVBarrier();
-
-#if 0
-	//verify textures
-	HQFloat4 texels[16 * 16];
-	m_subplatsIllumTexture[0]->CopyTextureContent(texels);
-
-#endif
+	m_pRDevice->BufferUAVBarrier();
 }
 
 void App::Upsample()
@@ -533,47 +528,48 @@ void App::Upsample()
 	hquint32 width = WINDOW_SIZE >> (NUM_RESOLUTIONS - 1), height = WINDOW_SIZE >> (NUM_RESOLUTIONS - 1);
 
 
+	//read from illumination buffer
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(0, m_subsplatsIllumBuffer);
+
+	//output to interpolated buffer and final texture
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(3, m_subsplatsInterpolatedBuffer);
+	m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(4, m_subsplatsFinalInterpolatedTexture);
+
+
+	/*-----------first step: generate first interpolated level----------------*/
+	hqint32 level = 0;
 	HQShaderObject* shader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("upsample_cs_1st_step")->GetShader();
 
 	m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
 
-	/*-----------first step: generate first interpolated level----------------*/
-
-	//read from first illumination texture
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 0, m_subplatsIllumTexture[0]);
-
-	//output of compute shader
-	m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(0, m_subplatsInterpolatedTexture[0]);
+	m_uniformLevelInfoBuffer->Update(&level);
 
 	m_pRDevice->DispatchCompute(max(width / threadGroupDim, 1), max(height / threadGroupDim, 1), 1);//run compute shader
 
-	m_pRDevice->TextureUAVBarrier();
+	m_pRDevice->BufferUAVBarrier();
 
 	/*-------------upsample the rest, starting from second lowest level----------------*/
-	hqint32 level = 1;
+	level = 1;
 	width <<= 1;
 	height <<= 1;
 
 	shader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("upsample_cs")->GetShader();
 	m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
+	
 	while (level < NUM_RESOLUTIONS){
-		//output of compute shader
-		m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(0, m_subplatsInterpolatedTexture[level]);
-
-		//read from current level's illumination texture computed  in previous pass
-		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 0, m_subplatsIllumTexture[level]);
-		//read from lower level's interpolated texture
-		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 1, m_subplatsInterpolatedTexture[level - 1]);
+		m_uniformLevelInfoBuffer->Update(&level);
 
 
 		m_pRDevice->DispatchCompute(max(width / threadGroupDim, 1), max(height / threadGroupDim, 1), 1);//run compute shader
 
-		m_pRDevice->TextureUAVBarrier();
+		m_pRDevice->BufferUAVBarrier();
 
 		width <<= 1;
 		height <<= 1;
 		level++;
 	}
+
+	m_pRDevice->TextureUAVBarrier();
 }
 
 void App::FinalPass()
@@ -642,14 +638,75 @@ void App::KeyReleased(HQKeyCodeType keyCode)
 			m_cameraTransition.z = 0;//stop moving in Z direction
 		break;
 	case HQKeyCode::NUM1:
-		m_subplatsRefineThreshold[0] += 0.01f;
-		m_uniformRefineThresholdBuffer->Update(m_subplatsRefineThreshold);
+		m_subsplatsRefineThreshold[0] += 0.01f;
+		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
 		break;
 	case HQKeyCode::NUM2:
-		m_subplatsRefineThreshold[0] -= 0.01f;
-		if (m_subplatsRefineThreshold[0] <= 0)
-			m_subplatsRefineThreshold[0] = 0;
-		m_uniformRefineThresholdBuffer->Update(m_subplatsRefineThreshold);
+		m_subsplatsRefineThreshold[0] -= 0.01f;
+		if (m_subsplatsRefineThreshold[0] <= 0)
+			m_subsplatsRefineThreshold[0] = 0;
+		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
 		break;
+#if defined DEBUG_ILLUM_BUFFER
+	case HQKeyCode::C://capture illumination buffer content
+	{
+		hquint32 coarsestSize = WINDOW_SIZE >> (NUM_RESOLUTIONS - 1);
+		hquint32 level_size = 0;
+		hquint32 numSubsplats = 0;
+		hquint32 *buffer = new hquint32[m_totalSubsplats];
+		hquint32* level_data;
+
+		//save illumination buffer's content to files
+		m_subsplatsIllumBuffer->CopyContent(buffer);
+
+		level_data = buffer;
+		for (hquint32 i = 0; i < NUM_RESOLUTIONS; ++i)
+		{
+			std::stringstream fileName; fileName << ("dbg_illumination_buffer");
+			fileName << i << ".bmp";
+
+			level_size = coarsestSize << i;
+			numSubsplats = level_size * level_size;
+
+			lodepng::encode(fileName.str(), (const unsigned char*)level_data, level_size, level_size);
+
+			level_data += numSubsplats;
+		}
+
+		//save interpolated buffer's content to files
+		m_subsplatsInterpolatedBuffer->CopyContent(buffer);
+
+		level_data = buffer;
+		for (hquint32 i = 0; i < NUM_RESOLUTIONS - 1; ++i)
+		{
+			std::stringstream fileName; fileName <<  ("dbg_interpolated_buffer");
+			fileName << i << ".bmp";
+
+			level_size = coarsestSize << i;
+			numSubsplats = level_size * level_size;
+
+			lodepng::encode(fileName.str(), (const unsigned char*)level_data, level_size, level_size);
+
+			level_data += numSubsplats;
+		}
+
+		//final interpolated texture
+		m_subsplatsFinalInterpolatedTexture->CopyFirstLevelContent(buffer);
+		level_data = buffer;
+		{
+			std::stringstream fileName; fileName << ("dbg_interpolated_buffer");
+			fileName << NUM_RESOLUTIONS - 1 << ".bmp";
+
+			level_size = WINDOW_SIZE;
+			numSubsplats = level_size * level_size;
+
+			lodepng::encode(fileName.str(), (const unsigned char*)level_data, level_size, level_size);
+		}
+
+		//clean up
+		delete[] buffer;
+	}
+		break;
+#endif//#if defined DEBUG_ILLUM_BUFFER
 	}
 }

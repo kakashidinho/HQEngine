@@ -13,6 +13,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\BaseSource\BaeApp.cpp" />
     <ClCompile Include="..\..\BaseSource\Light.cpp" />
+    <ClCompile Include="..\..\BaseSource\lodepng.cpp" />
+    <ClCompile Include="..\..\BaseSource\Utils.cpp" />
     <ClCompile Include="..\Source\App.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
   </ItemGroup>
@@ -20,6 +22,8 @@
     <ClInclude Include="..\..\BaseSource\BaseApp.h" />
     <ClInclude Include="..\..\BaseSource\BaseCommon.h" />
     <ClInclude Include="..\..\BaseSource\Light.h" />
+    <ClInclude Include="..\..\BaseSource\lodepng.h" />
+    <ClInclude Include="..\..\BaseSource\Utils.h" />
     <ClInclude Include="..\..\Data\common_compute_code.h" />
     <ClInclude Include="..\..\Data\common_shader_code.h" />
     <ClInclude Include="..\Source\App.h" />
@@ -47,7 +51,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslf;%(Outputs)</Outputs>
     </CustomBuild>
-    <None Include="..\..\Data\multires_splatting\clear_illumination_textures.cshader" />
+    <None Include="..\..\Data\multires_splatting\clear_illumination_buffer.cshader" />
     <None Include="..\..\Data\multires_splatting\common.cshaderh" />
     <CustomBuild Include="..\..\Data\multires_splatting\final-pass.hlsl">
       <FileType>Document</FileType>
@@ -61,8 +65,8 @@
     <None Include="..\..\Data\multires_splatting\msplat_resourcesCommon.script" />
     <None Include="..\..\Data\multires_splatting\msplat_resourcesD3D11.script" />
     <None Include="..\..\Data\multires_splatting\msplat_resourcesGL.script" />
-    <None Include="..\..\Data\multires_splatting\multires_splatting.cshader" />
-    <None Include="..\..\Data\multires_splatting\subsplats_refine.cshader" />
+    <None Include="..\..\Data\multires_splatting\multires_splatting_diffuse.cshader" />
+    <None Include="..\..\Data\multires_splatting\subsplats_refine_diffuse.cshader" />
     <None Include="..\..\Data\multires_splatting\upsample.cshader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -5,7 +5,76 @@ struct Subsplat {
 };
 
 #define GROUP_THREAD_SIZE 64
-#define FINEST_SIZE 512
+#define FINEST_DIM_SIZE 512
+#define FINEST_TOTAL_SIZE (FINEST_DIM_SIZE * FINEST_DIM_SIZE)
 #define NUM_RESOLUTIONS 5
-#define COARSEST_SIZE ((FINEST_SIZE) >> (NUM_RESOLUTIONS - 1))
+#define COARSEST_DIM_SIZE ((FINEST_DIM_SIZE) >> (NUM_RESOLUTIONS - 1))
+#define COARSEST_TOTAL_SIZE (COARSEST_DIM_SIZE * COARSEST_DIM_SIZE)
 #define NUM_VPL_PER_DIM 
+
+_GLOBAL_CONST_ begin_decl_array_with_init(uint, g_levels_dim_size, NUM_RESOLUTIONS)
+	COARSEST_DIM_SIZE,
+	COARSEST_DIM_SIZE << 1,
+	COARSEST_DIM_SIZE << 2,
+	COARSEST_DIM_SIZE << 3,
+	COARSEST_DIM_SIZE << 4
+end_decl_array_with_init
+
+
+_GLOBAL_CONST_ begin_decl_array_with_init(uint, g_levels_total_size, NUM_RESOLUTIONS)
+	COARSEST_TOTAL_SIZE,
+	COARSEST_TOTAL_SIZE << 2,
+	COARSEST_TOTAL_SIZE << 4,
+	COARSEST_TOTAL_SIZE << 6,
+	COARSEST_TOTAL_SIZE << 8
+end_decl_array_with_init
+
+
+_GLOBAL_CONST_ begin_decl_array_with_init(uint, g_levels_offset, NUM_RESOLUTIONS)
+	0,
+	g_levels_total_size[0],
+	g_levels_total_size[0] + g_levels_total_size[1],
+	g_levels_total_size[0] + g_levels_total_size[1] + g_levels_total_size[2],
+	g_levels_total_size[0] + g_levels_total_size[1] + g_levels_total_size[2] + g_levels_total_size[3]
+end_decl_array_with_init
+
+//total size of multires illumination buffer
+_GLOBAL_CONST_ uint g_illum_buffer_size = g_levels_offset[NUM_RESOLUTIONS - 1] + g_levels_total_size[NUM_RESOLUTIONS - 1];
+
+/*-----convert normalized floating point color to 32 bit rgba8 color--------*/
+uint colorRGBA8(float4 color4f){
+	uint color;
+	color4f = min(color4f, float4(1.0, 1.0, 1.0, 1.0));
+
+	color = uint(color4f.x * 255) & 0xff;
+	color |= (uint(color4f.y * 255) & 0xff) << 8;
+	color |= (uint(color4f.z * 255) & 0xff) << 16;
+	color |= (uint(color4f.w * 255) & 0xff) << 24;
+
+	return color;
+}
+
+/*-----convert 32 bit rgba8 color to normalized floating point color--------*/
+float4 colorRGBA4f(uint colorrgba8) {
+	float4 color;
+	color.x = (colorrgba8 & 0xff) / 255.0f;
+	color.y = ((colorrgba8 >> 8) & 0xff) / 255.0f;
+	color.z = ((colorrgba8 >> 16) & 0xff) / 255.0f;
+	color.w = ((colorrgba8 >> 24) & 0xff) / 255.0f;
+
+	return color;
+}
+
+//get index in multires illumination buffer of subsplat 
+//at res level <_level> and integer coordinates <_2dcoords>
+uint getSubsplatIndex(uint _level, uint2 _2dcoords) 
+{
+	return g_levels_offset[_level] + g_levels_dim_size[_level] * _2dcoords.y + _2dcoords.x;
+}
+
+//read color of subplat in multires illumination buffer
+#define readSubsplatColor(_buffer, _level, _2dcoords) (colorRGBA4f(_buffer[ getSubsplatIndex(_level, _2dcoords) ] ))
+
+//store color of subsplat in multires illumination buffer
+#define storeSubsplatColor4f(_buffer, _level, _2dcoords, _color4f) (_buffer[ getSubsplatIndex(_level, _2dcoords) ] = colorRGBA8(_color4f))
+#define storeSubsplatColorRGBA8(_buffer, _level, _2dcoords, _colorRGBA8) (_buffer[ getSubsplatIndex(_level, _2dcoords) ] = _colorRGBA8)

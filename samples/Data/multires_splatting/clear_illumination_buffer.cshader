@@ -1,0 +1,13 @@
+#include "../common_compute_code.h"
+#include "common.cshaderh"
+
+//mutires illumination buffer
+decl_structbuffer(uint, illumination_buffer, 0);
+
+main_proc(GROUP_THREAD_SIZE, 1, 1)
+{
+	if (globalThreadIdx.x >= g_illum_buffer_size)
+		return;
+
+	illumination_buffer[globalThreadIdx.x] = 0;
+}
