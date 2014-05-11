@@ -274,6 +274,10 @@ HQStateManagerD3D11::HQStateManagerD3D11(ID3D11Device * pD3DDevice ,
 				if (j < g_pD3DDev->GetCaps().maxPixelSamplers)
 					pD3DContext->PSSetSamplers(j  , 1 , &this->sState[i][j]->pD3DState);
 				break;
+			case 3:
+				if (j < g_pD3DDev->GetCaps().maxComputeSamplers)
+					pD3DContext->CSSetSamplers(j, 1, &this->sState[i][j]->pD3DState);
+				break;
 			}
 		}
 	}
@@ -297,6 +301,9 @@ HQStateManagerD3D11::~HQStateManagerD3D11()
 				break;
 			case 2:
 				pD3DContext->PSSetSamplers(j  , 1 , &g_nullSampler);
+				break;
+			case 3:
+				pD3DContext->CSSetSamplers(j, 1, &g_nullSampler);
 				break;
 			}
 		}
