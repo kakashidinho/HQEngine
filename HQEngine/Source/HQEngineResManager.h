@@ -27,6 +27,7 @@ public:
 	virtual bool IsRenderTarget() const = 0;
 
 	virtual HQTexture* GetTexture() const = 0;///caution: don't release this returned pointer by HQTextureManager interface
+	virtual HQRenderTargetView* GetRenderTargetView() const = 0;///caution: don't release this returned pointer by HQRenderTargetManager interface
 protected:
 	virtual ~HQEngineTextureResource() {}
 };

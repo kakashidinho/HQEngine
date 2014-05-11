@@ -59,6 +59,7 @@ public:
 	const hqfloat64* GetFloatAttributePtr(const char *attributeName) const;
 	const HQEngineCommonResParserNode* GetNextSibling(const char *siblingTypeName = NULL) const ;
 	const HQEngineCommonResParserNode* GetFirstChild(const char *childName = NULL) const ;
+	const char * GetFirstChildStrValue(const char *childName = NULL) const;///equivalent to GetFirstChild(childName)->GetStrAttribute("value")
 
 	void AddChild(HQEngineCommonResParserNode* child);
 	void SetAttribute(const char *name, ValueType value );

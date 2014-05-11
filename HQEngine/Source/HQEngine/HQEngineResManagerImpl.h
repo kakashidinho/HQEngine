@@ -30,7 +30,7 @@ public:
 
 	void Init(HQTexture* texture, HQRenderTargetView* renderTarget = NULL) {m_texture = texture; m_renderTarget = renderTarget;}
 	virtual HQTexture* GetTexture() const  { return m_texture; }
-	HQRenderTargetView* GetRenderTargetID() const { return m_renderTarget; }
+	virtual HQRenderTargetView* GetRenderTargetView() const { return m_renderTarget; }
 	virtual void GetTexture2DSize(hquint32 &width, hquint32 &height) const;
 	virtual bool IsRenderTarget() const {return m_renderTarget != NULL;}
 

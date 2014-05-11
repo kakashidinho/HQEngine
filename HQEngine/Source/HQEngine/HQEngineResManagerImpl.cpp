@@ -364,7 +364,7 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 		hquint32 width, height, arraySize = 1;
 		HQRenderTargetFormat format;
 		bool hasMipmap;
-		const char* hasMipmapStr = texture_info->GetStrAttribute("has_mipmap");
+		const char* hasMipmapStr = texture_info->GetFirstChildStrValue("has_mipmap");
 		hasMipmap = hasMipmapStr != NULL? strcmp(hasMipmapStr, "true") == 0: false;
 
 		//size
@@ -459,7 +459,7 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 
 
 			//generate mipmap for image?
-			const char* genMipStr = texture_info->GetStrAttribute("generate_mipmap");
+			const char* genMipStr = texture_info->GetFirstChildStrValue("generate_mipmap");
 			genMipmap = genMipStr != NULL? strcmp(genMipStr, "true") == 0 : false;
 
 			if (res_Name == NULL) res_Name = src_file_name;
@@ -478,7 +478,7 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 				return HQ_FAILED;
 			}
 
-			const char* genMipStr = texture_info->GetStrAttribute("generate_mipmap");
+			const char* genMipStr = texture_info->GetFirstChildStrValue("generate_mipmap");
 			genMipmap = genMipStr != NULL? strcmp(genMipStr, "true") == 0 : false;
 
 			texture_info_elem = texture_info->GetFirstChild("positive_x");
@@ -562,7 +562,7 @@ HQReturnVal HQEngineResManagerImpl::LoadTextureUAV(const HQEngineResParserNode* 
 	hquint32 width, height;
 	HQTextureUAVFormat format;
 	bool hasMipmap;
-	const char* hasMipmapStr = texture_info->GetStrAttribute("has_mipmap");
+	const char* hasMipmapStr = texture_info->GetFirstChildStrValue("has_mipmap");
 	hasMipmap = hasMipmapStr != NULL ? strcmp(hasMipmapStr, "true") == 0 : false;
 
 	//size

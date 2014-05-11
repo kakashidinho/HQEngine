@@ -420,7 +420,7 @@ HQReturnVal HQEngineRTGroupWrapper::Init(const CreationParams &params)
 		if (params.outputs[i].outputTexture == NULL)
 			outputDescs[i].renderTargetID = NULL;
 		else
-			outputDescs[i].renderTargetID = params.outputs[i].outputTexture->GetRenderTargetID();
+			outputDescs[i].renderTargetID = params.outputs[i].outputTexture->GetRenderTargetView();
 		outputDescs[i].cubeFace = (HQCubeTextureFace) params.outputs[i].cubeFace;
 	}
 

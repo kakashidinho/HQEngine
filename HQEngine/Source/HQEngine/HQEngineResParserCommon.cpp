@@ -90,6 +90,16 @@ const HQEngineCommonResParserNode* HQEngineCommonResParserNode::GetFirstChild(co
 	return NULL;
 }
 
+const char * HQEngineCommonResParserNode::GetFirstChildStrValue(const char *childName) const
+{
+	const HQEngineCommonResParserNode* child = GetFirstChild(childName);
+	if (child != NULL)
+	{
+		return child->GetStrAttribute("value");
+	}
+	return NULL;
+}
+
 void HQEngineCommonResParserNode::AddChild(HQEngineCommonResParserNode* child){
 	HQEngineCommonResParserNode* prev_child = m_firstChild;
 	while (prev_child != NULL && prev_child->m_nextSibling != NULL)
