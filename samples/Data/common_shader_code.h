@@ -117,6 +117,7 @@ float calculateSpotLightFactor(float3 lightToVert, float3 lightDirection, float3
 }
 
 #elif !defined HQEXT_GLSL && !defined HQEXT_GLSL_ES //D3D
+#pragma pack_matrix(column_major)
 
 struct vPNIn{
 	float3 iPos : VPOSITION;
@@ -267,12 +268,34 @@ float calculateSpotLightFactor(float3 lightToVert, float3 lightDirection, float3
 	return pow(max(spot, 0.0), lightFalloff_cosHalfAngle_cosHalfTheta.x);
 }
 
-#else
+#else //GLSL
 
 #define float4 vec4
+#define float4x4 mat4
 
 //TO DO
 #endif//#ifdef HQEXT_CG
+
+
+/*---------specular material -----------------------*/
+#if 1
+#define SpecularMaterial float4x4
+
+//work around cross platform array of struct in uniform buffer
+#	if defined HQEXT_GLSL || defined HQEXT_GLSL_ES
+#		define Material_Ambient(_material) ((_material)[0])
+#		define Material_Diffuse(_material) ((_material)[1])
+#		define Material_Specular(_material) ((_material)[2])
+#		define Material_SpecularExp(_material) ((_material)[3].x)
+#	else
+#		define Material_Ambient(_material) ((_material)._11_21_31_41)
+#		define Material_Diffuse(_material) ((_material)._12_22_32_42)
+#		define Material_Specular(_material) ((_material)._13_23_33_43)
+#		define Material_SpecularExp(_material) ((_material)._14)
+#	endif
+
+#else
+//can also view SpecularMaterial as
 
 struct SpecularMaterial {
 	float4 ambient;
@@ -280,6 +303,13 @@ struct SpecularMaterial {
 	float4 specular;
 	float specPower;
 };
+
+#define Material_Ambient(_material) (_material.ambient)
+#define Material_Diffuse(_material) (_material.diffuse)
+#define Material_Specular(_material) (_material.specular)
+#define Material_SpecularExp(_material) (_material.specPower)
+
+#endif
 
 
 #endif

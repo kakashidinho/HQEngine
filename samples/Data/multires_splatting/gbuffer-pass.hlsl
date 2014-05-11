@@ -114,24 +114,24 @@ pOut PS (in pIn input){
 	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
 	
 	/*------diffuse----------*/
-	float4 diffuse = lightDiffuse * max(dot(-lightVec, input.normalW), 0.0) * material[materialID].diffuse;
+	float4 diffuse = lightDiffuse * max(dot(-lightVec, input.normalW), 0.0) * Material_Diffuse(material[materialID]);
 
 	direct_flux = diffuse;
 	/*------specular----------*/
 
 	//combine
-	if (length(material[materialID].specular.xyz) > 0.0)
+	if (length(Material_Specular(material[materialID]).xyz) > 0.0)
 	{
 		float3 reflectedVec = reflect(lightVec, input.normalW);
-		float specFactor = pow(max(dot(reflectedVec, normalize(toCameraVec)), 0.0), material[materialID].specPower);
-		float4 specular = lightSpecular * material[materialID].specular * specFactor;
+		float specFactor = pow(max(dot(reflectedVec, normalize(toCameraVec)), 0.0), Material_SpecularExp(material[materialID]));
+		float4 specular = lightSpecular * Material_Specular(material[materialID]) * specFactor;
 		direct_flux += specular;
 	}
 	//multiply with spot light's factor and shadow factor
 	direct_flux *= spot * shadowFactor;
 
 	//combining with ambient intensity
-	direct_flux += lightAmbient * material[materialID].ambient;
+	direct_flux += lightAmbient * Material_Ambient(material[materialID]);
 
 	//store result
 	output.posW = float4(input.posW, 1.0);

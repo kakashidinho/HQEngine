@@ -103,7 +103,7 @@ pOut PS(
 	float3 lightVec = normalize(posW - lightPosition);
 	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
 	
-	output.flux = spot * max(dot(-lightVec, normalW), 0.0) * lightDiffuse * material[materialID].diffuse;
+	output.flux = spot * max(dot(-lightVec, normalW), 0.0) * lightDiffuse * Material_Diffuse(material[materialID]);
 	
 	return output;
 }

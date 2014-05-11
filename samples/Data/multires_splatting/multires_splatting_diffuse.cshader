@@ -62,7 +62,7 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 	//depth and material ID
 	float2 depthMat = texture2d_sample_lod_2f(depthMatMap, gbufferCoords, 0.0);
 	//material
-	float4 matDiffuse = material[int(depthMat.y)].diffuse;
+	float4 matDiffuse = Material_Diffuse(material[int(depthMat.y)]);
 
 	//world position
 	float4 worlPos = texture2d_sample_lod_4f(worldPosMap, gbufferCoords, 0.0);

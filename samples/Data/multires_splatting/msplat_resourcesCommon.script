@@ -49,6 +49,7 @@ resources {
 			
 		format=rg32f
 		
+		has_mipmap = true
 	}
 	render_target "world_pos_img" {
 		/* info for render target. "has_mipmap" default is false. */
@@ -59,6 +60,7 @@ resources {
 			
 		format=rgba16f
 		
+		has_mipmap = true
 	}
 	render_target "world_normal_img" {
 		/* info for render target. "has_mipmap" default is false. */
@@ -69,6 +71,7 @@ resources {
 			
 		format=rgba16f
 		
+		has_mipmap = true
 	}
 
 	render_target "direct_flux_img" {
