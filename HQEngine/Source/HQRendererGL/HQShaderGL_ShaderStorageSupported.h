@@ -43,6 +43,9 @@ struct HQShaderStorageBufferGL : public HQBufferGL {
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
 
+	//implement HQGraphicsBufferRawRetrievable
+	virtual HQReturnVal TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 destOffset, hquint32 srcOffset, hquint32 size);
+
 	virtual void BindBuffer() = 0;
 
 	HQDeviceGL * pMasterDevice;

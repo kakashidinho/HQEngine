@@ -57,8 +57,8 @@ private:
 	HQBufferUAV* m_finalSubsplatsBuffer;//buffer contains final list of subsplats
 	HQBufferUAV* m_subsplatsCountBuffer;//buffer containing subsplats count. see {m_initialSubsplatsCounts}
 	HQBufferUAV* m_dispatchArgsBuffer;//buffer containing dispatch's arguments. see {m_initialDispatchArgs}
-	hquint32 m_initialSubsplatsCounts[NUM_RESOLUTIONS];//initial total subsplats count and subsplats count for each refinement step
-	DispatchComputeArgs m_initialDispatchArgs[NUM_RESOLUTIONS];//initial dispatch arguments for indirect illumination step and refinement steps
+	HQBufferUAV* m_initialSubsplatsCountsBuffer;//initial total subsplats count and subsplats count for each refinement step
+	HQBufferUAV* m_initialDispatchArgsBuffer;//initial dispatch arguments for indirect illumination step and refinement steps
 	hqfloat32 m_subsplatsRefineThreshold[2];
 	hquint32 m_totalSubsplats;//total number of subsplats in all resolutions
 

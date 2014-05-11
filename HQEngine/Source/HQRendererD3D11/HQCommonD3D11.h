@@ -36,7 +36,7 @@ HQReturnVal CopyD3D11BufferContent(void *dest, ID3D11Buffer * resource);
 HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, size_t sizeToCopy);
 
 //base buffer object. Note: D3D11 resource's creation is done outside this class
-struct HQBufferD3D11 : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable, public HQBaseIDObject
+struct HQBufferD3D11 : public HQGraphicsBufferRawRetrievable, public HQBaseIDObject
 {
 	HQBufferD3D11(bool isDynamic, hq_uint32 size)
 	{
@@ -54,6 +54,7 @@ struct HQBufferD3D11 : public virtual HQMappableResource, public virtual HQGraph
 	virtual HQReturnVal Update(hq_uint32 offset, hq_uint32 size, const void * pData);
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
 	virtual HQReturnVal CopyContent(void *dest);
+	virtual HQReturnVal TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 destOffset, hquint32 srcOffset, hquint32 size);
 
 	//implement HQGraphicsResourceRawRetrievable
 	virtual void * GetRawHandle() { return pD3DBuffer; }
@@ -305,7 +306,7 @@ enum HQGenericBufferD3D11Type{
 };
 
 //Note: D3D11 resource's creation is done outside this class
-struct HQGenericBufferD3D11 : public HQBufferUAView_CacheD3D11, public HQBufferD3D11, public HQGraphicsBufferRawRetrievable {
+struct HQGenericBufferD3D11 : public HQBufferUAView_CacheD3D11, public HQBufferD3D11 {
 	typedef HQLinkedList<hquint32, HQPoolMemoryManager> SlotList;
 
 	struct BufferSlot//represent a (input/output) slot that buffer can bind to 

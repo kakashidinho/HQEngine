@@ -104,6 +104,29 @@ HQReturnVal HQBufferD3D11::CopyContent(void *dest)
 	return CopyD3D11BufferContent(dest, this->pD3DBuffer);
 }
 
+HQReturnVal HQBufferD3D11::TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 destOffset, hquint32 srcOffset, hquint32 size)
+{
+	HQBufferD3D11 * pSrcBufferD3D11 = static_cast<HQBufferD3D11*>(src);
+
+	if (destOffset + srcOffset + size == 0)//entire buffer
+	{
+		pD3DContext->CopyResource(this->pD3DBuffer, pSrcBufferD3D11->pD3DBuffer);
+	}
+	else{
+		D3D11_BOX src_box;
+		src_box.top = 0;
+		src_box.bottom = 1;
+		src_box.front = 0;
+		src_box.back = 1;
+		src_box.left = srcOffset;
+		src_box.right = srcOffset + size;
+
+		pD3DContext->CopySubresourceRegion(this->pD3DBuffer, 0, destOffset, 0, 0, pSrcBufferD3D11->pD3DBuffer, 0, &src_box);
+	}
+
+	return HQ_OK;
+}
+
 
 HQReturnVal CopyD3D11BufferContent(void *dest, ID3D11Buffer * resource)
 {

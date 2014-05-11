@@ -49,6 +49,10 @@ struct HQVertexBufferD3D9 : public HQBufferD3D9, public HQVertexBuffer, public H
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
 	virtual HQReturnVal CopyContent(void * dest);
+	virtual HQReturnVal TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 offset, hquint32 srcOffset, hquint32 size)
+	{
+		return HQ_FAILED;
+	}
 
 	//implement HQGraphicsResourceRawRetrievable
 	virtual void * GetRawHandle() { return pD3DBuffer; }
@@ -79,6 +83,10 @@ struct HQIndexBufferD3D9 : public HQBufferD3D9, public HQIndexBuffer, public HQB
 	virtual HQReturnVal Unmap();
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
 	virtual HQReturnVal CopyContent(void * dest);
+	virtual HQReturnVal TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 offset, hquint32 srcOffset, hquint32 size)
+	{
+		return HQ_FAILED;
+	}
 
 	//implement HQGraphicsResourceRawRetrievable
 	virtual void * GetRawHandle() { return pD3DBuffer; }

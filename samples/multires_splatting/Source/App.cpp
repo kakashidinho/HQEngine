@@ -363,11 +363,13 @@ void App::InitSubplatsBuffers(){
 
 	hquint32 totalSizeExceptLastLevel = 0;
 	hquint32 size = coarsestSize;
+	hquint32 initialSubsplatsCounts[NUM_RESOLUTIONS];//initial total subsplats count and subsplats count for each refinement step
+	DispatchComputeArgs initialDispatchArgs[NUM_RESOLUTIONS];//initial dispatch arguments for indirect illumination step and refinement steps
 	//the first element of this array is final subsplats list count, the subsequent ones are counts for each refinement step
-	m_initialSubsplatsCounts[0] = 0;
+	initialSubsplatsCounts[0] = 0;
 	//the first element of this array is indirect illumination's dispatch's arguments, 
 	//the subsequent ones are arguments for refinement steps' dispatchs
-	m_initialDispatchArgs[0].Set(1);
+	initialDispatchArgs[0].Set(1);
 
 	for (hquint32 i = 0; i < NUM_RESOLUTIONS - 1; ++i)
 	{
@@ -375,13 +377,13 @@ void App::InitSubplatsBuffers(){
 		//while other has zero
 		if (i == 0)
 		{
-			m_initialSubsplatsCounts[i + 1] = coarsestSize * coarsestSize;
-			m_initialDispatchArgs[i + 1].Set(max(m_initialSubsplatsCounts[i + 1] / dispatchGroupThreads, 1));
+			initialSubsplatsCounts[i + 1] = coarsestSize * coarsestSize;
+			initialDispatchArgs[i + 1].Set(max(initialSubsplatsCounts[i + 1] / dispatchGroupThreads, 1));
 		}
 		else
 		{
-			m_initialSubsplatsCounts[i + 1] = 0;
-			m_initialDispatchArgs[i + 1].Set(1);
+			initialSubsplatsCounts[i + 1] = 0;
+			initialDispatchArgs[i + 1].Set(1);
 		}
 		
 		size <<= 1;//next finer resolution
@@ -425,17 +427,30 @@ void App::InitSubplatsBuffers(){
 		delete[] subsplats;
 	}
 
+	/*--------buffers containing initial counts-------------*/
+	//create buffer containing subsplats' counts.
+	//the first element is final subsplats list count, the subsequent ones are counts for each refinement step
+	m_pRDevice->GetShaderManager()->CreateBufferUAV(initialSubsplatsCounts, sizeof(hquint32),
+		sizeof(initialSubsplatsCounts) / sizeof(hquint32),
+		&m_initialSubsplatsCountsBuffer);
+	//create buffer containing initial dispatch arguments for indirect illumination and refinement steps
+	m_pRDevice->GetShaderManager()->CreateComputeIndirectArgs(initialDispatchArgs,
+		sizeof(initialDispatchArgs) / sizeof(DispatchComputeArgs),
+		&m_initialDispatchArgsBuffer);
+
+	/*----buffer containing counts at runtime------------*/
 	//create buffer containing subsplats' counts.
 	//the first element is final subsplats list count, the subsequent ones are counts for each refinement step
 	m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(hquint32), 
-		sizeof(m_initialSubsplatsCounts) / sizeof(hquint32), 
+		sizeof(initialSubsplatsCounts) / sizeof(hquint32), 
 		&m_subsplatsCountBuffer);
 
 	//create buffer containing dispatch arguments for indirect illumination and refinement steps
 	m_pRDevice->GetShaderManager()->CreateComputeIndirectArgs(NULL,  
-		sizeof(m_initialDispatchArgs) / sizeof(DispatchComputeArgs),
+		sizeof(initialDispatchArgs) / sizeof(DispatchComputeArgs),
 		&m_dispatchArgsBuffer);
 
+	/*----------------------------------*/
 	//create buffer containing final subsplats list
 	m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(Subsplat), WINDOW_SIZE * WINDOW_SIZE, &m_finalSubsplatsBuffer);
 
@@ -447,8 +462,8 @@ void App::RefineSubsplats()
 	const hquint32 numCoarsestSubsplats = coarsestSize * coarsestSize;
 
 	
-	m_subsplatsCountBuffer->Update(m_initialSubsplatsCounts);//reset subsplats' counts
-	m_dispatchArgsBuffer->Update(m_initialDispatchArgs);//reset dispatch arguments
+	m_subsplatsCountBuffer->TransferData(m_initialSubsplatsCountsBuffer);//reset subsplats' counts
+	m_dispatchArgsBuffer->TransferData(m_initialDispatchArgsBuffer);//reset dispatch arguments
 
 #if VERIFY_CODE
 	{

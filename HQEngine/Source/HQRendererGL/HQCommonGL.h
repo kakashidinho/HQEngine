@@ -26,6 +26,12 @@ struct HQBufferGL : public HQGraphicsBufferRawRetrievable, public HQBaseIDObject
 	//implement HQGraphicsResourceRawRetrievable
 	virtual void * GetRawHandle() { return (void*)bufferName; }
 
+	//implement HQGraphicsBufferRawRetrievable
+	virtual HQReturnVal TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 destOffset, hquint32 srcOffset, hquint32 size)
+	{
+		return HQ_FAILED;
+	}
+
 	GLenum targetName;
 	GLenum usage;//GL_STATIC_DRAW or GL_DYNAMIC_DRAW
 	hq_uint32 size;

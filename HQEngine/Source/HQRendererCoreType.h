@@ -602,7 +602,10 @@ class HQTextureBuffer : public HQTexture, public HQMappableResource {
 };
 
 class HQGraphicsBufferRawRetrievable : public virtual HQMappableResource, public virtual HQGraphicsResourceRawRetrievable{
-
+public:
+	///transfer data between two buffers. For now, only UAV buffer is guaranteed to support this method. 
+	///if {offset} = {srcOffset} = {size} = 0, entire buffer is copied
+	virtual HQReturnVal TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 destOffset = 0, hquint32 srcOffset = 0, hquint32 size = 0) = 0;
 };
 
 typedef HQGraphicsBufferRawRetrievable HQVertexBuffer;

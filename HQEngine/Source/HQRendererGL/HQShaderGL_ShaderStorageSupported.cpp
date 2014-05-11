@@ -94,6 +94,24 @@ HQReturnVal HQShaderStorageBufferGL::GenericMap(void ** ppData, HQMapType mapTyp
 	return HQ_OK;
 }
 
+HQReturnVal HQShaderStorageBufferGL::TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 destOffset, hquint32 srcOffset, hquint32 size)
+{
+	HQBufferGL* pSrcBufferGL = static_cast<HQBufferGL*>(src);
+
+	glBindBuffer(GL_COPY_READ_BUFFER, pSrcBufferGL->bufferName);
+	glBindBuffer(GL_COPY_WRITE_BUFFER, this->bufferName);
+
+	if (destOffset + srcOffset + size == 0)//entire buffer
+	{
+		size = this->size;
+	}
+
+	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, srcOffset, destOffset, size);
+
+	return HQ_OK;
+}
+
+
 /*--------------HQDrawIndirectBufferGL-------------------*/
 HQDrawIndirectBufferGL::HQDrawIndirectBufferGL(hq_uint32 elemSize, hquint32 numElems)
 : HQShaderStorageBufferGL(elemSize, numElems, GL_DRAW_INDIRECT_BUFFER)
