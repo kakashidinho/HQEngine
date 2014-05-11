@@ -75,6 +75,7 @@ vOut VS(in vPNIn input){
 #define LOW_RES_SIZE 128
 
 uniform material {
+	float4 materialAmbient;
 	float4 materialDiffuse;
 } : BUFFER[2];
 

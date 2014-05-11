@@ -15,6 +15,7 @@ static void GetPerpendicularVector(hqfloat32 originalX, hqfloat32 originalY, hqf
 
 /*--------diffuse Spot Light----------*/
 DiffuseSpotLight::DiffuseSpotLight(
+	const HQColor &ambient,
 	const HQColor& diffuse,
 	hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
 	hqfloat32 dirX, hqfloat32 dirY, hqfloat32 dirZ,
@@ -24,7 +25,7 @@ DiffuseSpotLight::DiffuseSpotLight(
 	hqfloat32 _maxRange,
 	HQRenderAPI renderApi
 	)
-	: BaseLight(diffuse, posX, posY, posZ),
+	: BaseLight(ambient, diffuse, posX, posY, posZ),
 	angle(_angle), theta(_theta), falloff(_falloff), maxRange(_maxRange),
 	_direction(HQVector4::New())
 {
@@ -71,6 +72,7 @@ void DiffuseSpotLight::OnUpdated(const HQSceneNode * node, hqfloat32 dt)
 
 /*----------specular spot light ---------------*/
 SpecularSpotLight::SpecularSpotLight(
+	const HQColor &ambient,
 	const HQColor& diffuse,
 	const HQColor& specular,
 	hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
@@ -81,7 +83,9 @@ SpecularSpotLight::SpecularSpotLight(
 	hqfloat32 maxRange,
 	HQRenderAPI renderApi
 	)
-	: DiffuseSpotLight(diffuse,
+	: DiffuseSpotLight(
+		ambient,
+		diffuse,
 		posX, posY, posZ,
 		dirX, dirY, dirZ,
 		angle, theta, 

@@ -27,7 +27,8 @@ void RenderLoop::DepthPassRender(HQTime dt){
 	for (hquint32 i = 0; i < m_model->GetNumSubMeshes(); ++i){
 		//send material info to shader
 		m_uniformMaterialBuffer->Map(&material);
-		memcpy(material, &m_model->GetSubMeshInfo(i).colorMaterial.diffuse, sizeof(HQVector4));
+		memcpy(material->materialAmbient, &m_model->GetSubMeshInfo(i).colorMaterial.ambient, sizeof(HQVector4));
+		memcpy(material->materialDiffuse, &m_model->GetSubMeshInfo(i).colorMaterial.diffuse, sizeof(HQVector4));
 		m_uniformMaterialBuffer->Unmap();
 
 		m_model->DrawSubMesh(i);

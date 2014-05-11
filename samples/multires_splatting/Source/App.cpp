@@ -52,6 +52,7 @@ App::App()
 
 	//create light object
 	m_light = new SpecularSpotLight(
+		HQColorRGBA(0.0f, 0.0f, 0.0f, 1),//ambient
 		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),//diffuse
 		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),//specular
 		//HQColorRGBA(1.0f, 1.f, 1.f, 1),//diffuse
@@ -100,6 +101,7 @@ App::App()
 	m_uniformMaterialArrayBuffer->Map(&material);
 	for (hquint32 i = 0; i < m_model->GetNumSubMeshes(); ++i)
 	{
+		memcpy(&material[i].materialAmbient, &m_model->GetSubMeshInfo(i).colorMaterial.ambient, sizeof(HQFloat4));
 		memcpy(&material[i].materialDiffuse, &m_model->GetSubMeshInfo(i).colorMaterial.diffuse, sizeof(HQFloat4));
 		memcpy(&material[i].materialSpecular, &m_model->GetSubMeshInfo(i).colorMaterial.specular, sizeof(HQFloat4));
 		material[i].materialShininess = m_model->GetSubMeshInfo(i).colorMaterial.power;
@@ -160,6 +162,7 @@ void App::Update(HQTime dt){
 	m_uniformLightProtBuffer->Map(&lightProt);
 	memcpy(lightProt->lightPosition, &m_light->position(), sizeof(HQVector4));
 	memcpy(lightProt->lightDirection, &m_light->direction(), sizeof(HQVector4));
+	memcpy(lightProt->lightAmbient, &m_light->ambientColor, sizeof(HQVector4));
 	memcpy(lightProt->lightDiffuse, &m_light->diffuseColor, sizeof(HQVector4));
 	memcpy(lightProt->lightSpecular, &m_light->specularColor, sizeof(HQVector4));
 	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[0] = m_light->falloff;

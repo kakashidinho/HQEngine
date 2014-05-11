@@ -42,7 +42,7 @@ vOut VS(in vPNIn input){
 };
 
 /*-------fragment shader------------------*/
-#define DEPTH_BIAS 0.2
+#define DEPTH_BIAS 0.02
 #define SHADOW_MAP_SIZE 512
 
 cbuffer materials : register (b2) {
@@ -58,6 +58,7 @@ cbuffer lightProperties : register (b4) {
 
 	float3 lightPosition;
 	float3 lightDirection;
+	float4 lightAmbient;
 	float4 lightDiffuse;
 	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
 	float4 lightSpecular;
@@ -113,16 +114,24 @@ pOut PS (in pIn input){
 	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
 	
 	/*------diffuse----------*/
-	direct_flux = lightDiffuse * max(dot(-lightVec, input.normalW), 0.0) * material[materialID].diffuse;
+	float4 diffuse = lightDiffuse * max(dot(-lightVec, input.normalW), 0.0) * material[materialID].diffuse;
 
-
+	direct_flux = diffuse;
 	/*------specular----------*/
-	float3 reflectedVec = reflect(lightVec, input.normalW);
-	float spec = pow(max(dot(reflectedVec, normalize(toCameraVec)), 0.0), material[materialID].specPower);
-	direct_flux += lightSpecular * material[materialID].specular * spec;
 
+	//combine
+	if (length(material[materialID].specular.xyz) > 0.0)
+	{
+		float3 reflectedVec = reflect(lightVec, input.normalW);
+		float specFactor = pow(max(dot(reflectedVec, normalize(toCameraVec)), 0.0), material[materialID].specPower);
+		float4 specular = lightSpecular * material[materialID].specular * specFactor;
+		direct_flux += specular;
+	}
 	//multiply with spot light's factor and shadow factor
 	direct_flux *= spot * shadowFactor;
+
+	//combining with ambient intensity
+	direct_flux += lightAmbient * material[materialID].ambient;
 
 	//store result
 	output.posW = float4(input.posW, 1.0);

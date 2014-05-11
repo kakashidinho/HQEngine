@@ -275,6 +275,7 @@ float calculateSpotLightFactor(float3 lightToVert, float3 lightDirection, float3
 #endif//#ifdef HQEXT_CG
 
 struct SpecularMaterial {
+	float4 ambient;
 	float4 diffuse;
 	float4 specular;
 	float specPower;

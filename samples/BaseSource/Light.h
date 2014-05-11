@@ -6,15 +6,18 @@
 
 /*------basic light structure---------*/
 struct BaseLight{
-	BaseLight(const HQColor& diffuse,
-	hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ)
-	: diffuseColor(diffuse),
+	BaseLight(
+		const HQColor &ambient,
+		const HQColor& diffuse,
+		hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ)
+		: ambientColor (ambient), diffuseColor(diffuse),
 	_position(HQVector4::New(posX, posY, posZ, 1.0f))
 	{}
 	virtual ~BaseLight() { delete _position; }
 
 	const HQVector4& position() const { return *_position; }
 
+	HQColor ambientColor;
 	HQColor diffuseColor;
 protected:
 	HQVector4* _position;//vector4 object needs to be aligned in memory, that's why we need to dynamically allocate it
@@ -24,6 +27,7 @@ protected:
 /*------------diffuse only spot light--------*/
 struct DiffuseSpotLight : public BaseLight, public HQSceneNode::Listener{
 	DiffuseSpotLight(
+		const HQColor &ambient,
 		const HQColor& diffuse,
 		hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
 		hqfloat32 dirX, hqfloat32 dirY, hqfloat32 dirZ,
@@ -52,6 +56,7 @@ private:
 
 struct SpecularSpotLight : public DiffuseSpotLight {
 	SpecularSpotLight(
+		const HQColor &ambient,
 		const HQColor& diffuse,
 		const HQColor& specular,
 		hqfloat32 posX, hqfloat32 posY, hqfloat32 posZ,
@@ -69,6 +74,7 @@ struct SpecularSpotLight : public DiffuseSpotLight {
 /*-------structures that match those in shader--------*/
 
 struct DiffuseMaterial {
+	float materialAmbient[4];
 	float materialDiffuse[4];
 };
 
@@ -82,6 +88,7 @@ struct DiffuseLightProperties {
 
 	float lightPosition[4];
 	float lightDirection[4];
+	float lightAmbient[4];
 	float lightDiffuse[4];
 	float lightFalloff_cosHalfAngle_cosHalfTheta[3];
 	float padding;

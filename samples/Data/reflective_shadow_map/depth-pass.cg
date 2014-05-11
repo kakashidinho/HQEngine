@@ -68,6 +68,7 @@ vOut VS(in vPNIn input){
 
 
 uniform material {
+	float4 materialAmbient;
 	float4 materialDiffuse;
 } : BUFFER[2];
 
@@ -75,6 +76,7 @@ uniform lightProperties {
 	
 	float3 lightPosition;
 	float3 lightDirection;
+	float4 lightAmbient;
 	float4 lightDiffuse;
 	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
 } : BUFFER[3];
@@ -107,7 +109,8 @@ pOut PS(
 	float3 lightVec = normalize(posW - lightPosition);
 	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
 	
-	output.flux = spot * max(dot(-lightVec, normalW), 0.0) * lightDiffuse * materialDiffuse;
+	output.flux = spot * (lightAmbient * materialAmbient + 
+		+ max(dot(-lightVec, normalW), 0.0) * lightDiffuse * materialDiffuse);
 	
 	return output;
 }

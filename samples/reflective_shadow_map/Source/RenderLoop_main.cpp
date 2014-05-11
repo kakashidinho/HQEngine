@@ -98,7 +98,8 @@ RenderLoop::RenderLoop(const char* rendererAPI,
 
 	//create light object
 	m_light = new DiffuseSpotLight(
-			HQColorRGBA(1, 1, 1, 1),
+			HQColorRGBA(0.2f, 0.2f, 0.2f, 1), //ambient
+			HQColorRGBA(1, 1, 1, 1), //diffuse
 			343.f, 547.8f , -227.f,
 			0, -1, 0,
 			HQToRadian(90),
@@ -330,6 +331,7 @@ void RenderLoop::Update(HQTime dt)
 	m_uniformLightProtBuffer->Map(&lightProt);
 	memcpy(lightProt->lightPosition, &m_light->position(), sizeof(HQVector4));
 	memcpy(lightProt->lightDirection, &m_light->direction(), sizeof(HQVector4));
+	memcpy(lightProt->lightAmbient, &m_light->ambientColor, sizeof(HQVector4));
 	memcpy(lightProt->lightDiffuse, &m_light->diffuseColor, sizeof(HQVector4));
 	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[0] = m_light->falloff;
 	lightProt->lightFalloff_cosHalfAngle_cosHalfTheta[1] = cosf(m_light->angle * 0.5f);

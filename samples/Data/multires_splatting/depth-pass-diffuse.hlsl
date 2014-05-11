@@ -67,6 +67,7 @@ cbuffer lightProperties : register (b4) {
 	
 	float3 lightPosition;
 	float3 lightDirection;
+	float4 lightAmbient;
 	float4 lightDiffuse;
 	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
 };
