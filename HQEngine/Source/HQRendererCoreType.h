@@ -651,6 +651,33 @@ public:
 	virtual HQShaderObject * GetShader(HQShaderType type) = 0;
 };
 
+struct HQUnorderedAccessViewDesc {
+	enum Type {
+		TYPE_BUFFER_UAV,
+		TYPE_TEXTURE_UAV
+	};
+
+	Type resourceType;
+
+	union {
+		struct {
+			HQBufferUAV * buffer;//must be unordered access supported buffer
+			hquint32 firstElementIdx;
+			hquint32 numElenents;
+		} bufferDesc;
+
+		struct {
+			HQTexture* texture;//must be unordered access supported texture
+			hquint32 mipLevel;
+			bool readable;
+		} textureDesc;
+	};
+};
+
+class HQUnorderedAccessViewGroup : HQRestrictedObj {
+
+};
+
 #include "HQRendererCoreTypeInline.h"
 #include "HQRendererCoreTypeFixedFunction.h"
 #include "HQVertexAttribute.h"

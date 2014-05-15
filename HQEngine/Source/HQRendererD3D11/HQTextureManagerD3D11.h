@@ -15,7 +15,7 @@ COPYING.txt included with this distribution for more information.
 
 #include <d3d11.h>
 
-#define HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER 0
+#define HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER 1
 
 #ifndef HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
 #define HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
@@ -78,7 +78,6 @@ public:
 	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
 	HQReturnVal SetTexture(HQShaderType shaderStage, hq_uint32 slot, HQTexture* textureID);
 
-	HQReturnVal SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read);
 	HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read);
 	
 	HQBaseTexture * CreateNewTextureObject(HQTextureType type);

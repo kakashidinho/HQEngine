@@ -899,87 +899,6 @@ HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSl
 	return HQ_OK;
 }
 
-HQReturnVal HQTextureManagerD3D11::SetTextureUAV(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read)
-{
-	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
-
-	hq_uint32 uavSlot = slot & 0x0fffffff;
-
-	hq_uint32 shaderStage = slot & 0xf0000000;
-
-	TextureSlot *pTextureUAVSlot;
-	HQTextureD3D11* pCurrentTextureD3D11;
-	ID3D11UnorderedAccessView *pUAV = NULL;
-	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
-
-	UINT uavInitialCount = -1;
-
-	if (pTextureD3D11 != NULL)
-	{
-		//retrieve UAV
-		HQUAVTextureResourceD3D11* pTextureUAVResD3D11 = (HQUAVTextureResourceD3D11 *)pTextureD3D11->pData;
-		pUAV = pTextureUAVResD3D11-> GetOrCreateNewUAV(this->pD3DDevice, pTextureD3D11->type, mipLevel, read);
-
-		//first unbind texture from all shader resource view slots
-		this->UnbindTextureFromAllTextureSlots(pTexture);
-	}
-
-	//unbind any bound UAV buffer at the same slot
-	static_cast<HQShaderManagerD3D11*>(this->pMasterDevice->GetShaderManager())->OnTextureBindToComputeShaderUAVSlot(uavSlot);
-
-
-
-	switch (shaderStage)
-	{
-#if HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER
-	case HQ_PIXEL_SHADER:
-		//TO DO
-		break;
-#endif//#if HQ_D3D11_USE_TEX_UAV_IN_PIXEL_SHADER
-	case HQ_COMPUTE_SHADER:
-#if defined _DEBUG || defined DEBUG
-		if (uavSlot >= this->pMasterDevice->GetCaps().maxComputeUAVSlots)
-		{
-			Log("SetTextureUAV() Error : texture slot=%u is out of range!", uavSlot);
-			return HQ_FAILED;
-		}
-#endif
-		pTextureUAVSlot = this->textureUAVSlots[1] + uavSlot;
-		pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureUAVSlot->pTexture.GetRawPointer();
-		if (pTextureD3D11 != pCurrentTextureD3D11)
-		{
-			if (pCurrentTextureD3D11 != NULL)
-			{
-				//remove the link between old texture and uav slot
-				pCurrentTextureD3D11->uavBoundSlots.RemoveAt(pTextureUAVSlot->textureLink);
-			}
-
-			if (pTextureD3D11 != NULL)
-			{
-				//unbind from all other UAV slots
-				this->UnbindTextureFromAllUAVSlots(pTexture);
-
-				//link the texture with this slot
-				pTextureUAVSlot->textureLink = pTextureD3D11->uavBoundSlots.PushBack(slot);
-				pTextureUAVSlot->pTexture = pTexture;//hold reference to texture
-			}
-		}
-
-		//now set UAV
-		pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &pUAV, &uavInitialCount);
-
-		break;
-	default:
-#if defined _DEBUG || defined DEBUG
-		Log("Error : {slot} parameter passing to SetTextureUAV() method didn't bitwise OR with valid HQShaderType enum value!");
-#endif
-		return HQ_FAILED;
-	}
-
-
-	return HQ_OK;
-}
-
 HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSlot, HQTexture* textureID, hq_uint32 mipLevel, bool read)
 {
 #if defined _DEBUG || defined DEBUG
@@ -1043,6 +962,7 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSl
 
 	return HQ_OK;
 }
+
 
 void HQTextureManagerD3D11::OnBufferBindToComputeShaderUAVSlot(hquint32 slot)
 {
