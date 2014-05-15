@@ -1,18 +1,18 @@
 resources {
 	/*--------reflective shadow map pass----------*/
-	shader "depth-pass-diffuse_vs" { 			/* name will be default to source file name */
+	shader "depth-pass_vs" { 			/* name will be default to source file name */
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=VS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass-diffuse.hlsl" 			/* source file */
+		src="depth-pass.hlsl" 			/* source file */
 		debug=true
 	}
 	
-	shader "depth-pass-diffuse_ps" { 			/* name will be default to source file name */
+	shader "depth-pass_ps" { 			/* name will be default to source file name */
 		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass-diffuse.hlsl" 			/* source file */
+		src="depth-pass.hlsl" 			/* source file */
 		debug=true
 	}
 	/*--------g-buffer pass----------*/
@@ -77,11 +77,19 @@ resources {
 		debug=true
 	}
 
-	shader "multires_splatting_cs" { 			/* name will be default to source file name */
+	shader "multires_splatting_diffuse_cs" { 			/* name will be default to source file name */
 		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="multires_splatting_diffuse.cshader" 			/* source file */
+		debug=true
+	}
+
+	shader "multires_refine_vs_splatting_glossy_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=hlsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="multires_refine_vs_splatting_glossy.cshader" 			/* source file */
 		debug=true
 	}
 

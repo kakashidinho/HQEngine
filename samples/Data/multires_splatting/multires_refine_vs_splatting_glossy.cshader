@@ -1,0 +1,400 @@
+#include "../common_shader_code.h"
+#include "../common_compute_code.h"
+#include "common.cshaderh"
+
+#define ENABLE_SPECULAR 1
+#define ONLY_SPECULAR 0
+#define FORCE_REFINE 0
+#define ADDITIVE_BLEND 1
+
+struct VPL {
+	uint materialID;
+	float3 posW;//world space position
+	float3 normalW;//world space normal
+	float4 diffuseFlux;//reflected diffuse flux
+	float3 reflectedDir;//perfect reflected direction of direct light's ray
+	float spotFactor;
+};
+
+struct SubsplatEx {
+	uint materialID;
+	float3 posW;//wordl space position
+	float3 normalW;//world space normal
+};
+
+begin_decl_uniform_buffer(cameraInfos, 0)
+{
+	float4x3 worldMat;
+	float4x4 viewMat;
+	float4x4 projMat;
+	float4 cameraPos;//camera's world position
+};
+
+begin_decl_uniform_buffer(materialInfos, 2)
+{
+	SpecularMaterial material[7];
+};
+
+begin_decl_uniform_buffer(lightProperties, 4)
+{
+	float3 lightPosition;
+	float3 lightDirection;
+	float4 lightAmbient;
+	float4 lightDiffuse;
+	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
+	float4 lightSpecular;
+};
+
+begin_decl_uniform_buffer(current_level_info, 10)
+{
+	uint current_level;//current level of refinement step
+};
+
+begin_decl_uniform_buffer(threshold_info, 12)
+{
+	float3 thresholds;//discontinuity thresholds
+};
+
+begin_decl_uniform_buffer(vpl_sampling_info, 13)
+{
+	float2 vplSampleCoords;
+};
+
+
+
+//input textures
+decl_texture2d_with_sampler_2f(depthMatMap, 0);//texture containing depth and material ID
+decl_texture2d_with_sampler_4f(worldPosMap, 1);//texture containing world space position
+decl_texture2d_with_sampler_4f(worldNormalMap, 2);//texture containing world space normal
+decl_texture2d_with_sampler_2f(rsm_depthMatMap, 3);//texture containing VPL's depth and material ID
+decl_texture2d_with_sampler_4f(rsm_worldPosMap, 4);//texture containing VPL's world space position
+decl_texture2d_with_sampler_4f(rsm_worldNormalMap, 5);//texture containing VPL's world space normal
+decl_texture2d_with_sampler_4f(rsm_fluxMap, 6);//texture containing VPL's diffuse flux
+
+
+/*----------output buffers------------*/ 
+//mutires illumination buffer
+decl_structbuffer(uint, illumination_buffer, 0);
+//temporary illumination buffer
+decl_structbuffer(uint, temp_illumination_buffer, 1);
+
+decl_structbuffer(uint, numSubsplats, 2);//buffer containing number of subsplats in all refinement steps. The first element is unused since it is total number of subsplats
+decl_structbuffer(Subsplat, subplats_buffer, 3);//subsplat buffer containing subsplats for every refinement step
+decl_uintbuffer(indirect_args, 4);//buffer containing number of thread group to dispatch for refinement steps. First element is unused.
+
+//get subplat at current level
+Subsplat getSubsplat(uint index) {
+	return subplats_buffer[index + g_levels_offset[current_level] ];
+}
+
+//insert to finer subsplats list and return number of subsplats for that step
+uint insertToFinerSubsplatsList(Subsplat subsplat)
+{
+	uint index;
+
+	atomic_add(numSubsplats[subsplat.level + 1], 1, index);
+
+	index += g_levels_offset[subsplat.level];
+
+	subplats_buffer[index] = subsplat;
+
+	return index + 1;
+}
+
+uint setFinerStepDispatchSize(uint value)
+{
+	uint curSize;
+	atomic_max(indirect_args[(2 + current_level) * 3], value, curSize);
+
+	return curSize;
+}
+
+uint getDispatchSize(uint numSubsplats)
+{
+	uint re = numSubsplats % GROUP_THREAD_SIZE;
+	uint size = (numSubsplats) / GROUP_THREAD_SIZE;
+	size += (GROUP_THREAD_SIZE  - 1 + re) / GROUP_THREAD_SIZE;
+
+	return size;
+}
+
+VPL getVPLInfo(){
+	VPL vpl;
+
+	//get VPL materialID
+	uint vplMaterialID = uint(texture2d_sample_lod_2f(rsm_depthMatMap, vplSampleCoords, 0.0).y);
+
+	//get VPL position
+	float4 vplPos = texture2d_sample_lod_4f(rsm_worldPosMap, vplSampleCoords, 0.0);
+	//get VPL normal
+	float4 vplNormal = texture2d_sample_lod_4f(rsm_worldNormalMap, vplSampleCoords, 0.0);
+	//get VPL diffuse flux
+	float4 vplFlux = texture2d_sample_lod_4f(rsm_fluxMap, vplSampleCoords, 0.0);
+
+	//normalize normal
+	vplNormal.xyz = vplNormal.w * normalize(vplNormal.xyz);
+
+	//calculate perfectly reflected direction of direct light ray
+	float3 lightRay = normalize(vplPos.xyz - lightPosition);
+	float3 reflectedRay = reflect(lightRay, vplNormal.xyz);
+
+	//return result
+	vpl.posW = vplPos.xyz;
+	vpl.spotFactor = vplPos.w;//spot factor also stored in position buffer
+	vpl.normalW = vplNormal.xyz;
+	vpl.diffuseFlux = vplFlux;
+	vpl.materialID = vplMaterialID;
+	vpl.reflectedDir = reflectedRay;
+
+	return vpl;
+}
+
+SubsplatEx getSubsplatInfo(Subsplat subsplat)
+{
+	uint2 coords = uint2(subsplat.x, subsplat.y);
+	uint2 gbuffer_size, coarsest_size, current_size;
+
+#if 0
+	//gbuffer-size
+	texture2d_getsize_2f(depthMatMap, gbuffer_size.x, gbuffer_size.y);
+	//coarsest size
+	coarsest_size = uint2(COARSEST_DIM_SIZE, COARSEST_DIM_SIZE);
+	//current level's size
+	current_size = coarsest_size << subsplat.level;
+	
+	//get g-buffer sampling coords
+	float2 gbufferCoords =  (float2(coords) + float2( 0.5, 0.5)) / current_size.x;
+
+	//depth and material ID
+	float2 depthMat = texture2d_sample_lod_2f(depthMatMap, gbufferCoords, 0.0);
+
+	//world position
+	float4 worlPos = texture2d_sample_lod_4f(worldPosMap, gbufferCoords, 0.0);
+
+	//world normal
+	float4 worldNormal = texture2d_sample_lod_4f(worldNormalMap, gbufferCoords, 0.0);
+
+#else
+	uint gBufferMipLevel = G_BUFFER_MIP_LEVEL(subsplat.level);
+	//depth and material ID
+	float2 depthMat = texture2d_read_2f(depthMatMap, coords, gBufferMipLevel);
+
+	//world position
+	float4 worlPos = texture2d_read_4f(worldPosMap, coords, gBufferMipLevel);
+
+	//world normal
+	float4 worldNormal = texture2d_read_4f(worldNormalMap, coords, gBufferMipLevel);
+#endif
+	worldNormal.xyz = normalize(worldNormal.xyz);
+
+	//return result
+	SubsplatEx subsplatInfo;
+	subsplatInfo. materialID = uint(depthMat.y);
+	subsplatInfo.posW = worlPos.xyz;
+	subsplatInfo.normalW = worldNormal.xyz;
+
+	return subsplatInfo;
+}
+
+//calculate illumination of a subsplat
+float4 calculateIllumination(VPL vpl, Subsplat subsplatID){
+	SubsplatEx subsplat = getSubsplatInfo(subsplatID);
+	SpecularMaterial vplMaterial = material[vpl.materialID];
+	SpecularMaterial subsplatMaterial = material[subsplat.materialID];
+
+	//calculate indirect illumination
+	float3 toVPL = vpl.posW - subsplat.posW;
+	float distanceSqr = dot(toVPL, toVPL);
+	float distance = sqrt(distanceSqr);
+	toVPL = toVPL / distance;
+
+	//diffuse
+	float pdot = max(dot(toVPL, subsplat.normalW), 0.0);
+	float ldot = max(dot(-toVPL, vpl.normalW), 0.0);
+	float4 radianceIn = vpl.diffuseFlux * pdot * ldot;
+
+#if ENABLE_SPECULAR
+	//calculate specular reflection from vpl to subsplat
+	if (length(Material_Specular(vplMaterial)) > 0.0)
+	{
+		float vplSpecFactor = pow(max(dot(vpl.reflectedDir, -toVPL), 0.0), Material_SpecularExp(vplMaterial));
+		float4 vplSpecular = vplSpecFactor * lightSpecular * Material_Specular(vplMaterial) * vpl.spotFactor;
+
+		radianceIn += vplSpecular;
+	}
+#endif//#if ENABLE_SPECULAR
+	
+	//reduce radiance over distance
+	radianceIn /= (distanceSqr + distance + 1.0);
+
+	//now calculate radiance to eye
+
+	float4 specularToEye = float4(0.0, 0.0, 0.0, 0.0);
+#if ENABLE_SPECULAR
+	if (length(Material_Specular(subsplatMaterial)) > 0.0)
+	{
+		float3 toEye = normalize(cameraPos.xyz - subsplat.posW);
+		float3 reflectedVec = reflect(-toVPL, subsplat.normalW);
+		float specFactor = pow(max(dot(reflectedVec, toEye), 0.0), 4.0);
+		specularToEye = specFactor * radianceIn * Material_Specular(subsplatMaterial);
+	}
+#endif//#if ENABLE_SPECULAR
+
+	float4 radianceOut = specularToEye;
+#if !ONLY_SPECULAR
+	radianceOut += radianceIn * Material_Diffuse(subsplatMaterial);
+#endif
+	return radianceOut;
+}
+
+//check for discontinued illumination
+bool illuminationDiscontinuity(float4 I1, float4 I2, float4 I3, float4 I4)
+{
+	float4 maxI = max(max(I1, I2), max(I3, I4));
+	float4 minI = min(min(I1, I2), min(I3, I4));
+
+#if FORCE_REFINE
+	return true;
+#else
+	if (maxI.x - minI.x > thresholds.z 
+		|| maxI.y - minI.y > thresholds.z
+		|| maxI.z - minI.z > thresholds.z)
+		return true;
+
+	return false;
+#endif
+}
+
+//write illumination to temp buffer
+void writeToTempIlluminationBuffer(Subsplat subsplat, float4 I)
+{
+	uint subsplatLocalIdx = getSubsplatLocalIndex(subsplat);//get local index in temp buffer
+	temp_illumination_buffer[subsplatLocalIdx] = colorRGBA8(I);
+}
+
+/*---------store and overwrite buffer--------*/
+void writeToIlluminationBuffer(Subsplat subsplat, float4 I){
+	uint subsplatIdx = getSubsplatIndex(subsplat);//get global index in buffer
+	I.w = 1.0;//mark as valid texel
+	illumination_buffer[subsplatIdx] = colorRGBA8(I);
+}
+
+/*---additively blend with stored value and write to buffer--------*/
+void addToIlluminationBuffer(Subsplat subsplat, float4 I){
+	/*------------additively write to illumination buffer-----------*/
+	uint subsplatLocalIdx;//local index in temp buffer
+	uint subsplatIdx;//global index of subsplat in illumination buffer
+	//retrieve local and global indices
+	getSubsplatGlobalLocalIndex(subsplat, subsplatIdx, subsplatLocalIdx);
+		
+	//read illumination color currently stored in buffer
+	float4 total_indirect_illumination = colorRGBA4f(illumination_buffer[subsplatIdx]);
+
+	//additively blend with stored value
+	total_indirect_illumination.xyz += I.xyz;
+	total_indirect_illumination.w = 1.0;//mark as valid texel
+
+	//write to buffer
+	illumination_buffer[subsplatIdx] = colorRGBA8(total_indirect_illumination);
+}
+
+#if ADDITIVE_BLEND
+#	define storeInIlluminationBuffer(_subsplat, _I) addToIlluminationBuffer(_subsplat, _I)
+#else
+#	define storeInIlluminationBuffer(_subsplat, _I) writeToIlluminationBuffer(_subsplat, _I)
+#endif
+
+main_proc(GROUP_THREAD_SIZE, 1, 1)
+{
+	if (globalThreadIdx.x >= numSubsplats[current_level + 1])
+		return;
+
+	uint numSubsplats;
+	Subsplat subsplat, childSubsplat[4];
+
+	//get VPL
+	VPL vpl = getVPLInfo();
+
+	//get subsplat
+	subsplat = getSubsplat(globalThreadIdx.x);
+	
+	//get 4 children
+	uint2 finer_location = uint2(subsplat.x, subsplat.y) * 2;
+
+	childSubsplat[0].level = childSubsplat[1].level = childSubsplat[2].level = childSubsplat[3].level = current_level + 1;
+	childSubsplat[0].x = subsplat.x * 2; childSubsplat[0].y = subsplat.y * 2;
+	childSubsplat[1].x = subsplat.x * 2 + 1; childSubsplat[1].y = subsplat.y * 2;
+	childSubsplat[2].x = subsplat.x * 2; childSubsplat[2].y = subsplat.y * 2 + 1;
+	childSubsplat[3].x = subsplat.x * 2 + 1; childSubsplat[3].y = subsplat.y * 2 + 1;
+
+	float4 I1 = calculateIllumination(vpl, childSubsplat[0]);
+	float4 I2 = calculateIllumination(vpl, childSubsplat[1]);
+	float4 I3 = calculateIllumination(vpl, childSubsplat[2]);
+	float4 I4 = calculateIllumination(vpl, childSubsplat[3]);
+
+	if (illuminationDiscontinuity(I1, I2, I3, I4))
+	{
+		if (current_level == NUM_RESOLUTIONS - 2)//final step
+		{
+			//store directly to illumination buffer
+			storeInIlluminationBuffer(childSubsplat[0], I1);
+			storeInIlluminationBuffer(childSubsplat[1], I2);
+			storeInIlluminationBuffer(childSubsplat[2], I3);
+			storeInIlluminationBuffer(childSubsplat[3], I4);
+
+		}//if (current_level == NUM_RESOLUTIONS - 2)
+		else
+		{
+			//first cache calculated illumination in temp buffer
+			writeToTempIlluminationBuffer(childSubsplat[0], I1);
+			writeToTempIlluminationBuffer(childSubsplat[1], I2);
+			writeToTempIlluminationBuffer(childSubsplat[2], I3);
+			writeToTempIlluminationBuffer(childSubsplat[3], I4);
+
+			//append children subsplats to finer level list
+			insertToFinerSubsplatsList(childSubsplat[0]);
+			insertToFinerSubsplatsList(childSubsplat[1]);
+			insertToFinerSubsplatsList(childSubsplat[2]);
+			uint numSubsplats = insertToFinerSubsplatsList(childSubsplat[3]);
+
+			//now set dispatch size for next step
+			uint dispatch_size = getDispatchSize(numSubsplats); 
+			setFinerStepDispatchSize(dispatch_size);
+		}//else of if (current_level == NUM_RESOLUTIONS - 2)
+	}//if (illuminationDiscontinuity(I1, I2, I3, I4)
+	else
+	{
+		/*------------additively write to illumination buffer-----------*/
+		uint subsplatLocalIdx;//local index in temp buffer
+		uint subsplatIdx;//global index of subsplat in illumination buffer
+		//retrieve local and global indices
+		getSubsplatGlobalLocalIndex(subsplat, subsplatIdx, subsplatLocalIdx);
+		
+#if ADDITIVE_BLEND
+		//read stored color
+		float4 stored_I = colorRGBA4f(illumination_buffer[subsplatIdx]);
+#endif
+
+		float4 I;
+		if (current_level == 0)
+		{
+			//calculate illumination for this subsplat
+			I = calculateIllumination(vpl, subsplat);
+		}
+		else
+		{
+			//get illumination in temp buffer
+			I = colorRGBA4f(temp_illumination_buffer[subsplatLocalIdx]);
+		}
+
+#if ADDITIVE_BLEND
+		I += stored_I;
+#endif
+
+		I.w = 1.0;//mark as valid texel
+
+		//write to buffer
+		illumination_buffer[subsplatIdx] = colorRGBA8(I);
+		
+	}//else of if (illuminationDiscontinuity(I1, I2, I3, I4)
+}

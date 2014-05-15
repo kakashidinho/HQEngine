@@ -45,6 +45,10 @@ struct DispatchComputeArgs {
 	}
 };
 
+struct Float2 {
+	float x, y;
+};
+
 //uniform random variable between [a..b]
 inline float randf(float a, float b){
 	return (rand() / float(RAND_MAX)) * (b - a) + a;

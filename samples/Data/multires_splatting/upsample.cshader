@@ -1,19 +1,25 @@
 #include "../common_compute_code.h"
 #include "common.cshaderh"
 
+begin_decl_uniform_buffer(final_texture_clear_info, 9)
+{
+	uint should_additively_write;//should additively write to final interpolated texture or not?
+};
+
 begin_decl_uniform_buffer(current_level_info, 10)
 {
 	uint current_level;//current level of refinement step
 };
+
 
 /*----------input buffer-------------*/
 //mutires illumination buffer
 decl_structbuffer(uint, illumination_buffer, 0);
 
 /*----------output buffer------------*/
-decl_structbuffer(uint, interpolated_buffer, 3);//buffer contains multires iterpolated illumination
+decl_structbuffer(uint, interpolated_buffer, 5);//buffer contains multires iterpolated illumination
 /*----------output texture----------*/
-decl_rwtexture2d_4f(final_interpolated_tex, 4);//texture contains final interpolated illumination
+decl_rwtexture2d_readable_rgba8(final_interpolated_tex, 6);//texture contains final interpolated illumination
 
 
 
@@ -39,6 +45,7 @@ main_proc(16, 16, 1)
 	uint2 lower_texel_coords = texel_coords >> 1;
 	//read color from lower interpolated resolution
 	color += readSubsplatColor(interpolated_buffer, lower_level, lower_texel_coords);
+	color.w = min(color.w, 1.0);
 #endif
 
 	for (uint i = 0; i < 8; ++i)
@@ -47,26 +54,39 @@ main_proc(16, 16, 1)
 		//fetch neighbor texel from the same level in illumination buffer
 		float4 neighbor_color = readSubsplatColor(illumination_buffer, current_level, neighbor_coords);
 
+#ifdef FIRST_STEP
 		float neighbor_weight = weight[i] * neighbor_color.w;//any color that has zero "w" will be ignored
 		color.xyz +=  neighbor_weight * neighbor_color.xyz;
 		totalWeight += neighbor_weight;
-
-#ifndef FIRST_STEP
+#else
 		//fetch neighbor texel from previous interpolated level too
-		neighbor_coords >>= 1;
-		neighbor_color = readSubsplatColor(interpolated_buffer, lower_level, neighbor_coords);
+		uint2 lower_neighbor_coords = neighbor_coords >> 1;
+		float4 lower_neighbor_color = readSubsplatColor(interpolated_buffer, lower_level, lower_neighbor_coords);
 
-		neighbor_weight = weight[i] * neighbor_color.w;//any color that has zero "w" will be ignored
-		color.xyz +=  neighbor_weight * neighbor_color.xyz;
-		totalWeight += neighbor_weight;
-#endif
+		if (neighbor_color.w == 1.0 || lower_neighbor_color.w == 1.0)
+		{
+			totalWeight += weight[i];
+			color.xyz +=  weight[i] * (neighbor_color.xyz + lower_neighbor_color.xyz);
+		}
+
+#endif//#ifdef FIRST_STEP
+		
 	}
 
 	color.xyz /= totalWeight;
 	color.xyz *= color.w;//invalid texel marked by zero "w" will be ignored
 
 	if (current_level == NUM_RESOLUTIONS - 1)//final interpolated level
-		rwtexture2d_store_4f(final_interpolated_tex, texel_coords, color);
+	{
+		if (should_additively_write == 1)
+		{
+			//combine with already stored color in texture
+			float4 stored_color = rwtexture2d_read_rgba8(final_interpolated_tex, texel_coords);
+			color += stored_color;
+		}
+		
+		rwtexture2d_store_rgba8(final_interpolated_tex, texel_coords, color);
+	}
 	else
 		storeSubsplatColor4f(interpolated_buffer, current_level, texel_coords, color);
 }

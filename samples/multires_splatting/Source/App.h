@@ -27,16 +27,32 @@ private:
 	void KeyReleased(HQKeyCodeType keyCode);//override BaseApp
 	void InitSamplePattern();
 	void InitSubplatsBuffers();
-	void InitMipmaps();
 	void InitFullscreenQuadBuffer();
-	void GenMipmaps();
-	void RefineSubsplats();
-	void MultiresSplat();
+
 	void Upsample();
 	void DrawScene();
 	void FinalPass();
 
+	/*------for diffuse scene-------------*/
+	void InitDiffuse();
+	void GatherIndirectDiffuseIllum();//gather indirect illumination in diffuse scene
+	void InitMinmaxMipmaps();
+	void GenMinmaxMipmaps();
+	void RefineSubsplatsDiffuse();
+	void MultiresSplatDiffuse();
+
+	/*------for glossy scene-------------*/
+	void InitGlossy();
+	void GatherIndirectGlossyIllum();
+	void MultiresSplattingAndRefineGlossy();
+
+#ifdef DEBUG_ILLUM_BUFFER
+	void DbgIlluminationBuffer();
+#endif
+	/*-----------------------------------*/
+
 	bool m_giOn;//global illumination on?
+	bool m_diffuseScene;//is this diffuse scene
 	bool m_dynamicLight;
 	hquint32 m_vplsDim;//number of VPLs per RSM's dimension
 
@@ -49,7 +65,11 @@ private:
 	HQTexture * m_mipmapMax[NUM_RESOLUTIONS - 1];
 
 	HQTexture * m_samplePatternTexture;
-
+	HQSharedArrayPtr< Float2>  m_samplePattern;
+#ifdef DEBUG_ILLUM_BUFFER
+	HQTexture * m_subsplatIllumDbgTexture;//for debuggin
+#endif
+	HQBufferUAV* m_subsplatsTempIllumBuffer;//subplat temp illumination buffer
 	HQBufferUAV* m_subsplatsIllumBuffer;//multires subplat illumination buffer
 	HQBufferUAV* m_subsplatsInterpolatedBuffer;//interpolated illumination buffer for every resolution except final one
 	HQTexture* m_subsplatsFinalInterpolatedTexture;//final interpolated illumination texture
@@ -59,7 +79,7 @@ private:
 	HQBufferUAV* m_dispatchArgsBuffer;//buffer containing dispatch's arguments. see {m_initialDispatchArgs}
 	HQBufferUAV* m_initialSubsplatsCountsBuffer;//initial total subsplats count and subsplats count for each refinement step
 	HQBufferUAV* m_initialDispatchArgsBuffer;//initial dispatch arguments for indirect illumination step and refinement steps
-	hqfloat32 m_subsplatsRefineThreshold[2];
+	hqfloat32 m_subsplatsRefineThreshold[3];//depth, normal, illumination thresholds
 	hquint32 m_totalSubsplats;//total number of subsplats in all resolutions
 
 	HQUniformBuffer* m_uniformViewInfoBuffer;
@@ -67,9 +87,11 @@ private:
 	HQUniformBuffer* m_uniformMaterialArrayBuffer;
 	HQUniformBuffer* m_uniformMaterialIndexBuffer;
 	HQUniformBuffer* m_uniformLightViewBuffer;
+	HQUniformBuffer* m_uniformInterpolatedInfoBuffer;
 	HQUniformBuffer* m_uniformLevelInfoBuffer;
 	HQUniformBuffer* m_uniformRSMSamplesBuffer;
 	HQUniformBuffer* m_uniformRefineThresholdBuffer;
+	HQUniformBuffer* m_uniformVplSampleCoordsBuffer;
 
 	HQVertexBuffer * m_fullscreenQuadBuffer;
 	HQVertexLayout * m_fullscreenQuadVertLayout;

@@ -16,6 +16,8 @@
     <ClCompile Include="..\..\BaseSource\lodepng.cpp" />
     <ClCompile Include="..\..\BaseSource\Utils.cpp" />
     <ClCompile Include="..\Source\App.cpp" />
+    <ClCompile Include="..\Source\App_diffuse.cpp" />
+    <ClCompile Include="..\Source\App_glossy.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,7 +31,7 @@
     <ClInclude Include="..\Source\App.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass-diffuse.hlsl">
+    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass.hlsl">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\..\Data\compile_hlsl11_2_glsl430_debug.bat %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslf;%(Outputs)</Outputs>
@@ -66,6 +68,7 @@
     <None Include="..\..\Data\multires_splatting\msplat_resourcesD3D11.script" />
     <None Include="..\..\Data\multires_splatting\msplat_resourcesGL.script" />
     <None Include="..\..\Data\multires_splatting\multires_splatting_diffuse.cshader" />
+    <None Include="..\..\Data\multires_splatting\multires_refine_vs_splatting_glossy.cshader" />
     <None Include="..\..\Data\multires_splatting\subsplats_refine_diffuse.cshader" />
     <None Include="..\..\Data\multires_splatting\upsample.cshader" />
   </ItemGroup>

@@ -8,6 +8,7 @@ struct Subsplat {
 #define FINEST_DIM_SIZE 512
 #define FINEST_TOTAL_SIZE (FINEST_DIM_SIZE * FINEST_DIM_SIZE)
 #define NUM_RESOLUTIONS 5
+#define G_BUFFER_MIP_LEVEL(_resolution_level) (NUM_RESOLUTIONS - 1 - _resolution_level)
 #define COARSEST_DIM_SIZE ((FINEST_DIM_SIZE) >> (NUM_RESOLUTIONS - 1))
 #define COARSEST_TOTAL_SIZE (COARSEST_DIM_SIZE * COARSEST_DIM_SIZE)
 #define NUM_VPL_PER_DIM 
@@ -65,12 +66,34 @@ float4 colorRGBA4f(uint colorrgba8) {
 	return color;
 }
 
-//get index in multires illumination buffer of subsplat 
+//get local index of subsplat in illumination buffer
+uint getSubsplatLocalIndex(uint _level, uint2 _2dcoords) {
+	return g_levels_dim_size[_level] * _2dcoords.y + _2dcoords.x;
+}
+uint getSubsplatLocalIndex(Subsplat subsplat) {
+	return getSubsplatLocalIndex(subsplat.level, uint2(subsplat.x, subsplat.y));
+}
+
+//get global index in multires illumination buffer of subsplat 
 //at res level <_level> and integer coordinates <_2dcoords>
 uint getSubsplatIndex(uint _level, uint2 _2dcoords) 
 {
-	return g_levels_offset[_level] + g_levels_dim_size[_level] * _2dcoords.y + _2dcoords.x;
+	return g_levels_offset[_level] + getSubsplatLocalIndex(_level, _2dcoords);
 }
+
+//get global index
+uint getSubsplatIndex(Subsplat subsplat)
+{
+	return getSubsplatIndex(subsplat.level, uint2(subsplat.x, subsplat.y));
+}
+
+//get global and local index
+void getSubsplatGlobalLocalIndex(Subsplat subsplat, out uint globalIdx, out uint localIdx)
+{
+	localIdx = getSubsplatLocalIndex(subsplat);
+	globalIdx = g_levels_offset[subsplat.level] + localIdx;
+}
+
 
 //read color of subplat in multires illumination buffer
 #define readSubsplatColor(_buffer, _level, _2dcoords) (colorRGBA4f(_buffer[ getSubsplatIndex(_level, _2dcoords) ] ))

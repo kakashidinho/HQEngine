@@ -42,6 +42,12 @@
     <ClCompile Include="..\..\BaseSource\lodepng.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\App_diffuse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\App_glossy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\BaseSource\BaseApp.h">
@@ -76,7 +82,7 @@
     <CustomBuild Include="..\..\Data\multires_splatting\gbuffer-pass.hlsl">
       <Filter>Resource Files\shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass-diffuse.hlsl">
+    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass.hlsl">
       <Filter>Resource Files\shaders</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -114,6 +120,9 @@
       <Filter>Resource Files\shaders</Filter>
     </None>
     <None Include="..\..\Data\multires_splatting\subsplats_refine_diffuse.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\multires_refine_vs_splatting_glossy.cshader">
       <Filter>Resource Files\shaders</Filter>
     </None>
   </ItemGroup>

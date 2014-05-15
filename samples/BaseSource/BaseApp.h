@@ -33,6 +33,8 @@ protected:
 	HQRenderAPI m_renderAPI_type;
 
 	HQRenderDevice *m_pRDevice;
+	HQEngineResManager *m_resManager;
+	HQEngineEffectManager *m_effectManager;
 	HQCamera * m_camera;
 	HQSceneNode* m_scene;//the whole scene
 

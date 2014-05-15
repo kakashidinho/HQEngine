@@ -20,6 +20,7 @@ App::App()
 : BaseApp("Core-GL4.3", WINDOW_SIZE, WINDOW_SIZE),
 	m_vplsDim(16),
 	m_giOn(true),
+	m_diffuseScene(false),
 	m_dynamicLight(true)
 {
 	//setup resources
@@ -33,9 +34,9 @@ App::App()
 	//create model
 	m_model = new HQMeshNode(
 		"cornell_box",
-		"cornell_box_dragon.hqmesh",
+		"cornell_box_spheres.hqmesh",
 		m_pRDevice,
-		"depth-pass-diffuse_vs",
+		"depth-pass_vs",
 		NULL);
 
 	//init camera
@@ -52,7 +53,7 @@ App::App()
 
 	//create light object
 	m_light = new SpecularSpotLight(
-		HQColorRGBA(0.0f, 0.0f, 0.0f, 1),//ambient
+		HQColorRGBA(0.5f, 0.5f, 0.5f, 1),//ambient
 		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),//diffuse
 		HQColorRGBA(1.0f, 0.85f, 0.43f, 1),//specular
 		//HQColorRGBA(1.0f, 1.f, 1.f, 1),//diffuse
@@ -80,21 +81,27 @@ App::App()
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hqint32), true, &this->m_uniformMaterialIndexBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(SpecularLightProperties), true, &this->m_uniformLightProtBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(LightView), true, &this->m_uniformLightViewBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32), true, &m_uniformInterpolatedInfoBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32), true, &this->m_uniformLevelInfoBuffer);
 	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(hquint32)* m_vplsDim * m_vplsDim, true, &m_uniformRSMSamplesBuffer);
-	m_subsplatsRefineThreshold[0] = 0.06f; m_subsplatsRefineThreshold[1] = 0.2f;
-	m_pRDevice->GetShaderManager()->CreateUniformBuffer(m_subsplatsRefineThreshold, sizeof(hqfloat32)* 2, true, &m_uniformRefineThresholdBuffer);
+	m_subsplatsRefineThreshold[0] = 0.06f; m_subsplatsRefineThreshold[1] = 0.2f;//depth and normal thresholds
+	m_subsplatsRefineThreshold[2] = 0.002f;//illumination threshold
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(m_subsplatsRefineThreshold, sizeof(m_subsplatsRefineThreshold), true, &m_uniformRefineThresholdBuffer);
+	m_pRDevice->GetShaderManager()->CreateUniformBuffer(NULL, sizeof(Float2), true, &m_uniformVplSampleCoordsBuffer);
 
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 0, m_uniformViewInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 0, m_uniformViewInfoBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 0, m_uniformViewInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_VERTEX_SHADER, 1, m_uniformLightViewBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 2, m_uniformMaterialArrayBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 2, m_uniformMaterialArrayBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 3, m_uniformMaterialIndexBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 4, m_uniformLightProtBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 9, m_uniformInterpolatedInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 10, m_uniformLevelInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 11, m_uniformRSMSamplesBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 12, m_uniformRefineThresholdBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 13, m_uniformVplSampleCoordsBuffer);
 
 	//fill material array buffer
 	SpecularMaterial * material;
@@ -111,14 +118,14 @@ App::App()
 	//init full screen quad buffer and layout
 	this->InitFullscreenQuadBuffer();
 
-	/*------init mipmap textures---------*/
-	this->InitMipmaps();
-
 	//init reflective shadow map's sample pattern map
 	this->InitSamplePattern();
 
 	//init subplat buffers
 	this->InitSubplatsBuffers();
+
+	//init technique for diffuse scene
+	this->InitDiffuse();
 
 	//load effect
 	HQEngineApp::GetInstance()->GetEffectManager()->AddEffectsFromFile("msplat_effects.script");
@@ -178,7 +185,7 @@ void App::RenderImpl(HQTime dt){
 	viewport.width = RSM_DIM;
 	viewport.height = RSM_DIM;
 	
-	m_effect->GetPassByName("depth-pass-diffuse")->Apply();
+	m_effect->GetPassByName("depth-pass")->Apply();
 	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE, HQ_TRUE);
 
 	this->DrawScene();
@@ -193,20 +200,12 @@ void App::RenderImpl(HQTime dt){
 
 	if (m_giOn)
 	{
-		/*-------start preprocess step----------*/
 		m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(NULL);
 
-		//generate min-max mipmaps
-		this->GenMipmaps();
-
-		//refine list of subsplats
-		this->RefineSubsplats();
-
-		//multiresolution splatting
-		this->MultiresSplat();
-
-		//interpolating between illumination textures
-		this->Upsample();
+		if (m_diffuseScene)
+			this->GatherIndirectDiffuseIllum();
+		else
+			this->GatherIndirectGlossyIllum();
 	}//if (m_giOn)
 
 	//final pass, combine direct illumination with indirect illumination
@@ -254,107 +253,34 @@ void App::InitSamplePattern()
 	pattern_sizes[0] = pattern_sizes[1] = m_vplsDim;
 	m_uniformRSMSamplesBuffer->Unmap();
 	//------------
-	HQRawPixelBuffer* pixelBuffer = m_pRDevice->GetTextureManager()->CreatePixelBuffer(HQ_RPFMT_R32G32_FLOAT, m_vplsDim, m_vplsDim);
+	m_samplePattern = new Float2[m_vplsDim * m_vplsDim];
 
 	//uniform grid
 	double ds = 1.0 / double(m_vplsDim);
 
-	for (hquint32 i = 0; i < m_vplsDim; ++i)
+	for (hquint32 i = 0, sampleIdx = 0; i < m_vplsDim; ++i)
 	{
-		for (hquint32 j = 0; j < m_vplsDim; ++j){
+		for (hquint32 j = 0; j < m_vplsDim; ++j, ++sampleIdx){
 			double du = randd(0.0, ds);
 			double dv = randd(0.0, ds);
 
 			float u = (float)(ds * i + du);
 			float v = (float)(ds * j + dv);
 
-			pixelBuffer->SetPixelf(i, j, u, v, 0.f, 0.f);
+			m_samplePattern[sampleIdx].x = u;
+			m_samplePattern[sampleIdx].y = v;
 		}
 	}
 	
 	//now create texture
-	m_pRDevice->GetTextureManager()->AddTexture(pixelBuffer, false, &m_samplePatternTexture);
+	m_pRDevice->GetTextureManager()->AddTextureUAV(HQ_UAVTFMT_R32G32_FLOAT, m_vplsDim, m_vplsDim, false, &m_samplePatternTexture);
+	m_samplePatternTexture->SetLevelContent(0, m_samplePattern.GetRawPointer());
 
 	//add to resource manager
 	HQEngineApp::GetInstance()->GetResourceManager()->AddTextureResource("rsm_sample_map", m_samplePatternTexture);
-
-	pixelBuffer->Release();
 }
 
 
-void App::InitMipmaps()
-{
-	hquint32 size = MIN_MAX_MIPMAP_FIRST_SIZE;
-	for (hqint32 i = NUM_RESOLUTIONS - 2 ; i >= 0; --i)
-	{
-		
-		//min version
-		m_pRDevice->GetTextureManager()->AddTextureUAV(HQ_UAVTFMT_R32G32B32A32_FLOAT, size, size, false, &m_mipmapMin[i]);
-
-		//max version
-		m_pRDevice->GetTextureManager()->AddTextureUAV(HQ_UAVTFMT_R32G32B32A32_FLOAT, size, size, false, &m_mipmapMax[i]);
-
-		size >>= 1;
-	}
-}
-
-//dynamically generate mipmap
-void App::GenMipmaps()
-{
-	//thread group size
-	const hquint32 threadGroupDim = 16;
-	//mipmap size
-	hquint32 width = MIN_MAX_MIPMAP_FIRST_SIZE, height = MIN_MAX_MIPMAP_FIRST_SIZE;
-
-	//texture containing dinstance to camera
-	HQEngineTextureResource* depthMap = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("depth_materialID_img");
-	//texture containing world space normal	
-	HQEngineTextureResource* normalMap = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource("world_normal_img");
-	
-	HQShaderObject* shader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("mipmap_cs_1st_step")->GetShader();
-
-	m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
-
-	/*-----------first step: generate first mipmap level----------------*/
-	
-	//read from deapth and world space g-buffer
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 0, depthMap->GetTexture());
-	m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 1, normalMap->GetTexture());
-
-	//output of compute shader
-	m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(2, m_mipmapMin[NUM_RESOLUTIONS - 2]);
-	m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(3, m_mipmapMax[NUM_RESOLUTIONS - 2]);
-
-	m_pRDevice->DispatchCompute(max(width / threadGroupDim, 1), max(height / threadGroupDim, 1), 1);//run compute shader
-
-	m_pRDevice->TextureUAVBarrier();
-
-	/*-------------generate the rest, starting from second hishest mipmap level----------------*/
-	hqint32 level = NUM_RESOLUTIONS - 3;
-	width >>= 1;
-	height >>= 1;
-	
-	shader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("mipmap_cs")->GetShader();
-	m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
-	while (level >= 0 && width > 0){
-		//output of compute shader
-		m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(2, m_mipmapMin[level]);
-		m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(3, m_mipmapMax[level]);
-
-		//read from previous mipmap level
-		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 0, m_mipmapMin[level + 1]);
-		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 1, m_mipmapMax[level + 1]);
-
-
-		m_pRDevice->DispatchCompute(max(width / threadGroupDim, 1), max(height / threadGroupDim, 1), 1);//run compute shader
-
-		m_pRDevice->TextureUAVBarrier();
-
-		width >>= 1;
-		height >>= 1;
-		level--;
-	}
-}
 
 
 void App::InitSubplatsBuffers(){
@@ -392,9 +318,16 @@ void App::InitSubplatsBuffers(){
 
 	m_totalSubsplats = totalSizeExceptLastLevel + WINDOW_SIZE * WINDOW_SIZE;
 	
+	//create temp illumination buffer
+	m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(hquint32), WINDOW_SIZE * WINDOW_SIZE, &m_subsplatsTempIllumBuffer);
 	//create illumination buffer
 	m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(hquint32), m_totalSubsplats, &m_subsplatsIllumBuffer);
 	
+#ifdef DEBUG_ILLUM_BUFFER
+	//for debugging
+	m_pRDevice->GetTextureManager()->AddTextureUAV(HQ_UAVTFMT_R8G8B8A8_UNORM, WINDOW_SIZE, WINDOW_SIZE, true, &m_subsplatIllumDbgTexture);
+#endif
+
 	//create interpolated illumination buffer
 	m_pRDevice->GetShaderManager()->CreateBufferUAV(NULL, sizeof(hquint32), totalSizeExceptLastLevel, &m_subsplatsInterpolatedBuffer);
 	
@@ -456,96 +389,6 @@ void App::InitSubplatsBuffers(){
 
 }
 
-void App::RefineSubsplats()
-{
-	const hquint32 coarsestSize = WINDOW_SIZE >> (NUM_RESOLUTIONS - 1);
-	const hquint32 numCoarsestSubsplats = coarsestSize * coarsestSize;
-
-	
-	m_subsplatsCountBuffer->TransferData(m_initialSubsplatsCountsBuffer);//reset subsplats' counts
-	m_dispatchArgsBuffer->TransferData(m_initialDispatchArgsBuffer);//reset dispatch arguments
-
-#if VERIFY_CODE
-	{
-		//verify buffer content
-		hquint32 subsplatCountsBuffercontent[sizeof(m_initialSubsplatsCounts) / sizeof(hquint32)];
-		DispatchComputeArgs dispatchArgsBuffercontent[sizeof(m_initialDispatchArgs) / sizeof(DispatchComputeArgs)];
-
-		m_subsplatsCountBuffer->CopyContent(subsplatCountsBuffercontent);
-		m_dispatchArgsBuffer->CopyContent(dispatchArgsBuffercontent);
-	}
-#endif
-	
-	//activate shader
-	HQShaderObject* shader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("subsplat_refinement_cs")->GetShader();
-
-	m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
-
-	//subsplat count buffer
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(0, m_subsplatsCountBuffer);
-
-	//subsplats buffer
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(1, m_subsplatsRefineStepsBuffer);
-
-	//final subsplats list buffer
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(2, m_finalSubsplatsBuffer);
-
-	//indirect compute dispatch's arguments
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(3, m_dispatchArgsBuffer);
-
-	hquint32 *pCurrentLevel;
-
-	for (hquint32 level = 0; level < NUM_RESOLUTIONS - 1; ++level)
-	{
-		m_uniformLevelInfoBuffer->Map(&pCurrentLevel);
-		*pCurrentLevel = level;
-		m_uniformLevelInfoBuffer->Unmap();
-
-		//mipmap containing min & max depth & normal for finer level
-		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 0, m_mipmapMin[level]);
-		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER, 1, m_mipmapMax[level]);
-	
-		
-		if (level == NUM_RESOLUTIONS - 2)
-		{
-			//final step
-			shader = HQEngineApp::GetInstance()->GetResourceManager()
-				->GetShaderResource("subsplat_final_refinement_cs")->GetShader();
-			m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
-		}
-
-		//dispatch
-		m_pRDevice->DispatchComputeIndirect(m_dispatchArgsBuffer, level + 1);
-
-		m_pRDevice->BufferUAVBarrier();
-	}
-}
-
-void App::MultiresSplat()
-{
-	//set output buffer
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(0, m_subsplatsIllumBuffer);
-
-	//number of subsplats in final list
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(1, m_subsplatsCountBuffer, 0, 0);
-	//final subsplats list
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(2, m_finalSubsplatsBuffer, 0, 0);
-
-	/*---------------clear illumination buffer first------------------*/
-	HQShaderObject* shader = HQEngineApp::GetInstance()->GetResourceManager()->GetShaderResource("clear_illum_buffer_cs")->GetShader();
-	m_pRDevice->GetShaderManager()->ActiveComputeShader(shader);
-	//thread group size
-	const hquint32 threadGroupSize = 64;
-
-	m_pRDevice->DispatchCompute(m_totalSubsplats / threadGroupSize, 1, 1);
-	m_pRDevice->BufferUAVBarrier();
-
-	/*------------now do multiresolution splatting-----------------*/
-	m_effect->GetPassByName("multires_splatting")->Apply();
-
-	m_pRDevice->DispatchComputeIndirect(m_dispatchArgsBuffer);
-	m_pRDevice->BufferUAVBarrier();
-}
 
 void App::Upsample()
 {
@@ -559,8 +402,8 @@ void App::Upsample()
 	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(0, m_subsplatsIllumBuffer);
 
 	//output to interpolated buffer and final texture
-	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(3, m_subsplatsInterpolatedBuffer);
-	m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(4, m_subsplatsFinalInterpolatedTexture);
+	m_pRDevice->GetShaderManager()->SetBufferUAVForComputeShader(5, m_subsplatsInterpolatedBuffer);
+	m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(6, m_subsplatsFinalInterpolatedTexture, 0, true);
 
 
 	/*-----------first step: generate first interpolated level----------------*/
@@ -682,6 +525,9 @@ void App::KeyReleased(HQKeyCodeType keyCode)
 		}
 	}
 		break;
+	case HQKeyCode::TAB:
+		m_diffuseScene = !m_diffuseScene;
+		break;
 	case HQKeyCode::NUM1:
 		m_subsplatsRefineThreshold[0] += 0.01f;
 		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
@@ -701,6 +547,17 @@ void App::KeyReleased(HQKeyCodeType keyCode)
 		m_subsplatsRefineThreshold[1] -= 0.1f;
 		if (m_subsplatsRefineThreshold[1] <= 0)
 			m_subsplatsRefineThreshold[1] = 0;
+		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
+		break;
+
+	case HQKeyCode::NUM5:
+		m_subsplatsRefineThreshold[2] += 0.1f;
+		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
+		break;
+	case HQKeyCode::NUM6:
+		m_subsplatsRefineThreshold[2] -= 0.1f;
+		if (m_subsplatsRefineThreshold[2] <= 0)
+			m_subsplatsRefineThreshold[2] = 0;
 		m_uniformRefineThresholdBuffer->Update(m_subsplatsRefineThreshold);
 		break;
 #if defined DEBUG_ILLUM_BUFFER

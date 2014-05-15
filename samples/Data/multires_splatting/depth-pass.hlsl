@@ -74,7 +74,7 @@ cbuffer lightProperties : register (b4) {
 
 
 struct pOut{
-	float2 depth_materialID: SV_Target00;//distance to camera and material ID
+	float2 depth_materialID: SV_Target00;//distance to light and material ID
 	float4 posW: SV_Target01;//world space position
 	float4 normalW: SV_Target02;//world space normal
 	float4 flux: SV_Target03;//flux
@@ -99,11 +99,13 @@ pOut PS(
 	
 	output.normalW = float4(normalW, 1.0);//world space normal
 
-	//calculate flux
+	//calculate reflected diffuse flux
 	float3 lightVec = normalize(posW - lightPosition);
 	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
 	
 	output.flux = spot * max(dot(-lightVec, normalW), 0.0) * lightDiffuse * Material_Diffuse(material[materialID]);
+
+	output.posW.w = spot;//also store spot light factor in position buffer
 	
 	return output;
 }

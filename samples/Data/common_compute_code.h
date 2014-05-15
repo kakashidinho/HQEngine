@@ -12,6 +12,7 @@
 #define decl_texture2d_with_sampler_2f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
 #define decl_texture2darray_with_sampler_4f(_name, _binding) layout(binding  = _binding) uniform sampler2DArray _name;
 #define decl_rwtexture2d_readable_f(_name, _binding) layout(binding  = _binding, r32f) uniform image2D _name;
+#define decl_rwtexture2d_readable_rgba8(_name, _binding) layout(binding  = _binding, rgba8) uniform image2D _name;
 #define decl_rwtexture2d_readable_4f(_name, _binding) layout(binding  = _binding, rgba32f) uniform image2D _name;
 #define decl_rwtexture2d_f(_name, _binding) layout(binding  = _binding) uniform writeonly image2D _name;
 #define decl_rwtexture2d_4f(_name, _binding) layout(binding  = _binding) uniform writeonly image2D _name;
@@ -31,6 +32,8 @@
 #define texture2d_read_4f(_name, _2dcoords, _lod) texelFetch(_name, ivec2(_2dcoords), int(_lod)) 
 #define rwtexture2d_store_4f(_name, _coords, value) imageStore(_name, ivec2(_coords), value)
 #define rwtexture2d_read_4f(_name, _coords) imageLoad(_name, ivec2(_coords))
+#define rwtexture2d_store_rgba8(_name, _coords, value) imageStore(_name, ivec2(_coords), value)
+#define rwtexture2d_read_rgba8(_name, _coords) imageLoad(_name, ivec2(_coords))
 
 //texture sampling
 #define texture2d_sample_lod_4f(_name, _2dcoords, _lod) (textureLod(_name, vec2(_2dcoords), float(_lod)))
@@ -68,7 +71,8 @@
 #define uint2   uvec2
 
 #define float4x4 mat4
-#define float3x4 mat3x4
+#define float3x4 mat4x3
+#define float4x3 mat3x4
 
 #define _LOOP_ATTRIB_
 #define _UAV_COND_ATTRIB_
@@ -122,6 +126,7 @@ void rwtexture2d_f_getsize_4f(layout (r32f) image2D _name, out uint width, out u
 #define decl_texture2darray_with_sampler_4f(_name, _binding) decl_texture2darray_with_sampler(float4, _name, _binding)
 
 #define decl_rwtexture2d_readable_f(_name, _binding) RWTexture2D<float> _name : register(u ## _binding);
+#define decl_rwtexture2d_readable_rgba8(_name, _binding) RWTexture2D<uint> _name : register(u ## _binding);
 #define decl_rwtexture2d_readable_4f(_name, _binding) error_float4_is_not_readable
 #define decl_rwtexture2d_f(_name, _binding) RWTexture2D<float> _name : register(u ## _binding);
 #define decl_rwtexture2d_4f(_name, _binding) RWTexture2D<float4> _name : register(u ## _binding);
@@ -169,6 +174,32 @@ float4 rwtexture2d_f_read_4f(RWTexture2D<float> _name, uint2 _coords){
 	result.w = _name[scaledCoords + uint2(3, 0)];
 
 	return result;
+}
+
+void rwtexture2d_store_rgba8(RWTexture2D<uint> _name, uint2 _coords, float4 color4f)
+{
+	uint color;
+	color4f = min(color4f, float4(1.0, 1.0, 1.0, 1.0));
+
+	color = uint(color4f.x * 255) & 0xff;
+	color |= (uint(color4f.y * 255) & 0xff) << 8;
+	color |= (uint(color4f.z * 255) & 0xff) << 16;
+	color |= (uint(color4f.w * 255) & 0xff) << 24;
+
+	_name[_coords] = color;
+}
+
+float4 rwtexture2d_read_rgba8(RWTexture2D<uint> _name, uint2 _coords)
+{
+	float4 color;
+	uint colorrgba8 = _name[_coords];
+
+	color.x = (colorrgba8 & 0xff) / 255.0f;
+	color.y = ((colorrgba8 >> 8) & 0xff) / 255.0f;
+	color.z = ((colorrgba8 >> 16) & 0xff) / 255.0f;
+	color.w = ((colorrgba8 >> 24) & 0xff) / 255.0f;
+
+	return color;
 }
 
 //get size of one component texture when being viewed as 4 components one 

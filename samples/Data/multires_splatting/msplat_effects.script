@@ -1,8 +1,8 @@
 techniques{
 	technique "multires-splatting" { /*  must specify technique name  */
-		pass "depth-pass-diffuse" {
-			vertex_shader="depth-pass-diffuse_vs"
-			pixel_shader="depth-pass-diffuse_ps"
+		pass "depth-pass" {
+			vertex_shader="depth-pass_vs"
+			pixel_shader="depth-pass_ps"
 			depth=full
 			cull=ccw
 			outputs {  /*  if not specified, default render target is used  */
@@ -32,8 +32,8 @@ techniques{
 			}
 		}
 
-		compute_pass "multires_splatting" {
-			shader = "multires_splatting_cs"
+		compute_pass "multires_splatting_diffuse" {
+			shader = "multires_splatting_diffuse_cs"
 
 			texture0 {
 				 min_filter="point" mag_filter="point"
@@ -68,6 +68,44 @@ techniques{
 				 source=rsm_sample_map
 			}
 		}
+
+		compute_pass "multires_refine_vs_splatting_glossy" {
+			shader = "multires_refine_vs_splatting_glossy_cs"
+
+			texture0 {
+				 min_filter="point" mag_filter="point" mipmap_filter="point"
+				 source=depth_materialID_img
+			}
+			texture1 {
+				 min_filter="point" mag_filter="point" mipmap_filter="point"
+				 source=world_pos_img
+			}
+			texture2 {
+				 min_filter="point" mag_filter="point" mipmap_filter="point"
+				 source=world_normal_img
+			}
+			texture3 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_depth_material_img
+			}
+			texture4 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_world_pos_img
+			}
+			texture5 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_world_normal_img
+			}
+			texture6 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_flux_img
+			}
+			texture7 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_sample_map
+			}
+		}
+
 
 		pass "final-pass" {
 			texture0 = direct_flux_img

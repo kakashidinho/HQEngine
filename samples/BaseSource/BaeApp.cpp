@@ -90,6 +90,8 @@ void BaseApp::Init(const char* rendererAPI,
 	HQEngineApp::GetInstance()->SetKeyListener(*this);
 
 	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
+	m_resManager = HQEngineApp::GetInstance()->GetResourceManager();
+	m_effectManager = HQEngineApp::GetInstance()->GetEffectManager();
 
 	m_pRDevice->SetDisplayMode(width, height, true);
 	m_pRDevice->SetFullViewPort();

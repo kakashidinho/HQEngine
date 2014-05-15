@@ -2,6 +2,30 @@
 #include "../common_compute_code.h"
 #include "common.cshaderh"
 
+#define ENABLE_SPECULAR 0
+
+
+#if ENABLE_SPECULAR
+begin_decl_uniform_buffer(cameraInfos, 0)
+{
+	float4x3 worldMat;
+	float4x4 viewMat;
+	float4x4 projMat;
+	float4 cameraPos;//camera's world position
+};
+
+begin_decl_uniform_buffer(lightProperties, 4)
+{
+	float3 lightPosition;
+	float3 lightDirection;
+	float4 lightAmbient;
+	float4 lightDiffuse;
+	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
+	float4 lightSpecular;
+};
+
+#endif //#if ENABLE_SPECULAR
+
 
 begin_decl_uniform_buffer(materialInfos, 2)
 {
@@ -12,6 +36,7 @@ begin_decl_uniform_buffer(rsm_samples, 11)
 {
 	uint2 numVPLs;
 };
+
 
 //input textures
 decl_texture2d_with_sampler_2f(depthMatMap, 0);//texture containing depth and material ID
@@ -50,9 +75,6 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 	//current level's size
 	current_size = coarsest_size << subsplat.level;
 
-	//size of half texel in this level with respect to finest level
-	const float halfTexelSize = float(gbuffer_size.x / coarsest_size.x) * 0.5;
-
 	//output coords
 	uint2 texel_coords = uint2(subsplat.x, subsplat.y);
 	
@@ -62,7 +84,7 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 	//depth and material ID
 	float2 depthMat = texture2d_sample_lod_2f(depthMatMap, gbufferCoords, 0.0);
 	//material
-	float4 matDiffuse = Material_Diffuse(material[int(depthMat.y)]);
+	SpecularMaterial subsplatMaterial = material[int(depthMat.y)];
 
 	//world position
 	float4 worlPos = texture2d_sample_lod_4f(worldPosMap, gbufferCoords, 0.0);
@@ -83,6 +105,8 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 			//get sampling coords
 			float2 vplSampleCoords = texture2d_read_2f(rsm_sampleMap, uint2(i, j), 0);
 		
+			//get VPL material
+			uint vplMaterialID = uint(texture2d_sample_lod_2f(rsm_depthMatMap, vplSampleCoords, 0.0).y);
 			//get VPL position
 			float4 vplPos = texture2d_sample_lod_4f(rsm_worldPosMap, vplSampleCoords, 0.0);
 			//get VPL normal
@@ -93,7 +117,10 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 			//normalize normal
 			vplNormal.xyz = vplNormal.w * normalize(vplNormal.xyz);
 
-			//calculate indirect illumination
+			//VPL's material
+			SpecularMaterial vplMaterial = material[vplMaterialID];
+
+			//calculate indirect diffuse illumination
 			float3 toVPL = vplPos.xyz - worlPos.xyz;
 			float distanceSqr = dot(toVPL, toVPL);
 			float distance = sqrt(distanceSqr);
@@ -101,15 +128,47 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 
 			float pdot = max(dot(toVPL, worldNormal.xyz), 0.0);
 			float ldot = max(dot(-toVPL, vplNormal.xyz), 0.0);
-			float4 indirectI = vplFlux * pdot * ldot;
-			indirectI /= (distanceSqr + 1.0);
+			float4 radianceIn = vplFlux * pdot * ldot;
 
-			total_indirect_illumination +=  indirectI ;
+#if ENABLE_SPECULAR
+			//calculate perfectly reflected direction of direct light ray
+			float3 lightRay = normalize(vplPos.xyz - lightPosition);
+			float3 reflectedRay = reflect(lightRay, vplNormal.xyz);
+
+			//calculate specular reflection from vpl to subsplat
+			if (length(Material_Specular(vplMaterial)) > 0.0)
+			{
+				float vplSpotFactor = vplPos.w;//spot factor also stored in position buffer
+				float vplSpecFactor = pow(max(dot(reflectedRay, -toVPL), 0.0), Material_SpecularExp(vplMaterial));
+				float4 vplSpecular = vplSpecFactor * lightSpecular * Material_Specular(vplMaterial) * vplSpotFactor;
+
+				radianceIn += vplSpecular;
+			}
+#endif//#if ENABLE_SPECULAR
+	
+			//reduce radiance over distance
+			radianceIn /= (distanceSqr + 1.0);
+
+			//now calculate radiance to eye
+
+			float4 specularToEye = float4(0.0, 0.0, 0.0, 0.0);
+#if ENABLE_SPECULAR
+			if (length(Material_Specular(subsplatMaterial)) > 0.0)
+			{
+				float3 toEye = normalize(cameraPos.xyz - worlPos.xyz);
+				float3 reflectedVec = reflect(-toVPL, worldNormal.xyz);
+				float specFactor = pow(max(dot(reflectedVec, toEye), 0.0), Material_SpecularExp(subsplatMaterial));
+				specularToEye = specFactor * radianceIn * Material_Specular(subsplatMaterial);
+			}
+#endif//#if ENABLE_SPECULAR
+
+			float4 radianceOut = radianceIn * Material_Diffuse(subsplatMaterial) + specularToEye;
+
+			total_indirect_illumination +=  radianceOut ;
 		}//for (uint j = 0; j < numVPLs.y; ++j)
 	}//for (uint i = 0; i < numVPLs.x; ++i)
 
 	//now write to corresponding texture
-	total_indirect_illumination *= matDiffuse;
 	total_indirect_illumination.w = 1.0;//mark as valid texel
 
 	storeSubsplatColor4f(illumination_buffer, subsplat.level, texel_coords, total_indirect_illumination);

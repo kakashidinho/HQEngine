@@ -1,19 +1,19 @@
 resources {
 	
 	/*--------reflective shadow map pass----------*/
-	shader "depth-pass-diffuse_vs" { 			/* name will be default to source file name */
+	shader "depth-pass_vs" { 			/* name will be default to source file name */
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass-diffuse.glslv" 			/* source file */
+		src="depth-pass.glslv" 			/* source file */
 		debug=true
 	}
 	
-	shader "depth-pass-diffuse_ps" { 			/* name will be default to source file name */
+	shader "depth-pass_ps" { 			/* name will be default to source file name */
 		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass-diffuse.glslf" 			/* source file */
+		src="depth-pass.glslf" 			/* source file */
 		debug=true
 	}
 	
@@ -88,13 +88,21 @@ resources {
 		define version = 430
 	}
 
-	shader "multires_splatting_cs" { 			/* name will be default to source file name */
+	shader "multires_splatting_diffuse_cs" { 			/* name will be default to source file name */
 		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=glsl  			/* default is cg */
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="multires_splatting_diffuse.cshader" 			/* source file */
 		debug=true
 		define version = 430
+	}
+
+	shader "multires_refine_vs_splatting_glossy_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=hlsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="multires_refine_vs_splatting_glossy.cshader" 			/* source file */
+		debug=true
 	}
 
 	/*-----upsample pass----*/
