@@ -68,7 +68,6 @@
     <None Include="..\..\Data\multires_splatting\msplat_resourcesD3D11.script" />
     <None Include="..\..\Data\multires_splatting\msplat_resourcesGL.script" />
     <None Include="..\..\Data\multires_splatting\multires_splatting_diffuse.cshader" />
-    <None Include="..\..\Data\multires_splatting\multires_refine_vs_splatting_glossy.cshader" />
     <None Include="..\..\Data\multires_splatting\subsplats_refine_diffuse.cshader" />
     <None Include="..\..\Data\multires_splatting\upsample.cshader" />
   </ItemGroup>

@@ -97,14 +97,6 @@ resources {
 		define version = 430
 	}
 
-	shader "multires_refine_vs_splatting_glossy_cs" { 			/* name will be default to source file name */
-		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
-		src_type=hlsl  			/* default is cg */
-		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="multires_refine_vs_splatting_glossy.cshader" 			/* source file */
-		debug=true
-	}
-
 	/*-----upsample pass----*/
 	shader "upsample_cs_1st_step" { 			/* name will be default to source file name */
 		type=compute  			/* vertex/pixel/geometry shader. default to vertex */

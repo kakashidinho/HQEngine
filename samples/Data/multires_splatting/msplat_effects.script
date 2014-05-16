@@ -69,43 +69,6 @@ techniques{
 			}
 		}
 
-		compute_pass "multires_refine_vs_splatting_glossy" {
-			shader = "multires_refine_vs_splatting_glossy_cs"
-
-			texture0 {
-				 min_filter="point" mag_filter="point" mipmap_filter="point"
-				 source=depth_materialID_img
-			}
-			texture1 {
-				 min_filter="point" mag_filter="point" mipmap_filter="point"
-				 source=world_pos_img
-			}
-			texture2 {
-				 min_filter="point" mag_filter="point" mipmap_filter="point"
-				 source=world_normal_img
-			}
-			texture3 {
-				 min_filter="point" mag_filter="point"
-				 source=rsm_depth_material_img
-			}
-			texture4 {
-				 min_filter="point" mag_filter="point"
-				 source=rsm_world_pos_img
-			}
-			texture5 {
-				 min_filter="point" mag_filter="point"
-				 source=rsm_world_normal_img
-			}
-			texture6 {
-				 min_filter="point" mag_filter="point"
-				 source=rsm_flux_img
-			}
-			texture7 {
-				 min_filter="point" mag_filter="point"
-				 source=rsm_sample_map
-			}
-		}
-
 
 		pass "final-pass" {
 			texture0 = direct_flux_img

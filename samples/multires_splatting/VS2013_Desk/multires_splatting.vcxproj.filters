@@ -122,8 +122,5 @@
     <None Include="..\..\Data\multires_splatting\subsplats_refine_diffuse.cshader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="..\..\Data\multires_splatting\multires_refine_vs_splatting_glossy.cshader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>
