@@ -25,7 +25,7 @@ sematic following the attribute's declaration in the source code. This feature i
 	* Direct3D 11 new shader stages hasn't been implemented yet.
 	* The most difficult part to implement for the renderer abstract layer is that OpenGL (prior to the introduction of sampler object) doesn't separate sampler states from textures' states unlike Direct3D. I still haven't been able to remove that difference, hence, right now, the renderer's API has 2 versions for setting sampler states depends on its back-end. 
 	* Cg shader is supposed to be removed from OpenGL renderer in near future.
-- The current main maintained platforms are Windows and its variances (Phone/Metro). Android has also been maintained occasionally. IOS and Mac OSX currently have fewer maintenances due to limited resources. Linux has been supported again recently.
+- The current main maintained platforms are Windows and its variant (Phone/Metro). Android has also been maintained occasionally. IOS and Mac OSX currently have fewer maintenances due to limited resources. Linux has been supported again recently.
 	
 Samples' status
 ----------------------------
