@@ -141,6 +141,7 @@ struct HQEngineTextureUnit : public HQEngineBaseTextureUnit {
 struct HQEngineTextureUAVUnit : public HQEngineBaseTextureUnit {
 
 	hquint32 mipLevel;
+	bool readable;
 };
 
 /*------------buffer slot---------------*/

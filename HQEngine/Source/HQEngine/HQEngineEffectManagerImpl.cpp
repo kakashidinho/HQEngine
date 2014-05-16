@@ -614,7 +614,7 @@ HQReturnVal HQEngineComputePassImpl::Apply()
 	for (; !ite.IsAtEnd(); ++ite) //for each used texture unit
 	{
 		HQEngineTextureUAVUnit & unit = *ite;
-		m_renderDevice->GetTextureManager()->SetTextureUAVForComputeShader(unit.unitIndex, unit.texture->GetTexture(), unit.mipLevel);
+		m_renderDevice->GetTextureManager()->SetTextureUAVForComputeShader(unit.unitIndex, unit.texture->GetTexture(), unit.mipLevel, unit.readable);
 	}
 
 	//apply buffer UAV states
@@ -1412,6 +1412,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseTextureUAVUnit(const HQEngineEffectP
 	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
 	int elem_line = textureUnitElem->GetSourceLine();
 	hquint32 mipLevel = 0;
+	bool readable = false;
 	const char * textureResName = NULL;
 
 	const HQEngineEffectParserNode * attribute = textureUnitElem->GetFirstChild();
@@ -1437,6 +1438,10 @@ HQReturnVal HQEngineEffectManagerImpl::ParseTextureUAVUnit(const HQEngineEffectP
 
 			mipLevel = *valPtr;
 		}//else if (!strcmp(attriName, "mip_level"))
+		else if (!strcmp(attriName, "readable"))
+		{
+			readable = (!strcmp(attriValStr, "true"));
+		}
 	}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
 
 	//get texture resource
@@ -1455,6 +1460,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseTextureUAVUnit(const HQEngineEffectP
 	//store texture UAV unit
 	texUAVUnit.texture = texture;
 	texUAVUnit.mipLevel = mipLevel;
+	texUAVUnit.readable = readable;
 
 	return HQ_OK;
 }
