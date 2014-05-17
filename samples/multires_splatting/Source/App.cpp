@@ -187,6 +187,7 @@ void App::RenderImpl(HQTime dt){
 	m_effect->GetPassByName("clear_shadowmap_depth")->Apply();
 
 	m_pRDevice->DispatchCompute(RSM_DIM / threadGroup_dim, RSM_DIM / threadGroup_dim, 1);
+	m_pRDevice->TextureUAVBarrier();
 
 	//depth pass by drawing backface
 	m_effect->GetPassByName("depth-pass-backface")->Apply();

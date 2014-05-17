@@ -6,12 +6,13 @@ resources {
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="clear_shadowmap_depth.cshader" 			/* source file */
 		debug=true
+		define version = 430
 	}
 
 	/*-------depth pass ----------------*/
 	shader "depth-pass-backface_vs" { 			/* name will be default to source file name */
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
-		src_type=hlsl  			/* default is cg */
+		src_type=glsl  			/* default is cg */
 		entry=VS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="depth-pass-backface.glslv" 			/* source file */
 		debug=true
@@ -19,7 +20,7 @@ resources {
 	
 	shader "depth-pass-backface_ps" { 			/* name will be default to source file name */
 		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
-		src_type=hlsl  			/* default is cg */
+		src_type=glsl  			/* default is cg */
 		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="depth-pass-backface.glslf" 			/* source file */
 		debug=true
@@ -168,6 +169,7 @@ resources {
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="caustics_filter.cshader" 			/* source file */
 		debug=true
+		define version = 430
 	}
 
 	shader "caustics_pass_cs" {
@@ -176,5 +178,6 @@ resources {
 		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="caustics_pass.cshader" 			/* source file */
 		debug=true
+		define version = 430
 	}
 }

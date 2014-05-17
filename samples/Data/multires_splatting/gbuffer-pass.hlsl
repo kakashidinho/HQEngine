@@ -42,7 +42,7 @@ vOut VS(in vPNIn input){
 };
 
 /*-------fragment shader------------------*/
-#define DEPTH_BIAS 0.0002
+#define DEPTH_BIAS 0 //0.0002
 #define SHADOW_MAP_SIZE 512
 
 cbuffer materials : register (b2) {

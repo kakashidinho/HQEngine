@@ -1166,7 +1166,7 @@ HQReturnVal HQTextureManagerGL::SetTextureUAVForComputeShader(hq_uint32 slot, HQ
 
 	switch (pTexture->type)
 	{
-	case HQ_TEXTURE_2D:
+	case HQ_TEXTURE_2D_UAV:
 		glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, read ? GL_READ_WRITE : GL_WRITE_ONLY, pTextureRawPtr->internalFormat);
 		break;
 	case HQ_TEXTURE_2D_ARRAY_UAV:
