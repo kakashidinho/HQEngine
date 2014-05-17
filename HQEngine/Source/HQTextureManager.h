@@ -114,6 +114,12 @@ public:
 	///
 	virtual HQReturnVal AddTextureUAV(HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap, HQTexture ** ppTexture) = 0;
 
+
+	///
+	///create UAV 2d array texture
+	///
+	virtual HQReturnVal AddTextureArrayUAV(HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 arraySize, bool hasMipmap, HQTexture ** ppTexture) = 0;
+
 	virtual HQTextureCompressionSupport IsCompressionSupported(HQTextureType textureType, HQTextureCompressionFormat compressionType) = 0;
 	
 	///

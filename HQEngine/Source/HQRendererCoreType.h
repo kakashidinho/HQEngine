@@ -80,7 +80,8 @@ typedef enum HQTextureType
 	HQ_TEXTURE_CUBE = 1,
 	HQ_TEXTURE_BUFFER = 2,
 	HQ_TEXTURE_2D_ARRAY = 3,
-	HQ_TEXTURE_2D_UAV = 4,///unordered access texture, supports read and write via shader
+	HQ_TEXTURE_2D_UAV = 4,///2d texture supports read and write via shader
+	HQ_TEXTURE_2D_ARRAY_UAV = 5,///array texture supports read and write via shader
 	HQ_TEXTURE_TYPE_FORCE_DWORD = 0xffffffff
 } _HQTextureType;
 

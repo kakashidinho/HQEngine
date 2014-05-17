@@ -129,10 +129,16 @@ public:
 											bool generateMipmap
 											);
 
+	///
+	///add unordered access texture. 
+	///{depth} is array size if texture is array texture
+	///
 	virtual HQReturnVal AddTextureUAVResource(const char *name,
 		HQTextureUAVFormat format,
 		hquint32 width, hquint32 height,
-		bool hasMipmap
+		hquint32 depth,
+		bool hasMipmap,
+		HQTextureType textureType
 		);
 
 	virtual HQReturnVal AddRenderTargetTextureResource(

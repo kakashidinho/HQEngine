@@ -58,7 +58,7 @@ HQTextureGL::HQTextureGL(HQTextureType type ):HQBaseTexture()
 	case HQ_TEXTURE_BUFFER:
 		this->textureTarget = GL_TEXTURE_BUFFER;
 		break;
-	case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 		this->textureTarget = GL_TEXTURE_2D_ARRAY;
 		break;
 	}
@@ -88,7 +88,7 @@ hquint32 HQTextureGL::GetWidth() const
 {
 	switch (this->type)
 	{
-	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE: case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE: case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 	{
 		HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)this->textureDesc;
 		return l_textureDesc->width;
@@ -103,7 +103,7 @@ hquint32 HQTextureGL::GetHeight() const
 {
 	switch (this->type)
 	{
-	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:  case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D:case HQ_TEXTURE_CUBE:  case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 	{
 		HQTexture2DDesc * l_textureDesc = (HQTexture2DDesc *)this->textureDesc;
 		return l_textureDesc->height;
@@ -219,7 +219,7 @@ HQReturnVal HQTextureBufferGL::CopyContent(void *dest)
 
 /*--------HQTextureUAVGL-----*/
 struct HQTextureUAVGL : public HQTextureGL{
-	HQTextureUAVGL() : HQTextureGL(HQ_TEXTURE_2D_UAV)
+	HQTextureUAVGL(HQTextureType type) : HQTextureGL(type)
 	{
 	}
 
@@ -354,6 +354,9 @@ HQSharedPtr<HQBaseTexture> & HQTextureUnitInfoGL::GetTexture(HQTextureType type)
 	case HQ_TEXTURE_2D_UAV://same slot as HQ_TEXTURE_2D
 		type = HQ_TEXTURE_2D;
 		break;
+	case HQ_TEXTURE_2D_ARRAY_UAV://same slot as HQ_TEXTURE_2D_ARRAY
+		type = HQ_TEXTURE_2D_ARRAY;
+		break;
 	}
 
 	return this->texture[type];
@@ -366,9 +369,20 @@ const HQSharedPtr<HQBaseTexture> & HQTextureUnitInfoGL::GetTexture(HQTextureType
 	case HQ_TEXTURE_2D_UAV://same slot as HQ_TEXTURE_2D
 		type = HQ_TEXTURE_2D;
 		break;
+	case HQ_TEXTURE_2D_ARRAY_UAV://same slot as HQ_TEXTURE_2D_ARRAY
+		type = HQ_TEXTURE_2D_ARRAY;
+		break;
 	}
 
 	return this->texture[type];
+}
+
+GLuint HQTextureUnitInfoGL::GetTextureGL(HQTextureType type) const
+{
+	HQSharedPtr<HQBaseTexture> pTex = GetTexture(type);
+	if (pTex != NULL)
+		return *(GLuint*)pTex->pData;
+	return 0;
 }
 
 /*---------helper functions--------*/
@@ -896,7 +910,7 @@ HQBaseTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 	case HQ_TEXTURE_BUFFER:
 		currentBoundTex = this->texUnits[this->activeTexture].GetTextureBufferGL();
 		break;
-	case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 		currentBoundTex = this->texUnits[this->activeTexture].GetTexture2DArrayGL();
 		break;
     default:
@@ -911,8 +925,8 @@ HQBaseTexture * HQTextureManagerGL::CreateNewTextureObject(HQTextureType type)
 	else
 #endif
 	{
-		if (type == HQ_TEXTURE_2D_UAV)
-			newTex = HQ_NEW HQTextureUAVGL();
+		if (type == HQ_TEXTURE_2D_UAV || type == HQ_TEXTURE_2D_ARRAY_UAV)
+			newTex = HQ_NEW HQTextureUAVGL(type);
 		else
 			newTex = HQ_NEW HQTextureGL(type);
 	}
@@ -1150,8 +1164,18 @@ HQReturnVal HQTextureManagerGL::SetTextureUAVForComputeShader(hq_uint32 slot, HQ
 
 	GLuint textureName = *((GLuint*)pTexture->pData);
 
-	glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, read ? GL_READ_WRITE : GL_WRITE_ONLY, pTextureRawPtr->internalFormat);
-
+	switch (pTexture->type)
+	{
+	case HQ_TEXTURE_2D:
+		glBindImageTextureWrapper(slot, textureName, mipLevel, GL_FALSE, 0, read ? GL_READ_WRITE : GL_WRITE_ONLY, pTextureRawPtr->internalFormat);
+		break;
+	case HQ_TEXTURE_2D_ARRAY_UAV:
+		glBindImageTextureWrapper(slot, textureName, mipLevel, GL_TRUE, 0, read ? GL_READ_WRITE : GL_WRITE_ONLY, pTextureRawPtr->internalFormat);
+		break;
+	default:
+		//TO DO
+		break;
+	}
 	return HQ_OK;
 }
 
@@ -1862,7 +1886,7 @@ HQReturnVal HQTextureManagerGL::InitTextureBuffer(HQBaseTexture *pTex ,HQTexture
 #endif//#ifdef HQ_OPENGLES
 }
 
-HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat hqformat, hquint32 width, hquint32 height, bool hasMipmaps)
+HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat hqformat, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmaps)
 {
 	GLenum internalFmt, format, type;
 	internalFmt = helper::GetTextureUAVFormat(hqformat, format, type);
@@ -1886,25 +1910,38 @@ HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAV
 
 	pTextureUAVGL->internalFormat = internalFmt;
 
-	glBindTexture(GL_TEXTURE_2D, *pTextureName);
+	glBindTexture(pTextureUAVGL->textureTarget, *pTextureName);
 
-	for (hquint32 level = 0; level < numMipmaps; ++level)
+	switch (pTextureUAVGL->type)
 	{
-		glTexImage2D(GL_TEXTURE_2D, level, internalFmt, w, h, 0, format, type, NULL);
+	case HQ_TEXTURE_2D_UAV:
+		for (hquint32 level = 0; level < numMipmaps; ++level)
+		{
+			glTexImage2D(GL_TEXTURE_2D, level, internalFmt, w, h, 0, format, type, NULL);
 
-		if (w > 1) w >>= 1; //w/=2
-		if (h > 1) h >>= 1; //h/=2
+			if (w > 1) w >>= 1; //w/=2
+			if (h > 1) h >>= 1; //h/=2
+		}
+		break;
+#ifndef HQ_OPENGLES//TO DO: add to gles 3 later
+	case HQ_TEXTURE_2D_ARRAY_UAV:
+		glTexStorage3D(GL_TEXTURE_2D_ARRAY, numMipmaps, internalFmt, w, h, depth);
+		break;
+#endif
+	default:
+		//TO DO
+		return HQ_FAILED;
 	}
 
 
 	if (glGetError() != GL_NO_ERROR)
 	{
 		Log("Error : UAV Texture creation with format = %u failed", (hquint32)hqformat);
-		glBindTexture(GL_TEXTURE_2D, this->texUnits[this->activeTexture].GetTexture2DGL());//re-bind old texture
+		glBindTexture(pTextureUAVGL->textureTarget, this->texUnits[this->activeTexture].GetTextureGL(pTextureUAVGL->type));//re-bind old texture
 		return HQ_FAILED;
 	}
 
-	glBindTexture(GL_TEXTURE_2D, this->texUnits[this->activeTexture].GetTexture2DGL());//re-bind old texture
+	glBindTexture(pTextureUAVGL->textureTarget, this->texUnits[this->activeTexture].GetTextureGL(pTextureUAVGL->type));//re-bind old texture
 
 	//store texture's size
 	this->DefineTexture2DSize(pTex, width, height);

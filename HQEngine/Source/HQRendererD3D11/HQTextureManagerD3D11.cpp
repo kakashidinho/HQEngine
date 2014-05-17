@@ -285,7 +285,7 @@ HQ_FORCE_INLINE ID3D11UnorderedAccessView * HQUAVTextureResourceD3D11::GetOrCrea
 		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
 		switch (type)
 		{
-		case HQ_TEXTURE_2D_UAV:
+		case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY_UAV:
 		{
 								  //texture desc
 								  D3D11_TEXTURE2D_DESC l_t2DDesc;
@@ -295,11 +295,24 @@ HQ_FORCE_INLINE ID3D11UnorderedAccessView * HQUAVTextureResourceD3D11::GetOrCrea
 									  uavDesc.Format = this->GetUAViewFormat();
 								  else
 									  uavDesc.Format = this->GetNoReadUAViewFormat();
-								  uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
-								  if (miplevel >= l_t2DDesc.MipLevels)
-									  uavDesc.Texture2D.MipSlice = l_t2DDesc.MipLevels - 1;// mip level view
-								  else
-									  uavDesc.Texture2D.MipSlice = miplevel;// mip level view
+								  if (type == HQ_TEXTURE_2D_UAV)
+								  {
+									  uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+									  if (miplevel >= l_t2DDesc.MipLevels)
+										  uavDesc.Texture2D.MipSlice = l_t2DDesc.MipLevels - 1;// mip level view
+									  else
+										  uavDesc.Texture2D.MipSlice = miplevel;// mip level view
+								  }
+								  else //array view
+								  {
+									  uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
+									  uavDesc.Texture2DArray.ArraySize = l_t2DDesc.ArraySize;
+									  uavDesc.Texture2DArray.FirstArraySlice = 0;
+									  if (miplevel >= l_t2DDesc.MipLevels)
+										  uavDesc.Texture2DArray.MipSlice = l_t2DDesc.MipLevels - 1;// mip level view
+									  else
+										  uavDesc.Texture2DArray.MipSlice = miplevel;// mip level view
+								  }
 		}
 			break;
 		}//switch (type)
@@ -405,7 +418,7 @@ uavBoundSlots( HQGenericBufferD3D11::s_uavBoundSlotsMemManager) //use same slots
 	this->type = type;
 	switch (type)
 	{
-	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY_UAV:
 		pData = HQ_NEW HQUAVTextureResourceD3D11();
 		break;
 		//TO DO: other UAV texture type
@@ -430,6 +443,7 @@ hquint32 HQTextureD3D11::GetWidth() const
 	case HQ_TEXTURE_CUBE:
 	case HQ_TEXTURE_2D_UAV:
 	case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D_ARRAY_UAV:
 		{
 			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *)((HQTextureResourceD3D11*)this->pData)->pTexture;
 			D3D11_TEXTURE2D_DESC desc;
@@ -449,6 +463,7 @@ hquint32 HQTextureD3D11::GetHeight() const
 	case HQ_TEXTURE_CUBE:
 	case HQ_TEXTURE_2D_UAV:
 	case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D_ARRAY_UAV:
 		{
 			ID3D11Texture2D *textureD3D = (ID3D11Texture2D *)((HQTextureResourceD3D11*)this->pData)->pTexture;
 			D3D11_TEXTURE2D_DESC desc;
@@ -1724,6 +1739,13 @@ HQReturnVal HQTextureManagerD3D11::CreateShaderResourceView(HQBaseTexture * pTex
 		vDesc.Texture2D.MipLevels = this->t2DDesc.MipLevels;
 		vDesc.Texture2D.MostDetailedMip = 0;
 		break;
+	case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
+		vDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+		vDesc.Texture2DArray.MipLevels = this->t2DDesc.MipLevels;
+		vDesc.Texture2DArray.MostDetailedMip = 0;
+		vDesc.Texture2DArray.ArraySize = this->t2DDesc.ArraySize;
+		vDesc.Texture2DArray.FirstArraySlice = 0;
+		break;
 	case HQ_TEXTURE_CUBE:
 		vDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 		vDesc.TextureCube.MipLevels = this->t2DDesc.MipLevels;
@@ -1798,12 +1820,12 @@ HQReturnVal HQTextureManagerD3D11::InitTextureBuffer(HQBaseTexture *pTex ,HQText
 }
 
 
-HQReturnVal HQTextureManagerD3D11::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmaps)
+HQReturnVal HQTextureManagerD3D11::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmaps)
 {
-	return this->InitTextureUAVEx(pTex, format, width, height, hasMipmaps, false);
+	return this->InitTextureUAVEx(pTex, format, width, height, depth, hasMipmaps, false);
 }
 
-HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmaps, bool renderTarget)
+HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmaps, bool renderTarget)
 {
 	if (this->pMasterDevice->IsUAVTextureFormatSupported(format, pTex->type, hasMipmaps) == false)
 	{
@@ -1837,9 +1859,9 @@ HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextu
 	HRESULT hr;
 	switch (pTex->type)
 	{
-	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY_UAV:
 		//texture desc
-		this->t2DDesc.ArraySize = 1;
+		this->t2DDesc.ArraySize = depth;
 
 		//create texture
 		hr = pD3DDevice->CreateTexture2D(&this->t2DDesc, NULL, (ID3D11Texture2D**)&pTexResD3D->pTexture);

@@ -105,13 +105,16 @@ public:
 											) = 0;
 
 	///
-	///Create unordered access 2d texture
+	///Create unordered access texture.
+	///{depth} is array size if texture is array texture. 
 	///return HQ_FAILED_RESOURCE_EXISTS if there is an existing resource with the same name
 	///
 	virtual HQReturnVal AddTextureUAVResource(const char *name,
 		HQTextureUAVFormat format,
 		hquint32 width, hquint32 height,
-		bool hasMipmap
+		hquint32 depth,
+		bool hasMipmap,
+		HQTextureType textureType
 		) = 0;
 
 	///

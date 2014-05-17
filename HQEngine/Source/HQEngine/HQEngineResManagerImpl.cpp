@@ -338,6 +338,8 @@ HQReturnVal HQEngineResManagerImpl::LoadTexture(const HQEngineResParserNode* tex
 				textureType = HQ_TEXTURE_2D_UAV; 
 			else if (renderTarget && strcmp(valueStr, "2d_array") == 0)
 				textureType = HQ_TEXTURE_2D_ARRAY;
+			else if (renderTarget && strcmp(valueStr, "2d_array_uav") == 0)
+				textureType = HQ_TEXTURE_2D_ARRAY_UAV;
 			else if (strcmp(valueStr, "2d") == 0)
 				textureType = HQ_TEXTURE_2D;
 			else
@@ -559,9 +561,34 @@ HQReturnVal HQEngineResManagerImpl::LoadTextureUAV(const HQEngineResParserNode* 
 		return HQ_FAILED;
 	}
 
+
 	hquint32 width, height;
+	hquint32 arraySize = 1;
 	HQTextureUAVFormat format;
+	HQTextureType textureType = HQ_TEXTURE_2D_UAV;
 	bool hasMipmap;
+
+	//get type info
+	const HQEngineResParserNode * typeInfo = texture_info->GetFirstChild("type");
+	if (typeInfo != NULL)
+	{
+		const NodeAttrType &value = typeInfo->GetAttribute("value");
+		const char *valueStr = value.GetAsString();
+		if (valueStr != NULL)
+		{
+			if (strcmp(valueStr, "2d_uav") == 0)
+				textureType = HQ_TEXTURE_2D_UAV;
+			else if (strcmp(valueStr, "2d_array_uav") == 0)
+				textureType = HQ_TEXTURE_2D_ARRAY_UAV;
+			else
+			{
+				Log("Error : %d : invalid type='%s'!", typeInfo->GetSourceLine(), valueStr);
+				return HQ_FAILED;
+			}
+		}
+	}
+
+	//mipmap info
 	const char* hasMipmapStr = texture_info->GetFirstChildStrValue("has_mipmap");
 	hasMipmap = hasMipmapStr != NULL ? strcmp(hasMipmapStr, "true") == 0 : false;
 
@@ -584,6 +611,17 @@ HQReturnVal HQEngineResManagerImpl::LoadTextureUAV(const HQEngineResParserNode* 
 
 	width = (hquint32)*wPtr;
 	height = (hquint32)*hPtr;
+
+	//array size
+	{
+		const HQEngineResParserNode* arraySizeInfo = texture_info->GetFirstChild("array_size");
+		if (arraySizeInfo != NULL)
+		{
+			const hqint32* arraySizePtr = arraySizeInfo->GetIntAttributePtr("value");
+			if (arraySizePtr != NULL)
+				arraySize = (hquint32)*arraySizePtr;
+		}
+	}
 
 	//format
 	const HQEngineResParserNode* formatInfo = texture_info->GetFirstChild("format");
@@ -635,7 +673,9 @@ HQReturnVal HQEngineResManagerImpl::LoadTextureUAV(const HQEngineResParserNode* 
 	return this->AddTextureUAVResource(res_Name,
 		format,
 		width, height,
-		hasMipmap);
+		arraySize,
+		hasMipmap,
+		textureType);
 }
 
 HQReturnVal HQEngineResManagerImpl::LoadShader(const HQEngineResParserNode* shaderItem)
@@ -938,7 +978,9 @@ HQReturnVal HQEngineResManagerImpl::AddCubeTextureResource(const char *name,
 HQReturnVal HQEngineResManagerImpl::AddTextureUAVResource(const char *name,
 	HQTextureUAVFormat format,
 	hquint32 width, hquint32 height,
-	bool hasMipmap
+	hquint32 depth,
+	bool hasMipmap,
+	HQTextureType textureType
 	)
 {
 	if (m_textures.GetItemPointer(name) != NULL)
@@ -948,8 +990,21 @@ HQReturnVal HQEngineResManagerImpl::AddTextureUAVResource(const char *name,
 	}
 	//create new one
 	HQTexture * texture;
-	HQReturnVal re = HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
-		->AddTextureUAV(format, width, height, hasMipmap, &texture);
+	HQReturnVal re = HQ_FAILED;
+	
+	switch (textureType)
+	{
+	case HQ_TEXTURE_2D_UAV:
+		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
+			->AddTextureUAV(format, width, height, hasMipmap, &texture);
+		break;
+	case HQ_TEXTURE_2D_ARRAY_UAV:
+		re = HQEngineApp::GetInstance()->GetRenderDevice()->GetTextureManager()
+			->AddTextureArrayUAV(format, width, height, depth, hasMipmap, &texture);
+		break;
+	default:
+		break;//TO DO
+	}
 
 	if (HQFailed(re))
 		return re;

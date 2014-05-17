@@ -193,7 +193,7 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 		this->hqFormat = hqFormat;
 		switch (pTexture->type)
 		{
-		case HQ_TEXTURE_2D_ARRAY:
+		case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 			this->arraySize = arraySize;
 			break;
 		default:
@@ -276,7 +276,7 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 				//since we created a texture outside texture managet. we need to tell texture manager about the size of this texture
 				pTextureMan->DefineTexture2DSize(pTextureGL, this->width, this->width);
 				break;
-			case HQ_TEXTURE_2D_ARRAY:
+			case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 #ifndef HQ_OPENGLES//TO DO: add to gles 3 later
 				glBindTexture(GL_TEXTURE_2D_ARRAY, *pTextureGLHandle);
 
@@ -665,6 +665,9 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 				return HQ_FAILED;
 			}
 			break;
+		case HQ_TEXTURE_2D_ARRAY_UAV:
+			isTextureUAV = true;
+			uavFormat = HQBaseTextureManager::GetTextureUAVFormat(format);
 		case HQ_TEXTURE_2D_ARRAY:
 			if (width > caps.maxTextureSize || height > caps.maxTextureSize || arraySize > caps.maxTextureArraySize)
 			{
@@ -727,7 +730,10 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetTexture(hq_uint32 width,
 		switch (textureType)
 		{
 		case HQ_TEXTURE_2D_UAV:
-			re = this->pTextureManager->InitTextureUAV(pNewTex.GetRawPointer(), uavFormat, width, height, hasMipmaps);
+			re = this->pTextureManager->InitTextureUAV(pNewTex.GetRawPointer(), uavFormat, width, height, 1, hasMipmaps);
+			break;
+		case HQ_TEXTURE_2D_ARRAY_UAV:
+			re = this->pTextureManager->InitTextureUAV(pNewTex.GetRawPointer(), uavFormat, width, height, arraySize, hasMipmaps);
 			break;
 		default:
 			//TO DO
@@ -882,7 +888,8 @@ HQReturnVal HQRenderTargetManagerFBO::CreateRenderTargetGroupImpl(
 					GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderTargetDescs[i].cubeFace ,
 					*pGLtex , 0);
 #ifndef HQ_OPENGLES //TO DO: add to gles 3 later
-			else if (pTextureTargetGL->GetTexture()->type == HQ_TEXTURE_2D_ARRAY)
+			else if (pTextureTargetGL->GetTexture()->type == HQ_TEXTURE_2D_ARRAY ||
+				pTextureTargetGL->GetTexture()->type == HQ_TEXTURE_2D_ARRAY_UAV)
 			{
 				if (renderTargetDescs[i].arraySlice < pTextureTargetGL->arraySize)
 					glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i,

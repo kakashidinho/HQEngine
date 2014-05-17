@@ -112,7 +112,7 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 			for(hq_uint32 i = 0 ; i < 6 ; ++i)
 				this->ppRTView[i] = NULL;
 			break;
-		case HQ_TEXTURE_2D_ARRAY:
+		case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 			this->numViews = arraySize;
 			this->ppRTView = HQ_NEW ID3D11RenderTargetView *[this->numViews];
 			for (hq_uint32 i = 0; i < this->numViews; ++i)
@@ -211,7 +211,7 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 				}
 			}
 				break;
-			case HQ_TEXTURE_2D_ARRAY:
+			case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 			{
 				//texture desc
 				rtDesc.ArraySize = this->numViews;
@@ -330,7 +330,7 @@ struct HQRenderTargetTextureD3D : public HQBaseRenderTargetTexture
 
 		}
 			break;
-		case HQ_TEXTURE_CUBE: case HQ_TEXTURE_2D_ARRAY:
+		case HQ_TEXTURE_CUBE: case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 		{
 			//texture desc
 			((ID3D11Texture2D*)pTex->pTexture)->GetDesc(&rtDesc);
@@ -495,7 +495,7 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 	{
 	case HQ_TEXTURE_2D:  case HQ_TEXTURE_2D_ARRAY:
 		break;
-	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY_UAV:
 		isTextureUAV = true;
 		uavFormat = HQBaseTextureManager::GetTextureUAVFormat(format);
 		break;
@@ -551,7 +551,11 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetTexture(hq_uint32 widt
 		{
 		case HQ_TEXTURE_2D_UAV:
 			//create texture from texture manager side, there is almost need for further config, since non-power of two,etc are guaranteed to be supported
-			re = pTextureManagerD3D11->InitTextureUAVEx(pNewTex.GetRawPointer(), uavFormat, width, height, hasMipmaps, true);
+			re = pTextureManagerD3D11->InitTextureUAVEx(pNewTex.GetRawPointer(), uavFormat, width, height, 1, hasMipmaps, true);
+			break;
+		case HQ_TEXTURE_2D_ARRAY_UAV:
+			//create texture from texture manager side, there is almost need for further config, since non-power of two,etc are guaranteed to be supported
+			re = pTextureManagerD3D11->InitTextureUAVEx(pNewTex.GetRawPointer(), uavFormat, width, height, arraySize, hasMipmaps, true);
 			break;
 		default:
 			//TO DO
@@ -701,7 +705,8 @@ HQReturnVal HQRenderTargetManagerD3D11::CreateRenderTargetGroupImpl(
 
 			if(pRenderTarget->GetTexture()->type == HQ_TEXTURE_CUBE)
 				newGroup->renderTargetViews[i] = ppRTView [renderTargetDescs[i].cubeFace];
-			else if (pRenderTarget->GetTexture()->type == HQ_TEXTURE_2D_ARRAY)
+			else if (pRenderTarget->GetTexture()->type == HQ_TEXTURE_2D_ARRAY || 
+				pRenderTarget->GetTexture()->type == HQ_TEXTURE_2D_ARRAY_UAV)
 			{
 				if (renderTargetDescs[i].arraySlice < static_cast<HQRenderTargetTextureD3D*> (pRenderTarget.GetRawPointer())->numViews)
 					newGroup->renderTargetViews[i] = ppRTView[renderTargetDescs[i].arraySlice];

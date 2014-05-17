@@ -2075,7 +2075,8 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 					return HQ_FAILED;
 				}
 			}//if (rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_CUBE)
-			else if (rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_2D_ARRAY)
+			else if (rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_2D_ARRAY ||
+				rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_2D_ARRAY_UAV)
 			{
 				//get array slice
 				rtOutput.arraySlice = 0;

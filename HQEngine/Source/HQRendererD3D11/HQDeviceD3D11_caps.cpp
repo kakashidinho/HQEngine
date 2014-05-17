@@ -233,7 +233,7 @@ bool HQDeviceD3D11::IsUAVTextureFormatSupported(HQTextureUAVFormat format, HQTex
 		masks |= D3D11_FORMAT_SUPPORT_MIP;
 	switch (textureType)
 	{
-	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY_UAV:
 		masks |= D3D11_FORMAT_SUPPORT_TEXTURE2D;
 		break;
 	default:
@@ -276,7 +276,7 @@ bool HQDeviceD3D11::IsRTTFormatSupported(HQRenderTargetFormat format , HQTexture
 	{
 	case HQ_TEXTURE_2D_UAV:
 	case HQ_TEXTURE_2D:
-	case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D_ARRAY: case HQ_TEXTURE_2D_ARRAY_UAV:
 		masks |= D3D11_FORMAT_SUPPORT_TEXTURE2D;
 		break;
 	case HQ_TEXTURE_CUBE:

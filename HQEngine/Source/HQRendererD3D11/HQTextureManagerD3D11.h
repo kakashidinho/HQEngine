@@ -92,8 +92,8 @@ public:
 
 	HQReturnVal InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size  ,void *initData, bool isDynamic);
 
-	HQReturnVal InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap);
-	HQReturnVal InitTextureUAVEx(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, bool hasMipmap, bool renderTarget);
+	HQReturnVal InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmap);
+	HQReturnVal InitTextureUAVEx(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmap, bool renderTarget);
 
 	HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
 	HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);

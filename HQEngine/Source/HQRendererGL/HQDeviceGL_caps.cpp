@@ -75,6 +75,7 @@ bool HQDeviceGL::IsNpotTextureFullySupported(HQTextureType textureType)
 	case HQ_TEXTURE_CUBE:
 	case HQ_TEXTURE_2D_UAV:
 	case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D_ARRAY_UAV:
 #ifdef HQ_OPENGLES
 		return GLEW_OES_texture_non_power_of_two;
 #else
@@ -92,6 +93,7 @@ bool HQDeviceGL::IsNpotTextureSupported(HQTextureType textureType)
 	case HQ_TEXTURE_CUBE:
 	case HQ_TEXTURE_2D_UAV:
 	case HQ_TEXTURE_2D_ARRAY:
+	case HQ_TEXTURE_2D_ARRAY_UAV:
 #ifdef HQ_OPENGLES
 		return GLEW_OES_texture_non_power_of_two;
 #else
@@ -197,7 +199,7 @@ bool HQDeviceGL::IsRTTFormatSupported(HQRenderTargetFormat hqformat , HQTextureT
 	case HQ_TEXTURE_2D_ARRAY:
 		if (!GLEW_VERSION_3_0) return false;
 		break;
-	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY_UAV:
 		if (!GLEW_VERSION_4_2) return false;
 		break;
 	}
