@@ -1,18 +1,44 @@
 resources {
-	/*--------reflective shadow map pass----------*/
-	shader "depth-pass_vs" { 			/* name will be default to source file name */
+	/*-----------clear reflective shadow map pass--------*/
+	shader "clear_shadowmap_depth_cs" { 			/* name will be default to source file name */
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=hlsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="clear_shadowmap_depth.cshader" 			/* source file */
+		debug=true
+	}
+
+	/*-------depth pass ----------------*/
+	shader "depth-pass-backface_vs" { 			/* name will be default to source file name */
 		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=VS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass.hlsl" 			/* source file */
+		src="depth-pass-backface.hlsl" 			/* source file */
 		debug=true
 	}
 	
-	shader "depth-pass_ps" { 			/* name will be default to source file name */
+	shader "depth-pass-backface_ps" { 			/* name will be default to source file name */
 		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
 		src_type=hlsl  			/* default is cg */
 		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
-		src="depth-pass.hlsl" 			/* source file */
+		src="depth-pass-backface.hlsl" 			/* source file */
+		debug=true
+	}
+
+	/*--------reflective shadow map pass----------*/
+	shader "rsm-pass_vs" { 			/* name will be default to source file name */
+		type=vertex  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=hlsl  			/* default is cg */
+		entry=VS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="rsm-pass.hlsl" 			/* source file */
+		debug=true
+	}
+	
+	shader "rsm-pass_ps" { 			/* name will be default to source file name */
+		type=pixel  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=hlsl  			/* default is cg */
+		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="rsm-pass.hlsl" 			/* source file */
 		debug=true
 	}
 	/*--------g-buffer pass----------*/
@@ -118,6 +144,23 @@ resources {
 		src_type=hlsl  			/* default is cg */
 		entry=PS 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
 		src="final-pass.hlsl" 			/* source file */
+		debug=true
+	}
+
+	/*-----caustics VPLs filtering pass-------*/
+	shader "caustics_filter_cs" {
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=hlsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="caustics_filter.cshader" 			/* source file */
+		debug=true
+	}
+
+	shader "caustics_pass_cs" {
+		type=compute  			/* vertex/pixel/geometry shader. default to vertex */
+		src_type=hlsl  			/* default is cg */
+		entry=main 			/* entry function. default is 'main'. ignored in bytecode/glsl src_type */
+		src="caustics_pass.cshader" 			/* source file */
 		debug=true
 	}
 }

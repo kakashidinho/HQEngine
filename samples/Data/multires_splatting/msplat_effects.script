@@ -1,18 +1,35 @@
 techniques{
 	technique "multires-splatting" { /*  must specify technique name  */
-		pass "depth-pass" {
-			vertex_shader="depth-pass_vs"
-			pixel_shader="depth-pass_ps"
+		compute_pass "clear_shadowmap_depth" {
+			shader = clear_shadowmap_depth_cs
+			texture_uav0 = rsm_depth_material_img
+		}
+
+		pass "rsm-pass" {
+			vertex_shader="rsm-pass_vs"
+			pixel_shader="rsm-pass_ps"
 			depth=full
 			cull=ccw
 			outputs {  /*  if not specified, default render target is used  */
-				output0=rsm_depth_material_img 
+				output0=rsm_depth_material_img 1
 				output1=rsm_world_pos_img 
 				output2=rsm_world_normal_img 
 				output3=rsm_flux_img 
 				depth_stencil_buffer_format=d24s8
 			}
 		}
+
+		pass "depth-pass-backface" {
+			vertex_shader="depth-pass-backface_vs"
+			pixel_shader="depth-pass-backface_ps"
+			depth=full
+			cull=cw
+			outputs {  /*  if not specified, default render target is used  */
+				output0=rsm_depth_material_img 0
+				depth_stencil_buffer_format=d24s8
+			}
+		}
+
 		pass "gbuffer-pass" {
 			vertex_shader="gbuffer-pass_vs"
 			pixel_shader="gbuffer-pass_ps"
@@ -69,6 +86,56 @@ techniques{
 			}
 		}
 
+
+		compute_pass "caustics_filter" {
+			shader = caustics_filter_cs
+
+			texture6 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_flux_img
+			}
+
+			buffer_uav0 = "caustics_samples_coords_buffer" 0 262144
+			buffer_uav1 = "caustics_samples_count"
+		}
+
+		compute_pass "caustics_pass" {
+			shader = caustics_pass_cs
+
+			texture0 {
+				 min_filter="point" mag_filter="point"
+				 source=depth_materialID_img
+			}
+			texture1 {
+				 min_filter="point" mag_filter="point"
+				 source=world_pos_img
+			}
+			texture2 {
+				 min_filter="point" mag_filter="point"
+				 source=world_normal_img
+			}
+			texture3 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_depth_material_img
+			}
+			texture4 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_world_pos_img
+			}
+			texture5 {
+				 min_filter="point" mag_filter="point"
+				 source=rsm_world_normal_img
+			}
+
+			buffer_uav0 = "caustics_samples_coords_buffer" 0 262144
+			buffer_uav1 = "caustics_samples_count"
+
+			texture_uav6 {
+				mip_level = 0
+				readable=true
+				source = final_interpolated_illum_img
+			}
+		}
 
 		pass "final-pass" {
 			texture0 = direct_flux_img

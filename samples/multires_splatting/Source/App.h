@@ -41,10 +41,8 @@ private:
 	void RefineSubsplatsDiffuse();
 	void MultiresSplatDiffuse();
 
-	/*------for glossy scene-------------*/
-	void InitGlossy();
-	void GatherIndirectGlossyIllum();
-	void MultiresSplattingAndRefineGlossy();
+	/*------for caustics scene-------------*/
+	void CausticsGathering();
 
 #ifdef DEBUG_ILLUM_BUFFER
 	void DbgIlluminationBuffer();

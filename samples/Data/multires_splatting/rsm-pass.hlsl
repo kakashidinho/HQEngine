@@ -11,6 +11,7 @@ COPYING.txt included with this distribution for more information.
 #include "../common_shader_code.h"
 
 #define NORMALIZE_RESULTS 0
+#define STORE_DEPTH 0
 
 
 cbuffer transform : register (b0) {
@@ -74,10 +75,14 @@ cbuffer lightProperties : register (b4) {
 
 
 struct pOut{
-	float2 depth_materialID: SV_Target00;//distance to light and material ID
+#if STORE_DEPTH
+	//TO DO
+#else
+	float materialID: SV_Target00;//material ID
 	float4 posW: SV_Target01;//world space position
 	float4 normalW: SV_Target02;//world space normal
 	float4 flux: SV_Target03;//flux
+#endif
 };
 
 //pixel shader
@@ -92,9 +97,11 @@ pOut PS(
 	//re-normalize normal
 	normalW = normalize(normalW);
 
-	output.depth_materialID.x = length(posW - lightPosition.xyz);//distance to light
-	output.depth_materialID.y = materialID;//material ID
-	
+#if STORE_DEPTH
+	//TO DO
+#else
+	output.materialID = float(materialID);//material ID
+#endif	
 	output.posW = float4(posW, 1.0);//world space position 
 	
 	output.normalW = float4(normalW, 1.0);//world space normal
@@ -104,6 +111,12 @@ pOut PS(
 	float spot = calculateSpotLightFactor(lightVec, lightDirection, lightFalloff_cosHalfAngle_cosHalfTheta);
 	
 	output.flux = spot * max(dot(-lightVec, normalW), 0.0) * lightDiffuse * Material_Diffuse(material[materialID]);
+
+	float4 materialSpecular = Material_Specular(material[materialID]);
+	if (length(materialSpecular.xyz) > 0.0) //specular surface
+		output.flux.w = 1.0;//mark this VPL as specular light
+	else
+		output.flux.w = 0.0;//diffuse VPL
 
 	output.posW.w = spot;//also store spot light factor in position buffer
 	

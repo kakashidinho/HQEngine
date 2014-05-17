@@ -31,7 +31,7 @@
     <ClInclude Include="..\Source\App.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass.hlsl">
+    <CustomBuild Include="..\..\Data\multires_splatting\rsm-pass.hlsl">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\..\Data\compile_hlsl11_2_glsl430_debug.bat %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslf;%(Outputs)</Outputs>
@@ -53,7 +53,10 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslf;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslf;%(Outputs)</Outputs>
     </CustomBuild>
+    <None Include="..\..\Data\multires_splatting\caustics_filter.cshader" />
+    <None Include="..\..\Data\multires_splatting\caustics_pass.cshader" />
     <None Include="..\..\Data\multires_splatting\clear_illumination_buffer.cshader" />
+    <None Include="..\..\Data\multires_splatting\clear_shadowmap_depth.cshader" />
     <None Include="..\..\Data\multires_splatting\common.cshaderh" />
     <CustomBuild Include="..\..\Data\multires_splatting\final-pass.hlsl">
       <FileType>Document</FileType>
@@ -70,6 +73,15 @@
     <None Include="..\..\Data\multires_splatting\multires_splatting_diffuse.cshader" />
     <None Include="..\..\Data\multires_splatting\subsplats_refine_diffuse.cshader" />
     <None Include="..\..\Data\multires_splatting\upsample.cshader" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass-backface.hlsl">
+      <FileType>Document</FileType>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslf;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslv;$(SolutionDir)\..\..\Data\multires_splatting\%(Filename).glslf;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(SolutionDir)\..\..\Data\compile_hlsl11_2_glsl430_debug.bat %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(SolutionDir)\..\..\Data\compile_hlsl11_2_glsl430.bat %(FullPath)</Command>
+    </CustomBuild>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F8343172-E627-462B-9D79-7660C9611D49}</ProjectGuid>

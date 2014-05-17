@@ -42,7 +42,7 @@ vOut VS(in vPNIn input){
 };
 
 /*-------fragment shader------------------*/
-#define DEPTH_BIAS 0.02
+#define DEPTH_BIAS 0.0002
 #define SHADOW_MAP_SIZE 512
 
 cbuffer materials : register (b2) {
@@ -79,7 +79,7 @@ struct pOut{
 	float2 depth_materialID: SV_Target3;//distance to camera and materialID
 };
 
-Texture2D<float4> rsm_depthMap: register (t0);//rsm depth texture
+Texture2DArray<float4> rsm_depthMap: register (t0);//rsm depth texture
 uniform SamplerState rsm_depthMap_sampler: TEXUNIT0;//depth texture
 
 
@@ -103,8 +103,16 @@ pOut PS (in pIn input){
 	float fragmentLightDepth = length(input.posW - lightPosition.xyz);
 
 	//shadow factor
+#if 1
 	float shadowFactor = computeShadowFactor(shadowMapUV, fragmentLightDepth);
-	
+#else
+	float rsm_depth = rsm_depthMap.Sample(rsm_depthMap_sampler, float3(shadowMapUV, 0.0)).r + DEPTH_BIAS;
+	float shadowFactor;
+	if (rsm_depth < fragmentLightDepth)
+		shadowFactor = 0.0;
+	else
+		shadowFactor = 1.0;
+#endif
 	//re-normalize normal
 	input.normalW = normalize(input.normalW);
 

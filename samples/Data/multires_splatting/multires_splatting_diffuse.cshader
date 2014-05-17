@@ -42,7 +42,7 @@ begin_decl_uniform_buffer(rsm_samples, 11)
 decl_texture2d_with_sampler_2f(depthMatMap, 0);//texture containing depth and material ID
 decl_texture2d_with_sampler_4f(worldPosMap, 1);//texture containing world space position
 decl_texture2d_with_sampler_4f(worldNormalMap, 2);//texture containing world space normal
-decl_texture2d_with_sampler_2f(rsm_depthMatMap, 3);//texture containing VPL's depth and material ID
+decl_texture2darray_with_sampler_f(rsm_depthMatMap, 3);//texture containing VPL's depth and material ID
 decl_texture2d_with_sampler_4f(rsm_worldPosMap, 4);//texture containing VPL's world space position
 decl_texture2d_with_sampler_4f(rsm_worldNormalMap, 5);//texture containing VPL's world space normal
 decl_texture2d_with_sampler_4f(rsm_fluxMap, 6);//texture containing VPL's flux
@@ -106,7 +106,7 @@ main_proc(GROUP_THREAD_SIZE, 1, 1)
 			float2 vplSampleCoords = texture2d_read_2f(rsm_sampleMap, uint2(i, j), 0);
 		
 			//get VPL material
-			uint vplMaterialID = uint(texture2d_sample_lod_2f(rsm_depthMatMap, vplSampleCoords, 0.0).y);
+			uint vplMaterialID = uint(texture2darray_sample_lod_f(rsm_depthMatMap, float3(vplSampleCoords, 1.0), 0.0));
 			//get VPL position
 			float4 vplPos = texture2d_sample_lod_4f(rsm_worldPosMap, vplSampleCoords, 0.0);
 			//get VPL normal

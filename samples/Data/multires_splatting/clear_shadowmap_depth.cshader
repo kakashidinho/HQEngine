@@ -1,0 +1,13 @@
+#include "../common_compute_code.h"
+#include "common.cshaderh"
+
+#define GROUP_DIM 16
+
+decl_rwtexture2darray_f(rsm_depthMatMap, 0);//texture containing VPL's depth and material ID
+
+main_proc(GROUP_DIM, GROUP_DIM, 1)
+{
+	float depth = 999999.0;//default, every pixel is very far away from light source
+
+	rwtexture2darray_store_f(rsm_depthMatMap, uint3(globalThreadIdx.xy, 0), depth);
+}

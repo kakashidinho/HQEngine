@@ -1,0 +1,145 @@
+#include "../common_shader_code.h"
+#include "../common_compute_code.h"
+#include "common.cshaderh"
+
+
+#define GROUP_DIM 16
+
+begin_decl_uniform_buffer(cameraInfos, 0)
+{
+	float4x3 worldMat;
+	float4x4 viewMat;
+	float4x4 projMat;
+	float4 cameraPos;//camera's world position
+};
+
+begin_decl_uniform_buffer(materialInfos, 2)
+{
+	SpecularMaterial material[7];
+};
+
+
+begin_decl_uniform_buffer(lightProperties, 4)
+{
+	float3 lightPosition;
+	float3 lightDirection;
+	float4 lightAmbient;
+	float4 lightDiffuse;
+	float3 lightFalloff_cosHalfAngle_cosHalfTheta;
+	float4 lightSpecular;
+};
+
+
+//input textures
+decl_texture2d_with_sampler_2f(depthMatMap, 0);//texture containing depth and material ID
+decl_texture2d_with_sampler_4f(worldPosMap, 1);//texture containing world space position
+decl_texture2d_with_sampler_4f(worldNormalMap, 2);//texture containing world space normal
+decl_texture2darray_with_sampler_f(rsm_depthMatMap, 3);//texture containing VPL's depth and material ID
+decl_texture2d_with_sampler_4f(rsm_worldPosMap, 4);//texture containing VPL's world space position
+decl_texture2d_with_sampler_4f(rsm_worldNormalMap, 5);//texture containing VPL's world space normal
+decl_texture2d_with_sampler_4f(rsm_fluxMap, 6);//texture containing VPL's flux
+
+decl_structbuffer(float2, caustics_samples_buffer, 0);//specular vpl samples list
+decl_structbuffer(uint, caustics_samples_count_buffer, 1);//specular vpl samples list size
+
+
+/*----------output texture----------*/
+decl_rwtexture2d_readable_rgba8(final_interpolated_tex, 6);//texture contains final interpolated illumination
+
+main_proc(GROUP_DIM, GROUP_DIM, 1)
+{
+	uint numSamples = caustics_samples_count_buffer[0];
+	uint2 gbuffer_size;
+
+
+	//gbuffer-size
+	texture2d_getsize_2f(depthMatMap, gbuffer_size.x, gbuffer_size.y);
+
+	//output coords
+	uint2 texel_coords = uint2(globalThreadIdx.xy);
+	
+	//depth and material ID
+	float2 depthMat = texture2d_read_2f(depthMatMap, texel_coords, 0);
+	//material
+	SpecularMaterial pixelMaterial = material[int(depthMat.y)];
+
+	//world position
+	float4 worlPos = texture2d_read_4f(worldPosMap, texel_coords, 0);
+
+	//world normal
+	float4 worldNormal = texture2d_read_4f(worldNormalMap, texel_coords, 0);
+	worldNormal = normalize(worldNormal);
+
+	float4 total_indirect_illumination = float4(0.0, 0.0, 0.0, 0.0);
+
+	//for each caustics VPL
+	_LOOP_ATTRIB_ _UAV_COND_ATTRIB_
+	for (uint i = 0; i < numSamples; ++i)
+	{
+		//sample coords
+		float2 vplSampleCoords = caustics_samples_buffer[i];
+		//get VPL material
+		uint vplMaterialID = uint(texture2darray_sample_lod_f(rsm_depthMatMap, float3(vplSampleCoords, 1.0), 0.0));
+		//get VPL position
+		float4 vplPos = texture2d_sample_lod_4f(rsm_worldPosMap, vplSampleCoords, 0.0);
+		//get VPL normal
+		float4 vplNormal = texture2d_sample_lod_4f(rsm_worldNormalMap, vplSampleCoords, 0.0);
+
+		//normalize normal
+		vplNormal.xyz = vplNormal.w * normalize(vplNormal.xyz);
+
+		//VPL's material
+		SpecularMaterial vplMaterial = material[vplMaterialID];
+
+		//calculate indirect diffuse illumination
+		float3 toVPL = vplPos.xyz - worlPos.xyz;
+		float distanceSqr = dot(toVPL, toVPL);
+		float distance = sqrt(distanceSqr);
+		toVPL = toVPL / distance;
+
+		//calculate perfectly reflected direction of direct light ray
+		float3 lightRay = normalize(vplPos.xyz - lightPosition);
+		float3 reflectedRay = reflect(lightRay, vplNormal.xyz);
+
+		//calculate specular reflection from vpl to pixel
+		float vplSpotFactor = vplPos.w;//spot factor also stored in position buffer
+		float vplSpecFactor = pow(max(dot(reflectedRay, -toVPL), 0.0), Material_SpecularExp(vplMaterial));
+		float4 vplSpecular = vplSpecFactor * lightSpecular * Material_Specular(vplMaterial) * vplSpotFactor;
+
+		float4 radianceIn = vplSpecular;
+	
+		//reduce radiance over distance
+		radianceIn /= (distanceSqr + 1.0);
+
+		//now calculate radiance to eye
+		float4 radianceOut = radianceIn * Material_Diffuse(pixelMaterial) ;
+
+		total_indirect_illumination +=  radianceOut ;
+	}//for (uint i = 0; i < numSamples.y; ++i)
+
+	//total_indirect_illumination.xyz /= numSamples;
+	//blend with existing color
+	float4 storedColor = rwtexture2d_read_rgba8(final_interpolated_tex, texel_coords);
+	float4 color = total_indirect_illumination + storedColor;
+
+
+#if 0
+
+	//debug reflective shadow map
+	float4 rsm_flux = texture2d_read_4f(rsm_fluxMap, texel_coords, 0);
+	rwtexture2d_store_rgba8(final_interpolated_tex, texel_coords, rsm_flux * 0.1 + storedColor + 0.1);
+
+	//debug sample locations
+	if (globalThreadIdx.y * FINEST_DIM_SIZE + globalThreadIdx.x < numSamples)
+	{
+		float2 sampleCoords = caustics_samples_buffer[globalThreadIdx.y * FINEST_DIM_SIZE + globalThreadIdx.x];
+		uint2 sample_coords_int = uint2(sampleCoords * FINEST_DIM_SIZE);
+
+		float4 sampleMask = float4(1.0, 1.0, 1.0, 1.0);
+		rwtexture2d_store_rgba8(final_interpolated_tex, sample_coords_int, sampleMask);
+	}
+#else
+	//write to texture
+	rwtexture2d_store_rgba8(final_interpolated_tex, texel_coords, color);
+#endif
+}

@@ -1,0 +1,37 @@
+#include "../common_compute_code.h"
+#include "common.cshaderh"
+
+#define GROUP_DIM 16
+
+decl_texture2d_with_sampler_4f(rsm_fluxMap, 6);//texture containing VPL's flux
+
+decl_structbuffer(float2, caustics_samples_buffer, 0);//specular vpl samples list
+decl_structbuffer(uint, caustics_samples_count_buffer, 1);//specular vpl samples list size
+
+
+//insert a sample location to buffer and returns number of samples
+uint insertToSamplesList(float2 sample_coords)
+{
+	uint index;
+
+	atomic_add(caustics_samples_count_buffer[0], 1, index);
+
+	caustics_samples_buffer[index] = sample_coords;
+
+	return index + 1;
+}
+
+
+main_proc(GROUP_DIM, GROUP_DIM, 1)
+{
+	//get flux
+	float4 fluxMask = texture2d_read_4f(rsm_fluxMap, globalThreadIdx.xy, 4);
+	if (fluxMask.w == 1.0)//specular VPL
+	{
+		uint size = FINEST_DIM_SIZE >> 4;
+		//get normalized sampling coords
+		float2 texcoords = (float2(globalThreadIdx.xy) + float2( 0.5, 0.5)) / float(size);
+		//insert
+		insertToSamplesList(texcoords);
+	}
+}

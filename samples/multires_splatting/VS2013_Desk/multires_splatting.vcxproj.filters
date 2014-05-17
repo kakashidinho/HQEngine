@@ -82,7 +82,10 @@
     <CustomBuild Include="..\..\Data\multires_splatting\gbuffer-pass.hlsl">
       <Filter>Resource Files\shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass.hlsl">
+    <CustomBuild Include="..\..\Data\multires_splatting\rsm-pass.hlsl">
+      <Filter>Resource Files\shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\Data\multires_splatting\depth-pass-backface.hlsl">
       <Filter>Resource Files\shaders</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -120,6 +123,15 @@
       <Filter>Resource Files\shaders</Filter>
     </None>
     <None Include="..\..\Data\multires_splatting\subsplats_refine_diffuse.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\caustics_filter.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\caustics_pass.cshader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\..\Data\multires_splatting\clear_shadowmap_depth.cshader">
       <Filter>Resource Files\shaders</Filter>
     </None>
   </ItemGroup>

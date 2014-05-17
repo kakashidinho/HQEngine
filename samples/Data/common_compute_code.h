@@ -8,13 +8,17 @@
 #define decl_texture2d_f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
 #define decl_texture2d_2f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
 #define decl_texture2d_4f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
+#define decl_texture2darray_f(_name, _binding) layout(binding  = _binding) uniform sampler2DArray _name;
 #define decl_texture2d_with_sampler_4f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
 #define decl_texture2d_with_sampler_2f(_name, _binding) layout(binding  = _binding) uniform sampler2D _name;
+#define decl_texture2darray_with_sampler_f(_name, _binding) layout(binding  = _binding) uniform sampler2DArray _name;
 #define decl_texture2darray_with_sampler_4f(_name, _binding) layout(binding  = _binding) uniform sampler2DArray _name;
 #define decl_rwtexture2d_readable_f(_name, _binding) layout(binding  = _binding, r32f) uniform image2D _name;
 #define decl_rwtexture2d_readable_rgba8(_name, _binding) layout(binding  = _binding, rgba8) uniform image2D _name;
 #define decl_rwtexture2d_readable_4f(_name, _binding) layout(binding  = _binding, rgba32f) uniform image2D _name;
 #define decl_rwtexture2d_f(_name, _binding) layout(binding  = _binding) uniform writeonly image2D _name;
+#define decl_rwtexture2d_2f(_name, _binding) layout(binding  = _binding) uniform writeonly image2D _name;
+#define decl_rwtexture2darray_f(_name, _binding) layout(binding  = _binding) uniform writeonly image2DArray _name;
 #define decl_rwtexture2d_4f(_name, _binding) layout(binding  = _binding) uniform writeonly image2D _name;
 
 #define decl_uintbuffer(_name, _binding) layout(binding  = _binding, std430) buffer stbuffer ## _binding {uint _name[];};
@@ -28,8 +32,11 @@
 
 //texture/image load/store
 #define texture2d_read_f(_name, _2dcoords, _lod) (texelFetch(_name, ivec2(_2dcoords), int(_lod)).x) 
+#define texture2darray_read_f(_name, _3dcoords, _lod) (texelFetch(_name, ivec3(_3dcoords), int(_lod)).x) 
 #define texture2d_read_2f(_name, _2dcoords, _lod) (texelFetch(_name, ivec2(_2dcoords), int(_lod)).xy )
 #define texture2d_read_4f(_name, _2dcoords, _lod) texelFetch(_name, ivec2(_2dcoords), int(_lod)) 
+#define rwtexture2darray_store_f(_name, _coords, value) imageStore(_name, ivec3(_coords), float4(value.x, 0.0, 0.0, 0.0))
+#define rwtexture2d_store_2f(_name, _coords, value) imageStore(_name, ivec2(_coords), float4(value.xy, 0.0, 0.0))
 #define rwtexture2d_store_4f(_name, _coords, value) imageStore(_name, ivec2(_coords), value)
 #define rwtexture2d_read_4f(_name, _coords) imageLoad(_name, ivec2(_coords))
 #define rwtexture2d_store_rgba8(_name, _coords, value) imageStore(_name, ivec2(_coords), value)
@@ -37,6 +44,7 @@
 
 //texture sampling
 #define texture2d_sample_lod_4f(_name, _2dcoords, _lod) (textureLod(_name, vec2(_2dcoords), float(_lod)))
+#define texture2darray_sample_lod_f(_name, _3dcoords, _lod) (textureLod(_name, vec3(_3dcoords), float(_lod)).x)
 #define texture2darray_sample_lod_4f(_name, _3dcoords, _lod) (textureLod(_name, vec3(_3dcoords), float(_lod)))
 #define texture2d_sample_lod_2f(_name, _2dcoords, _lod) (textureLod(_name, vec2(_2dcoords), float(_lod)).xy)
 
@@ -123,12 +131,15 @@ void rwtexture2d_f_getsize_4f(layout (r32f) image2D _name, out uint width, out u
 
 #define decl_texture2d_with_sampler_4f(_name, _binding) decl_texture2d_with_sampler(float4, _name, _binding)
 #define decl_texture2d_with_sampler_2f(_name, _binding) decl_texture2d_with_sampler(float2, _name, _binding)
+#define decl_texture2darray_with_sampler_f(_name, _binding) decl_texture2darray_with_sampler(float, _name, _binding)
 #define decl_texture2darray_with_sampler_4f(_name, _binding) decl_texture2darray_with_sampler(float4, _name, _binding)
 
 #define decl_rwtexture2d_readable_f(_name, _binding) RWTexture2D<float> _name : register(u ## _binding);
 #define decl_rwtexture2d_readable_rgba8(_name, _binding) RWTexture2D<uint> _name : register(u ## _binding);
 #define decl_rwtexture2d_readable_4f(_name, _binding) error_float4_is_not_readable
 #define decl_rwtexture2d_f(_name, _binding) RWTexture2D<float> _name : register(u ## _binding);
+#define decl_rwtexture2darray_f(_name, _binding) RWTexture2DArray<float> _name : register(u ## _binding);
+#define decl_rwtexture2d_2f(_name, _binding) RWTexture2D<float2> _name : register(u ## _binding);
 #define decl_rwtexture2d_4f(_name, _binding) RWTexture2D<float4> _name : register(u ## _binding);
 
 #define decl_uintbuffer(_name, _binding) RWBuffer<uint> _name : register(u ## _binding);
@@ -145,6 +156,7 @@ void rwtexture2d_f_getsize_4f(layout (r32f) image2D _name, out uint width, out u
 #define texture2d_read_4f(_name, _2dcoords, _lod) _name.Load(int3(_2dcoords, _lod))
 //texture sampling
 #define texture2d_sample_lod_4f(_name, _2dcoords, _lod) _name.SampleLevel(_name ## _sampler_state, _2dcoords, _lod)
+#define texture2darray_sample_lod_f(_name, _3dcoords, _lod) _name.SampleLevel(_name ## _sampler_state, _3dcoords, _lod)
 #define texture2darray_sample_lod_4f(_name, _3dcoords, _lod) _name.SampleLevel(_name ## _sampler_state, _3dcoords, _lod)
 #define texture2d_sample_lod_2f(_name, _2dcoords, _lod) texture2d_sample_lod_4f(_name, _2dcoords, _lod)
 
@@ -158,7 +170,17 @@ void rwtexture2d_f_store_4f(RWTexture2D<float> _name, uint2 _coords, float4 valu
 	_name[scaledCoords + uint2(3, 0)] = value.w;
 }
 
+void rwtexture2d_store_2f(RWTexture2D<float2> _name, uint2 _coords, float2 value)
+{
+	_name[_coords] = value;
+}
+
 void rwtexture2d_store_4f(RWTexture2D<float4> _name, uint2 _coords, float4 value)
+{
+	_name[_coords] = value;
+}
+
+void rwtexture2darray_store_f(RWTexture2DArray<float> _name, uint3 _coords, float value)
 {
 	_name[_coords] = value;
 }

@@ -20,7 +20,7 @@ App::App()
 : BaseApp("Core-GL4.3", WINDOW_SIZE, WINDOW_SIZE),
 	m_vplsDim(16),
 	m_giOn(true),
-	m_diffuseScene(false),
+	m_diffuseScene(true),
 	m_dynamicLight(true)
 {
 	//setup resources
@@ -34,9 +34,9 @@ App::App()
 	//create model
 	m_model = new HQMeshNode(
 		"cornell_box",
-		"cornell_box_spheres.hqmesh",
+		"cornell_box_dragon.hqmesh",
 		m_pRDevice,
-		"depth-pass_vs",
+		"rsm-pass_vs",
 		NULL);
 
 	//init camera
@@ -97,6 +97,7 @@ App::App()
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 2, m_uniformMaterialArrayBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 3, m_uniformMaterialIndexBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_PIXEL_SHADER, 4, m_uniformLightProtBuffer);
+	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 4, m_uniformLightProtBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 9, m_uniformInterpolatedInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 10, m_uniformLevelInfoBuffer);
 	m_pRDevice->GetShaderManager()->SetUniformBuffer(HQ_COMPUTE_SHADER, 11, m_uniformRSMSamplesBuffer);
@@ -180,12 +181,20 @@ void App::Update(HQTime dt){
 
 
 void App::RenderImpl(HQTime dt){
-	HQViewPort viewport = {0, 0, };
-	//depth pass rendering
-	viewport.width = RSM_DIM;
-	viewport.height = RSM_DIM;
-	
-	m_effect->GetPassByName("depth-pass")->Apply();
+
+	//clear reflective shadowmap first
+	const hquint32 threadGroup_dim = 16;
+	m_effect->GetPassByName("clear_shadowmap_depth")->Apply();
+
+	m_pRDevice->DispatchCompute(RSM_DIM / threadGroup_dim, RSM_DIM / threadGroup_dim, 1);
+
+	//depth pass by drawing backface
+	m_effect->GetPassByName("depth-pass-backface")->Apply();
+
+	this->DrawScene();
+
+	//rsm pass rendering
+	m_effect->GetPassByName("rsm-pass")->Apply();
 	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE, HQ_TRUE);
 
 	this->DrawScene();
@@ -202,10 +211,9 @@ void App::RenderImpl(HQTime dt){
 	{
 		m_pRDevice->GetRenderTargetManager()->ActiveRenderTargets(NULL);
 
-		if (m_diffuseScene)
-			this->GatherIndirectDiffuseIllum();
-		else
-			this->GatherIndirectGlossyIllum();
+		this->GatherIndirectDiffuseIllum();
+		if (!m_diffuseScene)
+			this->CausticsGathering();
 	}//if (m_giOn)
 
 	//final pass, combine direct illumination with indirect illumination

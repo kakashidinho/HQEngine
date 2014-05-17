@@ -3,16 +3,18 @@ resources {
 	/*---------------- for depth pass -------------------------*/
 	render_target "rsm_depth_material_img" {
 		/* info for render target. "has_mipmap" default is false. */
-		type=2d	//type default is 2d
+		type=2d_array_uav	//type default is 2d
 			 
 		width=512
 		height=512
+		array_size=2
 			
-		format=rg32f
+		format=r32f
 		
 	}
 	render_target "rsm_world_pos_img" {
 		/* info for render target. "has_mipmap" default is false. */
+		//type=2d_uav	
 			 
 		width=512
 		height=512
@@ -22,6 +24,7 @@ resources {
 	}
 	render_target "rsm_world_normal_img" {
 		/* info for render target. "has_mipmap" default is false. */
+		//type=2d_uav
 			 
 		width=512
 		height=512
@@ -31,11 +34,14 @@ resources {
 	}
 	render_target "rsm_flux_img" {
 		/* info for render target. "has_mipmap" default is false. */
+		//type=2d_uav
 			 
 		width=512
 		height=512
 			
 		format=rgba8ub
+
+		has_mipmap = true
 		
 	}
 
@@ -85,6 +91,13 @@ resources {
 		
 	}
 
-	/*--------------------*/
+	/*--------for caustics VPL sampling------------*/
+	buffer_uav caustics_samples_coords_buffer {
+		num_elements = 262144 //worst case
+		element_size = 8 //texture coordinates size
+	}
 
+	buffer_uav caustics_samples_count {
+		element_size = 4 //
+	}
 }
