@@ -865,7 +865,7 @@ HQEngineEffectManagerImpl::HQEngineEffectManagerImpl(HQLogStream *stream, bool f
 	/*------------init string to value mapping table--------------*/
 	//none/cw/ccw
 	m_cullModeMap.Add("none", HQ_CULL_NONE);
-	m_cullModeMap.Add("cw", HQ_CULL_NONE);
+	m_cullModeMap.Add("cw", HQ_CULL_CW);
 	m_cullModeMap.Add("ccw", HQ_CULL_CCW);
 
 	//full/read only/write only/none
