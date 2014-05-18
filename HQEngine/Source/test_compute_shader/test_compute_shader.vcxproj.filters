@@ -46,13 +46,11 @@
     <None Include="draw-shader.glslv">
       <Filter>Source Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="compute-shader.hlsl">
+    <None Include="compute-shader.hlsl">
       <Filter>Source Files</Filter>
-    </FxCompile>
-    <FxCompile Include="draw-shader.hlsl">
+    </None>
+    <None Include="draw-shader.hlsl">
       <Filter>Source Files</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>
