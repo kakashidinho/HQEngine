@@ -11,6 +11,9 @@ COPYING.txt included with this distribution for more information.
 #include "HQDeviceD3D11PCH.h"
 #include "HQDeviceD3D11.h"
 
+#define HQ_UAV_SLOTS_CHANGED 0x1
+#define HQ_KEEP_RTV 0
+
 /*-------------------------*/
 
 struct HQDepthStencilBufferD3D : public HQBaseDepthStencilBufferView
@@ -467,6 +470,15 @@ HQRenderTargetManagerD3D11::HQRenderTargetManagerD3D11(ID3D11Device * pD3DDevice
 	this->renderTargetWidth = g_pD3DDev->GetWidth();
 	this->renderTargetHeight = g_pD3DDev->GetHeight();
 
+	for (hquint32 i = 0; i < D3D11_PS_CS_UAV_REGISTER_COUNT; ++i)
+	{
+		this->pUAVSlots[i] = NULL;
+		this->UAVInitialCounts[i] = -1;
+	}
+	this->minUsedUAVSlot = D3D11_PS_CS_UAV_REGISTER_COUNT;
+	this->maxUsedUAVSlot = -1;
+	this->flags = 0;
+
 	Log("Init done!");
 }
 
@@ -778,7 +790,10 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargetsImpl(HQSharedPtr<HQBa
 	for (hq_uint32 i = 0; i < group->numRenderTargets; ++i)
 	{
 		if (group->renderTargetViews[i] != NULL)
+		{
 			static_cast<HQTextureManagerD3D11*> (this->pTextureManager)->UnbindTextureFromAllTextureSlots(group->renderTargets[i].pRenderTarget->GetTexture());
+			static_cast<HQTextureManagerD3D11*> (this->pTextureManager)->UnbindTextureFromAllUAVSlots(group->renderTargets[i].pRenderTarget->GetTexture());
+		}
 	}
 
 	this->renderTargetWidth = group->commonWidth;
@@ -841,4 +856,88 @@ void HQRenderTargetManagerD3D11::SetDefaultDepthStencilView(ID3D11DepthStencilVi
 	if(this->IsUsingDefaultFrameBuffer())
 		this->pDepthStencilView = _pD3DDSBuffer;
 	this->pD3DDSBuffer = _pD3DDSBuffer;
+}
+
+
+HQReturnVal HQRenderTargetManagerD3D11::SetUAVForGraphicsShader(hquint32 slot, ID3D11UnorderedAccessView * pUAV)
+{
+	if (this->pUAVSlots[slot] != pUAV)
+	{
+		this->pUAVSlots[slot] = pUAV;
+		if (pUAV == NULL)
+		{
+			if (this->minUsedUAVSlot == slot)
+			{
+				while (this->minUsedUAVSlot < this->maxUsedUAVSlot && this->pUAVSlots[this->minUsedUAVSlot] == NULL)
+				{
+					this->minUsedUAVSlot++;
+				}
+			}
+
+			if (this->maxUsedUAVSlot == slot)
+			{
+				while (this->maxUsedUAVSlot >= this->minUsedUAVSlot && this->pUAVSlots[this->maxUsedUAVSlot] == NULL)
+				{
+					this->maxUsedUAVSlot--;
+				}
+			}
+		}//if (pUAV == NULL)
+		else
+		{
+			if ((hqint32)slot < this->minUsedUAVSlot)
+				this->minUsedUAVSlot = slot;
+			if ((hqint32)slot > this->maxUsedUAVSlot)
+				this->maxUsedUAVSlot = slot;
+		}
+		this->flags |= HQ_UAV_SLOTS_CHANGED;
+	}//if (this->pUAVSlots[slot] != pUAV)
+
+	return HQ_OK;
+}
+
+void HQRenderTargetManagerD3D11::OnDrawOrDispatch()
+{
+	if (this->flags & HQ_UAV_SLOTS_CHANGED)
+	{
+		hquint32 numRTVs = this->GetNumActiveRenderTargets();
+		hqint32 numUAVs = this->maxUsedUAVSlot - this->minUsedUAVSlot + 1;
+
+
+		if (numUAVs > 0)
+		{
+#if HQ_KEEP_RTV
+			numRTVs = D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL;
+#else
+			numRTVs = min(numRTVs, (hquint32)this->minUsedUAVSlot);//UAV will overwrite RTV slot
+#endif
+			//set UAVs
+			this->pD3DContext->OMSetRenderTargetsAndUnorderedAccessViews(
+				numRTVs,
+				this->renderTargetViews,
+				this->pDepthStencilView,
+				(UINT) this->minUsedUAVSlot,
+				(UINT)numUAVs,
+				this->pUAVSlots + this->minUsedUAVSlot,
+				this->UAVInitialCounts + this->minUsedUAVSlot
+				);
+		}//if (numUAVs > 0)
+		else
+		{
+#if HQ_KEEP_RTV
+			numRTVs = D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL;
+#endif
+			//unset UAVs
+			this->pD3DContext->OMSetRenderTargetsAndUnorderedAccessViews(
+				numRTVs,
+				this->renderTargetViews,
+				this->pDepthStencilView,
+				0,
+				0,
+				NULL,
+				this->UAVInitialCounts
+				);
+		}
+
+		this->flags = 0;
+	}
 }

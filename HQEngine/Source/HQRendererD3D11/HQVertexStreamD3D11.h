@@ -18,6 +18,10 @@ COPYING.txt included with this distribution for more information.
 
 #define MAX_VERTEX_ATTRIBS 16
 
+#ifndef HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
+#define HQ_DEVICE_D3D11_CLASS_FORWARD_DECLARED
+class HQDeviceD3D11;
+#endif
 
 #ifdef WIN32
 #	pragma warning( push )
@@ -157,6 +161,8 @@ public:
 
 private:
 	void ConvertToElementDesc(const HQVertexAttribDesc &vAttribDesc, D3D11_INPUT_ELEMENT_DESC &vElement);
+
+	HQDeviceD3D11 *pMasterDevice;
 
 	ID3D11Device * pD3DDevice;
 	ID3D11DeviceContext *pD3DContext;

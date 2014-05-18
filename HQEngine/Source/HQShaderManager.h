@@ -369,20 +369,15 @@ public:
 	///
 	virtual HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx = 0, hquint32 numElements = 0) = 0;
 
+	///
+	///Set UAV buffer to be read and written by every shaders (except compute). 
+	///Note: Direct3D11 uses same slots for UAV resources and render targets. 
+	///OpenGL uses same slots for compute shader and graphics shaders
+	///
+	virtual HQReturnVal SetBufferUAVForGraphicsShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx = 0, hquint32 numElements = 0) = 0;
+
 	virtual HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer) = 0;
 	virtual void RemoveAllBufferUAVs() = 0;
-
-	/* //TODO
-	virtual HQReturnVal CreateUAVGroup(HQUnorderedAccessViewDesc * descs, hquint32 numViews, HQUnorderedAccessViewGroup **groupOut) = 0;
-
-	///
-	///set UAVs group for normal rendering (not compute)
-	///
-	virtual HQReturnVal SetUAVsForRendering(HQUnorderedAccessViewGroup * group) = 0;
-
-	virtual HQReturnVal RemoveUAVGroup(HQUnorderedAccessViewGroup * group) = 0;
-	virtual void RemoveAllUAVGroups() = 0;
-	*/
 };
 
 #endif

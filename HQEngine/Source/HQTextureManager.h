@@ -64,6 +64,11 @@ public:
 	///
 	virtual HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel = 0, bool read = false) = 0;
 
+	///
+	///Note: Direct3D11 uses same slots for UAV resources and render targets. 
+	///OpenGL uses same slots for compute shader and graphics shaders
+	///
+	virtual HQReturnVal SetTextureUAVForGraphicsShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel = 0, bool read = false) = 0;
 
 	///
 	///2 biến maxAlpha và colorKey sẽ dùng để chuyển tất cả giá trị alpha của texel trong texture này thành (< hay = maxAlpha) 

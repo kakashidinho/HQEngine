@@ -491,7 +491,7 @@ public:
 	virtual ~HQEngineRenderPassPlatformController(){}
 
 	virtual void ApplyTextureStates(HQLinkedList<HQEngineTextureUnit >& textureUnits) = 0;
-	virtual bool Validate(HQEngineComputePassImpl &computePass, HQLoggableObject *logger) { return true; }
+	virtual bool Validate(HQEngineBaseRenderPassImpl &pass, HQLoggableObject *logger) { return true; }
 };
 
 /*-----------base rendering pass class---------------*/
@@ -510,8 +510,29 @@ void HQEngineBaseRenderPassImpl::AddTextureUnit(const HQEngineTextureUnit& texun
 	this->textureUnits.PushBack(texunit);
 }
 
+void HQEngineBaseRenderPassImpl::AddTextureUAVUnit(const HQEngineTextureUAVUnit& texunit)
+{
+	this->textureUAVUnits.PushBack(texunit);
+}
+void HQEngineBaseRenderPassImpl::AddBufferUAVSlot(const HQEngineShaderBufferUAVSlot& bufferSlot)
+{
+	this->bufferUAVSlots.PushBack(bufferSlot);
+}
+
+bool HQEngineBaseRenderPassImpl::Validate(HQLoggableObject *logger){
+	return this->platformController->Validate(*this, logger);
+}
+
 void HQEngineBaseRenderPassImpl::ApplyTextureStates(){
 	platformController->ApplyTextureStates(this->textureUnits);//delegating
+}
+
+HQReturnVal HQEngineBaseRenderPassImpl::Apply()
+{
+	//apply texture sampler states
+	this->ApplyTextureStates();
+
+	return HQ_OK;
 }
 
 
@@ -521,12 +542,13 @@ void HQEngineBaseRenderPassImpl::ApplyTextureStates(){
 #endif
 
 //normal rendering pipeline pass
-struct HQEngineRenderPassImpl : public HQEngineBaseRenderPassImpl{
-	HQEngineRenderPassImpl(const char* name, HQEngineRenderPassPlatformController* _platformController);
-	virtual ~HQEngineRenderPassImpl();
+struct HQEngineGraphicsPassImpl : public HQEngineBaseRenderPassImpl{
+	HQEngineGraphicsPassImpl(const char* name, HQEngineRenderPassPlatformController* _platformController);
+	virtual ~HQEngineGraphicsPassImpl();
+
 	virtual HQReturnVal Apply();
 
-	void Finalize();
+	bool Validate(HQLoggableObject* logger);
 
 	HQSharedPtr<HQEngineShaderProgramWrapper> shaderProgram;//shader program
 	HQSharedPtr<HQEngineRTGroupWrapper> renderTargetGroup;//render targets. 
@@ -548,42 +570,41 @@ struct HQEngineComputePassImpl : public HQEngineBaseRenderPassImpl{
 	}
 	virtual HQReturnVal Apply();
 
-	void SetShader(const HQSharedPtr<HQEngineShaderResImpl>& computeShader) { this->computeShader = computeShader; }
-	void AddTextureUAVUnit(const HQEngineTextureUAVUnit& texunit);
-	void AddBufferUAVSlot(const HQEngineShaderBufferUAVSlot& bufferSlot);
 	bool Validate(HQLoggableObject *logger);
 
-	HQSharedPtr<HQEngineShaderResImpl> computeShader;
+	void SetShader(const HQSharedPtr<HQEngineShaderResImpl>& computeShader) { this->computeShader = computeShader; }
 
-	HQLinkedList<HQEngineTextureUAVUnit > textureUAVUnits;//used UAV texture slots
-	HQLinkedList<HQEngineShaderBufferUAVSlot > bufferUAVSlots;//used UAV buffer slots
+	HQSharedPtr<HQEngineShaderResImpl> computeShader;
 };
 
 #ifdef WIN32
 #	pragma warning( pop )//dominance inheritance of GetName() warning
 #endif
 
-/*-------------HQEngineRenderPassImpl implementation ---------------*/
-HQEngineRenderPassImpl::HQEngineRenderPassImpl(const char* name, HQEngineRenderPassPlatformController* _platformController)
+/*-------------HQEngineGraphicsPassImpl implementation ---------------*/
+HQEngineGraphicsPassImpl::HQEngineGraphicsPassImpl(const char* name, HQEngineRenderPassPlatformController* _platformController)
 :HQEngineBaseRenderPassImpl(name, _platformController)
 {
 }
 
-HQEngineRenderPassImpl::~HQEngineRenderPassImpl()
+HQEngineGraphicsPassImpl::~HQEngineGraphicsPassImpl()
 {
 }
 
-void HQEngineRenderPassImpl::Finalize()
+bool HQEngineGraphicsPassImpl::Validate(HQLoggableObject* logger)
 {
 	//set default values
 	if (this->shaderProgram == NULL) this->shaderProgram = HQ_NEW HQEngineShaderProgramWrapper();
 	if (this->renderTargetGroup == NULL) this->renderTargetGroup = HQ_NEW HQEngineRTGroupWrapper();
 	if (this->blendState == NULL) this->blendState = HQ_NEW HQEngineBlendStateWrapper();
 	if (this->dsState == NULL) this->dsState = HQ_NEW HQEngineDSStateWrapper();
+
+	//superclass's method
+	return HQEngineBaseRenderPassImpl:: Validate(logger);
 }
 
 
-HQReturnVal HQEngineRenderPassImpl::Apply()
+HQReturnVal HQEngineGraphicsPassImpl::Apply()
 {
 	/*-----------apply states, controlled texture units and more-------------*/
 	this->m_renderDevice->GetStateManager()->SetFaceCulling(this->faceCullingMode);
@@ -593,10 +614,28 @@ HQReturnVal HQEngineRenderPassImpl::Apply()
 	this->dsState->Active();
 	this->blendState->Active();
 
-	this->ApplyTextureStates();//apply textures' states
 
+	//apply texture UAV states
+	HQLinkedList<HQEngineTextureUAVUnit >::Iterator ite;
+	this->textureUAVUnits.GetIterator(ite);
+	for (; !ite.IsAtEnd(); ++ite) //for each used texture unit
+	{
+		HQEngineTextureUAVUnit & unit = *ite;
+		m_renderDevice->GetTextureManager()->SetTextureUAVForGraphicsShader(unit.unitIndex, unit.texture->GetTexture(), unit.mipLevel, unit.readable);
+	}
 
-	return HQ_OK;
+	//apply buffer UAV states
+	HQLinkedList<HQEngineShaderBufferUAVSlot >::Iterator ite2;
+	this->bufferUAVSlots.GetIterator(ite2);
+	for (; !ite2.IsAtEnd(); ++ite2) //for each used texture unit
+	{
+		HQEngineShaderBufferUAVSlot& slot = (*ite2);
+		m_renderDevice->GetShaderManager()->SetBufferUAVForGraphicsShader(
+			slot.slotIndex, slot.buffer->GetBuffer(), slot.firstElement, slot.numElements);
+	}
+
+	//super class's methd
+	return HQEngineBaseRenderPassImpl::Apply();
 }
 
 /*-----------HQEngineComputePassImpl implementation-----------------*/
@@ -604,9 +643,6 @@ HQReturnVal HQEngineComputePassImpl::Apply()
 {
 	//activate shader
 	m_renderDevice->GetShaderManager()->ActiveComputeShader(this->computeShader->GetShader());
-
-	//apply texture sampler states
-	this->ApplyTextureStates();
 
 	//apply texture UAV states
 	HQLinkedList<HQEngineTextureUAVUnit >::Iterator ite;
@@ -626,16 +662,9 @@ HQReturnVal HQEngineComputePassImpl::Apply()
 		m_renderDevice->GetShaderManager()->SetBufferUAVForComputeShader(
 			slot.slotIndex, slot.buffer->GetBuffer(), slot.firstElement, slot.numElements);
 	}
-	return HQ_OK;
-}
 
-void HQEngineComputePassImpl::AddTextureUAVUnit(const HQEngineTextureUAVUnit& texunit)
-{
-	this->textureUAVUnits.PushBack(texunit);
-}
-void HQEngineComputePassImpl::AddBufferUAVSlot(const HQEngineShaderBufferUAVSlot& bufferSlot)
-{
-	this->bufferUAVSlots.PushBack(bufferSlot);
+	//super class's method
+	return HQEngineBaseRenderPassImpl::Apply();
 }
 
 bool HQEngineComputePassImpl::Validate(HQLoggableObject *logger){
@@ -645,7 +674,8 @@ bool HQEngineComputePassImpl::Validate(HQLoggableObject *logger){
 		return false;
 	}
 
-	return this->platformController->Validate(*this, logger);
+	//super class's method
+	return HQEngineBaseRenderPassImpl::Validate(logger);
 }
 
 /*-------------platform specific controller-------------------*/
@@ -672,8 +702,8 @@ public:
 class HQPlatformControllerD3D11 : public HQPlatformControllerD3D {
 public:
 
-	//validate compute shader
-	bool Validate(HQEngineComputePassImpl &computePass, HQLoggableObject *logger)
+	//validate rendering/compute pass
+	bool Validate(HQEngineBaseRenderPassImpl &pass, HQLoggableObject *logger)
 	{
 		bool success = true;
 
@@ -681,9 +711,9 @@ public:
 		HQClosedPrimeHashTable<hquint32, std::string > usedUavSlots;
 		//check for illegal use of buffer and texture as input and output
 
-		/*------inpute textures-----------*/
+		/*------input textures-----------*/
 		HQLinkedList<HQEngineTextureUnit >::Iterator input_tex_ite;
-		computePass.textureUnits.GetIterator(input_tex_ite);
+		pass.textureUnits.GetIterator(input_tex_ite);
 		for (; !input_tex_ite.IsAtEnd(); ++input_tex_ite) //for each used texture unit
 		{
 			inputTextures.Add(input_tex_ite->texture->GetName(), input_tex_ite->texture);
@@ -691,27 +721,27 @@ public:
 
 		/*----------output textures-------------*/
 		HQLinkedList<HQEngineTextureUAVUnit >::Iterator output_tex_ite;
-		computePass.textureUAVUnits.GetIterator(output_tex_ite);
+		pass.textureUAVUnits.GetIterator(output_tex_ite);
 		for (; !output_tex_ite.IsAtEnd(); ++output_tex_ite) //for each used texture unit
 		{
 			usedUavSlots.Add(output_tex_ite->unitIndex, output_tex_ite->texture->GetName());
 			if (inputTextures.GetItemPointer(output_tex_ite->texture->GetName()) != NULL)
 			{
-				logger->Log("Error: compute_pass '%s' uses texture '%s' both in texture unit and UAV slot!", computePass.GetName(), output_tex_ite->texture->GetName());
+				logger->Log("Error: pass '%s' uses texture '%s' both in texture unit and UAV slot!", pass.GetName(), output_tex_ite->texture->GetName());
 				success = false;
 			}
 		}
 
 		//check for illegal binding buffer and texture to same UAV slot
 		HQLinkedList<HQEngineShaderBufferUAVSlot >::Iterator buffer_ite;
-		computePass.bufferUAVSlots.GetIterator(buffer_ite);
+		pass.bufferUAVSlots.GetIterator(buffer_ite);
 		for (; !buffer_ite.IsAtEnd(); ++buffer_ite) //for each used buffer slot
 		{
 			std::string * boundTextureNamePtr = usedUavSlots.GetItemPointer(buffer_ite->slotIndex);
 			if (boundTextureNamePtr != NULL)
 			{
-				logger->Log("Error: compute_pass '%s' binds both buffer '%s' and texture '%s' to the same slot %u!"
-					, computePass.GetName(), buffer_ite->buffer->GetName(), boundTextureNamePtr->c_str(), buffer_ite->slotIndex);
+				logger->Log("Error: pass '%s' binds both buffer '%s' and texture '%s' to the same slot %u!"
+					, pass.GetName(), buffer_ite->buffer->GetName(), boundTextureNamePtr->c_str(), buffer_ite->slotIndex);
 				success = false;
 			}
 		}
@@ -1074,7 +1104,7 @@ HQReturnVal HQEngineEffectManagerImpl::LoadEffect(const HQEngineEffectParserNode
 		if (!strcmp(node_type, "pass")){
 
 			//now start loading the pass
-			HQEngineRenderPassImpl* newPassImpl = HQ_NEW HQEngineRenderPassImpl(pass_name, m_platformController);
+			HQEngineGraphicsPassImpl* newPassImpl = HQ_NEW HQEngineGraphicsPassImpl(pass_name, m_platformController);
 
 			if (HQFailed(this->LoadPass(pass, newPassImpl)))
 			{
@@ -1130,7 +1160,7 @@ HQReturnVal HQEngineEffectManagerImpl::LoadEffect(const HQEngineEffectParserNode
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* passItem, HQEngineRenderPassImpl* newPass)
+HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* passItem, HQEngineGraphicsPassImpl* newPass)
 {
 	const char emptyName[] = "";
 	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
@@ -1242,6 +1272,40 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* 
 				return HQ_FAILED;
 			}
 		}
+		if (!strncmp(elemName, "texture_uav", 11))//texture UAV slot
+		{
+			hquint32 textureIdx;
+			if (sscanf(elemName, "texture_uav%u", &textureIdx) == 0)
+			{
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
+				return HQ_FAILED;
+			}
+
+			HQEngineTextureUAVUnit texunit;
+			texunit.unitIndex = textureIdx;
+
+			if (HQFailed(this->ParseTextureUAVUnit(elem, texunit)))
+				return HQ_FAILED;
+
+			newPass->AddTextureUAVUnit(texunit);
+		}//if (!strncmp(elemName, "texture_uav", 11))
+		else if (!strncmp(elemName, "buffer_uav", 10))//bufer UAV slot
+		{
+			hquint32 bufferIdx;
+			if (sscanf(elemName, "buffer_uav%u", &bufferIdx) == 0)
+			{
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
+				return HQ_FAILED;
+			}
+
+			HQEngineShaderBufferUAVSlot bufferSlot;
+			bufferSlot.slotIndex = bufferIdx;
+
+			if (HQFailed(this->ParseShaderBufferUAVUnit(elem, bufferSlot)))
+				return HQ_FAILED;
+
+			newPass->AddBufferUAVSlot(bufferSlot);
+		}//else if (!strncmp(elemName, "buffer_uav", 10))
 	}//for (; elem != NULL; elem = elem->GetNextSibling())
 
 	//now create the program
@@ -1273,7 +1337,8 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* 
 	newPass->faceCullingMode = faceCullMode;
 
 	//finalize
-	newPass->Finalize();
+	if (!newPass->Validate(this))
+		return HQ_FAILED;
 
 	return HQ_OK;
 }

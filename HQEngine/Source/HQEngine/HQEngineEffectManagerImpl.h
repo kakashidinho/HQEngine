@@ -235,18 +235,25 @@ struct HQEngineBaseRenderPassImpl : public HQNamedGraphicsRelatedObj, public HQE
 	HQEngineBaseRenderPassImpl(const char *name, HQEngineRenderPassPlatformController* platformController);
 	virtual ~HQEngineBaseRenderPassImpl();
 
-	void AddTextureUnit(const HQEngineTextureUnit& texunit);
+	virtual HQReturnVal Apply();
 
-	void ApplyTextureStates();
-	
+	void AddTextureUnit(const HQEngineTextureUnit& texunit);
+	void AddTextureUAVUnit(const HQEngineTextureUAVUnit& texunit);
+	void AddBufferUAVSlot(const HQEngineShaderBufferUAVSlot& bufferSlot);
+	virtual bool Validate(HQLoggableObject *logger);
+
+	HQLinkedList<HQEngineTextureUAVUnit > textureUAVUnits;//used UAV texture slots
+	HQLinkedList<HQEngineShaderBufferUAVSlot > bufferUAVSlots;//used UAV buffer slots
 
 	HQLinkedList<HQEngineTextureUnit > textureUnits; //controlled texture units in this pass
 protected:
+	void ApplyTextureStates();
+
 	HQEngineRenderPassPlatformController* platformController;
 };
 
 //normal rendering pipeline pass
-struct HQEngineRenderPassImpl;
+struct HQEngineGraphicsPassImpl;
 //compute pass
 struct HQEngineComputePassImpl;
 
@@ -319,7 +326,7 @@ public:
 
 private:
 	HQReturnVal LoadEffect(const HQEngineEffectParserNode * effectItem);
-	HQReturnVal LoadPass(const HQEngineEffectParserNode* passItem, HQEngineRenderPassImpl *newPass);
+	HQReturnVal LoadPass(const HQEngineEffectParserNode* passItem, HQEngineGraphicsPassImpl *newPass);
 	HQReturnVal LoadComputePass(const HQEngineEffectParserNode* passItem, HQEngineComputePassImpl *newPass);
 	HQReturnVal ParseStencilState(const HQEngineEffectParserNode *stencilElem, HQEngineDSStateWrapper::CreationParams &params);
 	HQReturnVal ParseBlendState(const HQEngineEffectParserNode* blendElem, HQEngineBlendStateWrapper::CreationParams &params);

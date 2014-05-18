@@ -39,6 +39,9 @@ techniques{
 			texture0 {
 				source = "color_texture"
 			}
+
+			buffer_uav1 = indirect_draw_buffer 0 2
+			buffer_uav3 = counter_buffer
 		}
 	}
 }

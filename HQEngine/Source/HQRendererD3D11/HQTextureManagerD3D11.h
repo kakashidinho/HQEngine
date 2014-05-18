@@ -79,6 +79,7 @@ public:
 	HQReturnVal SetTexture(HQShaderType shaderStage, hq_uint32 slot, HQTexture* textureID);
 
 	HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read);
+	HQReturnVal SetTextureUAVForGraphicsShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read);
 	
 	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
 	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);
@@ -101,6 +102,7 @@ public:
 	void UnbindTextureFromAllTextureSlots(const HQSharedPtr<HQBaseTexture> &pTexture);//unbind the given texture from every texture slots
 
 	void OnBufferBindToComputeShaderUAVSlot(hquint32 slot);//unbind any texture from compute shader's UAV slot {slot}
+	void OnBufferBindToGraphicsShaderUAVSlot(hquint32 slot);//unbind any texture from graphics shader's UAV slot {slot}
 
 	void UnbindTextureFromAllUAVSlots(const HQSharedPtr<HQBaseTexture> &pTexture);//unbind texture from all UAV slots
 

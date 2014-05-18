@@ -26,7 +26,14 @@ private:
 
 	ID3D11RenderTargetView **renderTargetViews;//current active render target views
 	ID3D11DepthStencilView *pDepthStencilView;//current active depth stencil view
+
+	//-------------graphics UAV slots--------------------
+	ID3D11UnorderedAccessView *pUAVSlots[D3D11_PS_CS_UAV_REGISTER_COUNT];
+	UINT UAVInitialCounts[D3D11_PS_CS_UAV_REGISTER_COUNT];
+	hqint32 minUsedUAVSlot;//min used UAV slot
+	hqint32 maxUsedUAVSlot;//max used UAV slot. -1 if no slot is used
 	
+	hquint32 flags;
 public:
 	HQRenderTargetManagerD3D11(ID3D11Device * pD3DDevice , 
 		ID3D11DeviceContext *pD3DContext,
@@ -86,7 +93,11 @@ public:
 									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
 									) ;
 
-	
+
+	HQReturnVal SetUAVForGraphicsShader(hquint32 slot, ID3D11UnorderedAccessView * UAV);
+
+	void OnDrawOrDispatch();//this is called before drawing
+
 	static DXGI_FORMAT GetD3DFormat(HQRenderTargetFormat format);
 	static DXGI_FORMAT GetD3DFormat(HQDepthStencilFormat format);
 };

@@ -105,6 +105,15 @@ private:
 
 	void InitFeatureCaps();
 
+	void OnDraw();
+	void OnDispatchCompute();
+
+	void CommitCSUAVSlotsChanges();
+
+	void CommitSRVSlotsChanges();
+
+	void CommitIAStreamBufferChanges();
+
 	WindowInfo winfo;
 	hModule pDll; 
 #if !defined HQ_WIN_PHONE_PLATFORM && !defined HQ_WIN_STORE_PLATFORM
@@ -143,6 +152,30 @@ private:
 	UINT8 clearStencil;
 
 	HQDeviceEnumD3D11* pEnum;
+
+	//-------------compute's deferred UAV slots--------------------
+	ID3D11UnorderedAccessView *pDeferredCSUAVSlots[D3D11_PS_CS_UAV_REGISTER_COUNT];
+	UINT CSUAVInitialCounts[D3D11_PS_CS_UAV_REGISTER_COUNT];
+	hqint32 minUsedCSUAVSlot;//min used CS's UAV slot
+	hqint32 maxUsedCSUAVSlot;//max used CS's UAV slot. -1 if no slot is used
+
+	//deferred resources slots, only send to driver when drawing
+	ID3D11ShaderResourceView * pVSSRVSlots[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
+	ID3D11ShaderResourceView * pGSSRVSlots[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
+	ID3D11ShaderResourceView * pPSSRVSlots[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
+	ID3D11ShaderResourceView * pCSSRVSlots[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
+
+	hqint32 minUsedVSSRVSlot, maxUsedVSSRVSlot;
+	hqint32 minUsedGSSRVSlot, maxUsedGSSRVSlot;
+	hqint32 minUsedPSSRVSlot, maxUsedPSSRVSlot;
+	hqint32 minUsedCSSRVSlot, maxUsedCSSRVSlot;
+
+	//deferred vertex stream slots, only send to driver when drawing
+	ID3D11Buffer* pIAStreamBufferSlots[MAX_VERTEX_ATTRIBS];
+	UINT IAStreamStrides[MAX_VERTEX_ATTRIBS];
+	UINT IAStreamOffsets[MAX_VERTEX_ATTRIBS];
+	hqint32 minUsedIAStreamSlot;//min used vertex stream slot
+	hqint32 maxUsedIAStreamSlot;//max used vertex stream slot. -1 if no slot is used
 public:
 	HQDeviceD3D11(hModule _pDll , bool flushLog);
 
@@ -198,6 +231,16 @@ public:
 #endif
 
 	void SetPrimitiveMode(HQPrimitiveMode primitiveMode) ;
+
+	//put UAV binding to queue 
+	HQReturnVal SetUAVForComputeShader(hquint32 slot, ID3D11UnorderedAccessView * UAV);
+
+	HQReturnVal SetVSResource(hquint32 slot, ID3D11ShaderResourceView * pSRV);
+	HQReturnVal SetGSResource(hquint32 slot, ID3D11ShaderResourceView * pSRV);
+	HQReturnVal SetPSResource(hquint32 slot, ID3D11ShaderResourceView * pSRV);
+	HQReturnVal SetCSResource(hquint32 slot, ID3D11ShaderResourceView * pSRV);
+	HQReturnVal SetVertexBuffer(hquint32 slot, ID3D11Buffer *buffer, UINT stride, UINT offset);
+
 	HQReturnVal Draw(hq_uint32 vertexCount , hq_uint32 firstVertex) ;
 	HQReturnVal DrawPrimitive(hq_uint32 primitiveCount , hq_uint32 firstVertex) ;
 	HQReturnVal DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCount , hq_uint32 firstIndex );

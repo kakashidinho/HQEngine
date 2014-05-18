@@ -306,8 +306,10 @@ public:
 	HQReturnVal CreateDrawIndexedIndirectArgs(void* initData, hquint32 numElements, HQDrawIndexedIndirectArgsBuffer** ppBufferOut);
 
 	HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements);
+	HQReturnVal SetBufferUAVForGraphicsShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements);
 
 	void OnTextureBindToComputeShaderUAVSlot(hquint32 slot);//unbind any buffer from compute shader's UAV slot {slot}
+	void OnTextureBindToGraphicsShaderUAVSlot(hquint32 slot);//unbind any buffer from graphics shader's UAV slot {slot}
 	
 	void UnbindBufferFromAllUAVSlots(HQSharedPtr<HQGenericBufferD3D11>& pBuffer)//unbind buffer from every UAV slot
 	{
@@ -388,6 +390,8 @@ private:
 
 	HQReturnVal CreateGenericDrawIndirectBuffer(void* initData, hquint32 elementSize, hquint32 numElements, HQBufferUAV** ppBufferOut);
 
+	HQSharedPtr<HQGenericBufferD3D11> GetBufferUAVSharedPointer(HQGenericBufferD3D11 *pRawBuffer);
+
 	/*------------attributes--------------*/
 	HQSharedPtr<HQShaderProgramD3D11> activeProgram;
 	HQSharedPtr<HQShaderObjectD3D11> activeVShader, activeGShader, activePShader, activeCShader;
@@ -413,6 +417,7 @@ private:
 	HQShaderConstBufferD3D11* clearShaderParameters;//uniform parameters for clear viewport shaders 
 #endif
 
+	//feature level
 	D3D_FEATURE_LEVEL featureLevel;
 
 	// for fixed function emulation 

@@ -276,6 +276,7 @@ public:
 	HQReturnVal CreateDrawIndexedIndirectArgs(void* initData, hquint32 numElements, HQDrawIndexedIndirectArgsBuffer** ppBufferOut)  { return HQ_FAILED; }
 
 	HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)  { return HQ_FAILED; }
+	HQReturnVal SetBufferUAVForGraphicsShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements) { return HQ_FAILED; }
 
 	HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer) { return HQ_FAILED; }
 	void RemoveAllBufferUAVs() {}

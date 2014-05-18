@@ -101,6 +101,7 @@ void Game::Render(HQTime dt){
 	transformBuf->translation[1] = 0.0f;
 	m_uBuffer->Unmap();
 
+	//draw
 	m_pRDevice->DrawInstancedIndirect(m_indirectDrawBuffer, 1);
 
 	m_pRDevice->EndRender();

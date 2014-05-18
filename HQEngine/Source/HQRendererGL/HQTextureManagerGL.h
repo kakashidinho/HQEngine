@@ -120,6 +120,10 @@ public:
 	}
 
 	HQReturnVal SetTextureUAVForComputeShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read);
+	HQReturnVal SetTextureUAVForGraphicsShader(hq_uint32 slot, HQTexture* textureID, hq_uint32 mipLevel, bool read) 
+	{
+		return this->HQTextureManagerGL::SetTextureUAVForComputeShader(slot, textureID, mipLevel, read);
+	}
 
 	HQBaseTexture * CreateNewTextureObject(HQTextureType type);
 	HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex);

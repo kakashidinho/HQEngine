@@ -113,7 +113,7 @@
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Lib>
-      <OutputFile>$(SolutionDir)\Output\$(Configuration)\$(ProjectName)D.lib</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>

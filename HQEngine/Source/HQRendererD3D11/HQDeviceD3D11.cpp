@@ -13,6 +13,12 @@ COPYING.txt included with this distribution for more information.
 #include <string.h>
 
 #define FORCE_UNBIND_BOUND_UAV_BUFFERS 0
+#define CS_UAV_SLOTS_CHANGED 0x10000
+#define VS_SRV_SLOTS_CHANGED 0x20000
+#define GS_SRV_SLOTS_CHANGED 0x40000
+#define PS_SRV_SLOTS_CHANGED 0x80000
+#define CS_SRV_SLOTS_CHANGED 0x100000
+#define VBUFFER_SLOTS_CHANGED 0x200000
 
 #if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #include "..\HQEngine\winstore\HQWinStoreUtil.h"
@@ -121,6 +127,30 @@ HQDeviceD3D11::HQDeviceD3D11(hModule _pDll , bool flushLog)
 	
 	pEnum=0;
 
+	//-------------compute's deferred UAV slots--------------------
+	for (hquint32 i = 0; i < D3D11_PS_CS_UAV_REGISTER_COUNT; ++i)
+	{
+		this->pDeferredCSUAVSlots[i] = NULL;
+		this->CSUAVInitialCounts[i] = -1;
+	}
+	this->minUsedCSUAVSlot = D3D11_PS_CS_UAV_REGISTER_COUNT;
+	this->maxUsedCSUAVSlot = -1;
+
+	memset(pVSSRVSlots, 0, sizeof(pVSSRVSlots));
+	memset(pGSSRVSlots, 0, sizeof(pGSSRVSlots));
+	memset(pPSSRVSlots, 0, sizeof(pPSSRVSlots));
+	memset(pCSSRVSlots, 0, sizeof(pCSSRVSlots));
+
+	this->minUsedVSSRVSlot = this->minUsedGSSRVSlot = this->minUsedPSSRVSlot = this->minUsedCSSRVSlot
+		= D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
+
+	this->maxUsedVSSRVSlot = this->maxUsedGSSRVSlot = this->maxUsedPSSRVSlot = this->maxUsedCSSRVSlot
+		= -1;
+
+	memset(pIAStreamBufferSlots, 0, sizeof(pIAStreamBufferSlots));
+
+	this->minUsedIAStreamSlot = MAX_VERTEX_ATTRIBS;
+	this->maxUsedIAStreamSlot = -1;
 	
 	this->textureMan=0;
 	this->vStreamMan=0;
@@ -1183,7 +1213,7 @@ HQReturnVal HQDeviceD3D11::Draw(hq_uint32 vertexCount , hq_uint32 firstVertex)
 	if ((this->flags & RENDER_BEGUN)== 0)
 		return HQ_FAILED_RENDER_NOT_BEGUN;
 
-	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+	this->OnDraw();
 
 	pDevContext->Draw(vertexCount , firstVertex);
 	return HQ_OK;
@@ -1214,7 +1244,8 @@ HQReturnVal HQDeviceD3D11::DrawPrimitive(hq_uint32 primitiveCount , hq_uint32 fi
 		vertexCount = 0;
 	}
 
-	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+
+	this->OnDraw();
 
 	pDevContext->Draw(vertexCount , firstVertex);
 	return HQ_OK;
@@ -1224,7 +1255,8 @@ HQReturnVal HQDeviceD3D11::DrawIndexed(hq_uint32 numVertices , hq_uint32 indexCo
 	if ((this->flags & RENDER_BEGUN)== 0)
 		return HQ_FAILED_RENDER_NOT_BEGUN;
 
-	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+
+	this->OnDraw();
 
 	pDevContext->DrawIndexed(indexCount , firstIndex , 0);
 	return HQ_OK;
@@ -1256,7 +1288,8 @@ HQReturnVal HQDeviceD3D11::DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint3
 		indexCount = 0;
 	}
 
-	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+
+	this->OnDraw();
 
 	pDevContext->DrawIndexed(indexCount , firstIndex , 0);
 	return HQ_OK;
@@ -1269,7 +1302,8 @@ HQReturnVal HQDeviceD3D11::DrawInstancedIndirect(HQDrawIndirectArgsBuffer* buffe
 #if FORCE_UNBIND_BOUND_UAV_BUFFERS
 	static_cast<HQShaderManagerD3D11*> (shaderMan)->UnbindBufferFromAllUAVSlots(pD3DBuffer);//make sure it will not be bound to any UAV slot
 #endif
-	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+
+	this->OnDraw();
 
 	pDevContext->DrawInstancedIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
 
@@ -1283,7 +1317,8 @@ HQReturnVal HQDeviceD3D11::DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArg
 #if FORCE_UNBIND_BOUND_UAV_BUFFERS
 	static_cast<HQShaderManagerD3D11*> (shaderMan)->UnbindBufferFromAllUAVSlots(pD3DBuffer);//make sure it will not be bound to any UAV slot
 #endif
-	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+
+	this->OnDraw();
 
 	pDevContext->DrawIndexedInstancedIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
 
@@ -1320,6 +1355,8 @@ HQReturnVal HQDeviceD3D11::SetViewPort(const HQViewPort &viewport)
 
 HQReturnVal HQDeviceD3D11::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)
 {
+	this->OnDispatchCompute();
+
 	pDevContext->Dispatch(numGroupX, numGroupY, numGroupZ);
 
 	return HQ_OK;
@@ -1333,7 +1370,239 @@ HQReturnVal HQDeviceD3D11::DispatchComputeIndirect(HQComputeIndirectArgsBuffer* 
 	static_cast<HQShaderManagerD3D11*> (shaderMan)->UnbindBufferFromAllUAVSlots(pD3DBuffer);//make sure it will not be bound to any UAV slot
 #endif
 
+	this->OnDispatchCompute();
+
 	pDevContext->DispatchIndirect(pD3DBuffer->pD3DBuffer, elementIndex * pD3DBuffer->elementSize);
 
 	return HQ_OK;
+}
+
+
+HQReturnVal HQDeviceD3D11::SetUAVForComputeShader(hquint32 slot, ID3D11UnorderedAccessView * pUAV)
+{
+	DoDeferredResourceBinding(slot, pUAV, CS_UAV_SLOTS_CHANGED, 
+		this->pDeferredCSUAVSlots, this->minUsedCSUAVSlot, this->maxUsedCSUAVSlot, this->flags);
+
+	UINT initialCount = -1;
+	if (pUAV == NULL)//unbind resource immediately
+		pDevContext->CSSetUnorderedAccessViews(slot, 1, &pUAV, &initialCount);
+
+	return HQ_OK;
+}
+
+void HQDeviceD3D11::CommitCSUAVSlotsChanges()
+{
+	if (this->flags & CS_UAV_SLOTS_CHANGED)
+	{
+		hqint32 numUAVs = this->maxUsedCSUAVSlot - this->minUsedCSUAVSlot + 1;
+
+		if (numUAVs > 0)
+		{
+			//set UAVs
+			this->pDevContext->CSSetUnorderedAccessViews(
+				(UINT) this->minUsedCSUAVSlot,
+				(UINT)numUAVs,
+				this->pDeferredCSUAVSlots + this->minUsedCSUAVSlot,
+				this->CSUAVInitialCounts + this->minUsedCSUAVSlot
+				);
+		}//if (numUAVs > 0)
+
+		this->flags &= ~CS_UAV_SLOTS_CHANGED;
+	}
+}
+
+HQReturnVal HQDeviceD3D11::SetVSResource(hquint32 slot, ID3D11ShaderResourceView * pSRV)
+{
+	DoDeferredResourceBinding(slot, pSRV, VS_SRV_SLOTS_CHANGED,
+		this->pVSSRVSlots, this->minUsedVSSRVSlot, this->maxUsedVSSRVSlot, this->flags);
+
+	if (pSRV == NULL)//unbind resource immediately
+		pDevContext->VSSetShaderResources(slot, 1, &pSRV);
+
+	return HQ_OK;
+}
+HQReturnVal HQDeviceD3D11::SetGSResource(hquint32 slot, ID3D11ShaderResourceView * pSRV)
+{
+	DoDeferredResourceBinding(slot, pSRV, GS_SRV_SLOTS_CHANGED,
+		this->pGSSRVSlots, this->minUsedGSSRVSlot, this->maxUsedGSSRVSlot, this->flags);
+
+	if (pSRV == NULL)//unbind resource immediately
+		pDevContext->GSSetShaderResources(slot, 1, &pSRV);
+
+	return HQ_OK;
+}
+HQReturnVal HQDeviceD3D11::SetPSResource(hquint32 slot, ID3D11ShaderResourceView * pSRV)
+{
+	DoDeferredResourceBinding(slot, pSRV, PS_SRV_SLOTS_CHANGED,
+		this->pPSSRVSlots, this->minUsedPSSRVSlot, this->maxUsedPSSRVSlot, this->flags);
+
+	if (pSRV == NULL)//unbind resource immediately
+		pDevContext->PSSetShaderResources(slot, 1, &pSRV);
+
+	return HQ_OK;
+}
+HQReturnVal HQDeviceD3D11::SetCSResource(hquint32 slot, ID3D11ShaderResourceView * pSRV)
+{
+	DoDeferredResourceBinding(slot, pSRV, CS_SRV_SLOTS_CHANGED,
+		this->pCSSRVSlots, this->minUsedCSSRVSlot, this->maxUsedCSSRVSlot, this->flags);
+
+	if (pSRV == NULL)//unbind resource immediately
+		pDevContext->CSSetShaderResources(slot, 1, &pSRV);
+
+	return HQ_OK;
+}
+
+void HQDeviceD3D11::CommitSRVSlotsChanges()
+{
+	ID3D11ShaderResourceView * nullView = NULL;
+
+	//check for vertex shader's resource slot changes
+	if (this->flags & VS_SRV_SLOTS_CHANGED)
+	{
+		hqint32 numSRVs = this->maxUsedVSSRVSlot - this->minUsedVSSRVSlot + 1;
+
+		if (numSRVs > 0)
+		{
+			//set SRVs
+			this->pDevContext->VSSetShaderResources(this->minUsedVSSRVSlot, numSRVs, this->pVSSRVSlots + this->minUsedVSSRVSlot);
+		}//if (numSRVs > 0)
+
+		this->flags &= ~VS_SRV_SLOTS_CHANGED;
+	}
+
+	//check for geo shader's resource slot changes
+	if (this->flags & GS_SRV_SLOTS_CHANGED)
+	{
+		hqint32 numSRVs = this->maxUsedGSSRVSlot - this->minUsedGSSRVSlot + 1;
+
+		if (numSRVs > 0)
+		{
+			//set SRVs
+			this->pDevContext->GSSetShaderResources(this->minUsedGSSRVSlot, numSRVs, this->pGSSRVSlots + this->minUsedGSSRVSlot);
+		}//if (numSRVs > 0)
+
+		this->flags &= ~GS_SRV_SLOTS_CHANGED;
+	}
+
+	//check for pixel shader's resource slot changes
+	if (this->flags & PS_SRV_SLOTS_CHANGED)
+	{
+		hqint32 numSRVs = this->maxUsedPSSRVSlot - this->minUsedPSSRVSlot + 1;
+
+		if (numSRVs > 0)
+		{
+			//set SRVs
+			this->pDevContext->PSSetShaderResources(this->minUsedPSSRVSlot, numSRVs, this->pPSSRVSlots + this->minUsedPSSRVSlot);
+		}//if (numSRVs > 0)
+
+		this->flags &= ~PS_SRV_SLOTS_CHANGED;
+	}
+
+	//check for compute shader's resource slot changes
+	if (this->flags & CS_SRV_SLOTS_CHANGED)
+	{
+		hqint32 numSRVs = this->maxUsedCSSRVSlot - this->minUsedCSSRVSlot + 1;
+
+		if (numSRVs > 0)
+		{
+			//set SRVs
+			this->pDevContext->CSSetShaderResources(this->minUsedCSSRVSlot, numSRVs, this->pCSSRVSlots + this->minUsedCSSRVSlot);
+		}//if (numSRVs > 0)
+
+		this->flags &= ~CS_SRV_SLOTS_CHANGED;
+	}
+}
+
+void HQDeviceD3D11::OnDraw()
+{
+	static_cast<HQRenderTargetManagerD3D11*>(renderTargetMan)->OnDrawOrDispatch();//notify render target manager
+
+	static_cast<HQShaderManagerD3D11*> (shaderMan)->NotifyFFRenderIfNeeded();//make changes to FF emulator if needed
+
+	//this->CommitCSUAVSlotsChanges();
+
+	this->CommitSRVSlotsChanges();
+	this->CommitIAStreamBufferChanges();
+
+}
+void HQDeviceD3D11::OnDispatchCompute()
+{
+	static_cast<HQRenderTargetManagerD3D11*>(renderTargetMan)->OnDrawOrDispatch();//notify render target manager
+
+	this->CommitCSUAVSlotsChanges();
+
+	this->CommitSRVSlotsChanges();
+	//this->CommitIAStreamBufferChanges();
+}
+
+
+HQReturnVal HQDeviceD3D11::SetVertexBuffer(hquint32 slot, ID3D11Buffer *buffer, UINT stride, UINT offset)
+{
+	this->pIAStreamBufferSlots[slot] = buffer;
+	this->IAStreamStrides[slot] = stride;
+	this->IAStreamOffsets[slot] = offset;
+	if (buffer == NULL)
+	{
+		if (minUsedIAStreamSlot == slot)
+		{
+			while (minUsedIAStreamSlot < maxUsedIAStreamSlot && this->pIAStreamBufferSlots[minUsedIAStreamSlot] == NULL)
+			{
+				minUsedIAStreamSlot++;
+			}
+		}
+
+		if (maxUsedIAStreamSlot == slot)
+		{
+			while (maxUsedIAStreamSlot >= minUsedIAStreamSlot && this->pIAStreamBufferSlots[maxUsedIAStreamSlot] == NULL)
+			{
+				maxUsedIAStreamSlot--;
+			}
+		}
+
+		UINT zeroStride, zeroOffset = 0;
+		//unbind buffer immediately
+		this->pDevContext->IASetVertexBuffers(slot, 1, &buffer, &zeroStride, &zeroOffset);
+
+	}//if (buffer == NULL)
+	else
+	{
+		if ((hqint32)slot < minUsedIAStreamSlot)
+			minUsedIAStreamSlot = slot;
+		if ((hqint32)slot > maxUsedIAStreamSlot)
+			maxUsedIAStreamSlot = slot;
+	}
+	this->flags |= VBUFFER_SLOTS_CHANGED;
+
+	return HQ_OK;
+}
+
+void HQDeviceD3D11::CommitIAStreamBufferChanges()
+{
+	if (this->flags & VBUFFER_SLOTS_CHANGED)
+	{
+		hqint32 numBuffers = this->maxUsedIAStreamSlot - this->minUsedIAStreamSlot + 1;
+
+		if (numBuffers > 0)
+		{
+			this->pDevContext->IASetVertexBuffers(
+				(UINT)this->minUsedIAStreamSlot,
+				(UINT)numBuffers,
+				this->pIAStreamBufferSlots + this->minUsedIAStreamSlot,
+				this->IAStreamStrides + this->minUsedIAStreamSlot,
+				this->IAStreamOffsets + this->minUsedIAStreamSlot);
+		}
+		else
+		{
+			ID3D11Buffer *nullBuffer = NULL;
+			UINT zeroStride, zeroOffset = 0;
+			this->pDevContext->IASetVertexBuffers(
+				0,
+				0,
+				&nullBuffer,
+				&zeroStride,
+				&zeroOffset);
+		}
+
+		this->flags &= ~VBUFFER_SLOTS_CHANGED;
+	}
 }

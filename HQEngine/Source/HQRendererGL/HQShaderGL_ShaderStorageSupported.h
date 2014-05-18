@@ -94,6 +94,10 @@ public:
 	HQReturnVal CreateDrawIndexedIndirectArgs(void* initData, hquint32 numElements, HQDrawIndexedIndirectArgsBuffer** ppBufferOut);
 
 	HQReturnVal SetBufferUAVForComputeShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements);
+	HQReturnVal SetBufferUAVForGraphicsShader(hquint32 slot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements) 
+	{ 
+		return this->HQBaseShaderManagerGL_StorageBlockSupprted::SetBufferUAVForComputeShader(slot, buffer, firstElementIdx, numElements);
+	}
 
 	HQReturnVal RemoveBufferUAV(HQBufferUAV * buffer);
 	void RemoveAllBufferUAVs();

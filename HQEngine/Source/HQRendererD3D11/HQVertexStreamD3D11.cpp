@@ -9,7 +9,7 @@ COPYING.txt included with this distribution for more information.
 */
 
 #include "HQDeviceD3D11PCH.h"
-#include "HQVertexStreamD3D11.h"
+#include "HQDeviceD3D11.h"
 
 #if HQ_D3D_CLEAR_VP_USE_GS
 struct ClearBufferVertex
@@ -78,6 +78,7 @@ HQVertexStreamManagerD3D11::HQVertexStreamManagerD3D11(ID3D11Device* pD3DDevice 
 													HQLogStream* logFileStream , bool flushLog)
 :HQLoggableObject(logFileStream , "D3D11 Vertex Stream Manager :" ,flushLog)
 {
+	this->pMasterDevice = g_pD3DDev;
 	this->pD3DDevice = pD3DDevice;
 	this->pD3DContext = pD3DContext;
 	this->pShaderMan = pShaderMan;
@@ -496,13 +497,15 @@ HQReturnVal HQVertexStreamManagerD3D11::SetVertexBuffer(HQVertexBuffer* vertexBu
 	if (vBuffer != this->streams[streamIndex].pBuffer || stride != this->streams[streamIndex].stride)
 	{
 		if (vBuffer == NULL)
-			pD3DContext->IASetVertexBuffers(streamIndex , 1 , &l_nullBuffer , &stride , &l_offset);
+			pMasterDevice->SetVertexBuffer(streamIndex, NULL, stride, l_offset);
+			//pD3DContext->IASetVertexBuffers(streamIndex , 1 , &l_nullBuffer , &stride , &l_offset);
 		else
 		{
 			//make sure buffer will not be bound to any UAV slot
 			pShaderMan->UnbindBufferFromAllUAVSlots(vBuffer);
 
-			pD3DContext->IASetVertexBuffers(streamIndex, 1, &vBuffer->pD3DBuffer, &stride, &l_offset);
+			pMasterDevice->SetVertexBuffer(streamIndex, vBuffer->pD3DBuffer, stride, l_offset);
+			//pD3DContext->IASetVertexBuffers(streamIndex, 1, &vBuffer->pD3DBuffer, &stride, &l_offset);
 		}
 
 		this->streams[streamIndex].BindAsInput(streamIndex, vBuffer);//hold reference to buffer
@@ -525,7 +528,8 @@ void HQVertexStreamManagerD3D11::UnbindVertexBufferFromAllStreams(HQSharedPtr<HQ
 		hquint32 streamIndex = *ite;
 		this->streams[streamIndex].UnbindAsInput();//remove the link between the buffer and this stream
 		//set buffer to NULL
-		pD3DContext->IASetVertexBuffers(streamIndex, 1, &l_nullBuffer, &this->streams[streamIndex].stride, &l_offset);
+		pMasterDevice->SetVertexBuffer(streamIndex, NULL, this->streams[streamIndex].stride, l_offset);
+		//pD3DContext->IASetVertexBuffers(streamIndex, 1, &l_nullBuffer, &this->streams[streamIndex].stride, &l_offset);
 	}
 }
 
@@ -541,6 +545,7 @@ HQReturnVal  HQVertexStreamManagerD3D11::SetIndexBuffer(HQIndexBuffer* indexBuff
 			//make sure buffer will not be bound to any UAV slot
 			pShaderMan->UnbindBufferFromAllUAVSlots(iBuffer.GetRawPointer());
 
+			//TO DO: deferred binding
 			pD3DContext->IASetIndexBuffer(iBuffer->pD3DBuffer, iBuffer->d3dDataType, 0);
 		}
 		this->activeIndexBuffer = iBuffer;
@@ -638,10 +643,14 @@ void HQVertexStreamManagerD3D11::EndClearViewport()
 		pD3DContext->IASetInputLayout(this->activeInputLayout->pD3DLayout);
 	else
 		pD3DContext->IASetInputLayout(NULL);
+
+	//rebind old vertex buffer
 	if (this->streams[0].pBuffer != NULL)
-		pD3DContext->IASetVertexBuffers(0, 1, &this->streams[0].pBuffer->pD3DBuffer, &this->streams[0].stride, &l_offset);
+		pMasterDevice->SetVertexBuffer(0, this->streams[0].pBuffer->pD3DBuffer, this->streams[0].stride, l_offset);
+		//pD3DContext->IASetVertexBuffers(0, 1, &this->streams[0].pBuffer->pD3DBuffer, &this->streams[0].stride, &l_offset);
 	else
-		pD3DContext->IASetVertexBuffers(0, 1, &l_nullBuffer, &this->streams[0].stride, &l_offset);
+		pMasterDevice->SetVertexBuffer(0, NULL, this->streams[0].stride, l_offset);
+		//pD3DContext->IASetVertexBuffers(0, 1, &l_nullBuffer, &this->streams[0].stride, &l_offset);
 
 }
 

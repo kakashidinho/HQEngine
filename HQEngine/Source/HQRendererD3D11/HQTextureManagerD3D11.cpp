@@ -740,7 +740,8 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(HQShaderType shaderStage, hq_uint3
 			}
 			else
 				pSRV = NULL  ;
-			pD3DContext->VSSetShaderResources(resourceSlot , 1 , &pSRV);
+			//pD3DContext->VSSetShaderResources(resourceSlot , 1 , &pSRV);
+			pMasterDevice->SetVSResource(resourceSlot, pSRV);
 			pTextureSlot->pTexture = pTexture;
 		}
 		break;
@@ -771,7 +772,8 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(HQShaderType shaderStage, hq_uint3
 			}
 			else
 				pSRV = NULL;
-			pD3DContext->GSSetShaderResources(resourceSlot, 1, &pSRV);
+			//pD3DContext->GSSetShaderResources(resourceSlot, 1, &pSRV);
+			pMasterDevice->SetGSResource(resourceSlot, pSRV);
 			pTextureSlot->pTexture = pTexture;
 		}
 		break;
@@ -802,7 +804,8 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(HQShaderType shaderStage, hq_uint3
 			}
 			else
 				pSRV = NULL;
-			pD3DContext->PSSetShaderResources(resourceSlot, 1, &pSRV);
+			//pD3DContext->PSSetShaderResources(resourceSlot, 1, &pSRV);
+			pMasterDevice->SetPSResource(resourceSlot, pSRV);
 			pTextureSlot->pTexture = pTexture;
 		}
 		break;
@@ -833,7 +836,8 @@ HQReturnVal HQTextureManagerD3D11::SetTexture(HQShaderType shaderStage, hq_uint3
 			}
 			else
 				pSRV = NULL;
-			pD3DContext->CSSetShaderResources(resourceSlot, 1, &pSRV);
+			//pD3DContext->CSSetShaderResources(resourceSlot, 1, &pSRV);
+			pMasterDevice->SetCSResource(resourceSlot, pSRV);
 			pTextureSlot->pTexture = pTexture;
 		}
 		break;
@@ -906,7 +910,8 @@ HQReturnVal HQTextureManagerD3D11::SetTextureForPixelShader(hq_uint32 resourceSl
 		}
 		else
 			pSRV = NULL;
-		pD3DContext->PSSetShaderResources(resourceSlot, 1, &pSRV);
+		//pD3DContext->PSSetShaderResources(resourceSlot, 1, &pSRV);
+		pMasterDevice->SetPSResource(resourceSlot, pSRV);
 		pTextureSlot->pTexture = pTexture;
 	}
 	
@@ -930,8 +935,6 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSl
 	HQTextureD3D11* pCurrentTextureD3D11;
 	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
 	ID3D11UnorderedAccessView *pUAV = NULL;
-
-	UINT uavInitialCount = -1;
 
 	if (pTextureD3D11 != NULL)
 	{
@@ -971,17 +974,91 @@ HQReturnVal HQTextureManagerD3D11::SetTextureUAVForComputeShader(hq_uint32 uavSl
 	}
 
 	//now set UAV
-	pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &pUAV, &uavInitialCount);
+	this->pMasterDevice->SetUAVForComputeShader(uavSlot, pUAV);
+	//pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &pUAV, &uavInitialCount);
 
 
 
 	return HQ_OK;
 }
 
+HQReturnVal HQTextureManagerD3D11::SetTextureUAVForGraphicsShader(hq_uint32 uavSlot, HQTexture* textureID, hq_uint32 mipLevel, bool read)
+{
+#if defined _DEBUG || defined DEBUG
+	if (uavSlot >= this->pMasterDevice->GetCaps().maxPixelUAVSlots)
+	{
+		Log("SetTextureUAVForGraphicsShader() Error : texture slot=%u is out of range!", uavSlot);
+		return HQ_FAILED;
+	}
+#endif
+	HQRenderTargetManagerD3D11* pRenderTargetMan = static_cast<HQRenderTargetManagerD3D11*>(this->pMasterDevice->GetRenderTargetManager());
+
+	HQSharedPtr<HQBaseTexture> pTexture = this->textures.GetItemPointer(textureID);
+
+	TextureSlot *pTextureUAVSlot;
+	HQTextureD3D11* pCurrentTextureD3D11;
+	HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
+	ID3D11UnorderedAccessView *pUAV = NULL;
+
+	UINT uavInitialCount = -1;
+
+	if (pTextureD3D11 != NULL)
+	{
+		//retrieve UAV
+		HQUAVTextureResourceD3D11* pTextureUAVResD3D11 = (HQUAVTextureResourceD3D11 *)pTextureD3D11->pData;
+		pUAV = pTextureUAVResD3D11->GetOrCreateNewUAV(this->pD3DDevice, pTextureD3D11->type, mipLevel, read);;
+
+		//first unbind texture from all shader resource view slots
+		this->UnbindTextureFromAllTextureSlots(pTexture);
+	}
+
+	//unbind any bound UAV buffer at the same slot
+	static_cast<HQShaderManagerD3D11*>(this->pMasterDevice->GetShaderManager())->OnTextureBindToGraphicsShaderUAVSlot(uavSlot);
+
+
+
+	pTextureUAVSlot = this->textureUAVSlots[0] + uavSlot;
+	pCurrentTextureD3D11 = (HQTextureD3D11*)pTextureUAVSlot->pTexture.GetRawPointer();
+
+	if (pTextureD3D11 != pCurrentTextureD3D11)
+	{
+		if (pCurrentTextureD3D11 != NULL)
+		{
+			//remove the link between old texture and uav slot
+			pCurrentTextureD3D11->uavBoundSlots.RemoveAt(pTextureUAVSlot->textureLink);
+		}
+
+		if (pTextureD3D11 != NULL)
+		{
+			//unbind from all other UAV slots
+			this->UnbindTextureFromAllUAVSlots(pTexture);
+
+			//link the texture with this slot
+			pTextureUAVSlot->textureLink = pTextureD3D11->uavBoundSlots.PushBack(HQ_PIXEL_SHADER | uavSlot);
+			pTextureUAVSlot->pTexture = pTexture;//hold reference to texture
+		}
+	}
+
+	//now set UAV using render target manager, since D3D11 requires render targets and UAVs to be set at the same time
+	return pRenderTargetMan->SetUAVForGraphicsShader(uavSlot, pUAV);
+}
+
 
 void HQTextureManagerD3D11::OnBufferBindToComputeShaderUAVSlot(hquint32 slot)
 {
 	TextureSlot * pTextureUAVSlot = this->textureUAVSlots[1] + slot;
+	if (pTextureUAVSlot->pTexture != NULL)
+	{
+		HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTextureUAVSlot->pTexture.GetRawPointer();
+		//remove the link between this texture and the UAV slot, because we are switching to a buffer
+		pTextureD3D11->uavBoundSlots.RemoveAt(pTextureUAVSlot->textureLink);
+		pTextureUAVSlot->pTexture.ToNull();
+	}
+}
+
+void HQTextureManagerD3D11::OnBufferBindToGraphicsShaderUAVSlot(hquint32 slot)
+{
+	TextureSlot * pTextureUAVSlot = this->textureUAVSlots[0] + slot;
 	if (pTextureUAVSlot->pTexture != NULL)
 	{
 		HQTextureD3D11* pTextureD3D11 = (HQTextureD3D11*)pTextureUAVSlot->pTexture.GetRawPointer();
@@ -1012,19 +1089,23 @@ void HQTextureManagerD3D11::UnbindTextureFromAllTextureSlots(const HQSharedPtr<H
 		{
 		case HQ_VERTEX_SHADER:
 			pTextureSlot = this->textureSlots[0] + resourceSlot;
-			pD3DContext->VSSetShaderResources(resourceSlot, 1, &nullView);
+			pMasterDevice->SetVSResource(resourceSlot, NULL);
+			//pD3DContext->VSSetShaderResources(resourceSlot, 1, &nullView);
 			break;
 		case HQ_GEOMETRY_SHADER:
 			pTextureSlot = this->textureSlots[1] + resourceSlot;
-			pD3DContext->GSSetShaderResources(resourceSlot, 1, &nullView);
+			pMasterDevice->SetGSResource(resourceSlot, NULL);
+			//pD3DContext->GSSetShaderResources(resourceSlot, 1, &nullView);
 			break;
 		case HQ_PIXEL_SHADER:
 			pTextureSlot = this->textureSlots[2] + resourceSlot;
-			pD3DContext->PSSetShaderResources(resourceSlot, 1, &nullView);
+			pMasterDevice->SetPSResource(resourceSlot, NULL);
+			//pD3DContext->PSSetShaderResources(resourceSlot, 1, &nullView);
 			break;
 		case HQ_COMPUTE_SHADER:
 			pTextureSlot = this->textureSlots[3] + resourceSlot;
-			pD3DContext->CSSetShaderResources(resourceSlot, 1, &nullView);
+			pMasterDevice->SetCSResource(resourceSlot, NULL);
+			//pD3DContext->CSSetShaderResources(resourceSlot, 1, &nullView);
 			break;
 		}//switch (shaderStage)
 
@@ -1038,6 +1119,8 @@ void HQTextureManagerD3D11::UnbindTextureFromAllUAVSlots(const HQSharedPtr<HQBas
 {
 	if (pTexture == NULL)
 		return;
+	HQRenderTargetManagerD3D11* pRenderTargetMan = static_cast<HQRenderTargetManagerD3D11*>(this->pMasterDevice->GetRenderTargetManager());
+
 	HQTextureD3D11 *pTextureD3D11 = (HQTextureD3D11*)pTexture.GetRawPointer();
 
 	ID3D11UnorderedAccessView *nullView = NULL;
@@ -1056,8 +1139,13 @@ void HQTextureManagerD3D11::UnbindTextureFromAllUAVSlots(const HQSharedPtr<HQBas
 		{
 		case HQ_COMPUTE_SHADER:
 			pTextureUAVSlot = this->textureUAVSlots[1] + uavSlot;
-			pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &nullView, &uavInitialCount);
+			this->pMasterDevice->SetUAVForComputeShader(uavSlot, NULL);
+			//pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &nullView, &uavInitialCount);
 			break;
+		case HQ_PIXEL_SHADER:
+			pTextureUAVSlot = this->textureUAVSlots[0] + uavSlot;
+			//now unset UAV using render target manager, since D3D11 requires render targets and UAVs to be set at the same time
+			pRenderTargetMan->SetUAVForGraphicsShader(uavSlot, NULL);
 		default:
 			break;//TO DO
 		}//switch (shaderStage)

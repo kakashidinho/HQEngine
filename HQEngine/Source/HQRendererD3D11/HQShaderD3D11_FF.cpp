@@ -707,3 +707,4 @@ void HQShaderManagerD3D11::NotifyFFRenderIfNeeded()// notify shader manager that
 	}
 
 }
+

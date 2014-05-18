@@ -404,4 +404,44 @@ HQ_FORCE_INLINE void HQGenericBufferD3D11::BufferSlot::UnbindAsUAV()
 	}
 }
 
+
+/*---------------------deferred resource binding--------------------------*/
+template <class T>
+HQ_FORCE_INLINE void DoDeferredResourceBinding(hquint32 slot, T * newRes, hquint32 flagToSet,
+	T**  resourceArray, hqint32 &minUsedSlot, hqint32 &maxUsedSlot, hquint32 & flags )
+{
+	if (resourceArray[slot] != newRes)
+	{
+		resourceArray[slot] = newRes;
+		if (newRes == NULL)
+		{
+			if (minUsedSlot == slot)
+			{
+				while (minUsedSlot < maxUsedSlot && resourceArray[minUsedSlot] == NULL)
+				{
+					minUsedSlot++;
+				}
+			}
+
+			if (maxUsedSlot == slot)
+			{
+				while (maxUsedSlot >= minUsedSlot && resourceArray[maxUsedSlot] == NULL)
+				{
+					maxUsedSlot--;
+				}
+			}
+
+		}//if (newRes == NULL)
+		else
+		{
+			if ((hqint32)slot < minUsedSlot)
+				minUsedSlot = slot;
+			if ((hqint32)slot > maxUsedSlot)
+				maxUsedSlot = slot;
+		}
+		flags |= flagToSet;
+	}//if (resourceArray[slot] != newRes)
+}
+
+
 #endif

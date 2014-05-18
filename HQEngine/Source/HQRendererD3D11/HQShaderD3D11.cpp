@@ -1837,6 +1837,34 @@ HQReturnVal HQShaderManagerD3D11::CreateDrawIndexedIndirectArgs(void* initData, 
 	return this->CreateGenericDrawIndirectBuffer(initData, sizeof(Element), numElements, ppBufferOut);
 }
 
+HQSharedPtr<HQGenericBufferD3D11> HQShaderManagerD3D11::GetBufferUAVSharedPointer(HQGenericBufferD3D11 *pGenericD3DBuffer)
+{
+	HQVertexStreamManagerD3D11* pVStreamMan = static_cast<HQVertexStreamManagerD3D11*>(this->pMasterDevice->GetVertexStreamManager());
+
+	switch (pGenericD3DBuffer->type)
+	{
+	case HQ_VERTEX_BUFFER_D3D11://need to retrieve shared pointer from vertex stream manager
+	{
+		HQSharedPtr<HQVertexBufferD3D11> pVBuffer = pVStreamMan->GetVertexBufferSharedPtr(pGenericD3DBuffer);
+		pVStreamMan->UnbindVertexBufferFromAllStreams(pVBuffer);//need to remove it from every input slots
+		return pVBuffer.UpCast<HQGenericBufferD3D11>();
+	}
+		break;
+	case HQ_INDEX_BUFFER_D3D11://need to retrieve shared pointer from vertex stream manager
+	{
+		HQSharedPtr<HQIndexBufferD3D11> pIBuffer = pVStreamMan->GetIndexBufferSharedPtr(pGenericD3DBuffer);
+		pVStreamMan->UnsetIndexBufferIfActivated(pIBuffer);//need to remove it from every input slots
+		return pIBuffer.UpCast<HQGenericBufferD3D11>();
+	}
+		break;
+	case HQ_DRAW_INDIRECT_BUFFER_D3D11: case HQ_SHADER_USE_ONLY_D3D11://we own this buffer
+		return this->uavBuffers.GetItemPointer(pGenericD3DBuffer);
+		break;
+	}
+
+	return NULL;
+}
+
 HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)
 {
 
@@ -1849,30 +1877,10 @@ HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot,
 #endif
 
 	HQGenericBufferD3D11* pGenericD3DBuffer = static_cast<HQGenericBufferD3D11*> (buffer);
-	HQVertexStreamManagerD3D11* pVStreamMan = static_cast<HQVertexStreamManagerD3D11*>(this->pMasterDevice->GetVertexStreamManager());
 	HQSharedPtr<HQGenericBufferD3D11> pBuffer;
 	if (pGenericD3DBuffer != NULL)
 	{
-		switch (pGenericD3DBuffer->type)
-		{
-		case HQ_VERTEX_BUFFER_D3D11://need to retrieve shared pointer from vertex stream manager
-		{
-			HQSharedPtr<HQVertexBufferD3D11> pVBuffer = pVStreamMan->GetVertexBufferSharedPtr(pGenericD3DBuffer);
-			pVStreamMan->UnbindVertexBufferFromAllStreams(pVBuffer);//need to remove it from every input slots
-			pBuffer = pVBuffer.UpCast<HQGenericBufferD3D11>();
-		}
-			break;
-		case HQ_INDEX_BUFFER_D3D11://need to retrieve shared pointer from vertex stream manager
-		{
-			HQSharedPtr<HQIndexBufferD3D11> pIBuffer = pVStreamMan->GetIndexBufferSharedPtr(pGenericD3DBuffer);
-			pVStreamMan->UnsetIndexBufferIfActivated(pIBuffer);//need to remove it from every input slots
-			pBuffer = pIBuffer.UpCast<HQGenericBufferD3D11>();
-		}
-			break;
-		case HQ_DRAW_INDIRECT_BUFFER_D3D11: case HQ_SHADER_USE_ONLY_D3D11://we own this buffer
-			pBuffer = this->uavBuffers.GetItemPointer(pGenericD3DBuffer);
-			break;
-		}
+		pBuffer = this->GetBufferUAVSharedPointer(pGenericD3DBuffer);
 		//entire buffer is going to be bound
 		if (numElements == 0)
 			numElements = pBuffer->totalElements - firstElementIdx;
@@ -1880,8 +1888,6 @@ HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot,
 
 	ID3D11UnorderedAccessView *pUAV = NULL;
 	HQGenericBufferD3D11::BufferSlot * pCurrentBufferUAVD3D11Slot;
-
-	UINT uavInitialCount = -1;
 
 	pCurrentBufferUAVD3D11Slot = this->uavBufferSlots[1] + uavSlot;
 
@@ -1901,12 +1907,61 @@ HQReturnVal HQShaderManagerD3D11::SetBufferUAVForComputeShader(hquint32 uavSlot,
 	static_cast<HQTextureManagerD3D11*>(this->pMasterDevice->GetTextureManager())->OnBufferBindToComputeShaderUAVSlot(uavSlot);
 
 	//now set UAV
-	pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &pUAV, &uavInitialCount);
+	this->pMasterDevice->SetUAVForComputeShader(uavSlot, pUAV);
+	//pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &pUAV, &uavInitialCount);
 
 
 
 	return HQ_OK;
 }
+
+HQReturnVal HQShaderManagerD3D11::SetBufferUAVForGraphicsShader(hquint32 uavSlot, HQBufferUAV * buffer, hquint32 firstElementIdx, hquint32 numElements)
+{
+
+#if defined _DEBUG || defined DEBUG
+	if (uavSlot >= this->pMasterDevice->GetCaps().maxPixelUAVSlots)
+	{
+		Log("SetBufferUAVForGraphicsShader() Error : slot=%u is out of range!", uavSlot);
+		return HQ_FAILED;
+	}
+#endif
+
+	HQRenderTargetManagerD3D11* pRenderTargetMan = static_cast<HQRenderTargetManagerD3D11*>(this->pMasterDevice->GetRenderTargetManager());
+
+	HQGenericBufferD3D11* pGenericD3DBuffer = static_cast<HQGenericBufferD3D11*> (buffer);
+	HQSharedPtr<HQGenericBufferD3D11> pBuffer;
+	if (pGenericD3DBuffer != NULL)
+	{
+		pBuffer = this->GetBufferUAVSharedPointer(pGenericD3DBuffer);
+		//entire buffer is going to be bound
+		if (numElements == 0)
+			numElements = pBuffer->totalElements - firstElementIdx;
+	}
+
+	ID3D11UnorderedAccessView *pUAV = NULL;
+	HQGenericBufferD3D11::BufferSlot * pCurrentBufferUAVD3D11Slot;
+
+	pCurrentBufferUAVD3D11Slot = this->uavBufferSlots[0] + uavSlot;
+
+	if (pBuffer != NULL)
+	{
+		//retrieve UAV
+		pUAV = pBuffer->GetOrCreateUAView(pD3DDevice, firstElementIdx, numElements);
+
+		if (pCurrentBufferUAVD3D11Slot->pBuffer != pBuffer)
+		{
+			this->UnbindBufferFromAllUAVSlots(pGenericD3DBuffer);//make sure this buffer won't be bound to any other UAV slots
+		}
+	}
+	pCurrentBufferUAVD3D11Slot->BindAsUAV(HQ_PIXEL_SHADER | uavSlot, pBuffer);//hold reference to buffer
+
+	//unbind any bound UAV texture
+	static_cast<HQTextureManagerD3D11*>(this->pMasterDevice->GetTextureManager())->OnBufferBindToGraphicsShaderUAVSlot(uavSlot);
+
+	//now set UAV using render target manager, since D3D11 requires render targets and UAVs to be set at the same time
+	return pRenderTargetMan->SetUAVForGraphicsShader(uavSlot, pUAV);
+}
+
 
 void HQShaderManagerD3D11::OnTextureBindToComputeShaderUAVSlot(hquint32 slot)//unbind any buffer from compute shader's UAV slot {slot}
 {
@@ -1914,10 +1969,17 @@ void HQShaderManagerD3D11::OnTextureBindToComputeShaderUAVSlot(hquint32 slot)//u
 	this->uavBufferSlots[1][slot].UnbindAsUAV();
 }
 
+void HQShaderManagerD3D11::OnTextureBindToGraphicsShaderUAVSlot(hquint32 slot)
+{
+	//remove the link between the slot and current bound buffer, because we are switching to a texture
+	this->uavBufferSlots[0][slot].UnbindAsUAV();
+}
+
 void HQShaderManagerD3D11::UnbindBufferFromAllUAVSlots(HQGenericBufferD3D11* pBufferRawPtr)
 {
 	ID3D11UnorderedAccessView *nullView = NULL;
 	UINT uavInitialCount = -1;
+	HQRenderTargetManagerD3D11* pRenderTargetMan = static_cast<HQRenderTargetManagerD3D11*>(this->pMasterDevice->GetRenderTargetManager());
 
 	HQGenericBufferD3D11::SlotList::Iterator ite;
 	for (pBufferRawPtr->uavBoundSlots.GetIterator(ite); !ite.IsAtEnd(); ++ite)
@@ -1932,8 +1994,13 @@ void HQShaderManagerD3D11::UnbindBufferFromAllUAVSlots(HQGenericBufferD3D11* pBu
 		{
 		case HQ_COMPUTE_SHADER:
 			pBufferSlot = this->uavBufferSlots[1] + uavSlot;
-			pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &nullView, &uavInitialCount);
+			this->pMasterDevice->SetUAVForComputeShader(uavSlot, NULL);
+			//pD3DContext->CSSetUnorderedAccessViews(uavSlot, 1, &nullView, &uavInitialCount);
 			break;
+		case HQ_PIXEL_SHADER:
+			pBufferSlot = this->uavBufferSlots[0] + uavSlot;
+			//now unset UAV using render target manager, since D3D11 requires render targets and UAVs to be set at the same time
+			pRenderTargetMan->SetUAVForGraphicsShader(uavSlot, NULL);
 		default:
 			break;//TO DO
 		}//switch (shaderStage)
