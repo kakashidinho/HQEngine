@@ -1179,7 +1179,24 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* 
 	{
 		const char *elemName = elem->GetType();
 		int elem_line = elem->GetSourceLine();
-		if (!strncmp(elemName, "texture", 7))
+		if (!strncmp(elemName, "texture_uav", 11))//texture UAV slot
+		{
+			hquint32 textureIdx;
+			if (sscanf(elemName, "texture_uav%u", &textureIdx) == 0)
+			{
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
+				return HQ_FAILED;
+			}
+
+			HQEngineTextureUAVUnit texunit;
+			texunit.unitIndex = textureIdx;
+
+			if (HQFailed(this->ParseTextureUAVUnit(elem, texunit)))
+				return HQ_FAILED;
+
+			newPass->AddTextureUAVUnit(texunit);
+		}//if (!strncmp(elemName, "texture_uav", 11))
+		else if (!strncmp(elemName, "texture", 7))
 		{
 			hquint32 textureIdx;
 			if (sscanf(elemName, "texture%u", &textureIdx) == 0)
@@ -1272,23 +1289,6 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* 
 				return HQ_FAILED;
 			}
 		}
-		if (!strncmp(elemName, "texture_uav", 11))//texture UAV slot
-		{
-			hquint32 textureIdx;
-			if (sscanf(elemName, "texture_uav%u", &textureIdx) == 0)
-			{
-				Log("Error : %d : invalid token %s!", elem_line, elemName);
-				return HQ_FAILED;
-			}
-
-			HQEngineTextureUAVUnit texunit;
-			texunit.unitIndex = textureIdx;
-
-			if (HQFailed(this->ParseTextureUAVUnit(elem, texunit)))
-				return HQ_FAILED;
-
-			newPass->AddTextureUAVUnit(texunit);
-		}//if (!strncmp(elemName, "texture_uav", 11))
 		else if (!strncmp(elemName, "buffer_uav", 10))//bufer UAV slot
 		{
 			hquint32 bufferIdx;
