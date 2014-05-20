@@ -20,6 +20,8 @@
 #define decl_rwtexture2d_2f(_name, _binding) layout(binding  = _binding) uniform writeonly image2D _name;
 #define decl_rwtexture2darray_f(_name, _binding) layout(binding  = _binding) uniform writeonly image2DArray _name;
 #define decl_rwtexture2d_4f(_name, _binding) layout(binding  = _binding) uniform writeonly image2D _name;
+#define decl_rwtexture2darray_ui(_name, _binding) layout(binding  = _binding) uniform writeonly uimage2DArray _name;
+#define decl_rwtexture2d_i(_name, _binding) layout(binding  = _binding) uniform writeonly iimage2D _name;
 
 #define decl_uintbuffer(_name, _binding) layout(binding  = _binding, std430) buffer stbuffer ## _binding {uint _name[];};
 #define decl_bytebuffer(_name, _binding) layout(binding  = _binding, std430) buffer stbuffer ## _binding {uint _name[];};
@@ -35,7 +37,9 @@
 #define texture2darray_read_f(_name, _3dcoords, _lod) (texelFetch(_name, ivec3(_3dcoords), int(_lod)).x) 
 #define texture2d_read_2f(_name, _2dcoords, _lod) (texelFetch(_name, ivec2(_2dcoords), int(_lod)).xy )
 #define texture2d_read_4f(_name, _2dcoords, _lod) texelFetch(_name, ivec2(_2dcoords), int(_lod)) 
-#define rwtexture2darray_store_f(_name, _coords, value) imageStore(_name, ivec3(_coords), float4(value.x, 0.0, 0.0, 0.0))
+#define rwtexture2darray_store_f(_name, _coords, value) imageStore(_name, ivec3(_coords), float4(float(value), 0.0, 0.0, 0.0))
+#define rwtexture2darray_store_ui(_name, _coords, value) imageStore(_name, ivec3(_coords), uvec4(uint(value), 0, 0, 0))
+#define rwtexture2d_store_i(_name, _coords, value) imageStore(_name, ivec2(_coords), ivec4(int(value), 0, 0, 0))
 #define rwtexture2d_store_2f(_name, _coords, value) imageStore(_name, ivec2(_coords), float4(value.xy, 0.0, 0.0))
 #define rwtexture2d_store_4f(_name, _coords, value) imageStore(_name, ivec2(_coords), value)
 #define rwtexture2d_read_4f(_name, _coords) imageLoad(_name, ivec2(_coords))
@@ -59,7 +63,14 @@
 #define bytebuffer_store3(buffer, idx, value) {buffer[idx] = value.x; buffer[idx+1] = value.y; buffer[idx+2] = value.z;}
 #define bytebuffer_store4(buffer, idx, value) {buffer[idx] = value.x; buffer[idx+1] = value.y; buffer[idx+2] = value.z; buffer[idx+3] = value.w}
 
+
+#define bytebuffer_read(buffer, idx) (buffer[idx])
+#define bytebuffer_read2(buffer, idx) (uvec2(buffer[idx], buffer[idx+1]))
+#define bytebuffer_read3(buffer, idx) (uvec3(buffer[idx], buffer[idx+1], buffer[idx+2]))
+#define bytebuffer_read4(buffer, idx) (uvec4(buffer[idx], buffer[idx+1], buffer[idx+2], buffer[idx+3]))
+
 #define asuint floatBitsToUint
+#define asfloat uintBitsToFloat
 
 //atomic operations
 #define atomic_add(data_mem, added_value, original_value_out) {original_value_out = atomicAdd(data_mem, added_value);}
@@ -139,6 +150,8 @@ void rwtexture2d_f_getsize_4f(layout (r32f) image2D _name, out uint width, out u
 #define decl_rwtexture2d_readable_4f(_name, _binding) error_float4_is_not_readable
 #define decl_rwtexture2d_f(_name, _binding) RWTexture2D<float> _name : register(u ## _binding);
 #define decl_rwtexture2darray_f(_name, _binding) RWTexture2DArray<float> _name : register(u ## _binding);
+#define decl_rwtexture2darray_ui(_name, _binding) RWTexture2DArray<uint> _name : register(u ## _binding);
+#define decl_rwtexture2d_i(_name, _binding) RWTexture2D<int> _name : register(u ## _binding);
 #define decl_rwtexture2d_2f(_name, _binding) RWTexture2D<float2> _name : register(u ## _binding);
 #define decl_rwtexture2d_4f(_name, _binding) RWTexture2D<float4> _name : register(u ## _binding);
 
@@ -180,7 +193,17 @@ void rwtexture2d_store_4f(RWTexture2D<float4> _name, uint2 _coords, float4 value
 	_name[_coords] = value;
 }
 
+void rwtexture2d_store_i(RWTexture2D<int> _name, uint2 _coords, int value)
+{
+	_name[_coords] = value;
+}
+
 void rwtexture2darray_store_f(RWTexture2DArray<float> _name, uint3 _coords, float value)
+{
+	_name[_coords] = value;
+}
+
+void rwtexture2darray_store_ui(RWTexture2DArray<uint> _name, uint3 _coords, uint value)
 {
 	_name[_coords] = value;
 }
@@ -244,10 +267,16 @@ void texture2d_getsize_2f(const Texture2D<float2> _name, out uint width, out uin
 
 
 //byte buffer store
-#define bytebuffer_store(buffer, idx, value) buffer.Store(idx, (value))
-#define bytebuffer_store2(buffer, idx, value) buffer.Store2(idx, (value))
-#define bytebuffer_store3(buffer, idx, value) buffer.Store3(idx, (value))
-#define bytebuffer_store4(buffer, idx, value) buffer.Store4(idx, (value))
+#define bytebuffer_store(buffer, idx, value) buffer.Store(4 * idx, (value))
+#define bytebuffer_store2(buffer, idx, value) buffer.Store2(4 * idx, (value))
+#define bytebuffer_store3(buffer, idx, value) buffer.Store3(4 * idx, (value))
+#define bytebuffer_store4(buffer, idx, value) buffer.Store4(4 * idx, (value))
+
+
+#define bytebuffer_read(buffer, idx) (buffer.Load(4 * idx))
+#define bytebuffer_read2(buffer, idx) (buffer.Load2(4 * idx))
+#define bytebuffer_read3(buffer, idx) (buffer.Load3(4 * idx))
+#define bytebuffer_read4(buffer, idx) (buffer.Load4(4 * idx))
 
 //atomic operations
 #define atomic_add(data_mem, added_value, original_value_out) InterlockedAdd(data_mem, added_value, original_value_out)
