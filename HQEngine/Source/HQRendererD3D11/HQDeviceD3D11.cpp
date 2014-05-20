@@ -888,7 +888,8 @@ HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool 
 		if(dsflags)
 		{
 			ID3D11DepthStencilView *pCurrentDepthStencilView = static_cast<HQRenderTargetManagerD3D11*> (renderTargetMan)->GetDepthStencilView();
-			pDevContext->ClearDepthStencilView(pCurrentDepthStencilView, dsflags , this->clearDepth , this->clearStencil);
+			if (pCurrentDepthStencilView != NULL)
+				pDevContext->ClearDepthStencilView(pCurrentDepthStencilView, dsflags , this->clearDepth , this->clearStencil);
 		}
 	}
 	else if ((isClearPixel | isClearDepth | isClearStencil))
