@@ -1535,7 +1535,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseShaderBufferUAVUnit(const HQEngineEf
 	HQEngineResManagerImpl* resManager = static_cast<HQEngineResManagerImpl*> (HQEngineApp::GetInstance()->GetResourceManager());
 	int elem_line = bufferSlotElem->GetSourceLine();
 	hquint32 firstElement = 0;
-	hquint32 numElements = 1;
+	hquint32 numElements = 0;
 	const char * bufferResName = NULL;
 
 	const HQEngineEffectParserNode * attribute = bufferSlotElem->GetFirstChild();
