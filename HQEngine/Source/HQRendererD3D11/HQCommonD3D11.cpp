@@ -204,14 +204,22 @@ HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, si
 	pD3DContext->CopyResource(tempBuffer, resource);
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-	HQReturnVal re = HQ_FAILED;
+	HQReturnVal re = HQ_OK;
 	//now copy from temp buffer to {dest}
-	if (SUCCEEDED(pD3DContext->Map(tempBuffer, 0, D3D11_MAP_READ, 0, &mappedSubResource)))
+	UINT oneArraySliceSize = sizeToCopy / desc.ArraySize;
+	for (UINT i = 0; i < desc.ArraySize; ++i)
 	{
-		memcpy(dest, mappedSubResource.pData, sizeToCopy);
-		pD3DContext->Unmap(tempBuffer, 0);
+		//copy each array slice turn by turn
+		UINT subResource = D3D11CalcSubresource(0, i, desc.MipLevels);
+		if (SUCCEEDED(pD3DContext->Map(tempBuffer, subResource, D3D11_MAP_READ, 0, &mappedSubResource)))
+		{
+			memcpy(((hqubyte8*)dest) + oneArraySliceSize * i, mappedSubResource.pData, oneArraySliceSize);
+			pD3DContext->Unmap(tempBuffer, subResource);
 
-		re = HQ_OK;
+		}
+		else {
+			re = HQ_FAILED;
+		}
 	}
 
 

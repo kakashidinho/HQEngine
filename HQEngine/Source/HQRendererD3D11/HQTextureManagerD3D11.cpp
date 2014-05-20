@@ -480,7 +480,7 @@ HQReturnVal HQTextureD3D11::CopyFirstLevelContent(void *data)
 {
 	switch (this->type)
 	{
-	case HQ_TEXTURE_2D_UAV:
+	case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY_UAV:
 	{
 		HQUAVTextureResourceD3D11* pD3Dres = (HQUAVTextureResourceD3D11*)this->pData;
 		D3D11_TEXTURE2D_DESC desc;
@@ -489,7 +489,7 @@ HQReturnVal HQTextureD3D11::CopyFirstLevelContent(void *data)
 		hquint32 texelSize = GetTexelSize(desc.Format);
 		if (texelSize != 0)
 		{
-			return CopyD3D11Texture2DContent(data, pTexture, desc.Width * desc.Height * texelSize);
+			return CopyD3D11Texture2DContent(data, pTexture, desc.Width * desc.Height * desc.ArraySize * texelSize);
 		}
 	}
 	default:

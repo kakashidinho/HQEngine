@@ -259,17 +259,11 @@ bool HQEngineDSStateWrapper::CreationParams::Equal(const CreationParams* params2
 
 	if (!this->isTwoSideState)
 	{
-		if (desc.stencilEnable)
-		{
-			equal = equal && memcmp(&this->desc, &params2->desc, sizeof(HQDepthStencilStateDesc)) == 0;
-		}
+		equal = equal && memcmp(&this->desc, &params2->desc, sizeof(HQDepthStencilStateDesc)) == 0;
 	}
 	else
 	{
-		if (twoSideDesc.stencilEnable)
-		{
-			equal = equal && memcmp(&this->twoSideDesc, &params2->twoSideDesc, sizeof(HQDepthStencilStateTwoSideDesc)) == 0;
-		}
+		equal = equal && memcmp(&this->twoSideDesc, &params2->twoSideDesc, sizeof(HQDepthStencilStateTwoSideDesc)) == 0;
 	}
 
 	return equal;
