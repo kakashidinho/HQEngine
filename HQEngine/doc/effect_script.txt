@@ -147,7 +147,7 @@ Pass format:
 		}
 		
 		//bind UAV buffer to slot 0 starting at 1st element and number of elements used is 2
-		//default starting element is 0, default number of used elements is 1
+		//default starting element is 0, default number of used elements is 0 (entire buffer)
 		buffer_uav0= <buffer_name> 1 2
 		
 		shader=<compute shader resource name>
