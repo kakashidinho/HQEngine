@@ -24,15 +24,19 @@ protected:
 
 	hq_uint32 sWidth;//back buffer width
 	hq_uint32 sHeight;//back buffer height
-	HQViewPort currentVP;//current viewport
+	hq_uint32 maxNumVPs;//max number of viewports
+	HQViewPort *currentVPs;//current viewports
 
 	char * settingFileDir;
 	
 	hq_uint32 flags;
 public:
-	HQBaseRenderDevice(const char *desc , const char *logPrefix , bool flushLog)
+	HQBaseRenderDevice(const char *desc, const char *logPrefix , bool flushLog)
 		:HQLoggableObject(logPrefix , flushLog)
 	{
+		this->maxNumVPs = 0;
+		this->currentVPs = NULL;
+
 		this->flags = 0;
 		this->settingFileDir = NULL;
 		this->desc = HQ_NEW char [strlen(desc) + 1];
@@ -41,6 +45,7 @@ public:
 
 	~HQBaseRenderDevice()
 	{
+		SafeDeleteArray(this->currentVPs);
 		SafeDeleteArray(this->settingFileDir);
 		SafeDeleteArray(this->desc);
 	}
@@ -55,7 +60,7 @@ public:
 
 	inline hq_uint32 GetFlags() {return this->flags;}
 	
-	const HQViewPort & GetViewPort()  const {return this->currentVP;}
+	const HQViewPort & GetViewPort()  const {return this->currentVPs[0];}
 	
 	void CopySettingFileDir(const char *settingFileDir)
 	{

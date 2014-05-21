@@ -652,7 +652,7 @@ void HQRenderTargetManagerD3D9::ResetViewPort()
 	if (viewport.x != 0 || viewport.y !=0 || 
 		viewport.width != this->renderTargetWidth ||
 		viewport.height != this->renderTargetHeight)
-		g_pD3DDev->SetViewPort(viewport);
+		g_pD3DDev->SetViewport(viewport);
 }
 
 HQReturnVal HQRenderTargetManagerD3D9::GenerateMipmaps(HQRenderTargetView* renderTargetTextureID)

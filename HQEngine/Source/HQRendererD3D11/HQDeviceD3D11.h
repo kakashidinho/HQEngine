@@ -141,7 +141,8 @@ private:
 #endif
 	D3D_FEATURE_LEVEL featureLvl;
 	HQD3DFEATURE_CAPS featureCaps;
-	D3D11_VIEWPORT d3dViewPort;
+	D3D11_VIEWPORT d3dViewPort[D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE];
+	UINT numUsedViewports;
 	D3D11_PRIMITIVE_TOPOLOGY d3dPrimitiveMode;
 	D3D11_PRIMITIVE_TOPOLOGY d3dPrimitivelookupTable[HQ_PRI_NUM_PRIMITIVE_MODE];
 	
@@ -223,7 +224,10 @@ public:
 	///
 	HQReturnVal OnWindowSizeChanged(hq_uint32 width,hq_uint32 height);
 
-	HQReturnVal SetViewPort(const HQViewPort &viewport);
+	HQReturnVal SetViewport(const HQViewPort &viewport);
+	HQReturnVal SetViewports(const HQViewPort * viewports, hquint32 numViewports);
+	HQReturnVal ResetViewports();
+	UINT GetNumUsedViewports() const { return this->numUsedViewports; }
 	
 	void EnableVSync(bool enable);
 #if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)

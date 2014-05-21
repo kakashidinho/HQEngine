@@ -233,8 +233,8 @@ void RenderLoop::DecodeNoiseMap()//decode noise map from RGBA image to float tex
 	m_pRDevice->SetPrimitiveMode(HQ_PRI_TRIANGLE_STRIP);
 	//draw full screen quad
 	HQViewPort vp = {0, 0, width, height};
-	m_pRDevice->SetViewPort(vp);
-	m_pRDevice->BeginRender(HQ_TRUE, HQ_FALSE, HQ_FALSE, HQ_TRUE);
+	m_pRDevice->SetViewport(vp);
+	m_pRDevice->BeginRender(HQ_TRUE, HQ_FALSE, HQ_FALSE);
 	m_pRDevice->DrawPrimitive(2, 0);
 	m_pRDevice->EndRender();
 
@@ -266,13 +266,13 @@ void RenderLoop::ComputeShaderDecodeNoiseMap()
 		//set encoded texture
 		m_pRDevice->GetTextureManager()->SetTexture(0, encoded->GetTexture());
 		//set decoded texture UAV
-		m_pRDevice->GetTextureManager()->SetTextureUAV(0, decoded->GetTexture());
+		m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(0, decoded->GetTexture());
 	}
 	else{
 		//set encoded texture
 		m_pRDevice->GetTextureManager()->SetTexture(HQ_COMPUTE_SHADER | 0, encoded->GetTexture());
 		//set decoded texture UAV
-		m_pRDevice->GetTextureManager()->SetTextureUAV(HQ_COMPUTE_SHADER | 0, decoded->GetTexture());
+		m_pRDevice->GetTextureManager()->SetTextureUAVForComputeShader(0, decoded->GetTexture());
 	}
 
 	//active compute shader

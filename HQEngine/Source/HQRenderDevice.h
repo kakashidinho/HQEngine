@@ -229,15 +229,24 @@ public:
 	virtual HQReturnVal OnWindowSizeChanged(hq_uint32 width,hq_uint32 height)=0;
 
 	///
+	///Set first viewport. Other viewports set by SetViewports() are unchanged
 	///nếu vùng viewport không nằm gọn trong phạm vi của render target, viewport sẽ được set thành toàn bộ vùng render của render target
 	///
-	virtual HQReturnVal SetViewPort(const HQViewPort &viewport) = 0;
+	virtual HQReturnVal SetViewport(const HQViewPort &viewport) = 0;
+
+	///
+	///Set an array of viewports to be used.
+	///
+	virtual HQReturnVal SetViewports(const HQViewPort * viewports, hquint32 numViewports) = 0;
 
 	HQReturnVal SetFullViewPort() {
 		HQViewPort fullViewport = { 0, 0, this->GetWidth(), this->GetHeight() };
-		return SetViewPort(fullViewport);
+		return SetViewport(fullViewport);
 	}
 	
+	///
+	///get first viewport
+	///
 	virtual const HQViewPort & GetViewPort() const = 0;
 
 	///

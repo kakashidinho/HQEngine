@@ -376,7 +376,7 @@ void Game::Render(HQTime dt)
 	hquint32 halfw = pDevice->GetWidth() / 2;
 	hquint32 halfh = pDevice->GetHeight() / 2;
 	HQViewPort viewport = { 0 + m_offsetX, halfh + m_offsetY, halfw, halfh };
-	pDevice->SetViewPort(viewport);
+	pDevice->SetViewport(viewport);
 
 	pDevice->BeginRender(HQ_TRUE , HQ_TRUE , HQ_TRUE);
 

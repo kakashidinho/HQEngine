@@ -157,6 +157,10 @@ HQDeviceD3D11::HQDeviceD3D11(hModule _pDll , bool flushLog)
 	this->shaderMan=0;
 	this->stateMan = 0;
 	this->renderTargetMan = 0;
+
+	this->maxNumVPs = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
+	this->currentVPs = HQ_NEW HQViewPort[this->maxNumVPs];
+	this->numUsedViewports = 1;
 	
 
 	g_pD3DDev=this;
@@ -617,16 +621,16 @@ HQReturnVal HQDeviceD3D11::Init(HQRenderDeviceInitInput _hwnd,const char* settin
 	pDevContext->OMSetRenderTargets(1,&pMainRenderTargetView,pMainDepthStencilView);
 
 	
-	this->currentVP.x = this->currentVP.y = 0;
-	this->d3dViewPort.TopLeftX = this->d3dViewPort.TopLeftY = 0.0f;
-	this->currentVP.width = sWidth;
-	this->currentVP.height = sHeight;
-	this->d3dViewPort.Width = (hq_float32) sWidth;
-	this->d3dViewPort.Height = (hq_float32)sHeight;
-	this->d3dViewPort.MinDepth = 0.0f;
-	this->d3dViewPort.MaxDepth = 1.0f;
+	this->currentVPs[0].x = this->currentVPs[0].y = 0;
+	this->d3dViewPort[0].TopLeftX = this->d3dViewPort[0].TopLeftY = 0.0f;
+	this->currentVPs[0].width = sWidth;
+	this->currentVPs[0].height = sHeight;
+	this->d3dViewPort[0].Width = (hq_float32) sWidth;
+	this->d3dViewPort[0].Height = (hq_float32)sHeight;
+	this->d3dViewPort[0].MinDepth = 0.0f;
+	this->d3dViewPort[0].MaxDepth = 1.0f;
 
-	pDevContext->RSSetViewports(1 , &this->d3dViewPort);
+	pDevContext->RSSetViewports(1 , &this->d3dViewPort[0]);
 
 	this->textureMan=new HQTextureManagerD3D11(pDevice,pDevContext,logFileStream, this->m_flushLog);
 	this->shaderMan=new HQShaderManagerD3D11(pDevice , pDevContext,this->featureLvl , logFileStream ,this->m_flushLog);
@@ -1143,7 +1147,7 @@ void HQDeviceD3D11::OnResizeBuffer()
 	
 	static_cast<HQRenderTargetManagerD3D11*> (renderTargetMan)->OnBackBufferResized(sWidth, sHeight);
 
-	this->SetViewPort(this->currentVP);//reset viewport
+	this->ResetViewports();//reset viewport
 
 	
 }
@@ -1293,7 +1297,7 @@ HQReturnVal HQDeviceD3D11::DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArg
 }
 
 
-HQReturnVal HQDeviceD3D11::SetViewPort(const HQViewPort &viewport)
+HQReturnVal HQDeviceD3D11::SetViewport(const HQViewPort &viewport)
 {
 	HQReturnVal re = HQ_OK;
 	UINT width = static_cast<HQRenderTargetManagerD3D11*> (this->renderTargetMan)->GetRTWidth();
@@ -1301,23 +1305,59 @@ HQReturnVal HQDeviceD3D11::SetViewPort(const HQViewPort &viewport)
 	
 	if (viewport.x + viewport.width > width || viewport.y + viewport.height > height)//viewport area is invalid
 	{
-		this->currentVP.width = width;
-		this->currentVP.height = height;
-		this->currentVP.x = this->currentVP.y = 0;
+		this->currentVPs[0].width = width;
+		this->currentVPs[0].height = height;
+		this->currentVPs[0].x = this->currentVPs[0].y = 0;
 
 		re = HQ_WARNING_VIEWPORT_IS_INVALID;
 	}
 	else
-		this->currentVP = viewport;
+		this->currentVPs[0] = viewport;
 	
-	this->d3dViewPort.TopLeftX = (hq_float32)this->currentVP.x;
-	this->d3dViewPort.TopLeftY = (hq_float32)this->currentVP.y;
-	this->d3dViewPort.Width = (hq_float32)this->currentVP.width;
-	this->d3dViewPort.Height = (hq_float32)this->currentVP.height;
+	this->d3dViewPort[0].TopLeftX = (hq_float32)this->currentVPs[0].x;
+	this->d3dViewPort[0].TopLeftY = (hq_float32)this->currentVPs[0].y;
+	this->d3dViewPort[0].Width = (hq_float32)this->currentVPs[0].width;
+	this->d3dViewPort[0].Height = (hq_float32)this->currentVPs[0].height;
 	
-	pDevContext->RSSetViewports(1 , &this->d3dViewPort);
+	pDevContext->RSSetViewports(this->numUsedViewports , this->d3dViewPort);
 
 	return re;
+}
+
+HQReturnVal HQDeviceD3D11::SetViewports(const HQViewPort * viewports, hquint32 numViewports)
+{
+	HQReturnVal re = HQ_OK;
+	UINT width = static_cast<HQRenderTargetManagerD3D11*> (this->renderTargetMan)->GetRTWidth();
+	UINT height = static_cast<HQRenderTargetManagerD3D11*> (this->renderTargetMan)->GetRTHeight();
+
+	this->numUsedViewports = min(this->maxNumVPs, numViewports);
+
+	for (hquint32 i = 0; i < this->numUsedViewports; ++i)
+	{
+		if (viewports[i].x + viewports[i].width > width || viewports[i].y + viewports[i].height > height)//viewports[i] area is invalid
+		{
+			this->currentVPs[i].width = width;
+			this->currentVPs[i].height = height;
+			this->currentVPs[i].x = this->currentVPs[i].y = 0;
+
+			re = HQ_WARNING_VIEWPORT_IS_INVALID;
+		}
+		else
+			this->currentVPs[i] = viewports[i];
+
+		this->d3dViewPort[i].TopLeftX = (hq_float32)this->currentVPs[i].x;
+		this->d3dViewPort[i].TopLeftY = (hq_float32)this->currentVPs[i].y;
+		this->d3dViewPort[i].Width = (hq_float32)this->currentVPs[i].width;
+		this->d3dViewPort[i].Height = (hq_float32)this->currentVPs[i].height;
+	}
+	pDevContext->RSSetViewports(this->numUsedViewports, this->d3dViewPort);
+
+	return re;
+}
+
+HQReturnVal HQDeviceD3D11::ResetViewports()
+{
+	return SetViewports(this->currentVPs, this->numUsedViewports);
 }
 
 HQReturnVal HQDeviceD3D11::DispatchCompute(hquint32 numGroupX, hquint32 numGroupY, hquint32 numGroupZ)

@@ -159,18 +159,31 @@ HQReturnVal HQRenderDeviceDebugLayer::OnWindowSizeChanged(hq_uint32 width,hq_uin
 	return re;
 }
 
-HQReturnVal HQRenderDeviceDebugLayer::SetViewPort(const HQViewPort &viewport)
+HQReturnVal HQRenderDeviceDebugLayer::SetViewport(const HQViewPort &viewport)
 {
-	HQReturnVal re = m_pDevice->SetViewPort(viewport);
+	HQReturnVal re = m_pDevice->SetViewport(viewport);
 	if (HQFailed(re))
 	{
-		sprintf(debugString , 2048 , "HQRenderDevice::SetViewPort( {%u , %u , %u , %u} ) return %s\n" ,
+		sprintf(debugString , 2048 , "HQRenderDevice::SetViewport( {%u , %u , %u , %u} ) return %s\n" ,
 			viewport.x , viewport.y , viewport.width , viewport.height , HQReturnValToString(re));
 		
 		__OutputDebugString;
 	}
 	return re;
 
+}
+
+HQReturnVal HQRenderDeviceDebugLayer::SetViewports(const HQViewPort * viewports, hquint32 numViewports)
+{
+	HQReturnVal re = m_pDevice->SetViewports(viewports, numViewports);
+	if (HQFailed(re))
+	{
+		sprintf(debugString, 2048, "HQRenderDevice::SetViewports( {%p , %u} ) return %s\n",
+			viewports, numViewports, HQReturnValToString(re));
+
+		__OutputDebugString;
+	}
+	return re;
 }
 
 void HQRenderDeviceDebugLayer::EnableVSync(bool enable)

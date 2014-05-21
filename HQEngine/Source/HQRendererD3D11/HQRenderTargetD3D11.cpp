@@ -806,7 +806,7 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargetsImpl(HQSharedPtr<HQBa
 	
 	this->pD3DContext->OMSetRenderTargets(group->numRenderTargets , group->renderTargetViews  , group->pDepthStencilView);
 	
-	g_pD3DDev->SetViewPort(g_pD3DDev->GetViewPort());//reset viewport
+	g_pD3DDev->ResetViewports();//reset viewport
 
 	return HQ_OK;
 }
@@ -826,7 +826,7 @@ void HQRenderTargetManagerD3D11::ActiveDefaultFrameBuffer()
 	this->renderTargetWidth = g_pD3DDev->GetWidth();
 	this->renderTargetHeight = g_pD3DDev->GetHeight();
 
-	g_pD3DDev->SetViewPort(g_pD3DDev->GetViewPort());//reset viewport
+	g_pD3DDev->ResetViewports();//reset viewport
 }
 
 

@@ -984,7 +984,7 @@ HQReturnVal HQRenderTargetManagerFBO::ActiveRenderTargetsImpl(HQSharedPtr<HQBase
 		glDrawBuffers(group->numRenderTargets , group->draw_buffers);
 #endif
 
-	g_pOGLDev->SetViewPort(g_pOGLDev->GetViewPort());//reset viewport
+	g_pOGLDev->SetViewport(g_pOGLDev->GetViewPort());//reset viewport
 
 	return HQ_OK;
 }
@@ -1001,7 +1001,7 @@ void HQRenderTargetManagerFBO::ActiveDefaultFrameBuffer()
 	this->renderTargetWidth = g_pOGLDev->GetWidth();
 	this->renderTargetHeight = g_pOGLDev->GetHeight();
 
-	g_pOGLDev->SetViewPort(g_pOGLDev->GetViewPort());//reset viewport
+	g_pOGLDev->SetViewport(g_pOGLDev->GetViewPort());//reset viewport
 }
 
 

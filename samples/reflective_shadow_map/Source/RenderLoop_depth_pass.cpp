@@ -17,7 +17,7 @@ void RenderLoop::DepthPassRender(HQTime dt){
 
 	//set viewport
 	const HQViewPort viewport = {0, 0, DEPTH_PASS_RT_WIDTH, DEPTH_PASS_RT_HEIGHT};
-	m_pRDevice->SetViewPort(viewport);
+	m_pRDevice->SetViewport(viewport);
 
 	DiffuseMaterial * material;
 	

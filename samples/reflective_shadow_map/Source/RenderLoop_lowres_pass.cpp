@@ -7,7 +7,7 @@ void RenderLoop::LowresPassRender(HQTime dt){
 
 	//set viewport
 	const HQViewPort viewport = {0, 0, LOWRES_RT_WIDTH, LOWRES_RT_HEIGHT};
-	m_pRDevice->SetViewPort(viewport);
+	m_pRDevice->SetViewport(viewport);
 
 	//start rendering
 	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE);

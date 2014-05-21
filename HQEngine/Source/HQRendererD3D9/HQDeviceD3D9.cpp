@@ -77,6 +77,9 @@ HQDeviceD3D9::HQDeviceD3D9(HMODULE _pDll , bool flushLog)
 	this->shaderMan=0;
 	this->stateMan = 0;
 	this->renderTargetMan = 0;
+
+	this->currentVPs = HQ_NEW HQViewPort[1];
+	this->maxNumVPs = 1;
 	
 	this->primitiveMode = D3DPT_TRIANGLELIST;
 	this->primitiveLookupTable[HQ_PRI_TRIANGLES] = D3DPT_TRIANGLELIST;
@@ -261,9 +264,9 @@ HQReturnVal HQDeviceD3D9::Init(HWND _hwnd,const char* settingFileDir,HQLogStream
 		return HQ_FAILED_CREATE_DEVICE;
 	}
 
-	this->currentVP.x = this->currentVP.y = this->d3dViewPort.X = this->d3dViewPort.Y = 0;
-	this->currentVP.width = this->d3dViewPort.Width = sWidth;
-	this->currentVP.height = this->d3dViewPort.Height = sHeight;
+	this->currentVPs[0].x = this->currentVPs[0].y = this->d3dViewPort.X = this->d3dViewPort.Y = 0;
+	this->currentVPs[0].width = this->d3dViewPort.Width = sWidth;
+	this->currentVPs[0].height = this->d3dViewPort.Height = sHeight;
 	this->d3dViewPort.MinZ = 0.0f;
 	this->d3dViewPort.MaxZ = 1.0f;
 	
@@ -331,7 +334,7 @@ void HQDeviceD3D9::OnResetDevice()
 	static_cast<HQTextureManagerD3D9*> (this->textureMan)->OnResetDevice();
 	static_cast<HQShaderManagerD3D9*> (this->shaderMan)->OnResetDevice();
 
-	this->SetViewPort(this->currentVP);
+	this->SetViewport(this->currentVPs[0]);
 }
 
 bool HQDeviceD3D9::IsDeviceLost()
@@ -751,7 +754,7 @@ HQReturnVal HQDeviceD3D9::DrawIndexedPrimitive(hq_uint32 numVertices , hq_uint32
 	return HQ_OK;
 }
 
-HQReturnVal HQDeviceD3D9::SetViewPort(const HQViewPort &viewport)
+HQReturnVal HQDeviceD3D9::SetViewport(const HQViewPort &viewport)
 {
 	HQReturnVal re = HQ_OK;
 	UINT width = static_cast<HQRenderTargetManagerD3D9*> (this->renderTargetMan)->GetRTWidth();
@@ -759,19 +762,19 @@ HQReturnVal HQDeviceD3D9::SetViewPort(const HQViewPort &viewport)
 	
 	if (viewport.x + viewport.width > width || viewport.y + viewport.height > height)//viewport area is invalid
 	{
-		this->currentVP.width = width;
-		this->currentVP.height = height;
-		this->currentVP.x = this->currentVP.y = 0;
+		this->currentVPs[0].width = width;
+		this->currentVPs[0].height = height;
+		this->currentVPs[0].x = this->currentVPs[0].y = 0;
 
 		re = HQ_WARNING_VIEWPORT_IS_INVALID;
 	}
 	else
-		this->currentVP = viewport;
+		this->currentVPs[0] = viewport;
 	
-	this->d3dViewPort.X = this->currentVP.x;
-	this->d3dViewPort.Y = this->currentVP.y;
-	this->d3dViewPort.Width = this->currentVP.width;
-	this->d3dViewPort.Height = this->currentVP.height;
+	this->d3dViewPort.X = this->currentVPs[0].x;
+	this->d3dViewPort.Y = this->currentVPs[0].y;
+	this->d3dViewPort.Width = this->currentVPs[0].width;
+	this->d3dViewPort.Height = this->currentVPs[0].height;
 
 	pDevice->SetViewport(&this->d3dViewPort);
 

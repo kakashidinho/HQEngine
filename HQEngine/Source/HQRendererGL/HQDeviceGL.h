@@ -128,7 +128,8 @@ public:
 	HQReturnVal OnWindowSizeChanged(hq_uint32 width,hq_uint32 height);
 	HQReturnVal ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool windowed, bool resizeWindow);
 
-	HQReturnVal SetViewPort(const HQViewPort &viewport);
+	HQReturnVal SetViewport(const HQViewPort &viewport);
+	HQReturnVal SetViewports(const HQViewPort * viewports, hquint32 numViewports);
 	void EnableVSync(bool enable);
 	
 	void SetPrimitiveMode(HQPrimitiveMode primitiveMode) ;

@@ -16,7 +16,7 @@ void RenderLoop::FinalPassRender(HQTime dt){
 	rsm_effect->GetPassByName("final-gathering")->Apply();
 
 	const HQViewPort viewport = {0, 0, 600, 600};
-	m_pRDevice->SetViewPort(viewport);
+	m_pRDevice->SetViewport(viewport);
 
 	DiffuseMaterial * material;
 

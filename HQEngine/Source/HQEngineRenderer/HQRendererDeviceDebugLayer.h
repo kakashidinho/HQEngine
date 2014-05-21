@@ -61,7 +61,8 @@ public:
 	
 	HQReturnVal OnWindowSizeChanged(hq_uint32 width,hq_uint32 height);
 
-	HQReturnVal SetViewPort(const HQViewPort &viewport);
+	HQReturnVal SetViewport(const HQViewPort &viewport);
+	HQReturnVal SetViewports(const HQViewPort * viewports, hquint32 numViewports);
 	const HQViewPort & GetViewPort() const {return m_pDevice->GetViewPort();}
 	
 	void EnableVSync(bool enable);

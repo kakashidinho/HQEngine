@@ -85,6 +85,47 @@ void GLAPIENTRY glDrawElementsIndirectDummy(GLenum mode, GLenum type, const GLvo
 PFNGLDRAWARRAYSINDIRECT glDrawArraysIndirectWrapper;
 PFNGLDRAWELEMENTSINDIRECT glDrawElementsIndirectWrapper;
 
+/*-----------------viewport array----------------*/
+typedef void (GLAPIENTRY * PFNGLVIEWPORTARRAYV) (GLuint first, GLsizei count, const GLfloat * v);
+typedef void (GLAPIENTRY * PFNGLVIEWPORTINDEXEDF) (GLuint index, GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+PFNGLVIEWPORTARRAYV glViewportArrayvWrapper;
+PFNGLVIEWPORTINDEXEDF glViewportIndexedfWrapper;
+
+void GLAPIENTRY glViewportArrayv1stElemOnly(GLuint first, GLsizei count, const GLfloat * viewports)
+{
+	//this function ignore other elements in {viewports} but the first
+	glViewport((GLint)viewports[0], (GLint)viewports[1], (GLint)viewports[2], (GLint)viewports[3]);
+	glScissor((GLint)viewports[0], (GLint)viewports[1], (GLint)viewports[2], (GLint)viewports[3]);
+}
+
+void GLAPIENTRY glViewportIndexedfOnly1stIndexFunc(GLuint index, GLfloat x, GLfloat y, GLfloat w, GLfloat h)
+{
+	if (index == 0)
+	{
+		glViewport((GLint)x, (GLint)y, (GLint)w, (GLint)h);
+		glScissor((GLint)x, (GLint)y, (GLint)w, (GLint)h);
+	}
+}
+
+#ifdef GL_MAX_VIEWPORTS
+void GLAPIENTRY glViewportArrayvWrapperFunc(GLuint first, GLsizei count, const GLfloat * viewports)
+{
+	glViewportArrayv(first, count, viewports);
+
+	for (GLsizei i = 0; i < count; ++i)
+	{
+		const GLfloat * viewport = viewports + 4 * i;
+		glScissorIndexed(i, (GLint)viewport[0], (GLint)viewport[1], (GLint)viewport[2], (GLint)viewport[3]);
+	}
+}
+
+void GLAPIENTRY glViewportIndexedfWrapperFunc (GLuint index, GLfloat x, GLfloat y, GLfloat w, GLfloat h)
+{
+	glViewportIndexedf(index, x, y, w, h);
+	glScissorIndexed(index, (GLint)x, (GLint)y, (GLint)w, (GLint)h);
+}
+#endif//ifdef GL_MAX_VIEWPORTS
+
 /*----------------------------------*/
 
 
@@ -688,9 +729,24 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 
 #endif
 
-	this->currentVP.x = this->currentVP.y = 0;
-	this->currentVP.width = sWidth;
-	this->currentVP.height = sHeight;
+#ifdef GL_MAX_VIEWPORTS
+	if (GLEW_VERSION_4_1)
+	{
+		GLint maxVPs;
+		glGetIntegerv(GL_MAX_VIEWPORTS, &maxVPs);
+		this->maxNumVPs = maxVPs;
+	}
+	else
+#endif
+	{
+		this->maxNumVPs = 1;
+	}
+	this->currentVPs = HQ_NEW HQViewPort[this->maxNumVPs];
+
+	/*---------viewport----------------*/
+	this->currentVPs[0].x = this->currentVPs[0].y = 0;
+	this->currentVPs[0].width = sWidth;
+	this->currentVPs[0].height = sHeight;
 
 	this->shaderMan = HQCreateShaderManager(shaderManagerType , this->m_pLogStream , this->m_flushLog);
 	this->textureMan = new HQTextureManagerGL(pEnum->caps.nShaderSamplerUnits, pEnum->caps.nImageUnits, this->m_pLogStream, this->m_flushLog);
@@ -756,7 +812,18 @@ void HQDeviceGL::OnFinishInitDevice(int shaderManagerType)
 		glDrawElementsIndirectWrapper = glDrawElementsIndirectDummy;
 	}
 
-
+#ifdef GL_MAX_VIEWPORTS
+	if (GLEW_VERSION_4_1)
+	{
+		glViewportArrayvWrapper = glViewportArrayvWrapperFunc;
+		glViewportIndexedfWrapper = glViewportIndexedfWrapperFunc;
+	}
+	else
+#endif
+	{
+		glViewportArrayvWrapper = glViewportArrayv1stElemOnly;
+		glViewportIndexedfWrapper = glViewportIndexedfOnly1stIndexFunc;
+	}
 	//clear error
 	glGetError();
 }
@@ -1524,7 +1591,7 @@ HQReturnVal HQDeviceGL::ResizeBackBuffer(hq_uint32 width,hq_uint32 height, bool 
 
 	static_cast<HQBaseRenderTargetManager*> (renderTargetMan)->OnBackBufferResized(sWidth, sHeight);
 
-    this->SetViewPort(this->currentVP);
+    this->SetViewport(this->currentVPs[0]);
 
     return HQ_OK;
 }
@@ -1668,7 +1735,7 @@ HQReturnVal HQDeviceGL::DrawIndexedInstancedIndirect(HQDrawIndexedIndirectArgsBu
 	return HQ_OK;
 }
 
-HQReturnVal HQDeviceGL::SetViewPort(const HQViewPort &viewport)
+HQReturnVal HQDeviceGL::SetViewport(const HQViewPort &viewport)
 {
 	HQReturnVal re = HQ_OK;
 	UINT width , height;
@@ -1678,24 +1745,61 @@ HQReturnVal HQDeviceGL::SetViewPort(const HQViewPort &viewport)
 
 	if (viewport.x + viewport.width > width || viewport.y + viewport.height > height)//viewport area is invalid
 	{
-		this->currentVP.width = width;
-		this->currentVP.height = height;
-		this->currentVP.x = this->currentVP.y = 0;
+		this->currentVPs[0].width = width;
+		this->currentVPs[0].height = height;
+		this->currentVPs[0].x = this->currentVPs[0].y = 0;
 		
 		re = HQ_WARNING_VIEWPORT_IS_INVALID;
 	}
 	else
-		this->currentVP = viewport;
+		this->currentVPs[0] = viewport;
 
-	GLint Y= height - (this->currentVP.y + this->currentVP.height);
-	glViewport(this->currentVP.x , Y,
-				this->currentVP.width , this->currentVP.height);
-	glScissor(this->currentVP.x , Y,
-			   this->currentVP.width , this->currentVP.height);
+	GLint Y = height - (this->currentVPs[0].y + this->currentVPs[0].height);
+	glViewportIndexedfWrapper(0,
+		(GLfloat)this->currentVPs[0].x, (GLfloat)Y,
+		(GLfloat)this->currentVPs[0].width, (GLfloat)this->currentVPs[0].height);
 
 	return re;
 }
 
+
+HQReturnVal HQDeviceGL::SetViewports(const HQViewPort * viewports, hquint32 numViewports)
+{
+	HQReturnVal re = HQ_OK;
+	UINT width, height;
+
+	width = static_cast<HQBaseRenderTargetManager*> (renderTargetMan)->GetRTWidth();
+	height = static_cast<HQBaseRenderTargetManager*> (renderTargetMan)->GetRTHeight();
+
+	hquint32 numUsedVPs = min(this->maxNumVPs, numViewports);
+	for (hquint32 i = 0; i < numUsedVPs; ++i)
+	{
+		if (viewports[i].x + viewports[i].width > width || viewports[i].y + viewports[i].height > height)//viewport area is invalid
+		{
+			this->currentVPs[i].width = width;
+			this->currentVPs[i].height = height;
+			this->currentVPs[i].x = this->currentVPs[i].y = 0;
+
+			re = HQ_WARNING_VIEWPORT_IS_INVALID;
+		}
+		else
+			this->currentVPs[i] = viewports[i];
+
+		GLint Y = height - (this->currentVPs[i].y + this->currentVPs[i].height);
+
+		glViewportIndexedfWrapper(i,
+			(GLfloat)this->currentVPs[i].x, (GLfloat)Y,
+			(GLfloat)this->currentVPs[i].width, (GLfloat)this->currentVPs[i].height);
+	}
+
+	if (numUsedVPs > 1 && GLEW_VERSION_4_1 == GL_FALSE)
+	{
+		this->Log("Warning: array of different viewports is not supported.");
+		re = HQ_WARNING_VIEWPORT_IS_INVALID;
+	}
+
+	return re;
+}
 
 void * HQDeviceGL::GetRawHandle()
 { 
