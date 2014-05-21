@@ -802,8 +802,6 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargetsImpl(HQSharedPtr<HQBa
 	this->renderTargetViews = group->renderTargetViews;
 	this->pDepthStencilView = group->pDepthStencilView;
 	
-	this->currentUseDefaultBuffer = false;
-	
 	this->pD3DContext->OMSetRenderTargets(group->numRenderTargets , group->renderTargetViews  , group->pDepthStencilView);
 	
 	g_pD3DDev->ResetViewports();//reset viewport
@@ -813,15 +811,11 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargetsImpl(HQSharedPtr<HQBa
 
 void HQRenderTargetManagerD3D11::ActiveDefaultFrameBuffer()
 {
-	if (this->currentUseDefaultBuffer)
-		return;
 	//active default back buffer
 	this->renderTargetViews = &this->pD3DBackBuffer;
 	this->pDepthStencilView = this->pD3DDSBuffer;
 
 	this->pD3DContext->OMSetRenderTargets(1 , this->renderTargetViews , this->pDepthStencilView);
-		
-	this->currentUseDefaultBuffer = true;
 	
 	this->renderTargetWidth = g_pD3DDev->GetWidth();
 	this->renderTargetHeight = g_pD3DDev->GetHeight();
@@ -909,6 +903,8 @@ void HQRenderTargetManagerD3D11::OnDrawOrDispatch()
 			numRTVs = D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL;
 #else
 			numRTVs = min(numRTVs, (hquint32)this->minUsedUAVSlot);//UAV will overwrite RTV slot
+			if (numRTVs != this->GetNumActiveRenderTargets())
+				this->force_reactive_rtgroup = true;
 #endif
 			//set UAVs
 			this->pD3DContext->OMSetRenderTargetsAndUnorderedAccessViews(

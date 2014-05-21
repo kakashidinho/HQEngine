@@ -975,7 +975,6 @@ HQReturnVal HQRenderTargetManagerFBO::ActiveRenderTargetsImpl(HQSharedPtr<HQBase
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, group->framebuffer);
 
-	this->currentUseDefaultBuffer = false;
 	this->renderTargetWidth = group->commonWidth;
 	this->renderTargetHeight = group->commonHeight;
 
@@ -991,12 +990,7 @@ HQReturnVal HQRenderTargetManagerFBO::ActiveRenderTargetsImpl(HQSharedPtr<HQBase
 
 void HQRenderTargetManagerFBO::ActiveDefaultFrameBuffer()
 {
-	if (this->currentUseDefaultBuffer)
-		return;
-
 	glBindFramebuffer(GL_FRAMEBUFFER , defaultFBO);
-
-	this->currentUseDefaultBuffer = true;
 
 	this->renderTargetWidth = g_pOGLDev->GetWidth();
 	this->renderTargetHeight = g_pOGLDev->GetHeight();

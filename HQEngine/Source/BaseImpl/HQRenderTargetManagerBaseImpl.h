@@ -124,10 +124,9 @@ struct HQBaseRenderTargetGroup : public HQRenderTargetGroup, public HQBaseIDObje
 class HQBaseRenderTargetManager: public HQRenderTargetManager, public HQLoggableObject
 {
 protected:
-	bool currentUseDefaultBuffer;//is currently using default back buffer and depth stencil buffer
-	
 	HQRenderTargetGroup* currentActiveRTGroup;//current active render targets group
 	hq_uint32 maxActiveRenderTargets;
+	bool force_reactive_rtgroup;
 
 	HQIDItemManager<HQBaseRenderTargetView> renderTargets;
 	HQIDItemManager<HQBaseDepthStencilBufferView> depthStencilBuffers;
@@ -207,7 +206,7 @@ public:
 							  bool flushLog)
 		 :HQLoggableObject(logFileStream , logPrefix , flushLog)
 	{
-		this->currentUseDefaultBuffer = true;
+		this->force_reactive_rtgroup = false;
 		this->currentActiveRTGroup = NULL;
 		this->maxActiveRenderTargets = maxActiveRenderTargets;
 		this->pTextureManager = pTexMan;
@@ -220,7 +219,7 @@ public:
 
 	inline bool IsUsingDefaultFrameBuffer()
 	{
-		return currentUseDefaultBuffer;
+		return currentActiveRTGroup == NULL;
 	}
 	
 	inline hq_uint32 GetRTWidth () {return renderTargetWidth ;}
@@ -317,19 +316,21 @@ public:
 	///Set the render targets in group {renderTargetGroupID} as main render targets	
 	///
 	HQReturnVal ActiveRenderTargets(HQRenderTargetGroup* renderTargetGroupID) {
-		if (this->currentActiveRTGroup == renderTargetGroupID)
+		if (this->currentActiveRTGroup == renderTargetGroupID && !this->force_reactive_rtgroup)
 			return HQ_OK;
 		HQSharedPtr<HQBaseRenderTargetGroup> group = this->rtGroups.GetItemPointer(renderTargetGroupID);
 
-		if (group == NULL)
-		{
-			this->currentActiveRTGroup = NULL;
-		}
-		else
-			this->currentActiveRTGroup = renderTargetGroupID;
 
 		//call sub class method
-		return this->ActiveRenderTargetsImpl(group);
+		HQReturnVal re = this->ActiveRenderTargetsImpl(group);
+
+		this->force_reactive_rtgroup = false;
+
+		//cache current active group
+		this->currentActiveRTGroup = group.GetRawPointer();
+
+		return re;
+
 	}
 
 	///

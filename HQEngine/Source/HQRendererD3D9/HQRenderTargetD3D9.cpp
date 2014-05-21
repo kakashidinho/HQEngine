@@ -291,7 +291,7 @@ void HQRenderTargetManagerD3D9::OnResetDevice()
 	if (pD3DDevice->GetDepthStencilSurface(&pD3DDSBuffer) == D3DERR_NOTFOUND)
 		pD3DDSBuffer = NULL;
 
-	if (!this->currentUseDefaultBuffer)
+	if (this->currentActiveRTGroup != NULL)
 	{
 		HQSharedPtr<HQBaseRenderTargetView> pBuffer = HQSharedPtr<HQBaseRenderTargetView>::null;
 		for (hq_uint32 i = 0; i < this->numActiveRenderTargets ; ++i)
@@ -592,7 +592,7 @@ HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargetsImpl(HQSharedPtr<HQBas
 	
 	//active depth stencil buffer
 	HQSharedPtr<HQBaseDepthStencilBufferView> pDepthStencilBuffer = group->pDepthStencilBuffer;
-	if (this->currentUseDefaultBuffer || this->pActiveDepthStencilBuffer != pDepthStencilBuffer)
+	if (this->currentActiveRTGroup == NULL || this->pActiveDepthStencilBuffer != pDepthStencilBuffer)
 	{
 		if (pDepthStencilBuffer == NULL)
 		{
@@ -605,7 +605,6 @@ HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargetsImpl(HQSharedPtr<HQBas
 
 		this->pActiveDepthStencilBuffer = pDepthStencilBuffer;
 	}
-	this->currentUseDefaultBuffer = false;
 	this->renderTargetWidth = group->commonWidth;
 	this->renderTargetHeight = group->commonHeight;
 
@@ -615,9 +614,6 @@ HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargetsImpl(HQSharedPtr<HQBas
 
 void HQRenderTargetManagerD3D9::InvalidateRenderTargets()
 {
-	if (this->currentUseDefaultBuffer)
-		return;
-
 	this->activeRenderTargets[0].pRenderTarget = HQSharedPtr<HQBaseRenderTargetView> ::null;
 
 	for (hq_uint32 i = 1 ; i < this->numActiveRenderTargets ; ++i)
@@ -637,7 +633,6 @@ void HQRenderTargetManagerD3D9::ResetToDefaultFrameBuffer()
 	pD3DDevice->SetDepthStencilSurface(pD3DDSBuffer);
 
 	this->pActiveDepthStencilBuffer = HQSharedPtr<HQBaseDepthStencilBufferView> ::null;
-	this->currentUseDefaultBuffer = true;
 	this->numActiveRenderTargets = 0;
 
 	this->renderTargetWidth = g_pD3DDev->GetWidth();
