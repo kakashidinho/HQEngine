@@ -361,7 +361,7 @@ bool HQDeviceD3D9::IsDeviceLost()
 //***********************************
 //begin render
 //***********************************
-HQReturnVal HQDeviceD3D9::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil,HQBool isClearWholeRT){
+HQReturnVal HQDeviceD3D9::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil){
 #if defined DEBUG || defined _DEBUG
 	if(!pDevice)
 	{
@@ -388,7 +388,7 @@ HQReturnVal HQDeviceD3D9::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQ
 	DWORD l_flags = (isClearPixel) | (isClearDepth << 1) | (isClearStencil << 2);
 #endif
 	
-	if(isClearWholeRT)//clear toàn bộ màn hình hoặc toàn bộ bề mặt render target
+	//clear toàn bộ màn hình hoặc toàn bộ bề mặt render target
 	{
 		D3DVIEWPORT9 VP={0,0,
 			static_cast<HQRenderTargetManagerD3D9*> (this->renderTargetMan)->GetRTWidth(),
@@ -401,8 +401,6 @@ HQReturnVal HQDeviceD3D9::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQ
 
 		pDevice->SetViewport(&this->d3dViewPort);//chỉnh lại viewport đang active
 	}
-	else
-		hr=pDevice->Clear(0,0,l_flags,clearColor,clearDepth,clearStencil);
 	
 #if defined DEBUG || defined _DEBUG		
 	if(FAILED(hr))
@@ -476,7 +474,7 @@ HQReturnVal HQDeviceD3D9::DisplayBackBuffer()
 //***********************************
 //clear
 //***********************************
-HQReturnVal HQDeviceD3D9::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil,HQBool isClearWholeRT)
+HQReturnVal HQDeviceD3D9::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil)
 {
 #if defined DEBUG || defined _DEBUG
 	if(!pDevice)
@@ -503,7 +501,7 @@ HQReturnVal HQDeviceD3D9::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool i
 
 	HRESULT hr;
 
-	if(isClearWholeRT)//clear toàn bộ màn hình hoặc toàn bộ bề mặt render target
+	//clear toàn bộ màn hình hoặc toàn bộ bề mặt render target
 	{
 		D3DVIEWPORT9 VP={0,0,
 			static_cast<HQRenderTargetManagerD3D9*> (this->renderTargetMan)->GetRTWidth(),
@@ -516,8 +514,6 @@ HQReturnVal HQDeviceD3D9::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool i
 
 		pDevice->SetViewport(&this->d3dViewPort);//chỉnh lại viewport đang active
 	}
-	else
-		hr=pDevice->Clear(0,0,l_flags,clearColor,clearDepth,clearStencil);
 	
 #if defined DEBUG || defined _DEBUG		
 	if(FAILED(hr))

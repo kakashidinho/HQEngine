@@ -344,8 +344,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h" />
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex_debug.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_tex.h" />
@@ -524,7 +522,6 @@
     <ClInclude Include="..\..\..\..\Source\HQUtil\HQUtilPCH.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQBaseImplCommon.h" />
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQRenderDeviceBaseImpl.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQRenderTargetManagerBaseImpl.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQShaderParameterIndexTable.h" />
@@ -3312,20 +3309,6 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Command)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Command)</Message>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|x64'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\Source\BaseImpl\HQFFEmuShaderD3D1x.hlsl">

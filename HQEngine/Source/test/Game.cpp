@@ -371,29 +371,16 @@ void Game::Render(HQTime dt)
 	//clear whole render target
 	pDevice->SetClearStencilVal(0xff);
 	pDevice->SetClearDepthVal(1.0f);
-	pDevice->SetClearColorf(0.5f , 1.0f ,0.5f , 1.0f);
-	pDevice->BeginRender(HQ_TRUE , HQ_TRUE , HQ_TRUE ,HQ_TRUE);
+	pDevice->SetClearColorf(0.5f, 1.0f, 0.5f, 1.0f);
 
 	hquint32 halfw = pDevice->GetWidth() / 2;
 	hquint32 halfh = pDevice->GetHeight() / 2;
-
-	//clear depth
-	pDevice->SetClearDepthVal(0.5f);
-	HQViewPort viewport2 = {0 + m_offsetX , halfh + m_offsetY , halfw / 2 , halfh / 2};
-	pDevice->SetViewPort(viewport2);
-	pDevice->Clear(HQ_FALSE, HQ_TRUE, HQ_FALSE, HQ_FALSE);
-
-	//clear stencil
-	pDevice->SetClearStencilVal(0x1);
-	HQViewPort viewport3 = {halfw / 2  + m_offsetX, halfh * 3 / 2  + m_offsetY, halfw / 2, halfh / 2};
-	pDevice->SetViewPort(viewport3);
-	pDevice->Clear(HQ_FALSE, HQ_FALSE, HQ_TRUE, HQ_FALSE);
-
-	//clear color
-	HQViewPort viewport = {0  + m_offsetX, halfh  + m_offsetY , halfw , halfh};
+	HQViewPort viewport = { 0 + m_offsetX, halfh + m_offsetY, halfw, halfh };
 	pDevice->SetViewPort(viewport);
-	pDevice->SetClearColorf(1, 0, 0, 1);
-	pDevice->Clear(HQ_TRUE, HQ_FALSE, HQ_FALSE, HQ_FALSE);
+
+	pDevice->BeginRender(HQ_TRUE , HQ_TRUE , HQ_TRUE);
+
+
 	
 	pDevice->SetPrimitiveMode(HQ_PRI_TRIANGLES);
 	//pDevice->GetStateManager()->SetFillMode(HQ_FILL_WIREFRAME);

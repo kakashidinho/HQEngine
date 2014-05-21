@@ -773,13 +773,13 @@ void HQDeviceD3D11::CreateMainDepthStencilView()
 //***********************************
 //begin render
 //***********************************
-HQReturnVal HQDeviceD3D11::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil,HQBool isClearWholeRenderTarget){
+HQReturnVal HQDeviceD3D11::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil){
 	
 	if (this->flags & RENDER_BEGUN)
 		return HQ_FAILED_RENDER_ALREADY_BEGUN;
 	this->flags |= RENDER_BEGUN;
 
-	return this->Clear(isClearPixel, isClearDepth , isClearStencil,isClearWholeRenderTarget);
+	return this->Clear(isClearPixel, isClearDepth , isClearStencil);
 }
 //****************************************
 //end render
@@ -852,7 +852,7 @@ HQReturnVal HQDeviceD3D11::DisplayBackBuffer()
 //***********************************
 //clear
 //***********************************
-HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil,HQBool isClearWholeRenderTarget)
+HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil)
 {
 #if defined DEBUG || defined _DEBUG
 	if(!pDevice)
@@ -862,7 +862,7 @@ HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool 
 	}
 #endif
 
-	if(isClearWholeRenderTarget)//clear toàn bộ màn hình
+	//clear toàn bộ màn hình
 	{
 #if 0
 		UINT dsflags=0;
@@ -891,40 +891,6 @@ HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool 
 			if (pCurrentDepthStencilView != NULL)
 				pDevContext->ClearDepthStencilView(pCurrentDepthStencilView, dsflags , this->clearDepth , this->clearStencil);
 		}
-	}
-	else if ((isClearPixel | isClearDepth | isClearStencil))
-	{
-
-		if (this->flags & CLEAR_COLOR_OR_DEPTH_CHANGED)
-		{
-#if HQ_D3D_CLEAR_VP_USE_GS
-			static_cast<HQVertexStreamManagerD3D11*> (this->vStreamMan)->ChangeClearVBuffer(this->clearColorui , this->clearDepth);
-#else
-			static_cast<HQShaderManagerD3D11*> (this->shaderMan)->ChangeClearVPParams(this->clearColor, this->clearDepth);
-#endif
-			this->flags &= ~CLEAR_COLOR_OR_DEPTH_CHANGED;
-		}
-
-		static_cast<HQVertexStreamManagerD3D11*> (this->vStreamMan)->BeginClearViewport();
-		static_cast<HQStateManagerD3D11*> (this->stateMan)->BeginClearViewport(isClearPixel , isClearDepth , isClearStencil , this->clearStencil);
-		static_cast<HQShaderManagerD3D11*> (this->shaderMan)->BeginClearViewport();
-		
-#if HQ_D3D_CLEAR_VP_USE_GS
-		pDevContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-			
-		pDevContext->Draw(1 , 0);
-#else
-		pDevContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-			
-		pDevContext->Draw(4 , 0);
-#endif
-		
-		if (this->d3dPrimitiveMode != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED)
-			pDevContext->IASetPrimitiveTopology(this->d3dPrimitiveMode);
-
-		static_cast<HQShaderManagerD3D11*> (this->shaderMan)->EndClearViewport();
-		static_cast<HQStateManagerD3D11*> (this->stateMan)->EndClearViewport();
-		static_cast<HQVertexStreamManagerD3D11*> (this->vStreamMan)->EndClearViewport();
 	}
 	return HQ_OK;
 }

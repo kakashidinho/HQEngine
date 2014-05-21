@@ -14,8 +14,6 @@ pushd %~dp0
 set OUT_DIR=BaseImplShaderString
 if not exist %OUT_DIR% mkdir %OUT_DIR%
 
-call :MakeShaderString HQClearViewportShaderCodeD3D1x hlsl
-
 call :MakeShaderString HQFFEmuShaderD3D1x hlsl
 
 call :MakeShaderString HQFFEmuShaderGL glsl -no-windows-newline

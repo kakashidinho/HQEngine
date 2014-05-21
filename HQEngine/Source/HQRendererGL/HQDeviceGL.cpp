@@ -806,7 +806,7 @@ void HQDeviceGL::EnableVSyncNonSave(bool enable)
 //***********************************
 //begin render
 //***********************************
-HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil,HQBool clearWholeRenderTarget){
+HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil){
 #ifdef WIN32
 	if(hRC==NULL)
 #elif defined (HQ_LINUX_PLATFORM) || defined HQ_ANDROID_PLATFORM
@@ -847,13 +847,7 @@ HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool c
 	GLbitfield l_flags = (clearPixel << 14) | (clearDepth << 8) | (clearStencil << 10);
 #endif
 	
-	if(!clearWholeRenderTarget)//ko clear toàn bộ buffer
-	{
-		glEnable(GL_SCISSOR_TEST);
-		glClear(l_flags);
-		glDisable(GL_SCISSOR_TEST);
-	}
-	else glClear(l_flags);
+	glClear(l_flags);
 
 	this->flags |= RENDER_BEGUN;
 
@@ -942,7 +936,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 //***********************************
 //clear
 //***********************************
-HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil,HQBool clearWholeRenderTarget)
+HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil)
 {
 #if defined DEBUG || defined _DEBUG
 #ifdef WIN32
@@ -976,13 +970,7 @@ HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearSt
 	GLbitfield l_flags = (clearPixel << 14) | (clearDepth << 8) | (clearStencil << 10);
 #endif
 	
-	if(!clearWholeRenderTarget)//ko clear toàn bộ buffer
-	{
-		glEnable(GL_SCISSOR_TEST);
-		glClear(l_flags);
-		glDisable(GL_SCISSOR_TEST);
-	}
-	else glClear(l_flags);
+	glClear(l_flags);
 
 	return HQ_OK;
 }

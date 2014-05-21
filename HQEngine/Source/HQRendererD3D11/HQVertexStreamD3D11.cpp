@@ -89,84 +89,12 @@ HQVertexStreamManagerD3D11::HQVertexStreamManagerD3D11(ID3D11Device* pD3DDevice 
 
 	HQIndexBufferD3D11::s_boundSlotsMemManager =
 		HQ_NEW HQPoolMemoryManager(sizeof(HQGenericBufferD3D11::SlotList::LinkedListNodeType), 1);//not important
-	
-	/*------create vertex buffer and input layout for clearing viewport---------*/
-	const hq_uint32 l_clearVBStride = sizeof(ClearBufferVertex);
-
-	D3D11_BUFFER_DESC vbd;
-#if HQ_D3D_CLEAR_VP_USE_GS
-	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-	vbd.ByteWidth = l_clearVBStride;
-#else
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.CPUAccessFlags = 0;
-	vbd.ByteWidth = 4 * l_clearVBStride;
-#endif
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.MiscFlags = 0;
-	vbd.StructureByteStride = 0;
-
-#if HQ_D3D_CLEAR_VP_USE_GS
-	pD3DDevice->CreateBuffer(&vbd , NULL ,&this->pCleaVBuffer);
-
-#else //#if !HQ_D3D_CLEAR_VP_USE_GS
-	{
-		ClearBufferVertex pV[4];
-		D3D11_SUBRESOURCE_DATA subResource;
-		//create full screen quad
-		pV[0].position[0] = -1.0f; pV[0].position[1] = -1.0f;
-		pV[1].position[0] = -1.0f; pV[1].position[1] = 1.0f;
-		pV[2].position[0] = 1.0f; pV[2].position[1] = -1.0f;
-		pV[3].position[0] = 1.0f; pV[3].position[1] = 1.0f;
-		
-		subResource.pSysMem = pV;
-
-		pD3DDevice->CreateBuffer(&vbd , &subResource ,&this->pCleaVBuffer);
-	}
-#endif
-
-#if HQ_D3D_CLEAR_VP_USE_GS
-	const UINT numElements = 2;
-	D3D11_INPUT_ELEMENT_DESC id[numElements];
-	id[0].SemanticName = "COLOR";
-	id[0].SemanticIndex = 0;
-	id[0].Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	id[0].InputSlot = 0;
-	id[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	id[0].InstanceDataStepRate = 0;
-	id[0].AlignedByteOffset = 0;
-
-	id[1].SemanticName = "DEPTH";
-	id[1].SemanticIndex = 0;
-	id[1].Format = DXGI_FORMAT_R32_FLOAT;
-	id[1].InputSlot = 0;
-	id[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	id[1].InstanceDataStepRate = 0;
-	id[1].AlignedByteOffset = sizeof(HQColorui);
-#else//#if !HQ_D3D_CLEAR_VP_USE_GS
-	const UINT numElements = 1;
-	D3D11_INPUT_ELEMENT_DESC id[numElements];
-	id[0].SemanticName = "POSITION";
-	id[0].SemanticIndex = 0;
-	id[0].Format = DXGI_FORMAT_R32G32_FLOAT;
-	id[0].InputSlot = 0;
-	id[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	id[0].InstanceDataStepRate = 0;
-	id[0].AlignedByteOffset = 0;
-#endif//#if HQ_D3D_CLEAR_VP_USE_GS
-
-	ID3DBlob *pBlob = pShaderMan->GetCompiledClearVShader();
-
-	pD3DDevice->CreateInputLayout(id , numElements ,pBlob->GetBufferPointer() , pBlob->GetBufferSize(), &this->pClearInputLayout);
 
 	Log("Init done!");
 }
 
 HQVertexStreamManagerD3D11::~HQVertexStreamManagerD3D11()
 {
-	SafeRelease(this->pCleaVBuffer);
-	SafeRelease(this->pClearInputLayout);
 	Log("Released!");
 }
 
@@ -610,47 +538,3 @@ void HQVertexStreamManagerD3D11::RemoveAllVertexInputLayout()
 {
 	this->inputLayouts.RemoveAll();
 }
-
-#if HQ_D3D_CLEAR_VP_USE_GS
-void HQVertexStreamManagerD3D11::ChangeClearVBuffer(HQColorui color , hq_float32 depth)
-{
-	ClearBufferVertex *pV;
-	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-
-	pD3DContext->Map(this->pCleaVBuffer , 0 , D3D11_MAP_WRITE_DISCARD , 0 , &mappedSubResource);
-	pV = (ClearBufferVertex *)mappedSubResource.pData;
-	pV->color = color;
-	pV->depth = depth;
-	pD3DContext->Unmap(this->pCleaVBuffer , 0 );
-}
-#endif
-
-void HQVertexStreamManagerD3D11::BeginClearViewport()
-{
-	const hq_uint32 l_clearVBStride = sizeof(ClearBufferVertex);
-	const hq_uint32 l_offset = 0;
-
-	pD3DContext->IASetInputLayout(this->pClearInputLayout);
-	pD3DContext->IASetVertexBuffers(0, 1, &this->pCleaVBuffer, &l_clearVBStride, &l_offset);
-}
-
-void HQVertexStreamManagerD3D11::EndClearViewport()
-{
-	const hq_uint32 l_offset = 0;
-	ID3D11Buffer * const l_nullBuffer = NULL;
-
-	if (this->activeInputLayout != NULL)
-		pD3DContext->IASetInputLayout(this->activeInputLayout->pD3DLayout);
-	else
-		pD3DContext->IASetInputLayout(NULL);
-
-	//rebind old vertex buffer
-	if (this->streams[0].pBuffer != NULL)
-		pMasterDevice->SetVertexBuffer(0, this->streams[0].pBuffer->pD3DBuffer, this->streams[0].stride, l_offset);
-		//pD3DContext->IASetVertexBuffers(0, 1, &this->streams[0].pBuffer->pD3DBuffer, &this->streams[0].stride, &l_offset);
-	else
-		pMasterDevice->SetVertexBuffer(0, NULL, this->streams[0].stride, l_offset);
-		//pD3DContext->IASetVertexBuffers(0, 1, &l_nullBuffer, &this->streams[0].stride, &l_offset);
-
-}
-

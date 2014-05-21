@@ -428,14 +428,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\BaseImpl\HQClearViewportShaderCodeD3D1x.h"
-					>
-				</File>
-				<File
-					RelativePath="..\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl"
-					>
-				</File>
-				<File
 					RelativePath="..\BaseImpl\HQFFEmuShaderD3D1x.hlsl"
 					>
 				</File>
@@ -458,14 +450,6 @@
 				<Filter
 					Name="compiledBaseImplShader"
 					>
-					<File
-						RelativePath="..\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h"
-						>
-					</File>
-					<File
-						RelativePath="..\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h"
-						>
-					</File>
 					<File
 						RelativePath="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h"
 						>
@@ -534,10 +518,6 @@
 				<Filter
 					Name="BaseImplShaderString"
 					>
-					<File
-						RelativePath="..\BaseImpl\BaseImplShaderString\HQClearViewportShaderCodeD3D1x.h"
-						>
-					</File>
 					<File
 						RelativePath="..\BaseImpl\BaseImplShaderString\HQFFEmuShaderD3D1x.h"
 						>

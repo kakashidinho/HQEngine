@@ -10,11 +10,11 @@ techniques{
 				mipmap_filter=none
 				source="Bat_Albedo.jpg"
 			}
-			
+			/*
 			stencil{
 				reference_value=1
 				compare_func=less
-			}
+			}*/
 			depth=full
 			
 			blend {

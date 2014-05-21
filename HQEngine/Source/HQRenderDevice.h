@@ -155,10 +155,9 @@ public:
 	virtual HQReturnVal Init(HQRenderDeviceInitInput input,const char* settingFileDir, HQLogStream* logStream , const char *additionalSettings = NULL)=0;
 	
 	///
-	///nếu {clearWholeRenderTarget} = false , chỉ vùng viewport bị clear ,
-	///ngược lại toàn bộ màn hình hoặc toàn bộ bề mặt render target(nếu đang dùng render target không phải mặc định) sẽ bị clear
+	///if {clearPixel} is HQ_TRUE. whole render target will be cleared.
 	///
-	virtual HQReturnVal BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil,HQBool clearWholeRenderTarget=HQ_FALSE)=0;
+	virtual HQReturnVal BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil)=0;
 	virtual HQReturnVal EndRender()=0;
 	///
 	/// hiển thị hình ảnh trong backbuffer lên màn hình
@@ -181,10 +180,9 @@ public:
 	virtual HQMultiSampleType GetMultiSampleType() = 0;
 	
 	///
-	///nếu {clearWholeRenderTarget} = false , chỉ vùng viewport bị clear ,
-	///ngược lại toàn bộ màn hình hoặc toàn bộ bề mặt render target(nếu đang dùng render target không phải mặc định) sẽ bị clear
+	///if {clearPixel} is HQ_TRUE. whole render target will be cleared.
 	///
-	virtual HQReturnVal Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil,HQBool clearWholeRenderTarget=HQ_FALSE)=0;
+	virtual HQReturnVal Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil)=0;
 	///
 	///color range:0.0f->1.0f
 	///

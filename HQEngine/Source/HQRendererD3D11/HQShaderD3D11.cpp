@@ -408,71 +408,6 @@ HQShaderManagerD3D11::HQShaderManagerD3D11(ID3D11Device * pD3DDevice ,
 	cgSetCompilerIncludeCallback(this->cgContext, cgIncludeCallback);
 #endif//#if !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 
-/*------create shaders for clearing viewport------*/
-	ID3DBlob *pBlob = 0;
-	ID3DBlob *pError = 0;
-
-#if !HQ_D3D_CLEAR_VP_USE_BYTE_CODE
-	UINT flags;
-#if defined(DEBUG)||defined(_DEBUG)
-		flags = D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
-#else
-		flags = D3D10_SHADER_OPTIMIZATION_LEVEL3;
-#endif
-	hq_uint32 len = strlen(g_clearShaderCode);
-#endif//if !HQ_D3D_CLEAR_VP_USE_BYTE_CODE
-
-#if HQ_D3D_CLEAR_VP_USE_GS
-	D3DX11CompileFromMemory(g_clearShaderCode , len ,NULL , NULL ,NULL,
-							"VS" , "vs_4_0" , flags , 0 , NULL,
-							&pBlob , &pError , NULL);
-	this->CreateShader(HQ_VERTEX_SHADER , pBlob , &this->clearVShader);
-
-	D3DX11CompileFromMemory(g_clearShaderCode , len ,NULL , NULL ,NULL,
-							"GS" , "gs_4_0" , flags , 0 , NULL,
-							&pBlob , &pError , NULL);
-	this->CreateShader(HQ_GEOMETRY_SHADER , pBlob , &this->clearGShader);
-	SafeRelease(pBlob);
-	SafeRelease(pError);
-
-	D3DX11CompileFromMemory(g_clearShaderCode , len ,NULL , NULL ,NULL,
-							"PS" , "ps_4_0" , flags , 0 , NULL,
-							&pBlob , &pError , NULL);
-	this->CreateShader(HQ_PIXEL_SHADER , pBlob , &this->clearPShader);
-	SafeRelease(pBlob);
-	SafeRelease(pError);
-#else//#if !HQ_D3D_CLEAR_VP_USE_GS
-#if !HQ_D3D_CLEAR_VP_USE_BYTE_CODE
-	D3DX11CompileFromMemory(g_clearShaderCode , len ,NULL , NULL ,NULL,
-							"VS" , "vs_4_0_level_9_1" , flags , 0 , NULL,
-							&pBlob , &pError , NULL);
-#else
-	pBlob = HQ_NEW ID3DBlobImpl(HQClearViewportShaderCodeD3D1x_VS,
-							sizeof(HQClearViewportShaderCodeD3D1x_VS));
-#endif
-
-	this->CreateShader(HQ_VERTEX_SHADER , pBlob , &this->clearVShader);
-	SafeRelease(pBlob);
-	SafeRelease(pError);
-
-#if !HQ_D3D_CLEAR_VP_USE_BYTE_CODE
-	D3DX11CompileFromMemory(g_clearShaderCode , len ,NULL , NULL ,NULL,
-							"PS" , "ps_4_0_level_9_1" , flags , 0 , NULL,
-							&pBlob , &pError , NULL);
-#else
-	pBlob = HQ_NEW ID3DBlobImpl(HQClearViewportShaderCodeD3D1x_PS,
-							sizeof(HQClearViewportShaderCodeD3D1x_PS));
-#endif
-
-	this->CreateShader(HQ_PIXEL_SHADER , pBlob , &this->clearPShader);
-	SafeRelease(pBlob);
-	SafeRelease(pError);
-
-	HQUniformBuffer * pBuffer = 0;
-	this->CreateUniformBuffer(NULL, sizeof(ClearBufferParameters), true, &pBuffer);
-	this->clearShaderParameters = static_cast<HQShaderConstBufferD3D11*>(pBuffer);
-#endif//#if HQ_D3D_CLEAR_VP_USE_GS
-
 	/*------------------------*/
 
 	InitFFEmu();
@@ -526,10 +461,6 @@ ID3DBlob *HQShaderManagerD3D11::GetCompiledVertexShader(HQShaderObject* pVShader
 		return NULL;
 
 	return pVShader->pByteCodeInfo;
-}
-ID3DBlob *HQShaderManagerD3D11::GetCompiledClearVShader()
-{
-	return clearVShader.pByteCodeInfo;
 }
 
 /*------------------------*/
@@ -1664,61 +1595,6 @@ HQReturnVal HQShaderManagerD3D11::SetUniformBuffer(hq_uint32 index, HQUniformBuf
 	hq_uint32 shaderStage = index & 0xf0000000;
 
 	return this->HQShaderManagerD3D11::SetUniformBuffer((HQShaderType)shaderStage, slot, bufferID);
-}
-
-/*--------------------------------*/
-void HQShaderManagerD3D11::BeginClearViewport()
-{
-	pD3DContext->VSSetShader((ID3D11VertexShader*)this->clearVShader.pD3DShader , NULL , 0);
-	pD3DContext->GSSetShader((ID3D11GeometryShader*)this->clearGShader.pD3DShader, NULL , 0);
-	pD3DContext->PSSetShader((ID3D11PixelShader*)this->clearPShader.pD3DShader, NULL , 0);
-#if !HQ_D3D_CLEAR_VP_USE_GS
-	HQSharedPtr<HQShaderConstBufferD3D11> pBuffer = shaderConstBuffers.GetItemPointerNonCheck(this->clearShaderParameters);
-	pD3DContext->VSSetConstantBuffers(0, 1, &pBuffer->pD3DBuffer);
-#endif
-}
-
-#if !HQ_D3D_CLEAR_VP_USE_GS
-void HQShaderManagerD3D11::ChangeClearVPParams(HQColor clearColor, hqfloat32 clearDepth)
-{
-	ClearBufferParameters *parameters = NULL;
-
-	this->clearShaderParameters->Map(&parameters);
-	parameters->color = clearColor;
-	parameters->depth = clearDepth;
-	this->clearShaderParameters->Unmap();
-}
-#endif
-
-void HQShaderManagerD3D11::EndClearViewport()
-{
-	if (this->activeVShader != NULL)
-		pD3DContext->VSSetShader((ID3D11VertexShader*)this->activeVShader->pD3DShader, NULL , 0);
-	else
-		pD3DContext->VSSetShader(NULL , NULL , 0);
-
-	if (this->activeGShader != NULL)
-		pD3DContext->GSSetShader((ID3D11GeometryShader*)this->activeGShader->pD3DShader, NULL , 0);
-	else
-		pD3DContext->GSSetShader(NULL, NULL , 0);
-	
-	if (this->activePShader != NULL)
-		pD3DContext->PSSetShader((ID3D11PixelShader*)this->activePShader->pD3DShader, NULL , 0);
-	else
-		pD3DContext->PSSetShader(NULL, NULL , 0);
-
-#if !HQ_D3D_CLEAR_VP_USE_GS
-	if (this->uBufferSlots[0][0] != NULL)
-		pD3DContext->VSSetConstantBuffers(0, 1, &this->uBufferSlots[0][0]->pD3DBuffer);
-	else
-	{
-		/*
-		TO DO: crash
-		ID3D11Buffer *pNULL = NULL;
-		pD3DContext->VSSetConstantBuffers(0, 1, &pNULL);
-		*/
-	}
-#endif
 }
 
 

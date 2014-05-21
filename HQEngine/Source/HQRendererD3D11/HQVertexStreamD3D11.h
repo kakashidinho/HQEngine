@@ -152,12 +152,6 @@ public:
 	void RemoveAllVertexBuffer() ;
 	void RemoveAllIndexBuffer() ;
 	void RemoveAllVertexInputLayout() ;
-	
-#if HQ_D3D_CLEAR_VP_USE_GS
-	void ChangeClearVBuffer(HQColorui color , hq_float32 depth);
-#endif
-	void BeginClearViewport();
-	void EndClearViewport();
 
 private:
 	void ConvertToElementDesc(const HQVertexAttribDesc &vAttribDesc, D3D11_INPUT_ELEMENT_DESC &vElement);
@@ -166,8 +160,6 @@ private:
 
 	ID3D11Device * pD3DDevice;
 	ID3D11DeviceContext *pD3DContext;
-	ID3D11Buffer * pCleaVBuffer;//vertex buffer for clearing viewport
-	ID3D11InputLayout *pClearInputLayout;//input layout for clearing viewport
 
 	HQShaderManagerD3D11 *pShaderMan;
 

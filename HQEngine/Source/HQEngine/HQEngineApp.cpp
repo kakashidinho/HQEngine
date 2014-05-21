@@ -255,7 +255,7 @@ HQReturnVal HQEngineApp::InitWindow(const WindowInitParams* initParams)
 			return re;
 		}
 		/*---------clear window surface's color-----*/
-		m_pRenderDevice->Clear(HQ_TRUE , HQ_FALSE , HQ_FALSE, HQ_TRUE);
+		m_pRenderDevice->Clear(HQ_TRUE , HQ_FALSE , HQ_FALSE);
 		m_pRenderDevice->DisplayBackBuffer();
 
 		/*-----------create resource and effect manager--------*/

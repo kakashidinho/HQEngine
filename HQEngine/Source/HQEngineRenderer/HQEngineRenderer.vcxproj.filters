@@ -86,9 +86,6 @@
     <ClInclude Include="..\BaseImpl\HQBaseImplCommon.h">
       <Filter>Header Files\BaseImpl</Filter>
     </ClInclude>
-    <ClInclude Include="..\BaseImpl\HQClearViewportShaderCodeD3D1x.h">
-      <Filter>Header Files\BaseImpl</Filter>
-    </ClInclude>
     <ClInclude Include="..\BaseImpl\HQRenderDeviceBaseImpl.h">
       <Filter>Header Files\BaseImpl</Filter>
     </ClInclude>
@@ -97,12 +94,6 @@
     </ClInclude>
     <ClInclude Include="..\BaseImpl\HQTextureManagerBaseImpl.h">
       <Filter>Header Files\BaseImpl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h">
-      <Filter>Header Files\BaseImpl\compiledBaseImplShader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h">
-      <Filter>Header Files\BaseImpl\compiledBaseImplShader</Filter>
     </ClInclude>
     <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h">
       <Filter>Header Files\BaseImpl\compiledBaseImplShader</Filter>
@@ -152,9 +143,6 @@
     <ClInclude Include="..\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex_debug.h">
       <Filter>Header Files\BaseImpl\compiledBaseImplShader</Filter>
     </ClInclude>
-    <ClInclude Include="..\BaseImpl\BaseImplShaderString\HQClearViewportShaderCodeD3D1x.h">
-      <Filter>Header Files\BaseImpl\BaseImplShaderString</Filter>
-    </ClInclude>
     <ClInclude Include="..\BaseImpl\BaseImplShaderString\HQFFEmuShaderD3D1x.h">
       <Filter>Header Files\BaseImpl\BaseImplShaderString</Filter>
     </ClInclude>
@@ -178,14 +166,8 @@
     <None Include="..\BaseImpl\HQFFEmuShaderGL.glsl">
       <Filter>Header Files\BaseImpl</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl">
-      <Filter>Header Files\BaseImpl</Filter>
-    </FxCompile>
-    <FxCompile Include="..\BaseImpl\HQFFEmuShaderD3D1x.hlsl">
-      <Filter>Header Files\BaseImpl</Filter>
-    </FxCompile>
+    <None Include="..\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl" />
+    <None Include="..\BaseImpl\HQFFEmuShaderD3D1x.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

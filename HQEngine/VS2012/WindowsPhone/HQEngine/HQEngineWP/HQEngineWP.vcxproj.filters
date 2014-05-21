@@ -263,9 +263,6 @@
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQBaseImplCommon.h">
       <Filter>Source\HQRenderer\BaseImplement</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.h">
-      <Filter>Source\HQRenderer\BaseImplement</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQRenderDeviceBaseImpl.h">
       <Filter>Source\HQRenderer\BaseImplement</Filter>
     </ClInclude>
@@ -493,12 +490,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Source\HQUtilDXMath.h">
       <Filter>Source\HQUtilMath\DirectXMath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h">
-      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h">
-      <Filter>Source\HQRenderer\BaseImplement\compiledBaseImplShader</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Source\HQDataStream.h">
       <Filter>Source\HQEngine</Filter>
@@ -1082,9 +1073,6 @@
     </None>
     <None Include="..\..\..\..\Source\HQEngine\ios\HQIOSAppDelegate.mm">
       <Filter>Source\HQEngine\IOS</Filter>
-    </None>
-    <None Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl">
-      <Filter>Source\HQRenderer\BaseImplement</Filter>
     </None>
     <None Include="..\..\..\..\Source\BaseImpl\compileBaseImplShader.bat">
       <Filter>Source\HQRenderer\BaseImplement</Filter>

@@ -10,7 +10,6 @@ COPYING.txt included with this distribution for more information.
 
 #ifndef _SHADER_H_
 #define _SHADER_H_
-#include "../BaseImpl/HQClearViewportShaderCodeD3D1x.h"
 #include "../BaseImpl/HQBaseImplCommon.h"
 #include "../HQShaderManager.h"
 #include "HQCommonD3D11.h"
@@ -322,14 +321,6 @@ public:
 	void RemoveAllBufferUAVs();
 
 	/*----------------------------------*/
-	ID3DBlob * GetCompiledClearVShader();
-	void BeginClearViewport();
-#if !HQ_D3D_CLEAR_VP_USE_GS
-	void ChangeClearVPParams(HQColor clearColor, hqfloat32 clearDepth);
-#endif
-	void EndClearViewport();
-
-	/*----------------------------------*/
 	void NotifyFFRenderIfNeeded();// notify shader manager that the render device is going to draw something. Shader manager needs to update Fixed Function emulator if needed
 	HQShaderObject* GetFFVertexShaderForInputLayoutCreation();//fixed function vertex shader
 
@@ -411,11 +402,6 @@ private:
 	HQIDItemManager<HQShaderObjectD3D11> shaderObjects;//danh sách shader object
 	HQIDItemManager<HQShaderConstBufferD3D11> shaderConstBuffers;
 	HQIDItemManager<HQGenericBufferD3D11> uavBuffers;
-
-	HQShaderObjectD3D11 clearVShader, clearGShader, clearPShader;//shaders for clearing viewport
-#if !HQ_D3D_CLEAR_VP_USE_GS
-	HQShaderConstBufferD3D11* clearShaderParameters;//uniform parameters for clear viewport shaders 
-#endif
 
 	//feature level
 	D3D_FEATURE_LEVEL featureLevel;

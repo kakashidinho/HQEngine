@@ -448,8 +448,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_PS.h" />
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQClearViewportShaderCodeD3D1x_VS.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_notex_debug.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_PS_tex.h" />
@@ -467,7 +465,6 @@
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\compiledBaseImplShader\HQFFEmuShaderD3D1x_VS_nolight_nospec_tex_debug.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQBaseImplCommon.h" />
-    <ClInclude Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQRenderDeviceBaseImpl.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQRenderTargetManagerBaseImpl.h" />
     <ClInclude Include="..\..\..\..\Source\BaseImpl\HQShaderParameterIndexTable.h" />
@@ -4745,24 +4742,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\Source\BaseImpl\compileBaseImplShader.bat" />
-    <None Include="..\..\..\..\Source\BaseImpl\HQClearViewportShaderCodeD3D1x.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='StaticDebug|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='StaticRelease|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='StaticDebug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='StaticRelease|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_nooptimize|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_nooptimize_DirectXMath|Win32'">true</ExcludedFromBuild>
-    </None>
     <CustomBuild Include="..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonMatrix.s">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">armasm -machine ARM  ..\..\..\..\Source\HQUtilMath\arm_neon_math\HQNeonMatrix.s $(IntDir)HQNeonMatrix.obj</Command>
