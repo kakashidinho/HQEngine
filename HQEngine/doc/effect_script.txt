@@ -30,11 +30,23 @@ Pass format:
 			address_v=wrap/mirror/clamp/border
 			max_anisotropy=1
 			border_color=0 0 0 0 //red green blue alpha
-			source=<resource_name>
+			source=<resource_name> //texture resource name
 		} 
 		
 		//another syntax for specifying texture unit. In this case, default sampler state is used.
 		texture1=<resource_name>
+		
+		/*specify geometry shader's texture unit. Use same syntax as texture unit described above.
+		Note: OpenGL will treat this texture unit the same as normal texture unit. I.e. it will be accessed by every shader stage*/
+		geometry_texture0 {
+			...
+		}
+		
+		/*specify vertex shader's texture unit. Use same syntax as texture unit described above.
+		Note: OpenGL will treat this texture unit the same as normal texture unit. I.e. it will be accessed by every shader stage*/
+		vertex_texture0 {
+			...
+		}
 		
 		/*
 		Note: some value with more than one word need to be quoted.

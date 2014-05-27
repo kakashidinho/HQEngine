@@ -71,6 +71,8 @@ I           [uUlL]
 "border_color"				{SAVE_LINE;  return (BORDER_COLOR_KEYWORD);}
 
 texture{D}			  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (TEXUNIT);}	
+geometry_texture{D}			  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (GS_TEXUNIT);}
+vertex_texture{D}			  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (VS_TEXUNIT);}		
 output{D}			  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (OUTPUT);}
 texture_uav{D}		  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (TEX_UAV_UNIT);}	
 buffer_uav{D}		  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (BUFFER_UAV_UNIT);}	

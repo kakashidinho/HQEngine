@@ -1210,6 +1210,46 @@ HQReturnVal HQEngineEffectManagerImpl::LoadPass(const HQEngineEffectParserNode* 
 
 			newPass->AddTextureUnit(texunit);
 		}//if (!strncmp(elemName, "texture", 7))
+		else if (!strncmp(elemName, "geometry_texture", 16))
+		{
+			hquint32 textureIdx;
+			if (sscanf(elemName, "geometry_texture%u", &textureIdx) == 0)
+			{
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
+				return HQ_FAILED;
+			}
+
+			HQEngineTextureUnit texunit;
+			if (m_isGL)
+				texunit.unitIndex = textureIdx;
+			else
+				texunit.unitIndex = HQ_GEOMETRY_SHADER | textureIdx;
+
+			if (HQFailed(this->ParseTextureUnit(elem, texunit)))
+				return HQ_FAILED;
+
+			newPass->AddTextureUnit(texunit);
+		}//if (!strncmp(elemName, "geometry_texture", 16))
+		else if (!strncmp(elemName, "vertex_texture", 14))
+		{
+			hquint32 textureIdx;
+			if (sscanf(elemName, "vertex_texture%u", &textureIdx) == 0)
+			{
+				Log("Error : %d : invalid token %s!", elem_line, elemName);
+				return HQ_FAILED;
+			}
+
+			HQEngineTextureUnit texunit;
+			if (m_isGL)
+				texunit.unitIndex = textureIdx;
+			else
+				texunit.unitIndex = HQ_VERTEX_SHADER | textureIdx;
+
+			if (HQFailed(this->ParseTextureUnit(elem, texunit)))
+				return HQ_FAILED;
+
+			newPass->AddTextureUnit(texunit);
+		}//if (!strncmp(elemName, "geometry_texture", 16))
 		else if (!strcmp(elemName, "blend"))
 		{
 			if (HQFailed(this->ParseBlendState(elem, blendStateParams)) )
