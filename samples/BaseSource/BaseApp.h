@@ -11,7 +11,7 @@
 
 
 /*----------BaseApp-------------------------*/
-class BaseApp : public HQEngineRenderDelegate, public HQEngineKeyListener {
+class BaseApp : public HQEngineRenderDelegate, public HQEngineKeyListener, public HQEngineMouseListener {
 public:
 	BaseApp(const char* rendererAPI, 
 			HQLogStream *logStream,
@@ -29,6 +29,10 @@ protected:
 	virtual void Update(HQTime dt) = 0;
 	virtual void RenderImpl(HQTime dt) = 0;///don't need to call BeginRender() & EndRender()
 
+	virtual void MousePressed(HQMouseKeyCodeType button, const HQPointi &point);
+	virtual void MouseReleased(HQMouseKeyCodeType button, const HQPointi &point);
+	virtual void MouseMove(const HQPointi &point);
+
 	char m_renderAPI_name[6];//"D3D9" or "GL"
 	HQRenderAPI m_renderAPI_type;
 
@@ -37,6 +41,8 @@ protected:
 	HQEngineEffectManager *m_effectManager;
 	HQCamera * m_camera;
 	HQSceneNode* m_scene;//the whole scene
+	HQSceneNode* m_sceneController;//the scene's transformation controller
+	HQSceneNode* m_world;//the whole world
 
 	HQFloat3 m_cameraTransition;//camera's transition per second
 
@@ -44,6 +50,9 @@ protected:
 	MyGUI::HQEnginePlatform* m_guiPlatform;
 	MyGUI::Gui *m_myGUI;
 	MyGUI::TextBox* m_fpsTextBox;
+
+	bool m_leftMousePressed;
+	HQPointi m_prevMousePos;
 
 private:
 	void Init(const char* rendererAPI,

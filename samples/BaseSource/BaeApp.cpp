@@ -15,13 +15,13 @@ BaseApp::BaseApp(const char* rendererAPI,
 	HQLogStream *logStream,
 	const char * additionalAPISettings,
 	hquint32 width, hquint32 height)
-	: m_camera(NULL)
+	: m_camera(NULL), m_leftMousePressed(false)
 {
 	Init(rendererAPI, logStream, additionalAPISettings, width, height);
 }
 
 BaseApp::BaseApp(const char * additionalAPISettings, hquint32 width, hquint32 height)
-	: m_camera(NULL)
+: m_camera(NULL), m_leftMousePressed(false)
 {
 	//read renderer API config from "API.txt"
 	std::string rendererAPI = "D3D11";
@@ -40,6 +40,7 @@ BaseApp::BaseApp(const char * additionalAPISettings, hquint32 width, hquint32 he
 }
 
 BaseApp::BaseApp(HQLogStream* logStream, const char * additionalAPISettings, hquint32 width, hquint32 height)
+: m_camera(NULL), m_leftMousePressed(false)
 {
 	//read renderer API config from "API.txt"
 	std::string rendererAPI = "D3D11";
@@ -86,8 +87,9 @@ void BaseApp::Init(const char* rendererAPI,
 
 	//register renderering delegate
 	HQEngineApp::GetInstance()->SetRenderDelegate(*this);
-	//register key listener
+	//register listeners
 	HQEngineApp::GetInstance()->SetKeyListener(*this);
+	HQEngineApp::GetInstance()->SetMouseListener(*this);
 
 	m_pRDevice = HQEngineApp::GetInstance()->GetRenderDevice();
 	m_resManager = HQEngineApp::GetInstance()->GetResourceManager();
@@ -115,6 +117,14 @@ void BaseApp::Init(const char* rendererAPI,
 	//create scene container
 	m_scene = new HQSceneNode("scene_root"); 
 
+	m_sceneController = new HQSceneNode("scene_controller");
+
+	//create world container
+	m_world = new HQSceneNode("world_root");
+
+	m_world->AddChild(m_sceneController);
+	m_sceneController->AddChild(m_scene);
+
 	//by default, camera will stay still every frame
 	m_cameraTransition.Set(0, 0, 0);
 
@@ -129,6 +139,10 @@ BaseApp::~BaseApp()
 	delete m_camera;
 
 	delete m_scene;
+
+	delete m_sceneController;
+
+	delete m_world;
 
 	HQEngineApp::Release();
 }
@@ -153,12 +167,9 @@ void BaseApp::Render(HQTime dt)
 	//move camera
 	if (m_camera != NULL)
 	{
-		HQ_DECL_STACK_VECTOR4(scaledTrans);
-		scaledTrans.x = m_cameraTransition.x * dt;
-		scaledTrans.y = m_cameraTransition.y * dt;
-		scaledTrans.z = m_cameraTransition.z * dt;
-
-		m_camera->Translate(scaledTrans);
+		m_camera->MoveLeftRight( m_cameraTransition.x * dt);
+		m_camera->Translate(0, m_cameraTransition.y * dt, 0);
+		m_camera->MoveBackForward(m_cameraTransition.z * dt);
 	}
 
 	//call update implementation
@@ -184,4 +195,39 @@ void BaseApp::KeyReleased(HQKeyCodeType keyCode)
 		HQEngineApp::GetInstance()->Stop();
 		break;
 	}
+}
+
+void BaseApp::MousePressed(HQMouseKeyCodeType button, const HQPointi &point)
+{
+	switch (button)
+	{
+	case HQKeyCode::LBUTTON:
+		m_leftMousePressed = true;
+		m_prevMousePos = point;
+		break;
+	}
+}
+void BaseApp::MouseReleased(HQMouseKeyCodeType button, const HQPointi &point)
+{
+	switch (button)
+	{
+	case HQKeyCode::LBUTTON:
+		m_leftMousePressed = false;
+		break;
+	}
+}
+void BaseApp::MouseMove(const HQPointi &point)
+{
+	if (m_leftMousePressed)
+	{
+		HQPointi dpos;
+		dpos.x = point.x - m_prevMousePos.x;
+		dpos.y = point.y - m_prevMousePos.y;
+
+		//rotate camera
+		m_camera->RotateY(dpos.x * 0.001f);
+		m_camera->RotateVertical(dpos.y * -0.001f);
+
+		m_prevMousePos = point; //store current position
+	}//if (m_leftMousePressed)
 }
