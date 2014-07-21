@@ -246,6 +246,7 @@ struct HQFixedFunctionShaderGL: public HQA16ByteObject
 			glProgramUniformMatrix4fvWrapper = glProgramUniformMatrix4fv;
 		}
 		else
+#endif//#ifdef HQ_GLSL_SHADER_PIPELINE_DEFINED
 		{
 			glUseFixedFunctionProgramWrapper = glUseFixedFunctionProgram;
 			glProgramUniform1fWrapper = glNoPipelineUniform1f;
@@ -253,7 +254,6 @@ struct HQFixedFunctionShaderGL: public HQA16ByteObject
 			glProgramUniform4fvWrapper = glNoPipelineUniform4fv;
 			glProgramUniformMatrix4fvWrapper = glNoPipelineUniformMatrix4fv;
 		}
-#endif
 
 		/*---------------------------*/
 		Restore();

@@ -74,6 +74,10 @@ extern GLboolean GLEW_EXT_texture_rg;
 extern GLboolean GLEW_OES_texture_half_float;
 extern GLboolean GLEW_OES_texture_float;
 
+#ifndef GL_TEXTURE_2D_ARRAY
+#define GL_TEXTURE_2D_ARRAY 0x8C1A
+#endif
+
 #ifndef GL_TEXTURE_BUFFER
 #define GL_TEXTURE_BUFFER 0x8C2A
 #define GL_RGBA16F 0x881A
