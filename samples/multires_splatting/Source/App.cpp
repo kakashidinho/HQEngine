@@ -196,7 +196,7 @@ void App::RenderImpl(HQTime dt){
 
 	//rsm pass rendering
 	m_effect->GetPassByName("rsm-pass")->Apply();
-	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE, HQ_TRUE);
+	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE);
 
 	this->DrawScene();
 
@@ -204,7 +204,7 @@ void App::RenderImpl(HQTime dt){
 
 	m_effect->GetPassByName("gbuffer-pass")->Apply();
 	m_pRDevice->SetFullViewPort();
-	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE, HQ_TRUE);
+	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE);
 
 	this->DrawScene();
 
@@ -459,7 +459,7 @@ void App::FinalPass()
 	m_pRDevice->GetVertexStreamManager()->SetVertexInputLayout(m_fullscreenQuadVertLayout);
 	m_pRDevice->SetPrimitiveMode(HQ_PRI_TRIANGLE_STRIP);
 
-	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE, HQ_TRUE);
+	m_pRDevice->Clear(HQ_TRUE, HQ_TRUE, HQ_FALSE);
 	m_pRDevice->Draw(4, 0);
 }
 
