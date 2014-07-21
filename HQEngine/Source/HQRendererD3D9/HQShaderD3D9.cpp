@@ -387,20 +387,18 @@ void HQConstantTableD3D9::InitConstBufferSlotList(HQShaderVarParserD3D9& preproc
 		{
 			BufferSlotInfo* pUsedSlot = NULL;
 			HQLinkedList<UniformBlkElemInfo>::Iterator elemIte;
+			BufferSlotInfo emptyItem;
+
+			pUsedSlot = &this->constBufferSlotList.PushBack(emptyItem)->m_element;
+			pUsedSlot->index = ite->index;
+
 			for (ite->blockElems.GetIterator(elemIte); !elemIte.IsAtEnd(); ++elemIte)
 			{
 				//find in the constant table
 				bool found;
 				DWORD regIndex = this->GetConstantRegIndex(elemIte->name.c_str(), found);
-				if (found)//found
+				//if (found)//found
 				{
-					if (pUsedSlot == NULL)
-					{
-						//at least one constant is valid, so we added a new buffer slot
-						BufferSlotInfo emptyItem;
-						pUsedSlot = &this->constBufferSlotList.PushBack(emptyItem)->m_element;
-						pUsedSlot->index = ite->index;
-					}
 					ConstInfo constInfo;
 					constInfo.regIndex = regIndex;
 					constInfo.isInteger = elemIte->integer;
@@ -1992,12 +1990,15 @@ void HQShaderManagerD3D9::Commit()
 					!const_ite.IsAtEnd() && offset < totalSize;
 					++const_ite)
 				{
-					//for now, each element consumes one vector
-					if (const_ite->isInteger)
-						this->SetD3DVShaderConstantI<4>(const_ite->regIndex, (const hqint32*)(pData + offset), const_ite->numVectors);
-					else
-						this->SetD3DVShaderConstantF<4>(const_ite->regIndex, (const hqfloat32*)(pData + offset), const_ite->numVectors);
-
+					DWORD regIndex = const_ite->regIndex;
+					if (regIndex != 0xffffffff)
+					{
+						//for now, each element consumes array of 4 components vectors
+						if (const_ite->isInteger)
+							this->SetD3DVShaderConstantI<4>(regIndex, (const hqint32*)(pData + offset), const_ite->numVectors);
+						else
+							this->SetD3DVShaderConstantF<4>(regIndex, (const hqfloat32*)(pData + offset), const_ite->numVectors);
+					}
 					offset += 4 * sizeof(hqfloat32)* const_ite->numVectors;
 				}
 
@@ -2030,12 +2031,15 @@ void HQShaderManagerD3D9::Commit()
 					!const_ite.IsAtEnd() && offset < totalSize;
 					++const_ite)
 				{
-					//for now, each element consumes one vector
-					if (const_ite->isInteger)
-						this->SetD3DPShaderConstantI<4>(const_ite->regIndex, (const hqint32*)(pData + offset), const_ite->numVectors);
-					else
-						this->SetD3DPShaderConstantF<4>(const_ite->regIndex, (const hqfloat32*)(pData + offset), const_ite->numVectors);
-
+					DWORD regIndex = const_ite->regIndex;
+					if (regIndex != 0xffffffff)
+					{
+						//for now, each element consumes array of 4 components vectors
+						if (const_ite->isInteger)
+							this->SetD3DPShaderConstantI<4>(regIndex, (const hqint32*)(pData + offset), const_ite->numVectors);
+						else
+							this->SetD3DPShaderConstantF<4>(regIndex, (const hqfloat32*)(pData + offset), const_ite->numVectors);
+					}
 					offset += 4 * sizeof(hqfloat32)* const_ite->numVectors;
 				}
 
