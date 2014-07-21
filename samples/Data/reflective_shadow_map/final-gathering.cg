@@ -74,10 +74,21 @@ vOut VS(in vPNIn input){
 #define SHADOW_MAP_SIZE 512
 #define LOW_RES_SIZE 128
 
+#ifndef HQEXT_CG_D3D11
 uniform material {
 	float4 materialAmbient;
 	float4 materialDiffuse;
 } : BUFFER[2];
+#else
+//this is to prevent compiler from optimizing out ambient element of buffer
+
+uniform material {
+	float4x2 materialCoeff;
+} : BUFFER[2];
+
+#define materialDiffuse materialCoeff._12_22_32_42;
+
+#endif
 
 uniform lightProperties {
 	

@@ -16,10 +16,10 @@ COPYING.txt included with this distribution for more information.
 #include <string.h>
 #include <sstream>
 
-#define NUM_PREDEFINED_ARGS 17
+#define NUM_PREDEFINED_ARGS 18
 
 
-static char *g_predefined[18]= {
+static char *g_predefined[19]= {
 	"-DVPOSITION=POSITION",
 	"-DVCOLOR=COLOR",
 	"-DVNORMAL=NORMAL",
@@ -37,6 +37,7 @@ static char *g_predefined[18]= {
 	"-DVBLENDINDICES=BLENDINDICES",
 	"-DVPSIZE=PSIZE",
 	"-DHQEXT_CG",
+	"-DHQEXT_CG_D3D9",
 	NULL
 };
 

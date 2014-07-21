@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JComboBox;
 import java.awt.event.* ;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 /**
@@ -749,6 +750,8 @@ public class HQEngineShaderCompilerView extends FrameView {
         while(st.hasMoreTokens())
             args.add(st.nextToken());
         String profile = "";
+        boolean d3d11profile = false;
+        boolean d3d9profile = false;
         String glslMacros = "";
         String glslResult;
         String[] cmd;
@@ -779,12 +782,42 @@ public class HQEngineShaderCompilerView extends FrameView {
                     {
                         for (int i = 0 ; i < semanticsHLSL.length ; ++i)
                             args.add(semanticsHLSL[i]);
+                        
+                        //find shader model
+                        Scanner scanner = new Scanner(profile);
+                        scanner.useDelimiter("_");
+                        
+                        String stage = scanner.next();
+                        if (stage.equals("vs") || stage.equals("ps")
+                                || stage.equals("gs") || stage.equals("hs")
+                                || stage.equals("ds"))
+                        {
+                            int major = -1, minor;
+                            try {
+                                major = scanner.nextInt();
+                                minor = scanner.nextInt();
+                            }
+                            catch (Exception e)
+                            {
+                                major = -1;
+                            }
+                            
+                            if (major > 3)
+                                d3d11profile = true;
+                            else if (major > 0)
+                                d3d9profile = true;
+                        }
                     }
                     args.add("-profile");
                     args.add(profile);
                     args.add("-entry");
                     args.add(this.entryNameTextField.getText());
                     args.add("-DHQEXT_CG");
+                    if (d3d11profile)
+                        args.add("-DHQEXT_CG_D3D11");
+                    else if (d3d9profile)
+                        args.add("-DHQEXT_CG_D3D9");
+                        
 
                     st = new StringTokenizer(this.profileOptionTextField.getText());
                     if (st.hasMoreTokens())

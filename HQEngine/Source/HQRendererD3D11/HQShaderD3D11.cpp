@@ -44,6 +44,7 @@ static char *cgPredefinedMacrosArray[] = {
 	"-DVPSIZE=PSIZE",
 #endif
 	"-DHQEXT_CG",
+	"-DHQEXT_CG_D3D11",
 	NULL
 };
 
