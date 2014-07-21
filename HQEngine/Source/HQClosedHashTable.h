@@ -317,7 +317,7 @@ bool HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , Mem
 template <class Key ,class T ,class HashFunction , class ProbingFunction , class KeyEqual ,class MemoryManager >
 bool HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , MemoryManager> :: FindEmptySlot(const Key& key , hq_uint32 &foundIndex)
 {
-	hq_uint32 hashCode = m_hashFunction(key);
+	hq_uint32 hashCode = m_hashFunction(key) % this->m_numBuckets;
 	hq_uint32 i = 0 ;
 	bool found = false;
 	while(!found && i < this->m_numBuckets)
@@ -336,7 +336,7 @@ bool HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , Mem
 {
 	if (this->m_numItems == 0)
 		return false;
-	hq_uint32 hashCode = m_hashFunction(key);
+	hq_uint32 hashCode = m_hashFunction(key) % this->m_numBuckets;
 	hq_uint32 i = 0 ;
 	bool found = false;
 	while(!found && i < this->m_numBuckets)

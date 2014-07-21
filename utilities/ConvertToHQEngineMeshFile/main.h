@@ -27,6 +27,8 @@ COPYING.txt included with this distribution for more information.
 #define MAX_NUM_BONES_SUPPORTED 128
 
 #define FLAG_FLAT_FACES 0x1
+#define FLAG_FORCE_32BIT_INDICES 0x2
+#define FLAG_OUTPUT_ADDITIONAL_INFO 0x4
 
 struct HQMeshFileHeader
 {
@@ -130,6 +132,11 @@ struct Animation
 	AnimationKeySet *keySets;
 };
 
+struct MeshAdditionalInfo {
+	HQFloat3 bboxMin, bboxMax;
+	hqfloat32 meshSurfArea;//mesh's surface area
+};
+
 
 void CreateWindowHandle();
 void CreateDirect3dDevice();
@@ -140,5 +147,7 @@ void ConvertXToHQMeshFile(const char *dest, const char* source, int flags);
 void ConvertToHQMeshFile(const char *dest, const char* source, int flags);
 
 char* GetAnimationFileName(const char* destMeshFile);
+char* GetMoreInfoFileName(const char* destMeshFile);//get name of destination file containing additional info of the mesh
 
+void WriteMoreInfo(const char* destMeshFile, const MeshAdditionalInfo &info);
 #endif

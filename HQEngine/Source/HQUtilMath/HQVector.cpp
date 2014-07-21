@@ -1248,8 +1248,7 @@ HQVector4* HQVector4Transform(const HQVector4* v1,const HQQuaternion* quat,HQVec
 	HQQuaternion temp(NULL);
 #endif
 
-	//HQQuatMultiply(&quat1 , &(-(*quat)) , &quat2);
-	HQQuatMultiply(&quat1 , HQQuatNegate(quat, &temp) , &quat2);
+	HQQuatMultiply(&quat1, HQQuatConjugate(quat, &temp), &quat2);
 
 	//quat2=(*quat)*quat2;
 	HQQuatMultiply(quat, &quat2, &quat2);

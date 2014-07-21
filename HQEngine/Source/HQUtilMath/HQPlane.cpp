@@ -95,6 +95,49 @@ HQPlane& HQPlane::Normalize()
 
 	return *this;
 }
+//
+//trasform the plane
+//
+void HQPlane::Transform(const HQPlane& source, const HQMatrix4& mat)
+{
+	//find inverse transpose matrix
+	HQ_DECL_STACK_MATRIX4_CTOR_PARAMS(invTrans, (NULL));
+	HQMatrix4Inverse(&mat, &invTrans);
+
+	invTrans.Transpose();
+
+	source.ToFloat4(this->N);
+
+	HQVector4Transform(&this->N, &invTrans, &this->N);
+
+	this->D = this->N.w;
+	this->N.w = 0.f;
+}
+
+void HQPlane::Transform(const HQPlane& source, const HQMatrix3x4& mat)
+{
+	//find inverse transpose matrix
+	HQ_DECL_STACK_MATRIX4_CTOR_PARAMS(invTrans, (NULL));
+	HQMatrix3x4Inverse(&mat, &invTrans);
+
+	source.ToFloat4(this->N);
+
+	HQVector4Transform(&this->N, &invTrans, &this->N);
+
+	this->D = this->N.w;
+	this->N.w = 0.f;
+}
+
+void HQPlane::TransformInvTrans(const HQPlane& source, const HQMatrix4& mat)
+{
+	source.ToFloat4(this->N);
+
+	HQVector4Transform(&this->N, &mat, &this->N);
+
+	this->D = this->N.w;
+	this->N.w = 0.f;
+}
+
 //*********************************************************************
 //kiềm tra đa giác có cắt hay nằm ở 1 phía so với mặt phẳng
 //*********************************************************************

@@ -148,6 +148,11 @@ public:
 
 	HQReturnVal AddTexture(const HQRawPixelBuffer* color, bool generateMipmap, HQTexture** pTextureID);
 
+	HQReturnVal AddTextureAliasView(HQTexture *oriTexture,
+		hquint32 minMipLevel, hquint32 numMips,
+		hquint32 minLayer, hquint32 numLayers,
+		HQTexture **aliasOut);
+
 	/*--------implement dependent----------*/
 	virtual HQReturnVal LoadTextureFromStream(HQDataReaderStream* dataStream, HQBaseTexture * pTex) = 0;
 	virtual HQReturnVal LoadCubeTextureFromStreams(HQDataReaderStream* dataStreams[6], HQBaseTexture * pTex) = 0;
@@ -158,6 +163,13 @@ public:
 	virtual HQReturnVal InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmap) { return HQ_FAILED; }
 	
 	virtual HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color) = 0;
+
+	virtual HQReturnVal InitTextureAliasView(
+		HQBaseTexture *aliasTex, HQTexture *oriTexture,
+		hquint32 minMipLevel, hquint32 numMips,
+		hquint32 minLayer, hquint32 numLayers) {
+		return HQ_FAILED;
+	}
 
 	/*------------static methods----------------*/
 	static HQTextureUAVFormat GetTextureUAVFormat(HQRenderTargetFormat format);//get equivalent UAV texture format

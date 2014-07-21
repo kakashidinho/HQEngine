@@ -55,7 +55,7 @@ HQReturnVal HQBufferD3D11::Update(hq_uint32 offset, hq_uint32 size, const void *
 		box.left = offset;
 		box.right = offset + size;
 
-		pD3DContext->UpdateSubresource(this->pD3DBuffer, 0, &box, pData, this->size, this->size);
+		pD3DContext->UpdateSubresource(this->pD3DBuffer, 0, &box, pData, 0, 0);
 	}
 
 	return HQ_OK;
@@ -101,7 +101,44 @@ HQReturnVal HQBufferD3D11::GenericMap(void ** ppData, HQMapType mapType, hquint3
 
 HQReturnVal HQBufferD3D11::CopyContent(void *dest)
 {
-	return CopyD3D11BufferContent(dest, this->pD3DBuffer);
+	if (this->pD3DStagingBuffer == NULL)
+	{
+		//create staging buffer  to copy the content to
+		D3D11_BUFFER_DESC vbd;
+		this->pD3DBuffer->GetDesc(&vbd);//copy buffer size from {resource}
+
+		vbd.Usage = D3D11_USAGE_STAGING;
+		vbd.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		vbd.BindFlags = 0;
+		vbd.MiscFlags = 0;
+		vbd.StructureByteStride = 0;
+
+		ID3D11Device *pD3DDevice;
+		this->pD3DBuffer->GetDevice(&pD3DDevice);
+
+		if (FAILED(pD3DDevice->CreateBuffer(&vbd, NULL, &this->pD3DStagingBuffer)))
+		{
+			pD3DDevice->Release();
+			return HQ_FAILED_MEM_ALLOC;
+		}
+
+		pD3DDevice->Release();
+	}
+	//copy content
+	this->pD3DContext->CopyResource(this->pD3DStagingBuffer, this->pD3DBuffer);
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+	HQReturnVal re = HQ_FAILED;
+	//now copy from staging buffer to {dest}
+	if (SUCCEEDED(this->pD3DContext->Map(this->pD3DStagingBuffer, 0, D3D11_MAP_READ, 0, &mappedSubResource)))
+	{
+		memcpy(dest, mappedSubResource.pData, this->size);
+		this->pD3DContext->Unmap(this->pD3DStagingBuffer, 0);
+
+		re = HQ_OK;
+	}
+
+	return re;
 }
 
 HQReturnVal HQBufferD3D11::TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 destOffset, hquint32 srcOffset, hquint32 size)

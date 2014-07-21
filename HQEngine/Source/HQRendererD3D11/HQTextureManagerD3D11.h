@@ -72,7 +72,7 @@ public:
 
 	HQTextureCompressionSupport IsCompressionSupported(HQTextureType textureType, HQTextureCompressionFormat type);
 
-	HQReturnVal CreateShaderResourceView(HQBaseTexture * pTex);
+	HQReturnVal CreateShaderResourceView(HQBaseTexture * pTex);//create entire view of texture
 
 	HQReturnVal SetTexture(hq_uint32 slot , HQTexture* textureID);
 	HQReturnVal SetTextureForPixelShader(hq_uint32 slot, HQTexture* textureID);
@@ -95,6 +95,11 @@ public:
 
 	HQReturnVal InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmap);
 	HQReturnVal InitTextureUAVEx(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmap, bool renderTarget);
+
+	HQReturnVal InitTextureAliasView(
+		HQBaseTexture *aliasTex, HQTexture *oriTexture,
+		hquint32 minMipLevel, hquint32 numMips,
+		hquint32 minLayer, hquint32 numLayers);
 
 	HQBaseRawPixelBuffer* CreatePixelBufferImpl(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height);
 	HQReturnVal InitTexture(HQBaseTexture *pTex, const HQBaseRawPixelBuffer* color);

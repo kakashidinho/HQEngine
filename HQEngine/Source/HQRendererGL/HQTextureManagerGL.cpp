@@ -1949,6 +1949,15 @@ HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAV
 	return HQ_OK;
 }
 
+HQReturnVal HQTextureManagerGL::InitTextureAliasView(
+	HQBaseTexture *aliasTex, HQTexture *oriTexture,
+	hquint32 minMipLevel, hquint32 numMips,
+	hquint32 minLayer, hquint32 numLayers)
+{
+	//TO DO
+	return HQ_FAILED;
+}
+
 //define the size for texture. useful for textures created outside texture manager, such as those created by render target manager
 void HQTextureManagerGL::DefineTexture2DSize(HQBaseTexture* pTex, hquint32 width, hquint32 height)
 {

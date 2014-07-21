@@ -897,6 +897,7 @@ HQEngineEffectManagerImpl::HQEngineEffectManagerImpl(HQLogStream *stream, bool f
 	m_depthModeMap.Add("read only", HQ_DEPTH_READONLY);
 	m_depthModeMap.Add("write only", HQ_DEPTH_WRITEONLY);
 	m_depthModeMap.Add("none", HQ_DEPTH_NONE);
+	m_depthModeMap.Add("greater or equal read only", HQ_DEPTH_READONLY_GREATEREQUAL);
 
 	//keep/zero/replace/incre/decre/incre wrap/decre wrap
 	m_stencilOpMap.Add("keep", HQ_SOP_KEEP);

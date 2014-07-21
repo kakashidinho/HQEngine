@@ -16,19 +16,13 @@ COPYING.txt included with this distribution for more information.
 #include "../HQMeshNode.h"
 
 /*-----------Geometric Info------------*/
-struct HQGeometricGroup
-{
-	hquint32 startIndex;//start vertex index
-	hquint32 numIndices;//number of vertex indices 
-
-	HQSubMeshInfo material;
-};
 
 struct HQMeshNode::GeometricInfo : public HQReferenceCountObj
 {
 	GeometricInfo() :
 		groups(NULL) ,
-		indirectBuffer(NULL)
+		indirectBuffer(NULL),
+		customVertexLayout(NULL)
 	{
 	}
 	~GeometricInfo() {
@@ -36,6 +30,7 @@ struct HQMeshNode::GeometricInfo : public HQReferenceCountObj
 	}
 
 	HQVertexLayout* vertexInputLayout;
+	HQVertexLayout* customVertexLayout;
 	HQVertexBuffer* vertexBuffer;
 	hquint32 numVertices;
 	hquint32 vertexBufferStride;
@@ -45,7 +40,7 @@ struct HQMeshNode::GeometricInfo : public HQReferenceCountObj
 
 	hquint32 numGroups;
 	
-	HQGeometricGroup * groups;
+	HQSubMeshInfo * groups;
 };
 
 /*------------Animation Info-----------*/

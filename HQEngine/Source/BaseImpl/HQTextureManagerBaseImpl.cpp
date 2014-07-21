@@ -407,6 +407,42 @@ HQReturnVal HQBaseTextureManager::AddTextureArrayUAV(HQTextureUAVFormat format, 
 	return HQ_OK;
 }
 
+HQReturnVal HQBaseTextureManager::AddTextureAliasView(HQTexture *oriTexture,
+	hquint32 minMipLevel, hquint32 numMips,
+	hquint32 minLayer, hquint32 numLayers,
+	HQTexture **aliasOut)
+{
+	HQTextureType viewType;
+	switch (oriTexture->GetType())
+	{
+	case HQ_TEXTURE_2D_UAV:
+		viewType = HQ_TEXTURE_2D;
+		break;
+	case HQ_TEXTURE_2D_ARRAY_UAV:
+		viewType = HQ_TEXTURE_2D_ARRAY;
+		break;
+	default:
+		//TO DO: other format
+		viewType = oriTexture->GetType();
+	}
+	HQBaseTexture *pNewTex = this->CreateNewTextureObject(viewType);
+
+	HQReturnVal result = this->InitTextureAliasView(pNewTex, oriTexture, minMipLevel, numMips, minLayer, numLayers);
+	if (result != HQ_OK)
+	{
+		//giải phóng bộ nhớ
+		delete pNewTex;
+		return result;
+	}
+	if (this->textures.AddItem(pNewTex, aliasOut) == false)
+	{
+		delete pNewTex;
+		return HQ_FAILED_MEM_ALLOC;
+	}
+
+	return HQ_OK;
+}
+
 
 HQRawPixelBuffer* HQBaseTextureManager::CreatePixelBuffer(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height)
 {

@@ -138,6 +138,15 @@ public:
 	///
 	virtual HQRawPixelBuffer* CreatePixelBuffer(HQRawPixelFormat intendedFormat, hquint32 width, hquint32 height) = 0;
 	virtual HQReturnVal AddTexture(const HQRawPixelBuffer* color, bool generateMipmap, HQTexture** pTextureID) = 0;///Add texture from pixel buffer
+
+	///
+	///Create an alias view of texture, that can be set by SetTexture(). Note: this texture cannot be set by SetTextureUAV*(). 
+	///Undefined behavior happens when texture and its alias are bound to both input and output
+	///
+	virtual HQReturnVal AddTextureAliasView(HQTexture *oriTexture, 
+		hquint32 minMipLevel, hquint32 numMips,
+		hquint32 minLayer, hquint32 numLayers,												
+		HQTexture **aliasOut) = 0;
 };
 
 #endif

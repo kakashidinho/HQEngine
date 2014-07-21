@@ -53,10 +53,10 @@ public :
 
 protected:
 
-	HQMatrix4* m_viewProjMat;//view x projection matrix
-	HQVector4* m_xAxis;//camera's local x axix
-	HQVector4* m_yAxis;//camera's local y axis
-	HQVector4* m_zAxis;//camera's local z axis
+	HQMatrix4* m_viewProjMat;//view X projection matrix
+	HQVector4* m_ori_xAxis;//camera's original x axix
+	HQVector4* m_ori_yAxis;//camera's original y axis
+	HQVector4* m_ori_zAxis;//camera's original z axis
 
 	HQRenderAPI m_renderAPI;
 
@@ -73,17 +73,31 @@ public:
 			hqfloat32 fov, //field of view
 			hqfloat32 aspect_ratio,//width/height,
 			hqfloat32 nearPlane, hqfloat32 farPlane, //near and far plane
-			HQRenderAPI renderAPI//renderer API (D3D or OpenGL)
+			HQRenderAPI renderAPI,//renderer API (D3D or OpenGL)
+			hqfloat32 maxVerticalAngle = (HQPiFamily::_PIOVER2 - 0.1f) //0 => no limit. unit is radian. must be positive value
 		);
 
 	~HQCamera();
 
 	//override HQSceneNode's update
-	void Update(hqfloat32 dt, bool updateChilds = true, bool parentChanged = false);
+	virtual void Update(hqfloat32 dt, bool updateChilds = true, bool parentChanged = false);
+
+	void RotateVertical(hqfloat32 angle);
+	void RotateHorizontal(hqfloat32 angle);
+
+	void MoveLeftRight(float dx);
+	void MoveUpDown(float dx);
+	void MoveBackForward(float dx);
 
 	void GetWorldDirectionVec(HQVector4& directionOut) const;
 	void GetWorldDirection(HQFloat4& directionOut) const;
-private:
+protected:
+	virtual void UpdateLocalTransform();//override HQSceneNode
+
+	hqfloat32 m_horizontal_angle, m_vertical_angle;//rotation angle
+	hqfloat32 m_maxVerticalAngle;
+
+	HQFloat3 m_alignedMovement;//movement along camera's axes
 };
 
 

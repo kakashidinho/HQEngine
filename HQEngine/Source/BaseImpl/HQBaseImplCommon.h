@@ -115,10 +115,10 @@ class HQClosedPrimeHashTable : public HQClosedHashTable<Key, T, HashFunction, Pr
 public:
 	typedef HQClosedHashTable<Key, T, HashFunction, ProbingFunction, KeyEqual, MemoryManager > parentType;
 
-	/*----create hash table with 16 buckets and max load factor 0.75----------*/
-	HQClosedPrimeHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(pMemoryManager) {}
-	/*----create hash table with max load factor 0.75----------*/
-	HQClosedPrimeHashTable(hq_uint32 numBuckets, const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(numBuckets, pMemoryManager) {}
+	/*----create hash table with 17 buckets and max load factor 0.4----------*/
+	HQClosedPrimeHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(17, 0.4f, pMemoryManager) {}
+	/*----create hash table with max load factor 0.4----------*/
+	HQClosedPrimeHashTable(hq_uint32 numBuckets, const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(numBuckets, 0.4f, pMemoryManager) {}
 
 	/*-----------------------*/
 	HQClosedPrimeHashTable(hq_uint32 numBuckets, hq_float32 maxLoadFactor, const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(numBuckets, maxLoadFactor, pMemoryManager) {}
@@ -167,8 +167,10 @@ class HQClosedPtrKeyHashTable : public HQClosedPrimeHashTable<PointerTypedKey, T
 public:
 	typedef HQClosedPrimeHashTable<PointerTypedKey, T, HQPtrKeyHashFunc<PointerTypedKey>, ProbingFunction, HQEnginePtrKeyEqual<PointerTypedKey>, MemoryManager > parentType;
 
-	/*----create hash table with 16 buckets and max load factor 0.75----------*/
+	/*----create hash table with 17 buckets and max load factor 0.4----------*/
 	HQClosedPtrKeyHashTable(const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(pMemoryManager) {}
+
+	HQClosedPtrKeyHashTable(hq_uint32 numBuckets, hq_float32 maxLoadFactor, const HQSharedPtr<MemoryManager> &pMemoryManager = HQ_NEW MemoryManager()) : parentType(numBuckets, maxLoadFactor, pMemoryManager) {}
 };
 
 /*------- hash table using string key--------*/

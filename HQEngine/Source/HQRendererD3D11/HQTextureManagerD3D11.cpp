@@ -570,7 +570,6 @@ struct HQTextureBufferD3D11 : public HQTextureD3D11{
 	virtual HQReturnVal GenericMap(void ** ppData, HQMapType mapType, hquint32 offset, hquint32 size);
 	virtual HQReturnVal CopyContent(void *dest);
 
-
 	ID3D11DeviceContext *pD3DContext;
 	HQLoggableObject *pLog;
 	hquint32 size;
@@ -1939,7 +1938,7 @@ HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextu
 	if (renderTarget)
 		this->t2DDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
 	this->t2DDesc.CPUAccessFlags = 0;
-	this->t2DDesc.MiscFlags = 0;
+	this->t2DDesc.MiscFlags = (numMipmaps > 1 && renderTarget) ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
 
 	//create texture and UAV view
 	HQUAVTextureResourceD3D11* pTexResD3D = (HQUAVTextureResourceD3D11 *)pTex->pData;
@@ -1976,6 +1975,63 @@ HQReturnVal HQTextureManagerD3D11::InitTextureUAVEx(HQBaseTexture *pTex, HQTextu
 	return this->CreateShaderResourceView(pTex);
 }
 
+HQReturnVal HQTextureManagerD3D11::InitTextureAliasView(
+	HQBaseTexture *aliasTex, HQTexture *oriTexture,
+	hquint32 minMipLevel, hquint32 numMips,
+	hquint32 minLayer, hquint32 numLayers)
+{
+	HQTextureD3D11* pD3DAlias = static_cast<HQTextureD3D11*>  (aliasTex);
+	HQTextureD3D11* pD3DOri = static_cast<HQTextureD3D11*>  (oriTexture);
+
+	HQTextureResourceD3D11* pTexRes = (HQTextureResourceD3D11 *)pD3DOri->pData;
+	HQTextureResourceD3D11* pTexResAlias = (HQTextureResourceD3D11 *)pD3DAlias->pData;
+
+	pTexResAlias->pTexture = pTexRes->pTexture;
+	pTexRes->pTexture->AddRef();//add reference
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
+	pTexRes->pResourceView->GetDesc(&viewDesc);
+
+	switch (pD3DAlias->type)
+	{
+	case HQ_TEXTURE_2D:
+	{
+		viewDesc.Texture2D.MipLevels = numMips;
+		viewDesc.Texture2D.MostDetailedMip = minMipLevel;
+	}
+		break;
+	case HQ_TEXTURE_CUBE:
+	{
+		viewDesc.Texture2DArray.MipLevels = numMips;
+		viewDesc.Texture2DArray.MostDetailedMip = minMipLevel;
+		viewDesc.Texture2DArray.FirstArraySlice = minLayer;
+		viewDesc.Texture2DArray.ArraySize = numLayers;
+	}
+		break;
+	case HQ_TEXTURE_2D_ARRAY:
+	{
+		viewDesc.Texture2DArray.MipLevels = numMips;
+		viewDesc.Texture2DArray.MostDetailedMip = minMipLevel;
+		viewDesc.Texture2DArray.FirstArraySlice = minLayer;
+		viewDesc.Texture2DArray.ArraySize = numLayers;
+	}
+		break;
+	default:
+		//TO DO
+		return HQ_FAILED;
+	}
+
+	if (FAILED(pD3DDevice->CreateShaderResourceView(pTexResAlias->pTexture, &viewDesc, &pTexResAlias->pResourceView)))
+	{
+		pTexResAlias->pResourceView = 0;
+		pD3DDevice->Release();
+		return HQ_FAILED;
+	}
+
+	//TO DO: error correction
+
+	return HQ_OK;
+}
 
 HQTextureCompressionSupport HQTextureManagerD3D11::IsCompressionSupported(HQTextureType textureType,HQTextureCompressionFormat type)
 {

@@ -47,6 +47,11 @@ namespace helper{
 			desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 			desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 			break;
+		case HQ_DEPTH_READONLY_GREATEREQUAL:
+			desc.DepthEnable = TRUE;
+			desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+			desc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
+			break;
 		}
 	}
 	inline D3D11_STENCIL_OP GetD3DStencilOp(HQStencilOp op)

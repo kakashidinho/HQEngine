@@ -41,12 +41,14 @@ struct HQBufferD3D11 : public HQGraphicsBufferRawRetrievable, public HQBaseIDObj
 	HQBufferD3D11(bool isDynamic, hq_uint32 size)
 	{
 		this->pD3DBuffer = NULL;
+		this->pD3DStagingBuffer = NULL;
 		this->isDynamic = isDynamic;
 		this->size = size;
 	}
 	virtual ~HQBufferD3D11()
 	{
 		SafeRelease(this->pD3DBuffer);
+		SafeRelease(this->pD3DStagingBuffer);
 	}
 
 	virtual hquint32 GetSize() const { return size; }
@@ -61,6 +63,7 @@ struct HQBufferD3D11 : public HQGraphicsBufferRawRetrievable, public HQBaseIDObj
 
 	ID3D11DeviceContext* pD3DContext;
 	ID3D11Buffer *pD3DBuffer;
+	ID3D11Buffer *pD3DStagingBuffer;//staging buffer used for copy content to cpu
 	HQLoggableObject *pLog;
 	bool isDynamic;
 	hq_uint32 size;
@@ -216,7 +219,7 @@ struct HQBufferUAView_CacheD3D11 {
 		//cache view
 		this->pCachedView = fullView->GetD3DView();
 		//add to table
-		this->pUavTable = HQ_NEW UAVTableType();
+		this->pUavTable = HQ_NEW UAVTableType(17, 0.4f);
 		this->pUavTable->Add(&fullView->GetKey(), fullView);
 
 		return true;
@@ -246,8 +249,12 @@ struct HQBufferUAView_CacheD3D11 {
 			this->pBaseViewDesc->Buffer.FirstElement = firstIndex * this->elementSize / 4;
 			this->pBaseViewDesc->Buffer.NumElements = numElements * this->elementSize / 4;
 #else
-			if ((pBufferDesc->MiscFlags & D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS) != 0
-				|| (pBufferDesc->MiscFlags & D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS) != 0)
+			if ((pBufferDesc->MiscFlags & D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS) != 0)
+			{
+				this->pBaseViewDesc->Buffer.FirstElement = firstIndex * this->elementSize / 4;
+				this->pBaseViewDesc->Buffer.NumElements = numElements * this->elementSize / 4;
+			}
+			else if ((pBufferDesc->MiscFlags & D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS) != 0)
 			{
 				this->pBaseViewDesc->Buffer.FirstElement = firstIndex * this->elementSize / 4;
 				this->pBaseViewDesc->Buffer.NumElements = numElements * this->elementSize / 4;

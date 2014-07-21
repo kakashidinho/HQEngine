@@ -40,6 +40,10 @@ int main(int argc, char **argv)
 	for (int i = 2; i < argc - 1; ++i){
 		if (strcmp(argv[i], "-flat") == 0)
 			flags |= FLAG_FLAT_FACES;//flat faces model
+		else if (strcmp(argv[i], "-32bidx") == 0)
+			flags |= FLAG_FORCE_32BIT_INDICES;//use 32 bit index data
+		else if (!strcmp(argv[i], "-info"))
+			flags |= FLAG_OUTPUT_ADDITIONAL_INFO;//output more info
 	}
 
 	//check if this is .x file
@@ -79,5 +83,32 @@ char* GetAnimationFileName(const char* destMeshFile)
 	strcpy(animFileName + leng, "hqanimation");
 
 	return animFileName;
+}
+
+char* GetMoreInfoFileName(const char* destMeshFile)
+{
+	unsigned long leng = strlen(destMeshFile) + 1;
+	char *infoFileName = new char [leng + strlen(".hqmeshinfo")];
+	strncpy(infoFileName, destMeshFile, leng - 1);
+	strcpy(infoFileName + leng - 1, ".hqmeshinfo");
+
+	return infoFileName;
+}
+
+void WriteMoreInfo(const char* destMeshFile, const MeshAdditionalInfo &info)
+{
+	char * infoFileName = GetMoreInfoFileName(destMeshFile);
+
+	FILE *f = fopen(infoFileName, "w");
+
+	if (f)
+	{
+		fprintf (f, "%f %f %f\n%f %f %f\n", info.bboxMin.x, info.bboxMin.y, info.bboxMin.z, 
+			info.bboxMax.x, info.bboxMax.y, info.bboxMax.z);
+		fprintf(f, "%f\n", info.meshSurfArea);
+		fclose(f);
+	}
+
+	delete[] infoFileName;
 }
 

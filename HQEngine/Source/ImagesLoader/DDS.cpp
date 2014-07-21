@@ -92,7 +92,7 @@ struct DDS_Header{
 };
 
 
-static SurfaceFormat CheckFormat(const DDS_PixelFormat * pFormatInfo);
+static SurfaceFormat CheckFormat(const DDS_PixelFormat * pFormatInfo, hqshort16 & bits_per_pixel);
 static void CheckComplex(const DDS_Header & header,SurfaceComplexity *pComplex);
 
 int Bitmap::LoadDDS()
@@ -108,9 +108,7 @@ int Bitmap::LoadDDS()
 	this->width=header.dwWidth;
 	this->height=header.dwHeight;
 	
-	this->format=CheckFormat(&(header.ddpf));//kiểm tra format của dữ liệu ảnh
-
-	this->bits=header.ddpf.dwRGBBitCount;
+	this->format=CheckFormat(&(header.ddpf), this->bits);//kiểm tra format của dữ liệu ảnh
 	
 	CheckComplex(header,&complex);//kiểm tra độ phức tạp của dữ liệu ảnh
 
@@ -158,8 +156,10 @@ int Bitmap::LoadDDS()
 	return IMG_OK;
 }
 
-SurfaceFormat CheckFormat(const DDS_PixelFormat * pFormatInfo)
+SurfaceFormat CheckFormat(const DDS_PixelFormat * pFormatInfo, hqshort16 &bpp)
 {
+	bpp = pFormatInfo->dwRGBBitCount;
+
 	if(pFormatInfo->dwFlags & DDPF_FOURCC)//dạng nén
 	{
 		switch(pFormatInfo->dwFourCC)
@@ -170,6 +170,9 @@ SurfaceFormat CheckFormat(const DDS_PixelFormat * pFormatInfo)
 			return FMT_S3TC_DXT3;
 		case FOURCC_DXT5:
 			return FMT_S3TC_DXT5;
+		case 114:
+			bpp = 32;//32 bit float
+			return FMT_R32_FLOAT;
 		default:
 			return FMT_UNKNOWN;
 		}
@@ -203,6 +206,10 @@ SurfaceFormat CheckFormat(const DDS_PixelFormat * pFormatInfo)
 			if(pFormatInfo->dwRBitMask==0xff && pFormatInfo->dwGBitMask==0xff00 &&
 			   pFormatInfo->dwBBitMask==0xff0000)
 				return FMT_X8B8G8R8;
+
+			if (pFormatInfo->dwRBitMask == 0xffffffff && pFormatInfo->dwGBitMask == 0 &&
+				pFormatInfo->dwBBitMask == 0)
+				return FMT_R32_FLOAT;
 			return FMT_UNKNOWN;
 		}
 		if(pFormatInfo->dwRGBBitCount==24)

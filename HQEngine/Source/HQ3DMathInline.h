@@ -152,9 +152,9 @@ HQ_FORCE_INLINE HQVector4 HQVector4::operator +(const HQVector4& v2)const{
 #endif
 HQ_FORCE_INLINE HQVector4* HQVector4Add(const HQVector4* pV1,const HQVector4 *pV2,HQVector4* out)
 {
-	out->x = pV1->x * pV2->x;
-	out->y = pV1->y * pV2->y;
-	out->z = pV1->z * pV2->z;
+	out->x = pV1->x + pV2->x;
+	out->y = pV1->y + pV2->y;
+	out->z = pV1->z + pV2->z;
 	out->w = pV1->w;
 	return out;
 }
@@ -1032,6 +1032,15 @@ HQ_FORCE_INLINE HQQuaternion* HQQuatNegate(const HQQuaternion* in,HQQuaternion* 
 	out->y = -in->y;
 	out->z = -in->z;
 	out->w = -in->w;
+	return out;
+}
+
+HQ_FORCE_INLINE HQQuaternion* HQQuatConjugate(const HQQuaternion* in, HQQuaternion* out)
+{
+	out->x = -in->x;
+	out->y = -in->y;
+	out->z = -in->z;
+	out->w = out->w;
 	return out;
 }
 

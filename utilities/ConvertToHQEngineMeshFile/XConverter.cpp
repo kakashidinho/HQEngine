@@ -22,7 +22,7 @@ HWND            hwnd;
 LPDIRECT3DDEVICE9 pDevice = NULL;
 LPDIRECT3D9 pD3D = NULL;
 
-void XWriteGemetricDataToFile(FILE *f, ID3DXMesh *mesh, LPD3DXMESHCONTAINER meshContainer);
+void XWriteGemetricDataToFile(FILE *f, ID3DXMesh *mesh, LPD3DXMESHCONTAINER meshContainer, int flags);
 void XWriteAnimationData(const char *dest, const char * source, LPD3DXMESHCONTAINER pMeshContainer, D3DXFRAME *root, DWORD numFrames);
 
 void XBuildStaticMesh(const char *source, LPD3DXMESHCONTAINER *ppMeshContainerOut);
@@ -173,7 +173,7 @@ void ConvertXToHQMeshFile(const char *dest, const char* source, int flags)
 	//open file
 	f = fopen(dest, "wb");
 
-	XWriteGemetricDataToFile(f, mesh, meshContainer);
+	XWriteGemetricDataToFile(f, mesh, meshContainer, flags);
 
 
 	if (animation)
@@ -202,7 +202,7 @@ void ConvertXToHQMeshFile(const char *dest, const char* source, int flags)
 
 }
 
-void XWriteGemetricDataToFile(FILE *f, ID3DXMesh *mesh, LPD3DXMESHCONTAINER meshContainer)
+void XWriteGemetricDataToFile(FILE *f, ID3DXMesh *mesh, LPD3DXMESHCONTAINER meshContainer, int flags)
 {
 	HQMeshFileHeader header;
 	D3DXATTRIBUTERANGE *attrRanges = NULL;
@@ -214,7 +214,10 @@ void XWriteGemetricDataToFile(FILE *f, ID3DXMesh *mesh, LPD3DXMESHCONTAINER mesh
 	header.numSubMeshes = meshContainer->NumMaterials;
 	header.numIndices = mesh->GetNumFaces() * 3;
 	header.numVertices = mesh->GetNumVertices();
-	header.indexDataType = HQ_IDT_USHORT;
+	if (header.numIndices > 0xffff || (flags & FLAG_FORCE_32BIT_INDICES) != 0)
+		header.indexDataType = HQ_IDT_UINT;
+	else
+		header.indexDataType = HQ_IDT_USHORT;
 	header.vertexSize = mesh->GetNumBytesPerVertex();
 	//compute vertex attribute descs
 	header.numVertexAttribs = 0;
@@ -244,7 +247,21 @@ void XWriteGemetricDataToFile(FILE *f, ID3DXMesh *mesh, LPD3DXMESHCONTAINER mesh
 
 	//write index data
 	mesh->LockIndexBuffer(D3DLOCK_READONLY, &pData);
-	fwrite(pData, 2, header.numIndices, f);
+	if (header.numIndices <= 0xffff && (flags & FLAG_FORCE_32BIT_INDICES) != 0)
+	{
+		for (hquint32 i = 0; i < header.numIndices; ++i)
+		{
+			hquint32 index = (hquint32) (*(((hqushort16*)pData) + i));
+			fwrite(&index, 4, 1, f);
+		}
+	}
+	else
+	{
+		if (header.numIndices > 0xffff)
+			fwrite(pData, 4, header.numIndices, f);
+		else
+			fwrite(pData, 2, header.numIndices, f);
+	}
 	mesh->UnlockIndexBuffer();
 
 	//compute sub mesh info

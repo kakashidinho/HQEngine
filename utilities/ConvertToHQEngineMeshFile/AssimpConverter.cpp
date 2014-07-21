@@ -12,6 +12,8 @@ COPYING.txt included with this distribution for more information.
 #include "Assimp/include/aiPostProcess.h"
 #include "Assimp/include/aiScene.h"
 
+#include <float.h>
+
 #pragma comment(lib, "Assimp/lib/assimp_release-dll_win32/assimp.lib")
 
 //limitations for now:
@@ -21,7 +23,7 @@ COPYING.txt included with this distribution for more information.
 //-only support one texture per vertex
 // TO DO: remove limits
 
-void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene);
+void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditionalInfo& additionalInfo, int flags);
 void PrintVertexAttrDesc(HQVertexAttribDesc &desc);
 
 void ConvertToHQMeshFile(const char *dest, const char * source, int flags)
@@ -42,18 +44,22 @@ void ConvertToHQMeshFile(const char *dest, const char * source, int flags)
 	FILE *f = fopen(dest, "wb");
 	
 	//write gemeotry data
-	AssimpWriteGemetricDataToFile(f, scene);
+	MeshAdditionalInfo additionalInfo;
+	AssimpWriteGemetricDataToFile(f, scene, additionalInfo, flags);
 
 	//TO DO: add animation file later
 	fputc(0, f);//for now, no animation
 
-	//clean up
-	aiReleaseImport(scene);
+	//write bounding box info
+	if (flags & FLAG_OUTPUT_ADDITIONAL_INFO)
+		WriteMoreInfo(dest, additionalInfo);
 
+	//clean up
 	fclose(f);
+	aiReleaseImport(scene);
 }
 
-void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene)
+void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditionalInfo& additionalInfo, int flags)
 {
 	HQMeshFileHeader header;
 
@@ -76,7 +82,7 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene)
 	}
 
 	//set indices data type.
-	if (header.numIndices < 0xffff)
+	if (header.numIndices <= 0xffff && (flags & FLAG_FORCE_32BIT_INDICES) == 0)
 		header.indexDataType = HQ_IDT_USHORT;
 	else
 		header.indexDataType = HQ_IDT_UINT;
@@ -119,6 +125,11 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene)
 		fwrite(&vaDescs[i].usage, sizeof(hquint32), 1, f);
 	}
 
+	//bounding box
+	additionalInfo.bboxMin.Set(FLT_MAX, FLT_MAX, FLT_MAX);
+	additionalInfo.bboxMax.Set(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	//total surface area
+	additionalInfo.meshSurfArea = 0.f;
 	//write vertex data
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
@@ -129,6 +140,23 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene)
 				fwrite(&scene->mMeshes[i]->mTextureCoords[0][v], sizeof(aiVector2D), 1, f);
 			if (scene->mMeshes[0]->HasVertexColors(0))//vertex color
 				fwrite(&scene->mMeshes[i]->mColors[0][v], sizeof(aiColor4D), 1, f);
+
+			//compute bounding box
+			aiVector3D& position = scene->mMeshes[i]->mVertices[v];
+			if (additionalInfo.bboxMin.x > position.x)
+				additionalInfo.bboxMin.x = position.x;
+			if (additionalInfo.bboxMin.y > position.y)
+				additionalInfo.bboxMin.y = position.y;
+			if (additionalInfo.bboxMin.z > position.z)
+				additionalInfo.bboxMin.z = position.z;
+
+			if (additionalInfo.bboxMax.x < position.x)
+				additionalInfo.bboxMax.x = position.x;
+			if (additionalInfo.bboxMax.y < position.y)
+				additionalInfo.bboxMax.y = position.y;
+			if (additionalInfo.bboxMax.z < position.z)
+				additionalInfo.bboxMax.z = position.z;
+
 		}
 	}
 
@@ -137,8 +165,10 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene)
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
 		for (unsigned t = 0; t < scene->mMeshes[i]->mNumFaces; ++t){
+			aiVector3D* pTriVertex[3];
 			for (int v = 0; v < 3; ++v)
 			{
+				pTriVertex[v] = &scene->mMeshes[i]->mVertices[scene->mMeshes[i]->mFaces[t].mIndices[v]];
 				unsigned idx = scene->mMeshes[i]->mFaces[t].mIndices[v] + prevMeshVertices;
 				if (header.indexDataType == HQ_IDT_USHORT)
 				{
@@ -148,8 +178,17 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene)
 				}
 				else
 					fwrite(&idx, sizeof(unsigned int), 1, f);
-			}
-		}
+
+			}//for (int v = 0; v < 3; ++v)
+
+			//compute surface area
+			aiVector3D v0v1 = *pTriVertex[1] - *pTriVertex[0];
+			aiVector3D v0v2 = *pTriVertex[2] - *pTriVertex[0];
+			aiVector3D v0v1v2c = v0v1 ^ v0v2;
+			hqfloat32 triArea = 0.5f * v0v1v2c.Length();
+			additionalInfo.meshSurfArea += triArea;
+			
+		}//for (unsigned t = 0; t < scene->mMeshes[i]->mNumFaces; ++t)
 
 		prevMeshVertices += scene->mMeshes[i]->mNumVertices;
 	}
@@ -175,19 +214,20 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene)
 		aiColor3D color;
 		material->Get<aiColor3D>(AI_MATKEY_COLOR_DIFFUSE , color );
 		memcpy(colorMat.diffuse , &color , 3 * sizeof(float));
-		colorMat.diffuse.a = 1.0f;
+		//OPACITY
+		material->Get<hqfloat32>(AI_MATKEY_OPACITY , colorMat.diffuse.a );
 
 		material->Get<aiColor3D>(AI_MATKEY_COLOR_AMBIENT , color );
 		memcpy(colorMat.ambient , &color , 3 * sizeof(float));
-		colorMat.ambient.a = 1.0f;
+		colorMat.ambient.a = colorMat.diffuse.a;
 
 		material->Get<aiColor3D>(AI_MATKEY_COLOR_SPECULAR , color );
 		memcpy(colorMat.specular , &color , 3 * sizeof(float));
-		colorMat.specular.a = 1.0f;
+		colorMat.specular.a = colorMat.diffuse.a;
 
 		material->Get<aiColor3D>(AI_MATKEY_COLOR_EMISSIVE , color );
 		memcpy(colorMat.emissive , &color , 3 * sizeof(float));
-		colorMat.emissive.a = 1.0f;
+		colorMat.emissive.a = colorMat.diffuse.a;
 
 		material->Get<float>(AI_MATKEY_SHININESS , colorMat.power);
 		fwrite(&colorMat, sizeof(HQColorMaterial), 1, f);

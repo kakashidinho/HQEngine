@@ -38,6 +38,11 @@ namespace helper{
 			dsState->depthWriteEnable = GL_TRUE;
 			dsState->depthFunc = GL_LEQUAL;
 			break;
+		case HQ_DEPTH_READONLY_GREATEREQUAL:
+			dsState->depthEnable = true;
+			dsState->depthWriteEnable = GL_FALSE;
+			dsState->depthFunc = GL_GEQUAL;
+			break;
 		}
 	}
 	GLenum GetGLStencilOp(HQStencilOp op)

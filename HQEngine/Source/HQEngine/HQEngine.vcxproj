@@ -476,19 +476,19 @@
     </CustomBuild>
     <CustomBuild Include="effect_script_parser.y">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_effect_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="effect_script_tokens.l">
@@ -509,20 +509,25 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="res_script_parser.y">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">
+      </Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug static CRT|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">
+      </Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release noptimize|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">
+      </Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release static CRT|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bison   %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)../../../utilities/Third-Party/GnuWin32/bin/bison.exe  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call %(RootDir)%(Directory)bison_win32.bat  -d  -v -p hqengine_res_parser_ -o gen_%(Filename).cpp %(Filename).y</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">gen_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="res_script_tokens.l">

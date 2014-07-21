@@ -118,10 +118,11 @@ typedef enum HQCullMode
 
 typedef enum HQDepthMode
 {
-	HQ_DEPTH_FULL = 0,//ghi và đọc bộ đệm độ sâu
+	HQ_DEPTH_FULL = 0,//ghi và đọc bộ đệm độ sâu 
 	HQ_DEPTH_READONLY = 1,//chỉ đọc giá trị từ bộ đệm độ sâu để kiểm tra pixel có pass không,không ghi giá trị vào bộ đệm
 	HQ_DEPTH_WRITEONLY = 2,//chỉ ghi vào bộ đệm độ sâu.Các pixel được render ra luôn luôn pass phép kiểm tra độ sâu (depth) và ghi giá trị vào bộ đệm độ sâu
 	HQ_DEPTH_NONE = 3,//không dùng bộ đệm độ sâu
+	HQ_DEPTH_READONLY_GREATEREQUAL = 4, //read only depth mode, reject pixel with depth less than current depth in buffer
 	HQ_DEPTH_FORCE_DWORD = 0xffffffff
 } _HQDepthMode;
 

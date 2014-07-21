@@ -40,6 +40,11 @@ namespace helper{
 			dsState->depthWriteEnable = TRUE;
 			dsState->depthFunc = D3DCMP_LESSEQUAL;
 			break;
+		case HQ_DEPTH_READONLY_GREATEREQUAL:
+			dsState->depthEnable = D3DZB_TRUE;
+			dsState->depthWriteEnable = FALSE;
+			dsState->depthFunc = D3DCMP_GREATEREQUAL;
+			break;
 		}
 	}
 	inline D3DSTENCILOP GetD3DStencilOp(HQStencilOp op)

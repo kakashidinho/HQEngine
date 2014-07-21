@@ -82,7 +82,7 @@ Pass format:
 			ccw_compare_func=always/never/less/equal/less or equal/greater/greater or equal/not equal			// default is the same value as compare_func
 			
 		}
-		depth=full/read only/write only/none			// default is none 
+		depth=full/read only/write only/greater or equal read only/none			// default is none 
 		cull=none/cw/ccw		// default is none 
 		
 		vertex_shader=<shader resource name>

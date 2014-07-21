@@ -802,8 +802,11 @@ HQReturnVal HQRenderTargetManagerD3D11::ActiveRenderTargetsImpl(HQSharedPtr<HQBa
 	this->renderTargetViews = group->renderTargetViews;
 	this->pDepthStencilView = group->pDepthStencilView;
 	
-	this->pD3DContext->OMSetRenderTargets(group->numRenderTargets , group->renderTargetViews  , group->pDepthStencilView);
-	
+	//this->pD3DContext->OMSetRenderTargets(group->numRenderTargets , group->renderTargetViews  , group->pDepthStencilView);
+	//force binding on next draw call
+	this->flags |= HQ_UAV_SLOTS_CHANGED;
+	this->minUsedUAVSlot = group->numRenderTargets;
+
 	g_pD3DDev->ResetViewports();//reset viewport
 
 	return HQ_OK;
@@ -815,7 +818,10 @@ void HQRenderTargetManagerD3D11::ActiveDefaultFrameBuffer()
 	this->renderTargetViews = &this->pD3DBackBuffer;
 	this->pDepthStencilView = this->pD3DDSBuffer;
 
-	this->pD3DContext->OMSetRenderTargets(1 , this->renderTargetViews , this->pDepthStencilView);
+	//this->pD3DContext->OMSetRenderTargets(1 , this->renderTargetViews , this->pDepthStencilView);
+	//force binding on next draw call
+	this->flags |= HQ_UAV_SLOTS_CHANGED;
+	this->minUsedUAVSlot = 1;
 	
 	this->renderTargetWidth = g_pD3DDev->GetWidth();
 	this->renderTargetHeight = g_pD3DDev->GetHeight();
@@ -906,6 +912,8 @@ void HQRenderTargetManagerD3D11::OnDrawOrDispatch()
 			if (numRTVs != this->GetNumActiveRenderTargets())
 				this->force_reactive_rtgroup = true;
 #endif
+			ID3D11UnorderedAccessView ** UAVs = this->pUAVSlots + this->minUsedUAVSlot;
+			UINT* initialCounts = this->UAVInitialCounts + this->minUsedUAVSlot;
 			//set UAVs
 			this->pD3DContext->OMSetRenderTargetsAndUnorderedAccessViews(
 				numRTVs,
@@ -913,8 +921,8 @@ void HQRenderTargetManagerD3D11::OnDrawOrDispatch()
 				this->pDepthStencilView,
 				(UINT) this->minUsedUAVSlot,
 				(UINT)numUAVs,
-				this->pUAVSlots + this->minUsedUAVSlot,
-				this->UAVInitialCounts + this->minUsedUAVSlot
+				UAVs,
+				initialCounts
 				);
 		}//if (numUAVs > 0)
 		else

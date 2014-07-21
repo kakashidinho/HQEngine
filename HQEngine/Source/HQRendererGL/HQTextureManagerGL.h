@@ -138,6 +138,11 @@ public:
 	HQReturnVal InitTextureBuffer(HQBaseTexture *pTex ,HQTextureBufferFormat format , hq_uint32 size , void *initData ,bool isDynamic);
 	HQReturnVal InitTextureUAV(HQBaseTexture *pTex, HQTextureUAVFormat format, hquint32 width, hquint32 height, hquint32 depth, bool hasMipmap);
 
+	HQReturnVal InitTextureAliasView(
+		HQBaseTexture *aliasTex, HQTexture *oriTexture,
+		hquint32 minMipLevel, hquint32 numMips,
+		hquint32 minLayer, hquint32 numLayers);
+
 	HQReturnVal RemoveTexture(HQTexture* ID);
 	void RemoveAllTexture();
 

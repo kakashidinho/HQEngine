@@ -671,8 +671,8 @@ public:
 		D.Set(_dir.x,_dir.y,_dir.z,0.0f);
 	};
 
-	void Transform(const HQMatrix4& mat);
-	void Transform(const HQMatrix3x4& mat);
+	void Transform(const HQMatrix4& mat);//transform ray by row major matrix
+	void Transform(const HQMatrix3x4& mat);//transform ray by column major matrix
 	//tọa độ điểm cắt : V0 + (*pU) * (V1 - V0) + (*pV) * (V2 - V0) = O * (*pT) * D.Nếu <Cull> = true , không tính tam giác có góc giữa pháp vector & hướng tia < 90 độ.Với pháp vector tam giác = (V1 - V0) x (V2 - V0)
 	bool Intersect(const HQVector4& V0,const HQVector4& V1,const HQVector4& V2,hq_float32* pU,hq_float32* pV,hq_float32 *pT,bool Cull=true)const;
 	//tọa độ điểm cắt : V0 + (*pU) * (V1 - V0) + (*pV) * (V2 - V0)  = O * (*pT) * D.Nếu <Cull> = true , không tính tam giác có góc giữa pháp vector & hướng tia < 90 độ.Với pháp vector tam giác = (V1 - V0) x (V2 - V0)
@@ -761,6 +761,10 @@ public:
 
 	HQPlane& Normalize();
 
+	void Transform(const HQPlane& source, const HQMatrix4& mat);//transform plane by row major matrix. 
+	void Transform(const HQPlane& source, const HQMatrix3x4& mat);//transform plane by column major matrix
+	void TransformInvTrans(const HQPlane& source, const HQMatrix4& mat);//transform plane by a matrix {mat} which is an inverse transpose version of row major transformation matrix
+
 	hq_float32 Distance(const HQVector4& p)const;//tìm khoảng cách từ điểm p đến mặt phẳng,vector pháp tuyến phải đã được chuẩn hóa
 
 	Side CheckSide(const HQVector4& p)const;//kiểm tra điểm ở mặt trước (phía pháp vector hướng đến) hay mặt sau,trả về FRONT_PLANE nếu mặt trước,BACK_PLANE nếu mặt sau và IN_PLANE nếu nằm trên
@@ -773,6 +777,9 @@ public:
 	bool Intersect(const HQAABB& aabb)const;
 	bool Intersect(const HQOBB& obb)const;//pháp vector của mặt phẳng phải đã chuẩn hóa
 	bool Intersect(const HQSphere& sphere)const;//vector pháp tuyến phải đã được chuẩn hóa
+
+	void ToFloat4(HQFloat4& out) const { memcpy(&out, this, 3 * sizeof(hqfloat32)); out.w = this->D; }
+	void ToFloat4(HQVector4& out) const { memcpy(&out, this, 3 * sizeof(hqfloat32)); out.w = this->D; }
 
 #if !defined WIN32 && !(defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 }  HQ_ALIGN16 ;
@@ -827,7 +834,7 @@ public:
 	//kiểm tra hình hộp bị cắt hay nằm ngoài thể tính nhìn (hợp bởi các mặt phẳng tham số).Trả về HQ_CULLED nếu nằm ngoài,HQ_CLIPPED nếu 1 phần nằm trong , và HQ_VISIBLE nếu hoàn toàn nằm trong.
 	//pháp vector các mặt phẳng hướng ra ngoài thể tích nhìn
 	HQVisibility Cull(const HQPlane* planes,const hq_int32 numPlanes);
-	void GetPlanes(HQPlane * planesOut)const;//truy vấn các mặt phẳng của hình hộp theo thứ tự Ox+-,Oy+-,Oz+-
+	void GetPlanes(HQPlane * planesOut)const;//truy vấn các mặt phẳng của hình hộp theo thứ tự Ox+-,Oy+-,Oz+-. pháp vector hướng ra ngoài
 	bool ContainsPoint(const HQVector4& p)const;//kiểm tra điểm có nằm trong hình hộp không
 	bool ContainsPoint(const HQFloat3& p)const;//kiểm tra điểm có nằm trong hình hộp không
 	bool ContainsSegment(const HQVector4& p0,const HQVector4& p1)const;//kiểm tra đoạn thẳng có nằm trong hình hộp không
@@ -1156,6 +1163,7 @@ HQ_FORCE_INLINE HQQuaternion* HQQuatDivide(const HQQuaternion *quat1, hqfloat32 
 HQ_FORCE_INLINE HQQuaternion* HQQuatAdd(const HQQuaternion *quat1, const HQQuaternion* quat2, HQQuaternion *out);
 HQ_FORCE_INLINE HQQuaternion* HQQuatSub(const HQQuaternion *quat1, const HQQuaternion* quat2, HQQuaternion *out);
 HQ_FORCE_INLINE HQQuaternion* HQQuatNegate(const HQQuaternion* in,HQQuaternion* out);//negation
+HQ_FORCE_INLINE HQQuaternion* HQQuatConjugate(const HQQuaternion* in, HQQuaternion* out);//(-x, -y, -z, w)
 HQ_UTIL_MATH_API HQQuaternion* HQQuatNormalize(const HQQuaternion* in,HQQuaternion* out);
 HQ_UTIL_MATH_API HQQuaternion* HQQuatInverse(const HQQuaternion* in,HQQuaternion* out);
 HQ_UTIL_MATH_API HQQuaternion* HQQuatMultiply(const HQQuaternion* q1,const HQQuaternion* q2 , HQQuaternion* out);

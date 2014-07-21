@@ -118,7 +118,7 @@ protected:
 	bool UpdateWorldTransform(bool parentChanged);
 	void UpdateChilds(hqfloat32 dt , bool updateGrandChilds , bool thisNodeChanged);//call Update(dt , updateGrandChilds , thisNodeChanged) on all of this node's childs
 
-	void UpdateLocalTransform();//calculate local transform matrix from local position , scale factor and , local rotation.This method is called in method UpdateWorldTransform()
+	virtual void UpdateLocalTransform();//calculate local transform matrix from local position , scale factor and , local rotation.This method is called in method UpdateWorldTransform()
 
 	char *m_name;
 

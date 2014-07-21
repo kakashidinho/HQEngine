@@ -391,7 +391,7 @@ void HQSceneNode::GetWorldPositionVec(HQVector4 &positionOut) const
 {
 	if (this->m_pParent != NULL)
 	{
-		HQVector4TransformNormal(m_localPosition, &m_pParent->GetWorldTransform(), &positionOut);
+		HQVector4TransformCoord(m_localPosition, &m_pParent->GetWorldTransform(), &positionOut);
 	}
 	else
 		memcpy(&positionOut, m_localPosition,sizeof(HQVector4));

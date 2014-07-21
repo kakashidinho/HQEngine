@@ -49,7 +49,8 @@ HQMeshNode::HQMeshNode(const char *name,
 		const char *hqMeshFileName, 
 		HQRenderDevice *pDevice, 
 		HQShaderObject* vertexShaderID,
-		HQLogStream *pLogStream)
+		HQLogStream *pLogStream, 
+		bool uavVertexBuffer)
 :	HQSceneNode(name),
 	m_pRenderDevice(pDevice), 
 	m_geoInfo(new GeometricInfo()),
@@ -57,7 +58,7 @@ HQMeshNode::HQMeshNode(const char *name,
 	m_reloading(false)
 {
 
-	this->Init(name, hqMeshFileName, vertexShaderID, pLogStream);
+	this->Init(name, hqMeshFileName, vertexShaderID, pLogStream, uavVertexBuffer);
 
 }
 
@@ -65,7 +66,8 @@ HQMeshNode::HQMeshNode(const char *name,
 		const char *hqMeshFileName, 
 		HQRenderDevice *pDevice, 
 		const char* vertexShaderName, 
-		HQLogStream *pLogStream)
+		HQLogStream *pLogStream, 
+		bool uavVertexBuffer)
 :	HQSceneNode(name),
 	m_pRenderDevice(pDevice), 
 	m_geoInfo(new GeometricInfo()),
@@ -78,7 +80,7 @@ HQMeshNode::HQMeshNode(const char *name,
 	HQShaderObject* vertexShaderID = shaderResImpl != NULL ? shaderResImpl->GetShader() : NULL;
 
 
-	this->Init(name, hqMeshFileName, vertexShaderID, pLogStream);
+	this->Init(name, hqMeshFileName, vertexShaderID, pLogStream, uavVertexBuffer);
 
 }
 
@@ -86,8 +88,10 @@ HQMeshNode::HQMeshNode(const char *name,
 void HQMeshNode::Init(const char *name,
 		const char *hqMeshFileName ,
 		HQShaderObject* vertexShaderID,
-		HQLogStream *pLogStream)
+		HQLogStream *pLogStream,
+		bool uavVertexBuffer)
 {
+	m_uavBuffers = uavVertexBuffer;
 	m_hqMeshFileName = HQ_NEW char[strlen(hqMeshFileName) + 1];
 	strcpy(m_hqMeshFileName, hqMeshFileName);
 
@@ -206,7 +210,8 @@ void HQMeshNode::Init(const char *name,
 
 HQMeshNode::~HQMeshNode()
 {
-	m_pRenderDevice->GetVertexStreamManager()->RemoveVertexInputLayout(m_geoInfo->vertexInputLayout);
+	if (this->m_geoInfo->vertexInputLayout != NULL)
+		m_pRenderDevice->GetVertexStreamManager()->RemoveVertexInputLayout(m_geoInfo->vertexInputLayout);
 	m_pRenderDevice->GetVertexStreamManager()->RemoveVertexBuffer(m_geoInfo->vertexBuffer);
 	m_pRenderDevice->GetVertexStreamManager()->RemoveIndexBuffer(m_geoInfo->indexBuffer);
 	if (m_geoInfo->indirectBuffer != NULL)
@@ -214,11 +219,11 @@ HQMeshNode::~HQMeshNode()
 
 	for (hquint32 i = 0; i < m_geoInfo->numGroups; ++i)
 	{
-		for (hquint32 j = 0; j < this->m_geoInfo->groups[i].material.numTextures; ++j)
+		for (hquint32 j = 0; j < this->m_geoInfo->groups[i].numTextures; ++j)
 		{
-			HQEngineApp::GetInstance()->GetResourceManager() ->RemoveTextureResource(this->m_geoInfo->groups[i].material.textures[j]);
+			HQEngineApp::GetInstance()->GetResourceManager() ->RemoveTextureResource(this->m_geoInfo->groups[i].textures[j]);
 		}
-		delete[] this->m_geoInfo->groups[i].material.textures;
+		delete[] this->m_geoInfo->groups[i].textures;
 	}
 
 	m_geoInfo->Release();
@@ -233,7 +238,7 @@ hquint32 HQMeshNode::GetNumSubMeshes()
 
 const HQSubMeshInfo & HQMeshNode::GetSubMeshInfo(hquint32 submeshIndex)
 {
-	return m_geoInfo->groups[submeshIndex].material;
+	return m_geoInfo->groups[submeshIndex];
 }
 
 
@@ -263,29 +268,39 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderO
 	if (!m_reloading)
 	{//only do this on first loading
 		this->m_geoInfo->numGroups = header.numSubMeshes;
-		this->m_geoInfo->groups = HQ_NEW HQGeometricGroup[header.numSubMeshes];
+		this->m_geoInfo->groups = HQ_NEW HQSubMeshInfo[header.numSubMeshes];
 
 		//create vertex input layout
-		HQVertexAttribDesc *vAttribDescs = HQ_NEW HQVertexAttribDesc[header.numVertexAttribs];
-
-		for (hquint32 i = 0; i < header.numVertexAttribs; ++i)
+		if (vertexShaderID != NULL)
 		{
-			vAttribDescs[i].stream = 0;
-			fread(&vAttribDescs[i].offset, sizeof(hquint32), 1, f);
-			fread(&vAttribDescs[i].dataType, sizeof(hquint32), 1, f);
-			fread(&vAttribDescs[i].usage, sizeof(hquint32), 1, f);
+			HQVertexAttribDesc *vAttribDescs = HQ_NEW HQVertexAttribDesc[header.numVertexAttribs];
+
+			for (hquint32 i = 0; i < header.numVertexAttribs; ++i)
+			{
+				vAttribDescs[i].stream = 0;
+				fread(&vAttribDescs[i].offset, sizeof(hquint32), 1, f);
+				fread(&vAttribDescs[i].dataType, sizeof(hquint32), 1, f);
+				fread(&vAttribDescs[i].usage, sizeof(hquint32), 1, f);
+			}
+
+			re = m_pRenderDevice->GetVertexStreamManager()->CreateVertexInputLayout(
+				vAttribDescs,
+				header.numVertexAttribs,
+				vertexShaderID,
+				&this->m_geoInfo->vertexInputLayout);
+
+			delete[] vAttribDescs;
+
+			if (HQFailed(re))
+				return false;
+		}//if (vertexShaderID != NULL)
+		else
+		{
+			this->m_geoInfo->vertexInputLayout = NULL;
+
+			//ignore vertex input layout
+			fseek(f, 3 * sizeof(hquint32)* header.numVertexAttribs, SEEK_CUR);
 		}
-		
-		re = m_pRenderDevice->GetVertexStreamManager()->CreateVertexInputLayout(
-			vAttribDescs, 
-			header.numVertexAttribs, 
-			vertexShaderID, 
-			&this->m_geoInfo->vertexInputLayout);
-
-		delete[] vAttribDescs;
-
-		if (HQFailed(re))
-			return false;
 	}
 	else
 	{
@@ -302,11 +317,20 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderO
 	fread(verticesData, vertexBufferSize, 1, f);
 
 	if (!m_reloading)
-		re = m_pRenderDevice->GetVertexStreamManager()->CreateVertexBuffer(
-			verticesData, 
-			vertexBufferSize, 
-			false, false,
-			&this->m_geoInfo->vertexBuffer);
+	{
+		if (m_uavBuffers)
+			re = m_pRenderDevice->GetVertexStreamManager()->CreateVertexBufferUAV(
+				verticesData,
+				this->m_geoInfo->vertexBufferStride,
+				this->m_geoInfo->numVertices,
+				&this->m_geoInfo->vertexBuffer);
+		else
+			re = m_pRenderDevice->GetVertexStreamManager()->CreateVertexBuffer(
+				verticesData,
+				vertexBufferSize,
+				false, false,
+				&this->m_geoInfo->vertexBuffer);
+	}
 	else
 		re = this->m_geoInfo->vertexBuffer->Update(
 			0, 
@@ -336,48 +360,74 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderO
 	fread(indicesData, indexBufferSize, 1, f);
 	
 	if (!m_reloading)
-		re = m_pRenderDevice->GetVertexStreamManager()->CreateIndexBuffer(
-			indicesData,
-			indexBufferSize,
-			false,
-			header.indexDataType,
-			&this->m_geoInfo->indexBuffer);
+	{
+		if (m_uavBuffers)
+			re = m_pRenderDevice->GetVertexStreamManager()->CreateIndexBufferUAV(
+				indicesData,
+				header.numIndices,
+				header.indexDataType,
+				&this->m_geoInfo->indexBuffer);
+		else
+			re = m_pRenderDevice->GetVertexStreamManager()->CreateIndexBuffer(
+				indicesData,
+				indexBufferSize,
+				false,
+				header.indexDataType,
+				&this->m_geoInfo->indexBuffer);
+	}
 	else
 		re = this->m_geoInfo->indexBuffer->Update(
 				0,
 				indexBufferSize,
 				indicesData);
 
-	free(indicesData);
-
 	if (HQFailed(re))
+	{
+		free(indicesData);
 		return false;
+	}
 
 #ifndef HQ_ANDROID_PLATFORM
 	//android need textures to be reloaded too
-	if (m_reloading) 
+	if (m_reloading)
+	{
+		free(indicesData);
 		return true;
+	}
 #endif
 	//read sub mesh info
 	for (hquint32 i = 0; i < header.numSubMeshes; ++i)
 	{
 		fread(&this->m_geoInfo->groups[i].startIndex, sizeof(hquint32), 1, f);
 		fread(&this->m_geoInfo->groups[i].numIndices, sizeof(hquint32), 1, f);
+
+		//calculate minimum vertex index
+		this->m_geoInfo->groups[i].minIndex = 0xffffffff;
+		hquint32 lastIndex = this->m_geoInfo->groups[i].startIndex + this->m_geoInfo->groups[i].numIndices;
+		for (hquint32 j = this->m_geoInfo->groups[i].startIndex; j < lastIndex; ++j)
+		{
+			hquint32 index;
+			if (m_geoInfo->indexDataType == HQ_IDT_USHORT)
+				index = (hquint32)(*(((hqushort16*)indicesData) + j));
+			else
+				index = *(((hquint32*)indicesData) + j);
+			this->m_geoInfo->groups[i].minIndex = min(this->m_geoInfo->groups[i].minIndex, index);
+		}
 		
 		//material
-		fread(&this->m_geoInfo->groups[i].material.colorMaterial, sizeof(HQColorMaterial), 1, f);
+		fread(&this->m_geoInfo->groups[i].colorMaterial, sizeof(HQColorMaterial), 1, f);
 
 		//textures
-		fread(&this->m_geoInfo->groups[i].material.numTextures, sizeof(hquint32), 1, f);
-		if (this->m_geoInfo->groups[i].material.numTextures == 0)
-			this->m_geoInfo->groups[i].material.textures = NULL;
+		fread(&this->m_geoInfo->groups[i].numTextures, sizeof(hquint32), 1, f);
+		if (this->m_geoInfo->groups[i].numTextures == 0)
+			this->m_geoInfo->groups[i].textures = NULL;
 		else
 		{
 			if (!m_reloading)
-				this->m_geoInfo->groups[i].material.textures = HQ_NEW HQEngineTextureResource* [this->m_geoInfo->groups[i].material.numTextures];
+				this->m_geoInfo->groups[i].textures = HQ_NEW HQEngineTextureResource* [this->m_geoInfo->groups[i].numTextures];
 			char *textureName;
 
-			for (hquint32 j = 0; j < this->m_geoInfo->groups[i].material.numTextures; ++j)
+			for (hquint32 j = 0; j < this->m_geoInfo->groups[i].numTextures; ++j)
 			{
 				hqubyte8 textureNameSize ;
 				fread(&textureNameSize, 1, 1, f);
@@ -400,12 +450,14 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderO
 					textureRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource(textureName);
 				}
 
-				this->m_geoInfo->groups[i].material.textures[j] = textureRes;
+				this->m_geoInfo->groups[i].textures[j] = textureRes;
 		
 				delete[] textureName;
 			}//for (hquint32 j = 0; j < this->m_geoInfo->groups[i].material.numTextures; ++j)
 		}
 	}//for (hquint32 i = 0; i < header.numSubMeshes; ++i)
+
+	free(indicesData);//no need for indices data anymore
 
 	this->CreateIndirectBuffer();
 
@@ -430,7 +482,7 @@ void HQMeshNode::CreateIndirectBuffer()
 	IndirectArgs * indirectArgs = HQ_NEW IndirectArgs[m_geoInfo->numGroups];
 	for (hquint32 i = 0; i < m_geoInfo->numGroups; ++i)
 	{
-		HQGeometricGroup &subMeshInfo = m_geoInfo->groups[i];
+		HQSubMeshInfo &subMeshInfo = m_geoInfo->groups[i];
 		IndirectArgs& indirectArgsElem = indirectArgs[i];
 		
 		indirectArgsElem.number_of_indices_per_instance = subMeshInfo.numIndices;
@@ -460,6 +512,35 @@ HQDrawIndexedIndirectArgsBuffer* HQMeshNode::GetDrawIndirectArgs()
 	return m_geoInfo->indirectBuffer;
 }
 
+HQVertexBuffer * HQMeshNode::GetVertexBuffer()
+{
+	return m_geoInfo->vertexBuffer;
+}
+
+HQIndexBuffer * HQMeshNode::GetIndexBuffer()
+{
+	return m_geoInfo->indexBuffer;
+}
+
+HQVertexLayout * HQMeshNode::GetVertexLayout()
+{
+	return m_geoInfo->vertexInputLayout;
+}
+
+hquint32 HQMeshNode::GetVertexSize() {
+	return m_geoInfo->vertexBufferStride;
+}
+
+HQIndexDataType HQMeshNode::GetIndexBufferDataType()
+{
+	return m_geoInfo->indexDataType;
+}
+
+void HQMeshNode::SetVertexLayout(HQVertexLayout *vertexLayout)
+{
+	m_geoInfo->customVertexLayout = vertexLayout;
+}
+
 void HQMeshNode::Update(hqfloat32 dt ,bool updateChilds , bool parentChanged)
 {
 	TRACE("here %s %d", __FILE__, __LINE__);
@@ -484,7 +565,10 @@ void HQMeshNode::Update(hqfloat32 dt ,bool updateChilds , bool parentChanged)
 void HQMeshNode::BeginRender()
 {
 	m_pRenderDevice->SetPrimitiveMode(HQ_PRI_TRIANGLES);
-	m_pRenderDevice->GetVertexStreamManager()->SetVertexInputLayout(m_geoInfo->vertexInputLayout);
+	if (m_geoInfo->customVertexLayout != NULL)
+		m_pRenderDevice->GetVertexStreamManager()->SetVertexInputLayout(m_geoInfo->customVertexLayout);
+	else if (this->m_geoInfo->vertexInputLayout != NULL)
+		m_pRenderDevice->GetVertexStreamManager()->SetVertexInputLayout(m_geoInfo->vertexInputLayout);
 	m_pRenderDevice->GetVertexStreamManager()->SetVertexBuffer(m_geoInfo->vertexBuffer, 0,  m_geoInfo->vertexBufferStride);
 	m_pRenderDevice->GetVertexStreamManager()->SetIndexBuffer(m_geoInfo->indexBuffer);
 }
@@ -495,7 +579,7 @@ void HQMeshNode::EndRender()
 
 void HQMeshNode::DrawSubMesh(hquint32 submeshIndex)
 {
-	HQGeometricGroup &subMeshInfo = m_geoInfo->groups[submeshIndex];
+	HQSubMeshInfo &subMeshInfo = m_geoInfo->groups[submeshIndex];
 	m_pRenderDevice->DrawIndexed(m_geoInfo->numVertices, subMeshInfo.numIndices, subMeshInfo.startIndex);
 }
 
@@ -506,12 +590,12 @@ void HQMeshNode::DrawSubMeshIndirect(hquint32 submeshIndex)
 	m_pRenderDevice->DrawIndexedInstancedIndirect(m_geoInfo->indirectBuffer, submeshIndex);
 }
 
-void HQMeshNode::SetSubMeshTextures(hquint32 submeshIndex)
+void HQMeshNode::BindSubMeshTextures(hquint32 submeshIndex)
 {
-	HQGeometricGroup &subMeshInfo = m_geoInfo->groups[submeshIndex];
-	for (hquint32 i = 0; i < subMeshInfo.material.numTextures ; ++i)
+	HQSubMeshInfo &subMeshInfo = m_geoInfo->groups[submeshIndex];
+	for (hquint32 i = 0; i < subMeshInfo.numTextures ; ++i)
 	{
-		HQEngineApp::GetInstance()->GetEffectManager() ->SetTextureForPixelShader(i, subMeshInfo.material.textures[i]);
+		HQEngineApp::GetInstance()->GetEffectManager() ->SetTextureForPixelShader(i, subMeshInfo.textures[i]);
 	}
 }
 
@@ -520,7 +604,7 @@ void HQMeshNode::DrawInOneCall()
 	BeginRender();
 	for (hquint32 i = 0 ; i < m_geoInfo->numGroups; ++i)
 	{
-		SetSubMeshTextures(i);
+		BindSubMeshTextures(i);
 		DrawSubMesh(i);
 	}
 	EndRender();
@@ -531,7 +615,7 @@ void HQMeshNode::DrawInOneCallIndirect()
 	BeginRender();
 	for (hquint32 i = 0; i < m_geoInfo->numGroups; ++i)
 	{
-		SetSubMeshTextures(i);
+		BindSubMeshTextures(i);
 		DrawSubMeshIndirect(i);
 	}
 	EndRender();
