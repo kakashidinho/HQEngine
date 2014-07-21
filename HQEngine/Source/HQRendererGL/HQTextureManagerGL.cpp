@@ -1925,9 +1925,19 @@ HQReturnVal HQTextureManagerGL::InitTextureUAV(HQBaseTexture *pTex, HQTextureUAV
 		break;
 #ifndef HQ_OPENGLES//TO DO: add to gles 3 later
 	case HQ_TEXTURE_2D_ARRAY_UAV:
+#if 1
+        for (hquint32 level = 0; level < numMipmaps; ++level)
+        {
+            glTexImage3D(GL_TEXTURE_2D_ARRAY, level, internalFmt, w, h, depth, 0, format, type, NULL);
+                
+            if (w > 1) w >>= 1; //w/=2
+            if (h > 1) h >>= 1; //h/=2
+        }
+#else
 		glTexStorage3D(GL_TEXTURE_2D_ARRAY, numMipmaps, internalFmt, w, h, depth);
-		break;
 #endif
+		break;
+#endif//#ifndef HQ_OPENGLES
 	default:
 		//TO DO
 		return HQ_FAILED;

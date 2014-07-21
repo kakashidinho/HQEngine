@@ -280,7 +280,22 @@ struct HQRenderTargetTextureGL : public HQBaseRenderTargetTexture, public HQRese
 #ifndef HQ_OPENGLES//TO DO: add to gles 3 later
 				glBindTexture(GL_TEXTURE_2D_ARRAY, *pTextureGLHandle);
 
+#if 1
+                int w = this->width;
+                int h = this->height;
+                for (hq_uint32 i = 0; i < this->numMipmaps; ++i)
+                {
+                    glTexImage3D(GL_TEXTURE_2D_ARRAY, i, internalFormat, w, h, this->arraySize,
+                                     0, format, type, NULL);
+                        
+                    if (w > 1)
+                        w >>= 1;
+                    if (h > 1)
+                        h >>= 1;
+                }
+#else
 				glTexStorage3D(GL_TEXTURE_2D_ARRAY, this->numMipmaps, internalFormat, this->width, this->height, this->arraySize);
+#endif
 
 				//re-bind old texture
 				glBindTexture(GL_TEXTURE_2D_ARRAY, pTextureMan->GetActiveTextureUnitInfo().GetTexture2DArrayGL());
