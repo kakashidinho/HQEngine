@@ -58,7 +58,7 @@ attribute vec3 position VPOSITION;
 attribute vec3 normal VNORMAL;
 attribute vec2 texcoord0 VTEXCOORD0;
 attribute float	blendWeight VBLENDWEIGHT;
-#if __VERSION__ > 110
+#if __VERSION__ >= 130
 attribute ivec4 blendIndices VBLENDINDICES;
 #else
 attribute vec4 blendIndices VBLENDINDICES;

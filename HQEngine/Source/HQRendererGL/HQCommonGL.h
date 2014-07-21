@@ -24,7 +24,7 @@ struct HQBufferGL : public HQGraphicsBufferRawRetrievable, public HQBaseIDObject
 	virtual void Init(const void *initData) {};
 
 	//implement HQGraphicsResourceRawRetrievable
-	virtual void * GetRawHandle() { return (void*)bufferName; }
+	virtual void * GetRawHandle() { return (void*) ((intptr_t)bufferName); }
 
 	//implement HQGraphicsBufferRawRetrievable
 	virtual HQReturnVal TransferData(HQGraphicsBufferRawRetrievable* src, hquint32 destOffset, hquint32 srcOffset, hquint32 size)

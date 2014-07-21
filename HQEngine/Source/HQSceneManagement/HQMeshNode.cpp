@@ -28,6 +28,10 @@ COPYING.txt included with this distribution for more information.
 
 #include "../HQEngine/HQEngineCommonInternal.h"
 
+#ifndef min
+#define min(a, b) (a < b ? a : b)
+#endif
+
 using namespace HQEngineHelper;
 
 #define HQMESH_MAGIC_STR "HQEngineMeshFile"

@@ -14,7 +14,11 @@ COPYING.txt included with this distribution for more information.
 
 #include <string>
 
+#if defined DEBUG || defined _DEBUG
 #define LOG_SRC_ERR 0
+#else
+#define LOG_SRC_ERR 0
+#endif
 
 const char semanticKeywords[] =
 	"\

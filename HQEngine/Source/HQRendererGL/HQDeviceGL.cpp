@@ -30,6 +30,10 @@ Note: Initialization code is a bit ugly since it is written a long time ago
 #include <assert.h>
 #endif
 
+#ifndef min
+#define min(a, b) (a < b ? a : b)
+#endif
+
 
 /*----------------------------------*/
 #ifdef WIN32
