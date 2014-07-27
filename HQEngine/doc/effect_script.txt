@@ -94,10 +94,10 @@ Pass format:
 			/*
 			+x is positive x face of cube texture render target. 
 			cube_face can be "(+/-)(x/y/z)". default is "+x".
-			0 can be any number from 0 to max number of active render targets - 1
+			0 in "output0" can be any number from 0 to max number of active render targets minus 1.
 			*/
 			output0 = render_target_resource_name0 +x
-			//2nd output is array slice 1 of an array texture. default is array slice 0 
+			//2nd output is array slice 1 of an array texture. default array slice is 0 
 			output1 = render_target_resource_name1 1
 			.
 			.
