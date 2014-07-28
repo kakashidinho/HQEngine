@@ -55,11 +55,11 @@ COPYING.txt included with this distribution for more information.
 
 %token <lex> IDENTIFIER FLOATCONSTANT INTCONSTANT STRING_CONST EQUAL SEMI_COLON
 %token <lex> LBRACE RBRACE TECHNIQUES_GROUP_KEYWORD TECHNIQUE_KEYWORD PASS_KEYWORD BLEND_KEYWORD  STENCIL_KEYWORD
-%token <lex> OUTPUTS_KEYWORD BORDER_COLOR_KEYWORD
+%token <lex> OUTPUTS_KEYWORD BORDER_COLOR_KEYWORD DS_SIZE_KEYWORD
 %token <lex> TEXUNIT GS_TEXUNIT VS_TEXUNIT OUTPUT COMPUTE_PASS_KEYWORD TEX_UAV_UNIT BUFFER_UAV_UNIT CUBE_FACE 
 
 %type  <node> root technique_blocks technique_block block child_elems single_child assignment
-%type  <node> border_color_assignment  output_assignment
+%type  <node> border_color_assignment  output_assignment ds_size_assignment
 %type  <node> texture_unit_assignment texture_uav_unit_assignment buffer_uav_unit_assignment
 %type  <value> identifier_or_value
 %type  <value> string_or_identifier_or_value
@@ -148,6 +148,7 @@ assignment:
 	| buffer_uav_unit_assignment   {$$ = $1;}
 	| border_color_assignment  {$$ = $1;} 
 	| output_assignment   {$$ = $1;}
+	| ds_size_assignment {$$ = $1;}
 	| IDENTIFIER EQUAL string_or_identifier_or_value {
 		$$ = yynew_node($1.string, $1.line);
 		$$->SetAttribute("value", $3);	
@@ -249,6 +250,15 @@ output_assignment:
 		$$ = yynew_node($1.string, $1.line);
 		$$->SetAttribute("value", $3.string);
 		$$->SetAttribute("array_slice", $4.iconst);
+	}
+	;
+
+ds_size_assignment:
+	DS_SIZE_KEYWORD EQUAL INTCONSTANT INTCONSTANT {
+		$$ = yynew_node("depth_stencil_buffer_size", $1.line);
+		
+		$$->SetAttribute("width", $3.iconst);
+		$$->SetAttribute("height", $4.iconst);
 	}
 	;
 

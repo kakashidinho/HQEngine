@@ -13,7 +13,7 @@ COPYING.txt included with this distribution for more information.
 
 #include <sstream>
 
-//TO DO: reload resources when device lost
+//TO DO: reload resources when device lost. cleaner parser code.
 
 //parser's functions and variables
 extern HQDataReaderStream * hqengine_effect_parser_input_stream ;
@@ -2089,7 +2089,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseSamplerState(const HQEngineEffectPar
 	return HQ_OK;
 }
 
-HQReturnVal HQEngineEffectManagerImpl::ParseDepthStencilBuffer(const HQEngineEffectParserNode* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params)
+HQReturnVal HQEngineEffectManagerImpl::ParseDepthStencilBufferFmt(const HQEngineEffectParserNode* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params)
 {
 	HQDepthStencilFormat format;
 	bool mappedValueFound = false;
@@ -2117,6 +2117,9 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 	hquint32 global_width = 0xffffffff;
 	hquint32 global_height = 0xffffffff;
 	hquint32 width, height;
+	hquint32 custom_dsWidth = 0xffffffff;
+	hquint32 custom_dsHeight = 0xffffffff;
+	int elemLine = rtGroupElem->GetSourceLine();
 
 	const HQEngineEffectParserNode * attribute = rtGroupElem->GetFirstChild();
 	for (; attribute != NULL; attribute = attribute->GetNextSibling())
@@ -2129,8 +2132,13 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 		if (!strcmp(attriName, "depth_stencil_buffer_format"))
 		{
 			useDSBuffer = true;
-			if (HQFailed(this->ParseDepthStencilBuffer(attribute, dsBufferParams)))
+			if (HQFailed(this->ParseDepthStencilBufferFmt(attribute, dsBufferParams)))
 				return HQ_FAILED;
+		}
+		else if (!strcmp(attriName, "depth_stencil_buffer_size"))
+		{
+			custom_dsWidth = *attribute->GetIntAttributePtr("width");
+			custom_dsHeight = *attribute->GetIntAttributePtr("height");
 		}
 		else if (!strncmp(attriName, "output", 6))
 		{
@@ -2215,6 +2223,19 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 		}//else if (!strncmp(attriName, "target", 6))
 
 	}//for (; attribute != NULL; attribute = attribute->GetNextSibling())
+
+	//custom depth buffer size
+	if (custom_dsWidth != 0xffffffff)
+	{
+		if (global_width > custom_dsWidth || global_height > custom_dsHeight)
+		{
+			Log("Error : %d : The size of depth stencil buffer is too small!", elemLine);
+			return HQ_FAILED;
+		}
+
+		dsBufferParams.width = custom_dsWidth;
+		dsBufferParams.height = custom_dsHeight;
+	}
 
 	params.numOutputs = numOutputs;
 	params.outputs = outputArray;

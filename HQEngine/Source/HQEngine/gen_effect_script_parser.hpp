@@ -54,14 +54,15 @@
      STENCIL_KEYWORD = 270,
      OUTPUTS_KEYWORD = 271,
      BORDER_COLOR_KEYWORD = 272,
-     TEXUNIT = 273,
-     GS_TEXUNIT = 274,
-     VS_TEXUNIT = 275,
-     OUTPUT = 276,
-     COMPUTE_PASS_KEYWORD = 277,
-     TEX_UAV_UNIT = 278,
-     BUFFER_UAV_UNIT = 279,
-     CUBE_FACE = 280
+     DS_SIZE_KEYWORD = 273,
+     TEXUNIT = 274,
+     GS_TEXUNIT = 275,
+     VS_TEXUNIT = 276,
+     OUTPUT = 277,
+     COMPUTE_PASS_KEYWORD = 278,
+     TEX_UAV_UNIT = 279,
+     BUFFER_UAV_UNIT = 280,
+     CUBE_FACE = 281
    };
 #endif
 
@@ -89,7 +90,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 93 "gen_effect_script_parser.hpp"
+#line 94 "gen_effect_script_parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

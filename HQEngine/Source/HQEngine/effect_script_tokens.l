@@ -69,6 +69,7 @@ I           [uUlL]
 "stencil"					{SAVE_LINE;	 return (STENCIL_KEYWORD); }
 "outputs"					{SAVE_LINE;  return (OUTPUTS_KEYWORD);}
 "border_color"				{SAVE_LINE;  return (BORDER_COLOR_KEYWORD);}
+"depth_stencil_buffer_size" {SAVE_LINE;  return (DS_SIZE_KEYWORD);}
 
 texture{D}+			  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (TEXUNIT);}	
 geometry_texture{D}+			  { SAVE_LINE; yylval.lex.string = HQEngineHelper::GlobalPoolMallocString(yytext, yyleng); return (GS_TEXUNIT);}

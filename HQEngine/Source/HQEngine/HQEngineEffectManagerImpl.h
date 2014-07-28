@@ -331,7 +331,7 @@ private:
 	HQReturnVal ParseStencilState(const HQEngineEffectParserNode *stencilElem, HQEngineDSStateWrapper::CreationParams &params);
 	HQReturnVal ParseBlendState(const HQEngineEffectParserNode* blendElem, HQEngineBlendStateWrapper::CreationParams &params);
 	HQReturnVal ParseSamplerState(const HQEngineEffectParserNode* textureElem, HQEngineSamplerStateWrapper::CreationParams &params);
-	HQReturnVal ParseDepthStencilBuffer(const HQEngineEffectParserNode* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params);
+	HQReturnVal ParseDepthStencilBufferFmt(const HQEngineEffectParserNode* dsBufElem, HQEngineDSBufferWrapper::CreationParams &params);
 	HQReturnVal ParseRTGroup(const HQEngineEffectParserNode* rtGroupElem, HQEngineRTGroupWrapper::CreationParams &params);
 	HQReturnVal ParseTextureUnit(const HQEngineEffectParserNode* textureUnitElem, HQEngineTextureUnit& textureUnit);
 	HQReturnVal ParseTextureUAVUnit(const HQEngineEffectParserNode* textureUnitElem, HQEngineTextureUAVUnit& texUAVUnit);
