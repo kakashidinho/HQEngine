@@ -627,9 +627,12 @@ HQReturnVal HQDeviceD3D11::Init(HQRenderDeviceInitInput _hwnd,const char* settin
 	this->currentVPs[0].height = sHeight;
 	this->d3dViewPort[0].Width = (hq_float32) sWidth;
 	this->d3dViewPort[0].Height = (hq_float32)sHeight;
-	this->d3dViewPort[0].MinDepth = 0.0f;
-	this->d3dViewPort[0].MaxDepth = 1.0f;
 
+	for (hquint32 i = 0; i < this->maxNumVPs; ++i)
+	{
+		this->d3dViewPort[i].MinDepth = 0.0f;
+		this->d3dViewPort[i].MaxDepth = 1.0f;
+	}
 	pDevContext->RSSetViewports(1 , &this->d3dViewPort[0]);
 
 	this->textureMan=new HQTextureManagerD3D11(pDevice,pDevContext,logFileStream, this->m_flushLog);
