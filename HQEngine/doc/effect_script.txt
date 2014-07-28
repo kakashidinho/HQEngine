@@ -68,8 +68,8 @@ Pass format:
 			alpha_dest_factor = one/zero/src color/one minus src color/src alpha/one minus src alpha
 		}
 		stencil {
-			read_mask=ffffffff	
-			write_mask=ffffffff
+			read_mask=0xffffffff	
+			write_mask=0xffffffff
 			reference_value=0
 			fail_op=keep/zero/replace/incre/decre/incre wrap/decre wrap  // default is keep 
 			depth_fail_op=keep/zero/replace/incre/decre/incre wrap/decre wrap   // default is keep 
