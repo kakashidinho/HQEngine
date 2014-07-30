@@ -364,7 +364,7 @@ bool HQDeviceD3D9::IsDeviceLost()
 //***********************************
 //begin render
 //***********************************
-HQReturnVal HQDeviceD3D9::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil){
+HQReturnVal HQDeviceD3D9::BeginRender(HQBool isClearPixel, HQBool isClearDepth, HQBool isClearStencil, hquint32 numRTsToClear){
 #if defined DEBUG || defined _DEBUG
 	if(!pDevice)
 	{
@@ -400,7 +400,15 @@ HQReturnVal HQDeviceD3D9::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQ
 
 		pDevice->SetViewport(&VP);//set viewport full kích thước render target
 		
-		hr=pDevice->Clear(0,0,l_flags,clearColor,clearDepth,clearStencil);
+		if (isClearPixel && numRTsToClear > 0)
+		{
+			//clear first {numRTsToClear} render targets
+			static_cast<HQRenderTargetManagerD3D9*> (this->renderTargetMan)->ClearRenderTargets(numRTsToClear);
+			//clear depth stencil
+			hr = pDevice->Clear(0, 0, l_flags & (~D3DCLEAR_TARGET), clearColor, clearDepth, clearStencil);
+		}
+		else //clear all render targets
+			hr=pDevice->Clear(0,0,l_flags,clearColor,clearDepth,clearStencil);
 
 		pDevice->SetViewport(&this->d3dViewPort);//chỉnh lại viewport đang active
 	}
@@ -477,7 +485,7 @@ HQReturnVal HQDeviceD3D9::DisplayBackBuffer()
 //***********************************
 //clear
 //***********************************
-HQReturnVal HQDeviceD3D9::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil)
+HQReturnVal HQDeviceD3D9::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil, hquint32 numRTsToClear)
 {
 #if defined DEBUG || defined _DEBUG
 	if(!pDevice)
@@ -513,7 +521,15 @@ HQReturnVal HQDeviceD3D9::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool i
 
 		pDevice->SetViewport(&VP);
 		
-		hr=pDevice->Clear(0,0,l_flags,clearColor,clearDepth,clearStencil);
+		if (isClearPixel && numRTsToClear > 0)
+		{
+			//clear first {numRTsToClear} render targets
+			static_cast<HQRenderTargetManagerD3D9*> (this->renderTargetMan)->ClearRenderTargets(numRTsToClear);
+			//clear depth stencil
+			hr = pDevice->Clear(0, 0, l_flags & (~D3DCLEAR_TARGET), clearColor, clearDepth, clearStencil);
+		}
+		else //clear all render targets
+			hr = pDevice->Clear(0, 0, l_flags, clearColor, clearDepth, clearStencil);
 
 		pDevice->SetViewport(&this->d3dViewPort);//chỉnh lại viewport đang active
 	}

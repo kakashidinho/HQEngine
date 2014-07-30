@@ -62,14 +62,14 @@ HQReturnVal HQRenderDeviceDebugLayer::Init(HQRenderDeviceInitInput input,const c
 	return re;
 }
 
-HQReturnVal HQRenderDeviceDebugLayer:: BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil)
+HQReturnVal HQRenderDeviceDebugLayer::BeginRender(HQBool clearPixel, HQBool clearDepth, HQBool clearStencil, hquint32 numRTsToClear)
 {
-	HQReturnVal re = m_pDevice->BeginRender(clearPixel , clearDepth , clearStencil);
+	HQReturnVal re = m_pDevice->BeginRender(clearPixel, clearDepth, clearStencil, numRTsToClear);
 	
 	if (HQFailed(re))
 	{
-		sprintf(debugString , 2048 , "HQRenderDevice::BeginRender(%d , %d , %d) return %s\n" ,
-			(int)clearPixel , (int)clearDepth , (int)clearStencil , HQReturnValToString(re));
+		sprintf(debugString , 2048 , "HQRenderDevice::BeginRender(%d , %d , %d , %d) return %s\n" ,
+			(int)clearPixel, (int)clearDepth, (int)clearStencil, numRTsToClear, HQReturnValToString(re));
 		
 		__OutputDebugString;
 	}
@@ -103,13 +103,13 @@ HQReturnVal HQRenderDeviceDebugLayer::DisplayBackBuffer()
 }
 
 
-HQReturnVal HQRenderDeviceDebugLayer::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil)
+HQReturnVal HQRenderDeviceDebugLayer::Clear(HQBool clearPixel, HQBool clearDepth, HQBool clearStencil, hquint32 numRTsToClear)
 {
-	HQReturnVal re = m_pDevice->Clear(clearPixel , clearDepth , clearStencil);
+	HQReturnVal re = m_pDevice->Clear(clearPixel, clearDepth, clearStencil, numRTsToClear);
 	if (HQFailed(re))
 	{
-		sprintf(debugString , 2048 , "HQRenderDevice::Clear(%d , %d , %d) return %s\n" ,
-			(int)clearPixel , (int)clearDepth , (int)clearStencil , HQReturnValToString(re));
+		sprintf(debugString , 2048 , "HQRenderDevice::Clear(%d , %d , %d , %d) return %s\n" ,
+			(int)clearPixel, (int)clearDepth, (int)clearStencil, numRTsToClear, HQReturnValToString(re));
 		
 		__OutputDebugString;
 	}

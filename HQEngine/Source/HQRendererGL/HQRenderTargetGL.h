@@ -34,15 +34,14 @@ public:
 		)
 	{
 	}
+
+	//clear only first {numRTs} render targets
+	virtual HQReturnVal ClearRenderTargets(hquint32 numRTs) = 0;
 };
 
 /*----------frame buffer object implementation version---------------*/
 class HQRenderTargetManagerFBO : public HQBaseRenderTargetManagerGL
 {
-private:
-#ifdef HQ_IPHONE_PLATFORM
-	GLuint defaultFBO;
-#endif
 public:
 	HQRenderTargetManagerFBO(
 #ifdef HQ_IPHONE_PLATFORM
@@ -94,13 +93,20 @@ public:
 									HQDepthStencilBufferView* depthStencilBufferID,
 									hq_uint32 numRenderTargets,//number of render targers
 									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
-									) ;
-	
-	void ActiveDefaultFrameBuffer();
+									);
+
+	//clear only first {numRTs} render targets
+	virtual HQReturnVal ClearRenderTargets(hquint32 numRTs);
 
 	//device lost handling methods
 	virtual void OnLost();
 	virtual void OnReset();
+
+private:
+#ifdef HQ_IPHONE_PLATFORM
+	GLuint defaultFBO;
+#endif
+	void ActiveDefaultFrameBuffer();
 };
 
 

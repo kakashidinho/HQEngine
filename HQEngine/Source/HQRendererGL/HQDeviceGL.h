@@ -91,13 +91,13 @@ public:
 
 	HQReturnVal Init(HQRenderDeviceInitInput input,const char* settingFileDir,HQLogStream* logFileStream, const char *additionalSettings);
 
-	HQReturnVal BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil);
+	HQReturnVal BeginRender(HQBool clearPixel, HQBool clearDepth, HQBool clearStencil, hquint32 numRTsToClear);
 	HQReturnVal EndRender();
 	HQReturnVal DisplayBackBuffer();
 
 	HQMultiSampleType GetMultiSampleType() {return (HQMultiSampleType)pEnum->selectedMulSampleType;}
 
-	HQReturnVal Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil);
+	HQReturnVal Clear(HQBool clearPixel, HQBool clearDepth, HQBool clearStencil, hquint32 numRTsToClear);
 	void SetClearColorf(hq_float32 red,hq_float32 green,hq_float32 blue,hq_float32 alpha);//color range:0.0f->1.0f
 	void SetClearColori(hq_uint32 red,hq_uint32 green,hq_uint32 blue,hq_uint32 alpha);//color range:0->255
 	void SetClearDepthVal(hq_float32 val);

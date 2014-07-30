@@ -20,6 +20,10 @@ COPYING.txt included with this distribution for more information.
 #define CS_SRV_SLOTS_CHANGED 0x100000
 #define VBUFFER_SLOTS_CHANGED 0x200000
 
+#ifndef min
+#define min(a, b) (a < b ? a : b)
+#endif
+
 #if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
 #include "..\HQEngine\winstore\HQWinStoreUtil.h"
 
@@ -780,13 +784,13 @@ void HQDeviceD3D11::CreateMainDepthStencilView()
 //***********************************
 //begin render
 //***********************************
-HQReturnVal HQDeviceD3D11::BeginRender(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil){
+HQReturnVal HQDeviceD3D11::BeginRender(HQBool isClearPixel, HQBool isClearDepth, HQBool isClearStencil, hquint32 numRTsToClear){
 	
 	if (this->flags & RENDER_BEGUN)
 		return HQ_FAILED_RENDER_ALREADY_BEGUN;
 	this->flags |= RENDER_BEGUN;
 
-	return this->Clear(isClearPixel, isClearDepth , isClearStencil);
+	return this->Clear(isClearPixel, isClearDepth , isClearStencil, numRTsToClear);
 }
 //****************************************
 //end render
@@ -859,7 +863,7 @@ HQReturnVal HQDeviceD3D11::DisplayBackBuffer()
 //***********************************
 //clear
 //***********************************
-HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool isClearStencil)
+HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel, HQBool isClearDepth, HQBool isClearStencil, hquint32 numRTsToClear)
 {
 #if defined DEBUG || defined _DEBUG
 	if(!pDevice)
@@ -885,6 +889,9 @@ HQReturnVal HQDeviceD3D11::Clear(HQBool isClearPixel,HQBool isClearDepth,HQBool 
 		{
 			ID3D11RenderTargetView * const * pCurrentRenderTargetViews = static_cast<HQRenderTargetManagerD3D11*> (renderTargetMan)->GetRenderTargetViews();
 			UINT numViews = static_cast<HQRenderTargetManagerD3D11*> (renderTargetMan)->GetNumActiveRenderTargets();
+
+			if (numRTsToClear > 0)
+				numViews = min(numViews, numRTsToClear);
 
 			for (UINT i = 0 ; i < numViews ; ++i)
 			{

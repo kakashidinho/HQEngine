@@ -527,6 +527,11 @@ HQReturnVal HQRenderTargetManagerD3D9::CreateRenderTargetGroupImpl(
 
 HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& group)
 {
+	return ActiveRenderTargetsRawPtrImpl(group.GetRawPointer());
+}
+
+HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargetsRawPtrImpl(HQBaseRenderTargetGroup* group)
+{
 	if (g_pD3DDev->GetFlags() & DEVICE_LOST)
 		return HQ_FAILED_DEVICE_LOST;
 
@@ -609,6 +614,31 @@ HQReturnVal HQRenderTargetManagerD3D9::ActiveRenderTargetsImpl(HQSharedPtr<HQBas
 	this->renderTargetHeight = group->commonHeight;
 
 	this->ResetViewPort();
+	return HQ_OK;
+}
+
+HQReturnVal HQRenderTargetManagerD3D9::ClearRenderTargets(hquint32 numRTsToClear)
+{
+	if (!this->IsUsingDefaultFrameBuffer())
+	{
+		HQBaseRenderTargetGroup* group = static_cast <HQBaseRenderTargetGroup*> (this->currentActiveRTGroup);
+		
+		//deactive render targets starting from {numRTsToClear}
+		for (hq_uint32 i = numRTsToClear; i < this->numActiveRenderTargets; ++i)
+		{
+			if (this->activeRenderTargets[i].pRenderTarget != NULL)
+			{
+				this->activeRenderTargets[i].pRenderTarget = HQSharedPtr<HQBaseRenderTargetView> ::null;
+				pD3DDevice->SetRenderTarget(i, NULL);
+			}
+		}
+
+		//clear
+		pD3DDevice->Clear(0, 0, D3DCLEAR_TARGET, g_pD3DDev->GetD3DClearColor(), 0, 0);
+
+		//reactivate inactive render targets
+		this->ActiveRenderTargetsRawPtrImpl(group);
+	}
 	return HQ_OK;
 }
 

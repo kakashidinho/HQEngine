@@ -17,23 +17,6 @@ COPYING.txt included with this distribution for more information.
 
 class HQRenderTargetManagerD3D11 : public HQBaseRenderTargetManager
 {
-private:
-
-	ID3D11Device * pD3DDevice;
-	ID3D11DeviceContext *pD3DContext;
-	ID3D11RenderTargetView* pD3DBackBuffer;//default back buffer
-	ID3D11DepthStencilView* pD3DDSBuffer;//default depth stencil buffer
-
-	ID3D11RenderTargetView **renderTargetViews;//current active render target views
-	ID3D11DepthStencilView *pDepthStencilView;//current active depth stencil view
-
-	//-------------graphics UAV slots--------------------
-	ID3D11UnorderedAccessView *pUAVSlots[D3D11_PS_CS_UAV_REGISTER_COUNT];
-	UINT UAVInitialCounts[D3D11_PS_CS_UAV_REGISTER_COUNT];
-	hqint32 minUsedUAVSlot;//min used UAV slot
-	hqint32 maxUsedUAVSlot;//max used UAV slot. -1 if no slot is used
-	
-	hquint32 flags;
 public:
 	HQRenderTargetManagerD3D11(ID3D11Device * pD3DDevice , 
 		ID3D11DeviceContext *pD3DContext,
@@ -78,8 +61,6 @@ public:
 										HQDepthStencilBufferView **pDepthStencilBufferID_Out);
 	
 
-	void ActiveDefaultFrameBuffer();
-
 	///
 	///see HQBaseRenderTargetManager base class
 	///
@@ -100,6 +81,24 @@ public:
 
 	static DXGI_FORMAT GetD3DFormat(HQRenderTargetFormat format);
 	static DXGI_FORMAT GetD3DFormat(HQDepthStencilFormat format);
+private:
+	void ActiveDefaultFrameBuffer();
+
+	ID3D11Device * pD3DDevice;
+	ID3D11DeviceContext *pD3DContext;
+	ID3D11RenderTargetView* pD3DBackBuffer;//default back buffer
+	ID3D11DepthStencilView* pD3DDSBuffer;//default depth stencil buffer
+
+	ID3D11RenderTargetView **renderTargetViews;//current active render target views
+	ID3D11DepthStencilView *pDepthStencilView;//current active depth stencil view
+
+	//-------------graphics UAV slots--------------------
+	ID3D11UnorderedAccessView *pUAVSlots[D3D11_PS_CS_UAV_REGISTER_COUNT];
+	UINT UAVInitialCounts[D3D11_PS_CS_UAV_REGISTER_COUNT];
+	hqint32 minUsedUAVSlot;//min used UAV slot
+	hqint32 maxUsedUAVSlot;//max used UAV slot. -1 if no slot is used
+
+	hquint32 flags;
 };
 
 

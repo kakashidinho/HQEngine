@@ -877,7 +877,7 @@ void HQDeviceGL::EnableVSyncNonSave(bool enable)
 //***********************************
 //begin render
 //***********************************
-HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil){
+HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel, HQBool clearDepth, HQBool clearStencil, hquint32 numRTsToClear){
 #ifdef WIN32
 	if(hRC==NULL)
 #elif defined (HQ_LINUX_PLATFORM) || defined HQ_ANDROID_PLATFORM
@@ -918,7 +918,16 @@ HQReturnVal HQDeviceGL::BeginRender(HQBool clearPixel,HQBool clearDepth,HQBool c
 	GLbitfield l_flags = (clearPixel << 14) | (clearDepth << 8) | (clearStencil << 10);
 #endif
 	
-	glClear(l_flags);
+	if (clearPixel && numRTsToClear > 0)
+	{
+		//clear only first {numRTsToClear} render targets
+		static_cast<HQBaseRenderTargetManagerGL*>(this->renderTargetMan)->ClearRenderTargets(numRTsToClear);
+
+		//clear depth & stencil
+		glClear(l_flags & (~GL_COLOR_BUFFER_BIT));
+	}
+	else//simply clear
+		glClear(l_flags);
 
 	this->flags |= RENDER_BEGUN;
 
@@ -1007,7 +1016,7 @@ HQReturnVal HQDeviceGL::DisplayBackBuffer()
 //***********************************
 //clear
 //***********************************
-HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil)
+HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearStencil, hquint32 numRTsToClear)
 {
 #if defined DEBUG || defined _DEBUG
 #ifdef WIN32
@@ -1041,7 +1050,16 @@ HQReturnVal HQDeviceGL::Clear(HQBool clearPixel,HQBool clearDepth,HQBool clearSt
 	GLbitfield l_flags = (clearPixel << 14) | (clearDepth << 8) | (clearStencil << 10);
 #endif
 	
-	glClear(l_flags);
+	if (clearPixel && numRTsToClear > 0)
+	{
+		//clear only first {numRTsToClear} render targets
+		static_cast<HQBaseRenderTargetManagerGL*>(this->renderTargetMan)->ClearRenderTargets(numRTsToClear);
+
+		//clear depth & stencil
+		glClear(l_flags & (~GL_COLOR_BUFFER_BIT));
+	}
+	else//simply clear
+		glClear(l_flags);
 
 	return HQ_OK;
 }

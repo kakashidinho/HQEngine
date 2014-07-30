@@ -1013,6 +1013,27 @@ void HQRenderTargetManagerFBO::ActiveDefaultFrameBuffer()
 	g_pOGLDev->SetViewport(g_pOGLDev->GetViewPort());//reset viewport
 }
 
+HQReturnVal HQRenderTargetManagerFBO::ClearRenderTargets(hquint32 numRTs)
+{
+	if (!this->IsUsingDefaultFrameBuffer())
+	{
+		HQRenderTargetGroupGL* group = static_cast <HQRenderTargetGroupGL*> (this->currentActiveRTGroup);
+		if (numRTs > group->numRenderTargets)
+			numRTs = group->numRenderTargets;
+#ifndef HQ_OPENGLES
+		if (g_pOGLDev->GetDeviceCaps().maxDrawBuffers > 1)
+		{
+			glDrawBuffers(numRTs, group->draw_buffers);//activate only first {numRTs} draw buffers
+
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			glDrawBuffers(group->numRenderTargets, group->draw_buffers);//activate all draw buffers
+		}
+#endif
+	}
+
+	return HQ_OK;
+}
 
 HQReturnVal HQRenderTargetManagerFBO::GenerateMipmaps(HQRenderTargetView* renderTargetTextureID)
 {

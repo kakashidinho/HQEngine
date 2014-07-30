@@ -75,6 +75,9 @@ public:
 	///see HQBaseRenderTargetManager base class
 	///
 	HQReturnVal ActiveRenderTargetsImpl(HQSharedPtr<HQBaseRenderTargetGroup>& group);
+
+	HQReturnVal ActiveRenderTargetsRawPtrImpl(HQBaseRenderTargetGroup* group);
+
 	///
 	///see HQBaseRenderTargetManager base class
 	///
@@ -83,6 +86,8 @@ public:
 									hq_uint32 numRenderTargets,//number of render targers
 									HQBaseRenderTargetGroup **ppRenderTargetGroupOut
 									) ;
+
+	HQReturnVal ClearRenderTargets(hquint32 numRTsToClear);
 
 	void InvalidateRenderTargets();
 
