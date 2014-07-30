@@ -135,10 +135,10 @@ void rwtexture2d_f_getsize_4f(layout (r32f) image2D _name, out uint width, out u
 #define decl_texture2d_2f(_name, _binding) Texture2D<float2> _name : register(t ## _binding);
 #define decl_texture2d_4f(_name, _binding) Texture2D<float4> _name : register(t ## _binding);
 #define decl_texture2d_with_sampler(_type, _name, _binding) Texture2D<_type> _name : register(t ## _binding);\
-	SamplerState _name ## _sampler_state : TEXUNIT ## _binding;
+	SamplerState _name ## _sampler_state : register(s ## _binding);
 
 #define decl_texture2darray_with_sampler(_type, _name, _binding) Texture2DArray<_type> _name : register(t ## _binding);\
-	SamplerState _name ## _sampler_state : TEXUNIT ## _binding;
+	SamplerState _name ## _sampler_state : register(s ## _binding);
 
 #define decl_texture2d_with_sampler_4f(_name, _binding) decl_texture2d_with_sampler(float4, _name, _binding)
 #define decl_texture2d_with_sampler_2f(_name, _binding) decl_texture2d_with_sampler(float2, _name, _binding)
