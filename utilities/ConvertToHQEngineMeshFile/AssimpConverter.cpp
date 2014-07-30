@@ -230,6 +230,7 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditiona
 		colorMat.emissive.a = colorMat.diffuse.a;
 
 		material->Get<float>(AI_MATKEY_SHININESS , colorMat.power);
+		colorMat.power *= 0.25f;//assimp multiplies this value by 4 after model loaded. we need to convert it back
 		fwrite(&colorMat, sizeof(HQColorMaterial), 1, f);
 
 		//texture
