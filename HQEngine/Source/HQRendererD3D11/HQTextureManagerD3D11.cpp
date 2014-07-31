@@ -144,36 +144,6 @@ static DXGI_FORMAT GetTextureBufferFormat(HQTextureBufferFormat format, hq_uint3
 	}
 }
 
-
-static hquint32 GetTexelSize(DXGI_FORMAT format)
-{
-	switch (format)
-	{
-	case DXGI_FORMAT_R8G8B8A8_UNORM: case DXGI_FORMAT_R8G8B8A8_TYPELESS:
-	case DXGI_FORMAT_R8G8B8A8_SINT: case DXGI_FORMAT_R8G8B8A8_SNORM:
-	case DXGI_FORMAT_R8G8B8A8_UINT:
-	case DXGI_FORMAT_R32_FLOAT: case DXGI_FORMAT_R32_SINT:
-	case DXGI_FORMAT_R32_UINT: case DXGI_FORMAT_R32_TYPELESS:
-	case DXGI_FORMAT_R16G16_FLOAT: case DXGI_FORMAT_R16G16_TYPELESS:
-		return 4;
-	case DXGI_FORMAT_R16_FLOAT: case DXGI_FORMAT_R16_TYPELESS:
-		return 2;
-	case DXGI_FORMAT_R16G16B16A16_FLOAT: case DXGI_FORMAT_R16G16B16A16_TYPELESS:
-	case DXGI_FORMAT_R32G32_FLOAT:
-	case DXGI_FORMAT_R32G32_SINT:
-	case DXGI_FORMAT_R32G32_UINT: case DXGI_FORMAT_R32G32_TYPELESS:
-		return 8;
-	case DXGI_FORMAT_R32G32B32A32_FLOAT:
-	case DXGI_FORMAT_R32G32B32A32_SINT:
-	case DXGI_FORMAT_R32G32B32A32_UINT:
-	case DXGI_FORMAT_R32G32B32A32_TYPELESS:
-		return 16;
-	default:
-		//TO DO
-		return 0;
-	}
-}
-
 /*--------------HQUAVTextureResourceD3D11---------------*/
 struct HQUAVTextureResourceD3D11 : public HQTextureResourceD3D11
 {
@@ -478,6 +448,11 @@ hquint32 HQTextureD3D11::GetHeight() const
 
 HQReturnVal HQTextureD3D11::CopyFirstLevelContent(void *data)
 {
+	return CopyLevelContent(0, data);
+}
+
+HQReturnVal HQTextureD3D11::CopyLevelContent(hquint32 mipLevel, void *data)
+{
 	switch (this->type)
 	{
 	case HQ_TEXTURE_2D_UAV: case HQ_TEXTURE_2D_ARRAY_UAV:
@@ -489,7 +464,7 @@ HQReturnVal HQTextureD3D11::CopyFirstLevelContent(void *data)
 		hquint32 texelSize = GetTexelSize(desc.Format);
 		if (texelSize != 0)
 		{
-			return CopyD3D11Texture2DContent(data, pTexture, desc.Width * desc.Height * desc.ArraySize * texelSize);
+			return CopyD3D11Texture2DContent(data, pTexture, mipLevel);
 		}
 	}
 	default:

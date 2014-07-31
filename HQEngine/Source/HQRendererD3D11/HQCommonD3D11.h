@@ -32,8 +32,9 @@ COPYING.txt included with this distribution for more information.
 #	endif
 #endif
 
+hquint32 GetTexelSize(DXGI_FORMAT format);
 HQReturnVal CopyD3D11BufferContent(void *dest, ID3D11Buffer * resource);
-HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, size_t sizeToCopy);
+HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, hquint32 mipLevel = 0);
 
 //base buffer object. Note: D3D11 resource's creation is done outside this class
 struct HQBufferD3D11 : public HQGraphicsBufferRawRetrievable, public HQBaseIDObject

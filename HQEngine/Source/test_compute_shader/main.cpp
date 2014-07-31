@@ -63,6 +63,29 @@ Game::Game()
 
 	//load effect 
 	m_app->GetEffectManager()->AddEffectsFromFile("effects.script");
+
+	//test texture mipmaps genertation on hardware
+	hqfloat32 weight[] = {
+		1.f, 0.f, 1.f, 1.f,
+		1.f, 1.f, 0.f, 0.f,
+		0.f, 0.f, 0.f, 1.f,
+		1.f, 0.f, 0.f, 0.f
+	};
+
+	hqfloat32 verifyWeight[16];
+
+	HQTexture *weightTexture;
+	HQRenderTargetView* weightTextureRTV;
+	m_pRDevice->GetRenderTargetManager()->CreateRenderTargetTexture(
+		4, 4, 1, true, HQ_RTFMT_R_FLOAT32, HQ_MST_NONE, HQ_TEXTURE_2D_UAV, &weightTextureRTV, &weightTexture
+		);
+
+	weightTexture->SetLevelContent(0, weight);
+	m_pRDevice->GetRenderTargetManager()->GenerateMipmaps(weightTextureRTV);
+
+	weightTexture->CopyLevelContent(0, verifyWeight);
+	weightTexture->CopyLevelContent(1, verifyWeight);
+	weightTexture->CopyLevelContent(2, verifyWeight);
 }
 
 void Game::Render(HQTime dt){

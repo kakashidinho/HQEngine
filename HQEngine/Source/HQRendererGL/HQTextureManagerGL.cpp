@@ -225,12 +225,18 @@ struct HQTextureUAVGL : public HQTextureGL{
 
 	//implement HQTexture
 	virtual HQReturnVal CopyFirstLevelContent(void *data);
+	virtual HQReturnVal CopyLevelContent(hquint32 level, void *data);
 	virtual HQReturnVal SetLevelContent(hquint32 level, const void *data);
 
 	GLenum internalFormat;
 };
 
 HQReturnVal HQTextureUAVGL::CopyFirstLevelContent(void *data)
+{
+	return CopyLevelContent(0, data);
+}
+
+HQReturnVal HQTextureUAVGL::CopyLevelContent(hquint32 mipLevel, void *data)
 {
 	GLenum format, type;
 	switch (this->internalFormat){
@@ -267,7 +273,7 @@ HQReturnVal HQTextureUAVGL::CopyFirstLevelContent(void *data)
 #ifndef HQ_OPENGLES
 	GLuint textureName = *(GLuint*)this->pData;
 	glBindTexture(this->textureTarget, textureName);
-	glGetTexImage(this->textureTarget, 0, format, type, data);
+	glGetTexImage(this->textureTarget, mipLevel, format, type, data);
 
 	glBindTexture(this->textureTarget, oldTexture);
 #endif

@@ -594,6 +594,7 @@ public:
 
 	/*---------for debugging purpose------------*/
 	virtual HQReturnVal CopyFirstLevelContent(void *data) = 0; //Copy content of first mipmap level. This method may not be supported in some platform
+	virtual HQReturnVal CopyLevelContent(hquint32 level, void *data) = 0; //Copy content of first mipmap level. This method may not be supported in some platform
 	virtual HQReturnVal SetLevelContent(hquint32 level, const void *data) = 0;//copy data from system memory to a mipmap level of texture. This method may not be supported in some platform
 protected:
 	virtual ~HQTexture() {}

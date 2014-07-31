@@ -213,7 +213,7 @@ HQReturnVal CopyD3D11BufferContent(void *dest, ID3D11Buffer * resource)
 }
 
 
-HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, size_t sizeToCopy)
+HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, hquint32 mipLevel)
 {
 	//create temp readable texture  to copy the content to
 	D3D11_TEXTURE2D_DESC desc;
@@ -243,14 +243,22 @@ HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, si
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 	HQReturnVal re = HQ_OK;
 	//now copy from temp buffer to {dest}
-	UINT oneArraySliceSize = sizeToCopy / desc.ArraySize;
+	UINT mipWidth = max((desc.Width >> mipLevel), 1);
+	UINT mipHeight = max((desc.Height >> mipLevel), 1);
+	UINT rowSize = mipWidth * desc.ArraySize * GetTexelSize(desc.Format);
+	UINT oneArraySliceSize = rowSize * mipHeight;
 	for (UINT i = 0; i < desc.ArraySize; ++i)
 	{
 		//copy each array slice turn by turn
-		UINT subResource = D3D11CalcSubresource(0, i, desc.MipLevels);
+		UINT subResource = D3D11CalcSubresource(mipLevel, i, desc.MipLevels);
 		if (SUCCEEDED(pD3DContext->Map(tempBuffer, subResource, D3D11_MAP_READ, 0, &mappedSubResource)))
 		{
-			memcpy(((hqubyte8*)dest) + oneArraySliceSize * i, mappedSubResource.pData, oneArraySliceSize);
+			for (hquint32 j = 0; j < mipHeight; ++j)
+			{
+				hqubyte8* destAddress = ((hqubyte8*)dest) + j * rowSize + i * oneArraySliceSize;
+				memcpy(destAddress, (hqubyte8*)mappedSubResource.pData + mappedSubResource.RowPitch * j, rowSize);
+			}
+
 			pD3DContext->Unmap(tempBuffer, subResource);
 
 		}
@@ -265,4 +273,34 @@ HQReturnVal CopyD3D11Texture2DContent(void *dest, ID3D11Texture2D * resource, si
 	tempBuffer->Release();
 
 	return re;
+}
+
+
+hquint32 GetTexelSize(DXGI_FORMAT format)
+{
+	switch (format)
+	{
+	case DXGI_FORMAT_R8G8B8A8_UNORM: case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+	case DXGI_FORMAT_R8G8B8A8_SINT: case DXGI_FORMAT_R8G8B8A8_SNORM:
+	case DXGI_FORMAT_R8G8B8A8_UINT:
+	case DXGI_FORMAT_R32_FLOAT: case DXGI_FORMAT_R32_SINT:
+	case DXGI_FORMAT_R32_UINT: case DXGI_FORMAT_R32_TYPELESS:
+	case DXGI_FORMAT_R16G16_FLOAT: case DXGI_FORMAT_R16G16_TYPELESS:
+		return 4;
+	case DXGI_FORMAT_R16_FLOAT: case DXGI_FORMAT_R16_TYPELESS:
+		return 2;
+	case DXGI_FORMAT_R16G16B16A16_FLOAT: case DXGI_FORMAT_R16G16B16A16_TYPELESS:
+	case DXGI_FORMAT_R32G32_FLOAT:
+	case DXGI_FORMAT_R32G32_SINT:
+	case DXGI_FORMAT_R32G32_UINT: case DXGI_FORMAT_R32G32_TYPELESS:
+		return 8;
+	case DXGI_FORMAT_R32G32B32A32_FLOAT:
+	case DXGI_FORMAT_R32G32B32A32_SINT:
+	case DXGI_FORMAT_R32G32B32A32_UINT:
+	case DXGI_FORMAT_R32G32B32A32_TYPELESS:
+		return 16;
+	default:
+		//TO DO
+		return 0;
+	}
 }
