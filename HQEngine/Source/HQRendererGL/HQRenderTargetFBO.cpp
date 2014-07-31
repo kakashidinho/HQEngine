@@ -1043,21 +1043,12 @@ HQReturnVal HQRenderTargetManagerFBO::GenerateMipmaps(HQRenderTargetView* render
 		return HQ_FAILED_INVALID_ID;
 #endif
 
-	HQTextureGL* pTexture = (HQTextureGL*)pRenderTarget->GetTexture().GetRawPointer();
-	GLuint *pGLtex = (GLuint *)pTexture->pData;
-	GLuint currentBoundTex ;//current bound texture
-	
 	HQTextureManagerGL* glTextureManager = (HQTextureManagerGL*)this->pTextureManager;
 
-	switch(pTexture->type)
-	{
-	case HQ_TEXTURE_2D:
-		currentBoundTex = glTextureManager->GetActiveTextureUnitInfo().GetTexture2DGL();
-		break;
-	case HQ_TEXTURE_CUBE:
-		currentBoundTex = glTextureManager->GetActiveTextureUnitInfo().GetTextureCubeGL();
-		break;
-	}
+	HQTextureGL* pTexture = (HQTextureGL*)pRenderTarget->GetTexture().GetRawPointer();
+	GLuint *pGLtex = (GLuint *)pTexture->pData;
+	GLuint currentBoundTex = glTextureManager->GetActiveTextureUnitInfo().GetTextureGL(pTexture->type);//current bound texture
+	
 	if (*pGLtex != currentBoundTex)
 		glBindTexture(pTexture->textureTarget , *pGLtex);
 
