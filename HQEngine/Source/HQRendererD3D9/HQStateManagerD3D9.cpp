@@ -134,6 +134,12 @@ namespace helper{
 			break;
 		case HQ_BO_REVSUBTRACT  :
 			return D3DBLENDOP_REVSUBTRACT;
+			break; 
+		case HQ_BO_MIN:
+			return D3DBLENDOP_MIN;
+			break;
+		case HQ_BO_MAX:
+			return D3DBLENDOP_MAX;
 			break;
 		}
 		return D3DBLENDOP_FORCE_DWORD;

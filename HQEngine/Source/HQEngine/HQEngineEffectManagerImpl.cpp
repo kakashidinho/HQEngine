@@ -930,6 +930,8 @@ HQEngineEffectManagerImpl::HQEngineEffectManagerImpl(HQLogStream *stream, bool f
 	m_blendOpMap.Add("add", HQ_BO_ADD);
 	m_blendOpMap.Add("sub", HQ_BO_SUBTRACT);
 	m_blendOpMap.Add("rev sub", HQ_BO_REVSUBTRACT);
+	m_blendOpMap.Add("min", HQ_BO_MIN);
+	m_blendOpMap.Add("max", HQ_BO_MAX);
 
 	//wrap/mirror/clamp/border
 	m_taddrModeMap.Add("wrap", HQ_TAM_WRAP);
@@ -1873,6 +1875,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseStencilState(const HQEngineEffectPar
 
 HQReturnVal HQEngineEffectManagerImpl::ParseBlendState(const HQEngineEffectParserNode* blendElem, HQEngineBlendStateWrapper::CreationParams &params)
 {
+	//TO DO: independent blend state
 	HQBlendOp op;
 	HQBlendFactor factor;
 	bool mappedValueFound = false;

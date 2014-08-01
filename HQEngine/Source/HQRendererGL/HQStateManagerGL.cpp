@@ -132,6 +132,14 @@ namespace helper{
 		case HQ_BO_REVSUBTRACT  :
 			return GL_FUNC_REVERSE_SUBTRACT;
 			break;
+#ifndef HQ_OPENGLES //TO DO
+		case HQ_BO_MIN:
+			return GL_MIN;
+			break;
+		case HQ_BO_MAX:
+			return GL_MAX;
+			break;
+#endif
 		}
 		return 0;
 	}
@@ -496,6 +504,18 @@ HQReturnVal HQStateManagerGL::CreateBlendStateEx( const HQBlendStateExDesc &blen
 	newState->destAlphaFactor = helper::GetGLBlendFactor(blendStateDesc.destAlphaFactor);
 
 	return HQ_OK;
+}
+
+HQReturnVal HQStateManagerGL::CreateIndependentBlendState(const HQIndieBlendStateDesc *blendStateDescs, hq_uint32 numStateDescs, hq_uint32 *pBStateID)
+{
+	//TO DO
+	return HQ_FAILED;
+}
+
+HQReturnVal HQStateManagerGL::CreateIndependentBlendStateEx(const HQIndieBlendStateExDesc *blendStateDescs, hq_uint32 numStateDescs, hq_uint32 *pBStateID)
+{
+	//TO DO
+	return HQ_FAILED;
 }
 
 

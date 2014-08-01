@@ -266,22 +266,24 @@ typedef enum HQBlendOp
 	HQ_BO_ADD = 0,//output color = source color * source blend factor + destination color * destination blend factor
 	HQ_BO_SUBTRACT = 1,//output color = source color * source blend factor - destination color * destination blend factor
 	HQ_BO_REVSUBTRACT = 2, //output color = destination color * destination blend factor - source color * source blend factor
+	HQ_BO_MIN = 3,//output color = min(destination color * destination blend factor, source color * source blend factor). Note: OpenGL ignores blend factors
+	HQ_BO_MAX = 4,//output color = min(destination color * destination blend factor, source color * source blend factor). Note: OpenGL ignores blend factors
 	HQ_BO_FORCE_DWORD = 0xffffffff
 } _HQBlendOp;
 
-typedef struct HQBlendStateDesc//blend operation is HQ_BO_ADD
+typedef struct _HQBlendStateDesc//blend operation is HQ_BO_ADD
 {
-	HQBlendStateDesc(HQBlendFactor srcFactor = HQ_BF_ONE, HQBlendFactor destFactor = HQ_BF_ZERO);
+	_HQBlendStateDesc(HQBlendFactor srcFactor = HQ_BF_ONE, HQBlendFactor destFactor = HQ_BF_ZERO);
 
 	HQBlendFactor srcFactor; /// blend factor for  source color
 	HQBlendFactor destFactor ; /// blend factor for destination color
-}_HQBlendStateDesc;
+}HQBlendStateDesc;
 
 //description for creating extended blend state
 //supports blend operation other than HQ_BO_ADD and separate blend settings for alpha channel
-typedef struct HQBlendStateExDesc : public HQBlendStateDesc
+typedef struct _HQBlendStateExDesc : public HQBlendStateDesc
 {
-	HQBlendStateExDesc(	HQBlendFactor srcFactor = HQ_BF_ONE, 
+	_HQBlendStateExDesc(HQBlendFactor srcFactor = HQ_BF_ONE,
 						HQBlendFactor destFactor = HQ_BF_ZERO, 
 						HQBlendOp blendOp = HQ_BO_ADD,
 						HQBlendOp alphaBlendOp = HQ_BO_ADD);
@@ -290,8 +292,15 @@ typedef struct HQBlendStateExDesc : public HQBlendStateDesc
 	HQBlendFactor srcAlphaFactor; // blend factor for  source alpha
 	HQBlendFactor destAlphaFactor ; // blend factor for destination alpha
 	HQBlendOp alphaBlendOp;//blend operation for alpha channel
-} _HQBlendStateExDesc;
+} HQBlendStateExDesc;
 
+typedef struct _HQIndieBlendStateDesc : public HQBlendStateDesc{
+	hquint32 renderTargetIndex;
+} HQIndieBlendStateDesc;
+
+typedef struct _HQIndieBlendStateExDesc : public HQBlendStateExDesc{
+	hquint32 renderTargetIndex;
+} HQIndieBlendStateExDesc;
 
 typedef enum HQFilterMode
 {

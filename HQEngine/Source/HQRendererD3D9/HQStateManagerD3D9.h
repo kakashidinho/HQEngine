@@ -130,6 +130,8 @@ public:
 	/*------blend state-------------------------*/
 	HQReturnVal CreateBlendState( const HQBlendStateDesc &blendState , hq_uint32 *pBStateID) ;
 	HQReturnVal CreateBlendStateEx( const HQBlendStateExDesc &blendState , hq_uint32 *pBStateID) ;
+	HQReturnVal CreateIndependentBlendState(const HQIndieBlendStateDesc *blendStateDescs, hq_uint32 numStateDescs, hq_uint32 *pBStateID) { return HQ_FAILED; }
+	HQReturnVal CreateIndependentBlendStateEx(const HQIndieBlendStateExDesc *blendStateDescs, hq_uint32 numStateDescs, hq_uint32 *pBStateID) { return HQ_FAILED; }
 	HQReturnVal ActiveBlendState(hq_uint32 blendStateID);
 	HQReturnVal RemoveBlendState(hq_uint32 blendStateID) ; 
 

@@ -50,6 +50,14 @@ public:
 	///Note : extended blend state is state that has separate alpha channel blend mode and blend operation other than HQ_BO_ADD
 	///
 	virtual HQReturnVal CreateBlendStateEx( const HQBlendStateExDesc &blendState , hq_uint32 *pBStateID) = 0;
+
+	///
+	///Create independent blend states for each render target. Those are not listed will have their blending state disabled. 
+	///can cause unexpected behaviors if device not support extended blend state. 
+	///
+	virtual HQReturnVal CreateIndependentBlendState(const HQIndieBlendStateDesc *blendStateDescs, hq_uint32 numStateDescs, hq_uint32 *pBStateID) = 0;
+	virtual HQReturnVal CreateIndependentBlendStateEx(const HQIndieBlendStateExDesc *blendStateDescs, hq_uint32 numStateDescs, hq_uint32 *pBStateID) = 0;
+
 	///
 	///{blendStateID} = 0 => disable blend operation
 	///

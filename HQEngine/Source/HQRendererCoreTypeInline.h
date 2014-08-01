@@ -142,12 +142,12 @@ inline HQDepthStencilStateTwoSideDesc::HQDepthStencilStateTwoSideDesc(HQDepthMod
 {
 }
 
-inline HQBlendStateDesc::HQBlendStateDesc(HQBlendFactor _srcFactor , HQBlendFactor _destFactor)
+inline _HQBlendStateDesc::_HQBlendStateDesc(HQBlendFactor _srcFactor, HQBlendFactor _destFactor)
 : srcFactor(_srcFactor), destFactor(_destFactor)
 {
 }
 
-inline HQBlendStateExDesc :: HQBlendStateExDesc(HQBlendFactor _srcFactor, 
+inline _HQBlendStateExDesc::_HQBlendStateExDesc(HQBlendFactor _srcFactor,
 												HQBlendFactor _destFactor , 
 												HQBlendOp _blendOp,
 												HQBlendOp _alphaBlendOp) 

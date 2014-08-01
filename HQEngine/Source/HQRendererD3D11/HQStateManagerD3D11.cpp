@@ -141,6 +141,12 @@ namespace helper{
 		case HQ_BO_REVSUBTRACT  :
 			return D3D11_BLEND_OP_REV_SUBTRACT;
 			break;
+		case HQ_BO_MIN:
+			return D3D11_BLEND_OP_MIN;
+			break;
+		case HQ_BO_MAX:
+			return D3D11_BLEND_OP_MAX;
+			break;
 		}
 		return (D3D11_BLEND_OP)0xffffffff;
 	}
@@ -627,6 +633,101 @@ HQReturnVal HQStateManagerD3D11::CreateBlendStateEx( const HQBlendStateExDesc &b
 
 	return HQ_OK;
 }
+
+
+HQReturnVal HQStateManagerD3D11::CreateIndependentBlendState(const HQIndieBlendStateDesc *blendStateDescs, hq_uint32 numStateDescs, hq_uint32 *pBStateID)
+{
+	HQBlendStateD3D11 *newState = HQ_NEW HQBlendStateD3D11();
+	D3D11_BLEND_DESC desc;
+
+	desc.AlphaToCoverageEnable = FALSE;
+	desc.IndependentBlendEnable = TRUE;
+
+	for (int i = 0; i < 8; ++i)//default values
+	{
+		desc.RenderTarget[i].BlendEnable = FALSE;
+		desc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+		desc.RenderTarget[i].BlendOpAlpha = desc.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+		desc.RenderTarget[i].SrcBlendAlpha = desc.RenderTarget[i].SrcBlend = D3D11_BLEND_ONE;
+		desc.RenderTarget[i].DestBlendAlpha = desc.RenderTarget[i].DestBlend = D3D11_BLEND_ZERO;
+	}
+
+	for (hquint32 i = 0; i < numStateDescs; ++i)
+	{
+		const HQIndieBlendStateDesc &blendStateDesc = blendStateDescs[i];
+		hquint32 rtIndex = blendStateDesc.renderTargetIndex;
+
+		desc.RenderTarget[rtIndex].SrcBlendAlpha = desc.RenderTarget[rtIndex].SrcBlend = helper::GetD3DBlendFactor(blendStateDesc.srcFactor);
+		desc.RenderTarget[rtIndex].DestBlendAlpha = desc.RenderTarget[rtIndex].DestBlend = helper::GetD3DBlendFactor(blendStateDesc.destFactor);
+
+		desc.RenderTarget[rtIndex].BlendEnable = TRUE;
+	}
+
+
+	if (FAILED(pD3DDevice->CreateBlendState(&desc, &newState->pD3DState)))
+	{
+		SafeDelete(newState);
+		return HQ_FAILED;
+	}
+	if (!this->bStates.AddItem(newState, pBStateID))
+	{
+		SafeDelete(newState);
+		return HQ_FAILED_MEM_ALLOC;
+	}
+
+	return HQ_OK;
+}
+
+HQReturnVal HQStateManagerD3D11::CreateIndependentBlendStateEx(const HQIndieBlendStateExDesc *blendStateDescs, hq_uint32 numStateDescs, hq_uint32 *pBStateID)
+{
+	HQBlendStateD3D11 *newState = HQ_NEW HQBlendStateD3D11();
+	D3D11_BLEND_DESC desc;
+
+	desc.AlphaToCoverageEnable = FALSE;
+	desc.IndependentBlendEnable = TRUE;
+
+	for (int i = 0; i < 8; ++i)//default values
+	{
+		desc.RenderTarget[i].BlendEnable = FALSE;
+		desc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+		desc.RenderTarget[i].BlendOpAlpha = desc.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+		desc.RenderTarget[i].SrcBlendAlpha = desc.RenderTarget[i].SrcBlend = D3D11_BLEND_ONE;
+		desc.RenderTarget[i].DestBlendAlpha = desc.RenderTarget[i].DestBlend = D3D11_BLEND_ZERO;
+	}
+
+	for (hquint32 i = 0; i < numStateDescs; ++i)
+	{
+		const HQIndieBlendStateExDesc &blendStateDesc = blendStateDescs[i];
+		hquint32 rtIndex = blendStateDesc.renderTargetIndex;
+
+		desc.RenderTarget[rtIndex].BlendOp = helper::GetD3DBlendOp(blendStateDesc.blendOp);
+		desc.RenderTarget[rtIndex].SrcBlend = helper::GetD3DBlendFactor(blendStateDesc.srcFactor);
+		desc.RenderTarget[rtIndex].DestBlend = helper::GetD3DBlendFactor(blendStateDesc.destFactor);
+
+		desc.RenderTarget[rtIndex].BlendOpAlpha = helper::GetD3DBlendOp(blendStateDesc.alphaBlendOp);
+		desc.RenderTarget[rtIndex].SrcBlendAlpha = helper::GetD3DBlendFactor(blendStateDesc.srcAlphaFactor);
+		desc.RenderTarget[rtIndex].DestBlendAlpha = helper::GetD3DBlendFactor(blendStateDesc.destAlphaFactor);
+
+		desc.RenderTarget[rtIndex].BlendEnable = TRUE;
+	}
+
+
+	if (FAILED(pD3DDevice->CreateBlendState(&desc, &newState->pD3DState)))
+	{
+		SafeDelete(newState);
+		return HQ_FAILED;
+	}
+	if (!this->bStates.AddItem(newState, pBStateID))
+	{
+		SafeDelete(newState);
+		return HQ_FAILED_MEM_ALLOC;
+	}
+
+	return HQ_OK;
+}
+
 HQReturnVal HQStateManagerD3D11::ActiveBlendState(hq_uint32 blendStateID)
 {
 	HQSharedPtr<HQBlendStateD3D11> state = this->bStates.GetItemPointer(blendStateID);
