@@ -2151,7 +2151,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 			const char* cubeFaceStr = defaultCubeFaceStr;
 			if (sscanf(attriName, "output%u", &targetIdx) != 1)
 			{
-				Log("Error : %d : invald token %s!", attriLine, attriName);
+				Log("Error : %d : invalid token %s!", attriLine, attriName);
 				return HQ_FAILED;
 			}
 
@@ -2159,7 +2159,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 			rtOutput.outputTexture = resManager->GetTextureResourceSharedPtr(attriValStr);
 			if (rtOutput.outputTexture == NULL || rtOutput.outputTexture->IsRenderTarget() == false)
 			{
-				Log("Error : %d : invald render target resource=%s!", attriLine, attriValStr);
+				Log("Error : %d : invalid render target resource=%s!", attriLine, attriValStr);
 				return HQ_FAILED;
 			}
 
@@ -2182,7 +2182,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 				else if (!strcmp(cubeFaceStr, "-z"))
 					rtOutput.cubeFace = HQ_CTF_NEG_Z;
 				else {
-					Log("Error : %d : invald cube_face=%s!", attriLine, cubeFaceStr);
+					Log("Error : %d : invalid cube_face=%s!", attriLine, cubeFaceStr);
 					return HQ_FAILED;
 				}
 			}//if (rtOutput.outputTexture->GetTexture()->GetType() == HQ_TEXTURE_CUBE)
@@ -2212,7 +2212,7 @@ HQReturnVal HQEngineEffectManagerImpl::ParseRTGroup(const HQEngineEffectParserNo
 				//check if the size is valid
 				if (global_width != width || global_height != height)
 				{
-					Log("Error : %d : invald render target resource=%s! This resource has different size from the rest of the group!", attriLine, attriValStr);
+					Log("Error : %d : invalid render target resource=%s! This resource has different size from the rest of the group!", attriLine, attriValStr);
 					return HQ_FAILED;
 				}
 
