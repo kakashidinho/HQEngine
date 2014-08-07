@@ -70,6 +70,7 @@ public:
 	///
 	HQDrawIndexedIndirectArgsBuffer* GetDrawIndirectArgs();
 
+	const char* GetMeshFileName() const { return m_hqMeshFileName; }
 	HQVertexBuffer * GetVertexBuffer();
 	HQIndexBuffer * GetIndexBuffer();
 	HQVertexLayout * GetVertexLayout();//get graphics vertex input layout that matches mesh file's vertex descriptions
