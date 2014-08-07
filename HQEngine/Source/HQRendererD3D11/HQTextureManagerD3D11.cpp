@@ -1315,6 +1315,7 @@ HQReturnVal HQTextureManagerD3D11::LoadCubeTextureFromStreams(HQDataReaderStream
 
 HQReturnVal HQTextureManagerD3D11::InitSingleColorTexture(HQBaseTexture *pTex,HQColorui color)
 {
+	t2DDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	t2DDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	t2DDesc.Width = 1;
 	t2DDesc.Height =1;
@@ -1446,6 +1447,7 @@ HQReturnVal HQTextureManagerD3D11::InitTexture(bool changeAlpha,hq_uint32 numMip
 	}
 	
 	t2DDesc.MipLevels = numMipmaps;
+	t2DDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
 	//non power of 2 texture restriction
 	hquint32 Exp;
