@@ -235,6 +235,19 @@ void HQCamera::MoveBackForward(float dx)
 	m_alignedMovement.z += dx;
 }
 
+void HQCamera::GetLocalDirectionVec(HQVector4& directionOut) const
+{
+	//get local transformed direction
+	HQVector4TransformNormal(m_ori_zAxis, m_localTransform, &directionOut);
+	directionOut.Normalize();
+}
+
+void HQCamera::GetLocalDirection(HQFloat4& directionOut) const
+{
+	HQ_DECL_STACK_VECTOR4(tempVec);
+	this->GetLocalDirectionVec(tempVec);
+	memcpy(&directionOut, &tempVec, sizeof(HQFloat4));
+}
 
 void HQCamera::GetWorldDirectionVec(HQVector4& directionOut) const
 {

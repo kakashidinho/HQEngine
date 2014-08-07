@@ -89,6 +89,8 @@ public:
 	void MoveUpDown(float dx);
 	void MoveBackForward(float dx);
 
+	void GetLocalDirectionVec(HQVector4& directionOut) const;
+	void GetLocalDirection(HQFloat4& directionOut) const;
 	void GetWorldDirectionVec(HQVector4& directionOut) const;
 	void GetWorldDirection(HQFloat4& directionOut) const;
 protected:
