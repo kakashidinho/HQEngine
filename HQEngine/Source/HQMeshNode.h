@@ -45,7 +45,7 @@ public:
 		HQLogStream *pLogStream = NULL,
 		bool uavVertexBuffer = false);
 	///
-	///{vertexShaderName} is name of shader resource used for creating vertex input layout. . If it is NULL => no vertex layout will be created. 
+	///{vertexShaderName} is name of shader resource used for creating vertex input layout. If it is NULL => no vertex layout will be created. 
 	///{uavVertexBuffer} = true if creating UAV vertex & index buffer is desired
 	///
 	HQMeshNode(const char *name,
@@ -55,7 +55,9 @@ public:
 		HQLogStream *pLogStream = NULL,
 		bool uavVertexBuffer = false);
 	~HQMeshNode();
-	
+
+	//TO DO: give an option to preprocess to know vertex layout, etc
+
 	hquint32 GetNumSubMeshes();//number of sub-meshes. Each uses different material, textures ..
 	const HQSubMeshInfo & GetSubMeshInfo(hquint32 submeshIndex);
 
@@ -70,9 +72,11 @@ public:
 
 	HQVertexBuffer * GetVertexBuffer();
 	HQIndexBuffer * GetIndexBuffer();
-	HQVertexLayout * GetVertexLayout();
+	HQVertexLayout * GetVertexLayout();//get graphics vertex input layout that matches mesh file's vertex descriptions
 	hquint32 GetVertexSize();//get size (bytes) of single vertex
 	HQIndexDataType GetIndexBufferDataType();
+	const HQVertexAttribDesc * GetVertexAttribDescs();//get mesh file's vertex descriptions
+	hquint32 GetNumVertexAttribs();//get number of vertex attributes in mesh file's vertex descriptions
 
 	void SetVertexLayout(HQVertexLayout *vertexLayout);//tell this mesh to use the specified vertex layout whenever BeginRender() is called
 
@@ -112,7 +116,8 @@ private:
 	struct GeometricInfo;
 	struct AnimationInfo;
 
-	bool LoadGeometricInfo(void *f, MeshFileHeader &header, HQShaderObject* vertexShaderID);
+	void GetContainingFolder(void* folder);
+	bool LoadGeometricInfo(void *f, void *containingFolderName, MeshFileHeader &header, HQShaderObject* vertexShaderID);
 	bool LoadAnimationInfo(const char *fileName);
 
 	void CreateIndirectBuffer();

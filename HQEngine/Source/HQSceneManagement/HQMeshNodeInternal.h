@@ -14,6 +14,7 @@ COPYING.txt included with this distribution for more information.
 #include "../HQReferenceCountObj.h"
 #include "../HQSceneNode.h"
 #include "../HQMeshNode.h"
+#include "../HQLinkedList.h"
 
 /*-----------Geometric Info------------*/
 
@@ -22,13 +23,18 @@ struct HQMeshNode::GeometricInfo : public HQReferenceCountObj
 	GeometricInfo() :
 		groups(NULL) ,
 		indirectBuffer(NULL),
-		customVertexLayout(NULL)
+		customVertexLayout(NULL),
+		vertexAttribDescs(NULL),
+		numVertexAttribs(0)
 	{
 	}
 	~GeometricInfo() {
 		delete[] groups;
+		delete[] vertexAttribDescs;
 	}
 
+	HQVertexAttribDesc *vertexAttribDescs;
+	hquint32 numVertexAttribs;
 	HQVertexLayout* vertexInputLayout;
 	HQVertexLayout* customVertexLayout;
 	HQVertexBuffer* vertexBuffer;
@@ -39,6 +45,8 @@ struct HQMeshNode::GeometricInfo : public HQReferenceCountObj
 	HQDrawIndexedIndirectArgsBuffer* indirectBuffer;
 
 	hquint32 numGroups;
+
+	HQLinkedList<HQEngineTextureResource*> m_textures;//list of textures used by this mesh
 	
 	HQSubMeshInfo * groups;
 };

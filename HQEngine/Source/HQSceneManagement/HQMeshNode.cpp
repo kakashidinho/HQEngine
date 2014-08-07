@@ -17,6 +17,7 @@ COPYING.txt included with this distribution for more information.
 
 #include <stdio.h>
 #include <string.h>
+#include <string>
 
 #ifdef HQ_ANDROID_PLATFORM
 #	include <android/log.h>
@@ -149,9 +150,13 @@ void HQMeshNode::Init(const char *name,
 
 		throw std::bad_alloc();
 	}
+	//TO DO : support full path, currently only support relative path for texture and animation file loading
+	//get containing folder
+	std::string containingFolder;
+	this->GetContainingFolder(&containingFolder);
 
 	//load geometric data
-	if (!this->LoadGeometricInfo(f, header, vertexShaderID))
+	if (!this->LoadGeometricInfo(f, &containingFolder, header, vertexShaderID))
 	{
 		if (pLogStream != NULL)
 		{
@@ -178,7 +183,9 @@ void HQMeshNode::Init(const char *name,
 
 		fclose(f);
 
-		if (!this->LoadAnimationInfo(animFile))
+		std::string animFileFull = containingFolder + animFile;
+
+		if (!this->LoadAnimationInfo(animFileFull.c_str()))
 		{
 			if (pLogStream != NULL)
 			{
@@ -221,12 +228,16 @@ HQMeshNode::~HQMeshNode()
 	if (m_geoInfo->indirectBuffer != NULL)
 		m_pRenderDevice->GetShaderManager()->RemoveBufferUAV(m_geoInfo->indirectBuffer);
 
+	//delete used textures
+	HQLinkedList<HQEngineTextureResource*>::Iterator ite;
+	for (m_geoInfo->m_textures.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+	{
+		HQEngineTextureResource* res = *ite;
+		HQEngineApp::GetInstance()->GetResourceManager()->RemoveTextureResource(res);
+	}
+
 	for (hquint32 i = 0; i < m_geoInfo->numGroups; ++i)
 	{
-		for (hquint32 j = 0; j < this->m_geoInfo->groups[i].numTextures; ++j)
-		{
-			HQEngineApp::GetInstance()->GetResourceManager() ->RemoveTextureResource(this->m_geoInfo->groups[i].textures[j]);
-		}
 		delete[] this->m_geoInfo->groups[i].textures;
 	}
 
@@ -258,13 +269,33 @@ void HQMeshNode::OnResetDevice()
 	MeshFileHeader header;
 	fread(&header, sizeof(MeshFileHeader), 1, f);
 
+	std::string containingFolder;
+	this->GetContainingFolder(&containingFolder);
 
-	this->LoadGeometricInfo(f, header, 0);
+	this->LoadGeometricInfo(f, &containingFolder, header, 0);
 
 	fclose(f);
 }
 
-bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderObject* vertexShaderID)
+void HQMeshNode::GetContainingFolder(void* folderArg)
+{
+	std::string* folderName = (std::string*) folderArg;
+	if (m_hqMeshFileName != NULL)
+	{
+		char *slashLocPtr = strrchr(m_hqMeshFileName, '/');
+		if (slashLocPtr == NULL)
+			slashLocPtr = strrchr(m_hqMeshFileName, '\\');
+		if (slashLocPtr == NULL)
+			*folderName = "";
+		else
+		{
+			size_t slashLoc = slashLocPtr - m_hqMeshFileName;
+			folderName->assign(m_hqMeshFileName, slashLoc + 1);
+		}
+	}
+}
+
+bool HQMeshNode::LoadGeometricInfo(void *fptr, void *containingFolderNamePtr, MeshFileHeader &header, HQShaderObject* vertexShaderID)
 {
 	HQDataReaderStream *f = (HQDataReaderStream*) fptr;
 	HQReturnVal re;
@@ -274,36 +305,36 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderO
 		this->m_geoInfo->numGroups = header.numSubMeshes;
 		this->m_geoInfo->groups = HQ_NEW HQSubMeshInfo[header.numSubMeshes];
 
-		//create vertex input layout
+		//read vertex layout
+		m_geoInfo->vertexAttribDescs = HQ_NEW HQVertexAttribDesc[header.numVertexAttribs];
+		for (hquint32 i = 0; i < header.numVertexAttribs; ++i)
+		{
+			m_geoInfo->vertexAttribDescs[i].stream = 0;
+			fread(&m_geoInfo->vertexAttribDescs[i].offset, sizeof(hquint32), 1, f);
+			fread(&m_geoInfo->vertexAttribDescs[i].dataType, sizeof(hquint32), 1, f);
+			fread(&m_geoInfo->vertexAttribDescs[i].usage, sizeof(hquint32), 1, f);
+		}
+
+		//store the vertex attribute descs
+		this->m_geoInfo->numVertexAttribs = header.numVertexAttribs;
+
+		//create graphics vertex input layout
 		if (vertexShaderID != NULL)
 		{
-			HQVertexAttribDesc *vAttribDescs = HQ_NEW HQVertexAttribDesc[header.numVertexAttribs];
-
-			for (hquint32 i = 0; i < header.numVertexAttribs; ++i)
-			{
-				vAttribDescs[i].stream = 0;
-				fread(&vAttribDescs[i].offset, sizeof(hquint32), 1, f);
-				fread(&vAttribDescs[i].dataType, sizeof(hquint32), 1, f);
-				fread(&vAttribDescs[i].usage, sizeof(hquint32), 1, f);
-			}
 
 			re = m_pRenderDevice->GetVertexStreamManager()->CreateVertexInputLayout(
-				vAttribDescs,
+				m_geoInfo->vertexAttribDescs,
 				header.numVertexAttribs,
 				vertexShaderID,
 				&this->m_geoInfo->vertexInputLayout);
 
-			delete[] vAttribDescs;
-
 			if (HQFailed(re))
 				return false;
+
 		}//if (vertexShaderID != NULL)
 		else
 		{
 			this->m_geoInfo->vertexInputLayout = NULL;
-
-			//ignore vertex input layout
-			fseek(f, 3 * sizeof(hquint32)* header.numVertexAttribs, SEEK_CUR);
 		}
 	}
 	else
@@ -400,6 +431,7 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderO
 	}
 #endif
 	//read sub mesh info
+	std::string &containingFolder = *(std::string*)containingFolderNamePtr;
 	for (hquint32 i = 0; i < header.numSubMeshes; ++i)
 	{
 		fread(&this->m_geoInfo->groups[i].startIndex, sizeof(hquint32), 1, f);
@@ -440,18 +472,22 @@ bool HQMeshNode::LoadGeometricInfo(void *fptr, MeshFileHeader &header, HQShaderO
 				fread(textureName, textureNameSize, 1, f);
 				textureName[textureNameSize] = '\0';
 
+				std::string textureFullPathName = containingFolder + textureName;
+
 				//check if texture resource is already loaded
-				HQEngineTextureResource* textureRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource(textureName);
+				HQEngineTextureResource* textureRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource(textureFullPathName.c_str());
 				if (textureRes == NULL)
 				{
 					//create texture resource
 					HQEngineApp::GetInstance()->GetResourceManager()->AddTextureResource(
-						textureName, 
-						textureName,
+						textureFullPathName.c_str(),
+						textureFullPathName.c_str(),
 						true,
 						HQ_TEXTURE_2D);
 
-					textureRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource(textureName);
+					textureRes = HQEngineApp::GetInstance()->GetResourceManager()->GetTextureResource(textureFullPathName.c_str());
+
+					this->m_geoInfo->m_textures.PushBack(textureRes);
 				}
 
 				this->m_geoInfo->groups[i].textures[j] = textureRes;
@@ -538,6 +574,15 @@ hquint32 HQMeshNode::GetVertexSize() {
 HQIndexDataType HQMeshNode::GetIndexBufferDataType()
 {
 	return m_geoInfo->indexDataType;
+}
+
+const HQVertexAttribDesc * HQMeshNode::GetVertexAttribDescs()
+{
+	return m_geoInfo->vertexAttribDescs;
+}
+hquint32 HQMeshNode::GetNumVertexAttribs()
+{
+	return m_geoInfo->numVertexAttribs;
 }
 
 void HQMeshNode::SetVertexLayout(HQVertexLayout *vertexLayout)
