@@ -13,6 +13,10 @@ COPYING.txt included with this distribution for more information.
 #include "Assimp/include/aiScene.h"
 
 #include <float.h>
+#include <vector>
+#include <list>
+#include <string.h>
+#include <string>
 
 #pragma comment(lib, "Assimp/lib/assimp_release-dll_win32/assimp.lib")
 
@@ -23,13 +27,13 @@ COPYING.txt included with this distribution for more information.
 //-only support one texture per vertex
 // TO DO: remove limits
 
-void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditionalInfo& additionalInfo, int flags);
+void AssimpWriteGemetricDataToFile(FILE *f, const char* destfileName, const aiScene * scene, MeshAdditionalInfo& additionalInfo, int flags);
 void PrintVertexAttrDesc(HQVertexAttribDesc &desc);
 
 void ConvertToHQMeshFile(const char *dest, const char * source, int flags)
 {
 
-	unsigned int aiFlags = aiProcess_Triangulate | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder ;
+	unsigned int aiFlags = aiProcess_Triangulate | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_RemoveRedundantMaterials;
 	if (flags & FLAG_FLAT_FACES)
 		aiFlags |= aiProcess_GenNormals;
 	else
@@ -45,7 +49,7 @@ void ConvertToHQMeshFile(const char *dest, const char * source, int flags)
 	
 	//write gemeotry data
 	MeshAdditionalInfo additionalInfo;
-	AssimpWriteGemetricDataToFile(f, scene, additionalInfo, flags);
+	AssimpWriteGemetricDataToFile(f, dest, scene, additionalInfo, flags);
 
 	//TO DO: add animation file later
 	fputc(0, f);//for now, no animation
@@ -59,14 +63,32 @@ void ConvertToHQMeshFile(const char *dest, const char * source, int flags)
 	aiReleaseImport(scene);
 }
 
-void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditionalInfo& additionalInfo, int flags)
+void AssimpWriteGemetricDataToFile(FILE *f, const char* destFileName, const aiScene * scene, MeshAdditionalInfo& additionalInfo, int flags)
 {
+
+	//group meshes by materials
+	typedef std::list<aiMesh*> MeshGroupType;
+	typedef MeshGroupType::iterator MeshGroupTypeIte;
+	typedef std::vector<MeshGroupType > MeshGroupsType;
+	MeshGroupsType meshGroups(scene->mNumMaterials);
+	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
+	{
+		aiMesh * mesh = scene->mMeshes[i];
+		meshGroups[mesh->mMaterialIndex].push_back(mesh);
+	}
+
+	/*-----compute file header------*/
 	HQMeshFileHeader header;
 
 	strncpy(header.magicString, HQMESH_MAGIC_STR, strlen(HQMESH_MAGIC_STR));
 
-	/*-----compute file header------*/
-	header.numSubMeshes = scene->mNumMeshes;
+	//num valid submeshes
+	header.numSubMeshes = 0;
+	for (hquint32 i = 0; i < meshGroups.size(); ++i) 
+	{
+		if (meshGroups[i].size() > 0)
+			header.numSubMeshes  ++;
+	}
 
 	//compute num indices
 	header.numIndices = 0;
@@ -116,6 +138,12 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditiona
 	//write header and vertex desciption array
 	fwrite(&header, sizeof(HQMeshFileHeader), 1, f);
 
+	//print number of submeshes
+	printf("Num submeshes = %u\n", header.numSubMeshes);
+	printf("Num vertices = %u\n", header.numVertices);
+	printf("Num indices = %u\n", header.numIndices);
+	printf("Num materials = %u\n", scene->mNumMaterials);
+
 	for (unsigned int i = 0; i < header.numVertexAttribs; ++i)
 	{
 		PrintVertexAttrDesc(vaDescs[i]);//print the desciption to the screen
@@ -131,84 +159,121 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditiona
 	//total surface area
 	additionalInfo.meshSurfArea = 0.f;
 	//write vertex data
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
+	for (hquint32 i = 0; i < meshGroups.size(); ++i)
 	{
-		for (unsigned v = 0; v < scene->mMeshes[i]->mNumVertices; ++v){
-			fwrite(&scene->mMeshes[i]->mVertices[v], sizeof(aiVector3D), 1, f);//position
-			fwrite(&scene->mMeshes[i]->mNormals[v], sizeof(aiVector3D), 1, f);//normal
-			if (scene->mMeshes[0]->HasTextureCoords(0))//texcoords
-				fwrite(&scene->mMeshes[i]->mTextureCoords[0][v], sizeof(aiVector2D), 1, f);
-			if (scene->mMeshes[0]->HasVertexColors(0))//vertex color
-				fwrite(&scene->mMeshes[i]->mColors[0][v], sizeof(aiColor4D), 1, f);
+		for (MeshGroupTypeIte ite = meshGroups[i].begin(); ite != meshGroups[i].end(); ++ite)
+		{
+			aiMesh* mesh = *ite;
+			for (unsigned v = 0; v < mesh->mNumVertices; ++v){
+				fwrite(&mesh->mVertices[v], sizeof(aiVector3D), 1, f);//position
+				fwrite(&mesh->mNormals[v], sizeof(aiVector3D), 1, f);//normal
+				if (scene->mMeshes[0]->HasTextureCoords(0))//texcoords
+					fwrite(&mesh->mTextureCoords[0][v], sizeof(aiVector2D), 1, f);
+				if (scene->mMeshes[0]->HasVertexColors(0))//vertex color
+					fwrite(&mesh->mColors[0][v], sizeof(aiColor4D), 1, f);
 
-			//compute bounding box
-			aiVector3D& position = scene->mMeshes[i]->mVertices[v];
-			if (additionalInfo.bboxMin.x > position.x)
-				additionalInfo.bboxMin.x = position.x;
-			if (additionalInfo.bboxMin.y > position.y)
-				additionalInfo.bboxMin.y = position.y;
-			if (additionalInfo.bboxMin.z > position.z)
-				additionalInfo.bboxMin.z = position.z;
+				//compute bounding box
+				aiVector3D& position = mesh->mVertices[v];
+				if (additionalInfo.bboxMin.x > position.x)
+					additionalInfo.bboxMin.x = position.x;
+				if (additionalInfo.bboxMin.y > position.y)
+					additionalInfo.bboxMin.y = position.y;
+				if (additionalInfo.bboxMin.z > position.z)
+					additionalInfo.bboxMin.z = position.z;
 
-			if (additionalInfo.bboxMax.x < position.x)
-				additionalInfo.bboxMax.x = position.x;
-			if (additionalInfo.bboxMax.y < position.y)
-				additionalInfo.bboxMax.y = position.y;
-			if (additionalInfo.bboxMax.z < position.z)
-				additionalInfo.bboxMax.z = position.z;
+				if (additionalInfo.bboxMax.x < position.x)
+					additionalInfo.bboxMax.x = position.x;
+				if (additionalInfo.bboxMax.y < position.y)
+					additionalInfo.bboxMax.y = position.y;
+				if (additionalInfo.bboxMax.z < position.z)
+					additionalInfo.bboxMax.z = position.z;
 
+			}
 		}
 	}
 
 	//write index data
 	unsigned int prevMeshVertices = 0;
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
+	for (hquint32 i = 0; i < meshGroups.size(); ++i)
 	{
-		for (unsigned t = 0; t < scene->mMeshes[i]->mNumFaces; ++t){
-			aiVector3D* pTriVertex[3];
-			for (int v = 0; v < 3; ++v)
-			{
-				pTriVertex[v] = &scene->mMeshes[i]->mVertices[scene->mMeshes[i]->mFaces[t].mIndices[v]];
-				unsigned idx = scene->mMeshes[i]->mFaces[t].mIndices[v] + prevMeshVertices;
-				if (header.indexDataType == HQ_IDT_USHORT)
+		for (MeshGroupTypeIte ite = meshGroups[i].begin(); ite != meshGroups[i].end(); ++ite)
+		{
+			aiMesh* mesh = *ite;
+			for (unsigned t = 0; t < mesh->mNumFaces; ++t){
+				aiVector3D* pTriVertex[3];
+				for (int v = 0; v < 3; ++v)
 				{
-					//convert to 16 bit 
-					unsigned short idx16 = (unsigned short) (idx & 0xffff);
-					fwrite(&idx16, sizeof(unsigned short), 1, f);
-				}
-				else
-					fwrite(&idx, sizeof(unsigned int), 1, f);
+					pTriVertex[v] = &mesh->mVertices[mesh->mFaces[t].mIndices[v]];
+					unsigned idx = mesh->mFaces[t].mIndices[v] + prevMeshVertices;
+					if (header.indexDataType == HQ_IDT_USHORT)
+					{
+						//convert to 16 bit 
+						unsigned short idx16 = (unsigned short) (idx & 0xffff);
+						fwrite(&idx16, sizeof(unsigned short), 1, f);
+					}
+					else
+						fwrite(&idx, sizeof(unsigned int), 1, f);
 
-			}//for (int v = 0; v < 3; ++v)
+				}//for (int v = 0; v < 3; ++v)
 
-			//compute surface area
-			aiVector3D v0v1 = *pTriVertex[1] - *pTriVertex[0];
-			aiVector3D v0v2 = *pTriVertex[2] - *pTriVertex[0];
-			aiVector3D v0v1v2c = v0v1 ^ v0v2;
-			hqfloat32 triArea = 0.5f * v0v1v2c.Length();
-			additionalInfo.meshSurfArea += triArea;
-			
-		}//for (unsigned t = 0; t < scene->mMeshes[i]->mNumFaces; ++t)
+				//compute surface area
+				aiVector3D v0v1 = *pTriVertex[1] - *pTriVertex[0];
+				aiVector3D v0v2 = *pTriVertex[2] - *pTriVertex[0];
+				aiVector3D v0v1v2c = v0v1 ^ v0v2;
+				hqfloat32 triArea = 0.5f * v0v1v2c.Length();
+				additionalInfo.meshSurfArea += triArea;
+				
+			}//for (unsigned t = 0; t < mesh->mNumFaces; ++t)
 
-		prevMeshVertices += scene->mMeshes[i]->mNumVertices;
+			prevMeshVertices += mesh->mNumVertices;
+		}
 	}
 
-	//write sub mesh info
-	unsigned int prevMeshIndices = 0;
-	for (unsigned int i = 0; i < header.numSubMeshes; ++i)
+	//decide white texture's name for those submeshes without texture
+	bool whiteTextureWritten = false;
+	const char * destNameCutOffSlash = strrchr(destFileName, '/');
+	size_t containingFolderSize;
+	if (destNameCutOffSlash == NULL)
+		destNameCutOffSlash = strrchr(destFileName, '\\');
+	if (destNameCutOffSlash == NULL)
 	{
+		containingFolderSize = 0;
+	}
+	else
+	{
+		containingFolderSize = destNameCutOffSlash - destFileName + 1;
+	}
+
+	std::string whiteTextureFullName(destFileName, containingFolderSize);
+	whiteTextureFullName += ( "white.bmp");
+	aiString whiteTexture = "white.bmp";
+
+	//write sub mesh info
+	unsigned int prevMeshGroupsIndices = 0;
+	for (hquint32 i = 0; i < meshGroups.size(); ++i)
+	{
+		if (meshGroups[i].size() == 0)
+			continue;//empty material group
+		//total indices of all assimp meshes in this group
+		unsigned int totalMeshGroupIndices = 0;
+		for (MeshGroupTypeIte ite = meshGroups[i].begin(); ite != meshGroups[i].end(); ++ite)
+		{
+			aiMesh* mesh = *ite;
+
+			//shift the starting index of next sub mesh
+			totalMeshGroupIndices += mesh->mNumFaces * 3;
+		}
+
 		hquint32 numTextures = 0;
 		HQColorMaterial colorMat;
 
-		aiMesh * mesh = scene->mMeshes[i];
-		aiMaterial * material = scene->mMaterials[mesh->mMaterialIndex];
+		aiMaterial * material = scene->mMaterials[i];
 		
 		//start index and num indices
-		unsigned int startIndex = prevMeshIndices;
-		unsigned int numIndices = mesh->mNumFaces * 3;
+		unsigned int startIndex = prevMeshGroupsIndices;
 
 		fwrite(&startIndex, sizeof(hquint32), 1, f);
-		fwrite(&numIndices, sizeof(hquint32), 1, f);
+		fwrite(&totalMeshGroupIndices, sizeof(hquint32), 1, f);
 
 		//color material
 		aiColor3D color;
@@ -238,6 +303,18 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditiona
 		material->Get<aiString>(AI_MATKEY_TEXTURE_DIFFUSE(0) , textureName);
 		if (textureName.length > 0)
 			numTextures = 1;
+		else if (flags & FLAG_FORCE_WHITE_TEXTURE)
+		{
+			numTextures = 1;
+			//force using white texture
+			if (!whiteTextureWritten)
+			{
+				whiteTextureWritten = true;
+				WriteWhiteBMPImage(whiteTextureFullName.c_str());
+			}
+
+			textureName = whiteTexture;
+		}
 		fwrite(&numTextures, sizeof(hquint32), 1, f);
 		if (textureName.length > 0)
 		{
@@ -246,9 +323,8 @@ void AssimpWriteGemetricDataToFile(FILE *f, const aiScene * scene, MeshAdditiona
 			fwrite(textureName.data, textureFileNameLen, 1, f);
 		}
 
-
 		//shift the starting index of next sub mesh
-		prevMeshIndices += mesh->mNumFaces * 3;
+		prevMeshGroupsIndices += totalMeshGroupIndices;
 	}
 }
 

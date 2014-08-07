@@ -44,6 +44,8 @@ int main(int argc, char **argv)
 			flags |= FLAG_FORCE_32BIT_INDICES;//use 32 bit index data
 		else if (!strcmp(argv[i], "-info"))
 			flags |= FLAG_OUTPUT_ADDITIONAL_INFO;//output more info
+		else if (!strcmp(argv[i], "-whitetex"))
+			flags |= FLAG_FORCE_WHITE_TEXTURE;//submesh without texture will be forced to use white texture
 	}
 
 	//check if this is .x file
@@ -110,5 +112,46 @@ void WriteMoreInfo(const char* destMeshFile, const MeshAdditionalInfo &info)
 	}
 
 	delete[] infoFileName;
+}
+
+void WriteWhiteBMPImage(const char* name)
+{
+	FILE * f = fopen(name, "wb");
+	if (f == NULL)
+		return;
+	//write header
+	unsigned int width = 1;
+	unsigned int height = 1;
+	int linePadding = (4 - width * 3 % 4) % 4;
+	unsigned int imgSize = (3 * width + linePadding) * height;
+	unsigned int fileSize = 54 + imgSize;
+	unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0};
+	unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0,
+		0,0,0,0, // compression is none
+		0,0,0,0, // image size
+		0x13,0x0B,0,0, // horz resoluition in pixel / m
+		0x13,0x0B,0,0 // vert resolutions (0x03C3 = 96 dpi, 0x0B13 = 72 dpi)
+	};
+	unsigned char bmppad[3] = {0,0,0};
+
+	memcpy(bmpfileheader + 2, &fileSize, 4);//file size
+	memcpy(bmpinfoheader + 4, &width, 4);//image width
+	memcpy(bmpinfoheader + 8, &height, 4);//image height
+	memcpy(bmpinfoheader + 24, &imgSize, 4);//image size
+
+	fwrite(bmpfileheader, 1, 14, f);
+	fwrite(bmpinfoheader, 1, 40, f);
+	for(unsigned int i = 0; i < height; i++)
+	{
+		for(unsigned int j = 0; j < width; j++)
+		{
+			const hquint32 white = 0xffffffff;
+
+			fwrite(&white, 3, 1, f);
+		}
+		fwrite(bmppad, 1, linePadding, f);//line padding
+	}
+
+	fclose(f);
 }
 

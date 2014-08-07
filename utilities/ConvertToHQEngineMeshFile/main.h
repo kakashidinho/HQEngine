@@ -29,6 +29,7 @@ COPYING.txt included with this distribution for more information.
 #define FLAG_FLAT_FACES 0x1
 #define FLAG_FORCE_32BIT_INDICES 0x2
 #define FLAG_OUTPUT_ADDITIONAL_INFO 0x4
+#define FLAG_FORCE_WHITE_TEXTURE 0x8
 
 struct HQMeshFileHeader
 {
@@ -150,4 +151,5 @@ char* GetAnimationFileName(const char* destMeshFile);
 char* GetMoreInfoFileName(const char* destMeshFile);//get name of destination file containing additional info of the mesh
 
 void WriteMoreInfo(const char* destMeshFile, const MeshAdditionalInfo &info);
+void WriteWhiteBMPImage(const char* name);
 #endif
