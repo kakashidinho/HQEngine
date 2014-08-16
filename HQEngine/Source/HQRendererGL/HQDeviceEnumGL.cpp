@@ -35,6 +35,8 @@ extern GLenum GLEWAPIENTRY glxewContextInit (void);
 #define REQUIRE_EXACT_DEPTH_STENCIL 0
 #define REFRESHRATEDIFF 0.00001
 
+//TO DO: sRGB format
+
 const int numPixelFmt=9;//số lượng pixel format hỗ trợ
 const FORMAT PixelFormat[]={
 	SFMT_A8R8G8B8,   SFMT_X8R8G8B8,

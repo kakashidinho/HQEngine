@@ -52,13 +52,15 @@ enum FORMAT
     SFMT_D16                  = 80,
 	SFMT_S8					  = 82,
 	SFMT_NODEPTHSTENCIL		  = 81,
+	SFMT_A8R8G8B8_SRGB		  = 83,
 	SFMT_UNKNOWN			  = 0xffffffff,
 };
 
-const int numDisFmt=4;//số lượng display format hỗ trợ
+const int numDisFmt=5;//số lượng display format hỗ trợ
 const FORMAT DisFormat[]={
 	SFMT_A8R8G8B8, SFMT_R5G6B5, 
-	SFMT_A1R5G5B5, SFMT_A2B10G10R10
+	SFMT_A1R5G5B5, SFMT_A2B10G10R10,
+	SFMT_A8R8G8B8_SRGB
 };
 
 
@@ -78,6 +80,7 @@ namespace helper{
 	{
 		switch(dxFmt)
 		{
+		case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB: return SFMT_A8R8G8B8_SRGB;
 		case DXGI_FORMAT_R8G8B8A8_UNORM : return SFMT_A8R8G8B8;
 		case DXGI_FORMAT_R10G10B10A2_UNORM: return SFMT_A2B10G10R10;
 		case DXGI_FORMAT_D32_FLOAT: return  SFMT_D32;
@@ -91,6 +94,7 @@ namespace helper{
 	{
 		switch(format)
 		{
+		case SFMT_A8R8G8B8_SRGB: return DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
 		case SFMT_R8G8B8: return DXGI_FORMAT_R8G8B8A8_UNORM;
 		case SFMT_A8R8G8B8: return DXGI_FORMAT_R8G8B8A8_UNORM;
 		case SFMT_X8R8G8B8: return DXGI_FORMAT_R8G8B8A8_UNORM;

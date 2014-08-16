@@ -13,6 +13,8 @@ COPYING.txt included with this distribution for more information.
 #include "../HQHashTable.h"
 #include <stdio.h>
 
+//TO DO: sRGB format
+
 const int numBackFmt=9;//số lượng backbuffer format hỗ trợ
 const D3DFORMAT BackFormat[]={
 	D3DFMT_R8G8B8,   D3DFMT_A8R8G8B8, 
