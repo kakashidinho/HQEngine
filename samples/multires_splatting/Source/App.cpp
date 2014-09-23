@@ -192,6 +192,8 @@ void App::RenderImpl(HQTime dt){
 	//depth pass by drawing backface
 	m_effect->GetPassByName("depth-pass-backface")->Apply();
 
+	m_pRDevice->Clear(HQ_FALSE, HQ_TRUE, HQ_FALSE);
+	
 	this->DrawScene();
 
 	//rsm pass rendering
