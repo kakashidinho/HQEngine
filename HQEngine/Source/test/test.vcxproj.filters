@@ -138,25 +138,14 @@
     <None Include="script\resourcesGLES.script">
       <Filter>Resource Files\script</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="shader\hlsl_ps.hlsl">
-      <Filter>Resource Files\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\hlsl_vs.hlsl">
-      <Filter>Resource Files\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\hlsl-mesh_ps.hlsl">
-      <Filter>Resource Files\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\hlsl-mesh_vs.hlsl">
-      <Filter>Resource Files\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\VS.hlsl">
-      <Filter>Resource Files\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\VSo.hlsl">
-      <Filter>Resource Files\shader</Filter>
-    </FxCompile>
+    <None Include="shader\hlsl-mesh_ps.hlsl" />
+    <None Include="shader\hlsl-mesh_vs.hlsl" />
+    <None Include="shader\hlsl_ps.hlsl" />
+    <None Include="shader\hlsl_vs.hlsl" />
+    <None Include="shader\VS.hlsl" />
+    <None Include="shader\VSo.hlsl" />
+    <None Include="script\resourcesGL3.1.script">
+      <Filter>Resource Files\script</Filter>
+    </None>
   </ItemGroup>
 </Project>
