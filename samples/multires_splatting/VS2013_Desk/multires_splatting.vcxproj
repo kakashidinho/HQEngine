@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\BaseSource\BaeApp.cpp" />
+    <ClCompile Include="..\..\BaseSource\BaseApp.cpp" />
     <ClCompile Include="..\..\BaseSource\Light.cpp" />
     <ClCompile Include="..\..\BaseSource\lodepng.cpp" />
     <ClCompile Include="..\..\BaseSource\Utils.cpp" />

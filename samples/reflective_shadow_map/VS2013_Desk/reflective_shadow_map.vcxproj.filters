@@ -45,7 +45,7 @@
     <ClCompile Include="..\..\BaseSource\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\BaseSource\BaeApp.cpp">
+    <ClCompile Include="..\..\BaseSource\BaseApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

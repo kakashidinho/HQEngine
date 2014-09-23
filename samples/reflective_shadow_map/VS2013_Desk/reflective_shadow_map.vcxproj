@@ -411,7 +411,7 @@ xcopy /q /y "$(SolutionDir)\..\..\..\ThirdParty-mod\MyGUI\Win32-vs2013-desktop\b
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\BaseSource\BaeApp.cpp">
+    <ClCompile Include="..\..\BaseSource\BaseApp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_D3D9|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_CUDA|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_D3D11|Win32'">NotUsing</PrecompiledHeader>

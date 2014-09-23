@@ -464,7 +464,7 @@
 				Name="base"
 				>
 				<File
-					RelativePath="..\..\BaseSource\BaeApp.cpp"
+					RelativePath="..\..\BaseSource\BaseApp.cpp"
 					>
 				</File>
 				<File
