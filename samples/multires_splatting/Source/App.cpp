@@ -470,16 +470,16 @@ void App::KeyPressed(HQKeyCodeType keyCode, bool repeat)
 	switch (keyCode)
 	{
 	case HQKeyCode::A:
-		m_cameraTransition.x = g_camOffsetPerSec;//start moving in X direction
-		break;
-	case HQKeyCode::D:
 		m_cameraTransition.x = -g_camOffsetPerSec;//start moving in X direction
 		break;
+	case HQKeyCode::D:
+		m_cameraTransition.x = g_camOffsetPerSec;//start moving in X direction
+		break;
 	case HQKeyCode::W:
-		m_cameraTransition.z = -g_camOffsetPerSec;//start moving in Z direction
+		m_cameraTransition.z = g_camOffsetPerSec;//start moving in Z direction
 		break;
 	case HQKeyCode::S:
-		m_cameraTransition.z = g_camOffsetPerSec;//start moving in Z direction
+		m_cameraTransition.z = -g_camOffsetPerSec;//start moving in Z direction
 		break;
 	}
 }
@@ -503,19 +503,19 @@ void App::KeyReleased(HQKeyCodeType keyCode)
 		HQEngineApp::GetInstance()->Stop();
 		break;
 	case HQKeyCode::A:
-		if (m_cameraTransition.x > 0)
-			m_cameraTransition.x = 0;//stop moving in X direction
-		break;
-	case HQKeyCode::D:
 		if (m_cameraTransition.x < 0)
 			m_cameraTransition.x = 0;//stop moving in X direction
 		break;
+	case HQKeyCode::D:
+		if (m_cameraTransition.x > 0)
+			m_cameraTransition.x = 0;//stop moving in X direction
+		break;
 	case HQKeyCode::W:
-		if (m_cameraTransition.z < 0)
+		if (m_cameraTransition.z > 0)
 			m_cameraTransition.z = 0;//stop moving in Z direction
 		break;
 	case HQKeyCode::S:
-		if (m_cameraTransition.z > 0)
+		if (m_cameraTransition.z < 0)
 			m_cameraTransition.z = 0;//stop moving in Z direction
 		break;
 	case HQKeyCode::F:
