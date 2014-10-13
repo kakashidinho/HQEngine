@@ -60,6 +60,10 @@ public:
 	virtual HQReturnVal SetListenerOrientation(const hqfloat32 at[3], const hqfloat32 up[3]) ;
 
 	virtual HQReturnVal SetListenerVolume(hqfloat32 volume);
+
+	virtual void Pause();
+	virtual void Resume();
+
 protected:
 	virtual HQAudioSourceControllerAL *CreateNewSourceObject(const HQAudioSourceInfo &info, HQSharedPtr<HQBaseAudioBuffer> &pBuffer);//create right handed source
 private:

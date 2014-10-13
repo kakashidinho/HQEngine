@@ -89,6 +89,25 @@ HQAudioDeviceAL::~HQAudioDeviceAL()
 #endif
 }
 
+void HQAudioDeviceAL::Pause()
+{
+	HQItemManager<HQBaseAudioSourceController>::Iterator ite;
+	for (m_sourceManager.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+	{
+		ite->Pause();
+	}
+}
+
+void HQAudioDeviceAL::Resume()
+{
+	HQItemManager<HQBaseAudioSourceController>::Iterator ite;
+	for (m_sourceManager.GetIterator(ite); !ite.IsAtEnd(); ++ite)
+	{
+		HQBaseAudioSourceController *source = ite.GetItemPointer().GetRawPointer();
+		static_cast<HQAudioSourceControllerAL*>(source)->Resume();
+	}
+}
+
 HQReturnVal HQAudioDeviceAL::CreateAudioBufferFromFile(const char *fileName, hq_uint32 *pBufferID) 
 {
 	if (this->IsAudioFileLoaded(fileName, pBufferID))

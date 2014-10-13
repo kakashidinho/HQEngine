@@ -62,6 +62,9 @@ public:
 
 	virtual HQReturnVal SetListenerVolume(hqfloat32 volume);
 
+	virtual void Pause();
+	virtual void Resume();
+
 	const X3DAUDIO_LISTENER &GetListener() {return m_listener;}
 	const X3DAUDIO_HANDLE& Get3DAudioHandle() {return m_audioHandle;}
 #if !HQ_XAUDIO_2_8
@@ -73,8 +76,6 @@ protected:
 	virtual HQXAudioSourceController *CreateNewSourceObject(const HQAudioSourceInfo &info, HQSharedPtr<HQBaseAudioBuffer> &pBuffer);//create left handed source
 
 	void SetSourceAudioSettings();//use to re calculate source's audio setting after listener state is changed
-	void Pause();
-	void Resume();
 
 #if (defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)
 	Windows::Foundation::EventRegistrationToken m_appSuspendToken;

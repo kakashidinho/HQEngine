@@ -20,7 +20,7 @@ class HQAudioSourceControllerAL: public  HQBaseAudioSourceController{
 public:
 
 	HQAudioSourceControllerAL(const HQAudioSourceInfo &info, HQSharedPtr<HQBaseAudioBuffer> &pBuffer) 
-		:m_positioning(HQ_TRUE) , m_info(info)
+		:m_positioning(HQ_TRUE), m_info(info), m_continuous(HQ_FALSE)
 	{
 		alGenSources(1, &m_sourceName);
 		if (AL_OUT_OF_MEMORY == alGetError())
@@ -219,12 +219,27 @@ public:
 
 		alSourcePlay(m_sourceName);
 
+		m_continuous = continuous;
 
 		return HQ_OK;
 	}
 	HQReturnVal Pause()
 	{
-		alSourcePause(m_sourceName);
+		ALint state;
+		alGetSourcei(m_sourceName, AL_SOURCE_STATE, &state);
+		if (state == AL_PLAYING)//source is playing
+			alSourcePause(m_sourceName);
+		return HQ_OK;
+	}
+
+	HQReturnVal Resume()
+	{
+		ALint state;
+		alGetSourcei(m_sourceName, AL_SOURCE_STATE, &state);
+		if (state == AL_PAUSED)//source is paused
+		{
+			this->Play(m_continuous);
+		}
 		return HQ_OK;
 	}
 	HQReturnVal Stop()
@@ -291,6 +306,7 @@ public:
 protected:
 	ALuint m_sourceName;
 	HQBool m_positioning;
+	HQBool m_continuous;
 private:
 	hqfloat32 m_position[3];//cached position
 	HQSharedPtr<HQBaseAudioBuffer> m_pBuffer;
