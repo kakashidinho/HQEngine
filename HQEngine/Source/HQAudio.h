@@ -101,7 +101,7 @@ public:
 	///{volume}must be in [0..1]. default is 1.0
 	virtual HQReturnVal SetVolume(hqfloat32 volume) = 0;
 
-	virtual HQReturnVal Play(HQBool continuous = HQ_TRUE) = 0;
+	virtual HQReturnVal Play(HQBool continuous = HQ_TRUE) = 0;///will resume playing if the source is paused before
 	virtual HQReturnVal Pause() = 0;
 	virtual HQReturnVal Stop() = 0;
 	virtual State GetCurrentState() = 0;
@@ -149,6 +149,9 @@ public:
 
 	///{volume}must be in [0..1]. default is 1.0
 	virtual HQReturnVal SetListenerVolume(hqfloat32 volume) = 0;
+
+	virtual void Pause() = 0;
+	virtual void Resume() = 0;
 
 	/*----------capabilities-----------*/
 	virtual bool IsMultiChannelsSupported(hquint32 numChannels) = 0;
