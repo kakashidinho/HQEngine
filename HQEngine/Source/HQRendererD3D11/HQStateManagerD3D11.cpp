@@ -767,6 +767,12 @@ HQReturnVal HQStateManagerD3D11::CreateSamplerState(const HQSamplerStateDesc &de
 	helper::GetD3DFilter(desc.filterMode ,sdesc);
 
 	sdesc.MaxAnisotropy = desc.maxAnisotropy;
+
+	if (g_pD3DDev->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0 && sdesc.MaxLOD != D3D11_FLOAT32_MAX)
+	{
+		sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+		this->Log("CreateSamplerState() warning : mipmap cannot be disabled.");
+	}
 	
 	if (FAILED(pD3DDevice->CreateSamplerState(&sdesc , &newState->pD3DState)))
 	{
