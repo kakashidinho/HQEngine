@@ -399,6 +399,7 @@
     <ClInclude Include="..\..\..\..\Source\HQEngineResManager.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\gen_effect_script_parser.hpp" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\gen_res_script_parser.hpp" />
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQBufferedDataStream.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultDataStream.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQDefaultFileManager.h" />
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQEngineCommonInternal.h" />

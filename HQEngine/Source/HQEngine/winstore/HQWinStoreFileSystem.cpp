@@ -559,7 +559,7 @@ namespace HQWinStoreFileSystem
 		if (filename == NULL)
 			return nullptr;
 #if USE_WIN32_HANDLE
-		HQBufferedDataReader * datareader = nullptr;
+		HQDataReaderStream * datareader = nullptr;
 
 		try
 		{

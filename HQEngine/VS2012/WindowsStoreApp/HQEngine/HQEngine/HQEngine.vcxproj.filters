@@ -591,6 +591,9 @@
     <ClInclude Include="..\..\..\..\Source\HQRendererD3D11\HQCommonD3D11.h">
       <Filter>Source\HQRenderDeviceD3D11</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQEngine\HQBufferedDataStream.h">
+      <Filter>Source\HQEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQAABB.cpp">

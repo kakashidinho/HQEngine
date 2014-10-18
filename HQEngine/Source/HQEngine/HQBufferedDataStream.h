@@ -124,6 +124,7 @@ inline size_t HQBufferedDataReader::ReadBytes(unsigned char *ptr, size_t maxByte
 		memcpy(ptr, buffer + this->bufferOffset, this->unconsumedBufferLength);
 
 		bytesToCopy -= this->unconsumedBufferLength;
+		ptr += this->unconsumedBufferLength;
 
 		this->unconsumedBufferLength = 0;
 		this->bufferOffset = 0;
@@ -131,7 +132,9 @@ inline size_t HQBufferedDataReader::ReadBytes(unsigned char *ptr, size_t maxByte
 
 	if (bytesToCopy >= this->bufferSize)//read directly from stream
 	{
-		bytesToCopy -= this->ReadFromStream(ptr, bytesToCopy);
+		size_t readBytes = this->ReadFromStream(ptr, bytesToCopy);
+		bytesToCopy -= readBytes;
+		ptr += readBytes;
 	}
 	else//read to buffer first for faster small data reading
 	{
