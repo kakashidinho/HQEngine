@@ -73,6 +73,8 @@ inline HQPoolMemoryManager::HQPoolMemoryManager(size_t blockSize, size_t maxBloc
 :m_isOwnerOfPool(true) , m_is16ByteAlign(is16ByteAlign) ,
 m_blockSize(blockSize), m_maxBlocksPerPool(maxBlocksPerPool), m_fixedPool(fixedPool), m_firstFreeBlock(NULL)
 {
+	if (m_maxBlocksPerPool == 0)
+		m_maxBlocksPerPool = 1;//minimum blocks per pool
 	HQ_ASSERT(IsBlockSizeLargerThanOrEqualToSizeofPointer(blockSize));
 
 	if (m_is16ByteAlign)
@@ -107,6 +109,9 @@ inline HQPoolMemoryManager::HQPoolMemoryManager(void *preAllocatedPool ,size_t b
 :m_isOwnerOfPool(false)  , m_blockSize(blockSize), m_maxBlocksPerPool(maxBlocks) , m_fixedPool(true),  
   m_firstFreeBlock(preAllocatedPool)
 {
+	if (m_maxBlocksPerPool == 0)
+		m_maxBlocksPerPool = 1;//minimum blocks per pool
+
 	HQ_ASSERT(IsBlockSizeLargerThanOrEqualToSizeofPointer(blockSize));
 
 	HQ_ASSERT(preAllocatedPool != NULL);
