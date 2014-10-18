@@ -989,7 +989,7 @@ HQReturnVal HQEngineResManagerImpl::AddTextureUAVResource(const char *name,
 		return HQ_FAILED_RESOURCE_EXISTS;
 	}
 	//create new one
-	HQTexture * texture;
+	HQTexture * texture = NULL;
 	HQReturnVal re = HQ_FAILED;
 	
 	switch (textureType)
