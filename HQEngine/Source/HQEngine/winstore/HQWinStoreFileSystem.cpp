@@ -10,6 +10,7 @@ COPYING.txt included with this distribution for more information.
 
 #include "../HQEnginePCH.h"
 #include "../HQEngineCommonInternal.h"
+#include "../HQBufferedDataStream.h"
 #include "HQWinStoreFileSystem.h"
 #include "HQWinStoreUtil.h"
 #include "../../HQTimer.h"
@@ -25,6 +26,72 @@ using namespace HQEngineHelper;
 
 namespace HQWinStoreFileSystem
 {
+#if USE_WIN32_HANDLE
+	class  DataReader : public HQDataReaderStream
+	{
+	public:
+		DataReader(const char *fileName, bool useExactFileName = false);
+		~DataReader();
+
+		int GetByte();
+		size_t ReadBytes(void* dataOut, size_t elemSize, size_t elemCount);
+		int Close();
+		int Seek(long long offset, StreamSeekOrigin origin);
+		void Rewind();
+		long long Tell() const;//ftell implemetation
+
+		size_t TotalSize() const { return totalSize; }
+		bool Good() const { return Tell() < TotalSize(); }
+
+		const char *GetName() const { return name; }
+	private:
+		size_t ReadBytes(unsigned char *ptr, size_t bytes);
+
+		HANDLE fileHandle;
+
+		LARGE_INTEGER currentPointer;
+		size_t totalSize;//total size of stream from the start to the end
+
+		char * name;//file name
+	};
+#else
+	//async version
+	class BufferedDataReader : public HQDataReaderStream
+	{
+	public:
+		BufferedDataReader(Windows::Storage::Streams::IRandomAccessStream ^stream, const char *_name);
+		~BufferedDataReader();
+
+		int GetByte();
+		size_t ReadBytes(void* dataOut, size_t elemSize, size_t elemCount);
+		int Close();
+		int Seek(long long offset, StreamSeekOrigin origin);
+		void Rewind();
+		long long Tell() const;//ftell implemetation
+
+		size_t TotalSize() const { return totalSize; }
+		bool Good() const { return Tell() < TotalSize(); }
+
+		const char *GetName() const { return name; }
+	private:
+		void ResetStream(size_t position);
+		void ReadBytes(unsigned char *ptr, size_t bytes);
+		bool FillBuffer();
+
+		Windows::Storage::Streams::IRandomAccessStream ^stream;
+		Windows::Storage::Streams::DataReader ^reader;
+
+		Platform::Array<unsigned char>^ buffer;
+		size_t bufferSize;
+		size_t unconsumedBufferLength;
+		size_t bufferOffset;
+		size_t streamOffset;
+		size_t totalSize;//total size of stream from the start to the end
+
+		char * name;//file name
+	};
+#endif
+
 	//emu current working directory
 	static Platform::String ^ g_currentDir = "";
 
@@ -38,7 +105,7 @@ namespace HQWinStoreFileSystem
 		extendedParams.lpSecurityAttributes = nullptr;
 		extendedParams.hTemplateFile = nullptr;
 
-		auto fullPath  = folder->Path + L"\\" + refFileName;
+		auto fullPath = folder != nullptr ? (folder->Path + L"\\" + refFileName) : refFileName;
 
 		auto file = 
 			CreateFile2(
@@ -62,9 +129,10 @@ namespace HQWinStoreFileSystem
 
 		try
 		{
-			auto task = HQWinStoreUtil::Wait( folder->GetFileAsync(refFileName) );
-
-			return task;
+			if (folder != nullptr)
+				return HQWinStoreUtil::Wait(folder->GetFileAsync(refFileName));
+			else
+				return HQWinStoreUtil::Wait(Windows::Storage::StorageFile::GetFileFromPathAsync(refFileName));
 		}
 		catch (...)
 		{
@@ -78,8 +146,14 @@ namespace HQWinStoreFileSystem
 		if (refFileName == nullptr)
 			return nullptr;
 		//try all possible paths
-		auto folder = Windows::ApplicationModel::Package::Current->InstalledLocation;
-		auto file = OpenFileHandleForRead(folder, refFileName);
+		Windows::Storage::StorageFolder^ folder = nullptr;
+		auto file = OpenFileHandleForRead(nullptr, refFileName);
+
+		if (file == nullptr)
+		{
+			folder = Windows::ApplicationModel::Package::Current->InstalledLocation;
+			file = OpenFileHandleForRead(folder, refFileName);
+		}
 
 		if (file == nullptr)
 		{
@@ -107,8 +181,14 @@ namespace HQWinStoreFileSystem
 		if (refFileName == nullptr)
 			return nullptr;
 		//try all possible paths
-		auto folder = Windows::ApplicationModel::Package::Current->InstalledLocation;
-		auto file = OpenFile(folder, refFileName);
+		Windows::Storage::StorageFolder^ folder = nullptr;
+		auto file = OpenFile(nullptr, refFileName);
+
+		if (file == nullptr)
+		{
+			folder = Windows::ApplicationModel::Package::Current->InstalledLocation;
+			file = OpenFile(folder, refFileName);
+		}
 
 		if (file == nullptr)
 		{
@@ -474,16 +554,18 @@ namespace HQWinStoreFileSystem
 	}
 
 	//this will search file in installed folder, local folder, roaming folder, temp folder of the app
-	BufferedDataReader * OpenFileForRead(const char *filename)
+	HQDataReaderStream * OpenFileForRead(const char *filename)
 	{
 		if (filename == NULL)
 			return nullptr;
 #if USE_WIN32_HANDLE
-		BufferedDataReader * datareader = nullptr;
+		HQBufferedDataReader * datareader = nullptr;
 
 		try
 		{
-			datareader = new BufferedDataReader(filename);
+			DataReader *stream = new DataReader(filename);
+			datareader = new HQBufferedDataReader(stream);
+			stream->Release();
 		}
 		catch (...)
 		{
@@ -513,16 +595,18 @@ namespace HQWinStoreFileSystem
 	}
 	
 	//open a file using exact name
-	BufferedDataReader * OpenExactFileForRead(const char *filename)
+	HQDataReaderStream * OpenExactFileForRead(const char *filename)
 	{
 		if (filename == NULL)
 			return nullptr;
 #if USE_WIN32_HANDLE
-		BufferedDataReader * datareader = nullptr;
+		HQBufferedDataReader * datareader = nullptr;
 
 		try
 		{
-			datareader = new BufferedDataReader(filename, true);
+			DataReader *stream = new DataReader(filename, true);
+			datareader = new HQBufferedDataReader(stream);
+			stream->Release();
 		}
 		catch (...)
 		{
@@ -581,11 +665,12 @@ namespace HQWinStoreFileSystem
 		g_currentDir = (CreateFixedPathString(dir));
 	}
 
-	//BufferedDataReader class
+	/*-----------DataReader class------------------*/
 	static const size_t DefaultBufferSize = 8192;
 
 #if USE_WIN32_HANDLE
-	BufferedDataReader::BufferedDataReader(const char *fileName, bool useExactName)
+
+	DataReader::DataReader(const char *fileName, bool useExactName)
 	{
 		Platform::String^ refFileName;
 		if (!useExactName)
@@ -622,37 +707,31 @@ namespace HQWinStoreFileSystem
 		name[nameLen] = '\0';
 		
 	}
-	BufferedDataReader::~BufferedDataReader()
+	DataReader::~DataReader()
 	{
 		Close();
 		delete[] name;
 	}
 
 
-	size_t BufferedDataReader::ReadBytes(void* dataOut, size_t elemSize, size_t elemCount)
+	size_t DataReader::ReadBytes(void* dataOut, size_t elemSize, size_t elemCount)
 	{
-		size_t elems = 0;
-		unsigned char *ptr = (unsigned char *)dataOut;
+		size_t bytesRead = ReadBytes((unsigned char*)dataOut, elemSize * elemCount);
 
-		for (size_t i = 0; i < elemCount; ++i)
+		size_t elems = bytesRead / elemSize;
+
+		size_t remain = bytesRead % elemSize;
+		//bytesRead is not divisible by elemSize
+		if (remain != 0)
 		{
-			size_t availableBytes = this->totalSize - this->currentPointer.LowPart;
-
-			if (!ReadBytes(ptr, elemSize))//try to read data to this element
-				break;
-
-			if (availableBytes < elemSize)//this element can not be read fully
-				break;//stop the reading
-
-			elems ++;
-			ptr += elemSize;
+			this->Seek(-((long long)remain), SSO_CURRENT);
 		}
 
 
 		return elems;
 	}
 
-	bool BufferedDataReader::ReadBytes(unsigned char *ptr, size_t bytes)
+	size_t DataReader::ReadBytes(unsigned char *ptr, size_t bytes)
 	{
 		DWORD bytesRead = 0;
 		BOOL re = ReadFile(this->fileHandle, ptr, bytes, &bytesRead, NULL);
@@ -660,11 +739,11 @@ namespace HQWinStoreFileSystem
 		if (re != 0)//success
 			this->currentPointer.QuadPart += bytesRead;
 
-		return re != 0;
+		return bytesRead;
 
 	}
 
-	int BufferedDataReader::GetByte()
+	int DataReader::GetByte()
 	{
 		if (this->currentPointer.LowPart >= this->totalSize)
 			return EOF;
@@ -677,22 +756,7 @@ namespace HQWinStoreFileSystem
 		return byte;
 	}
 
-	bool BufferedDataReader::GetLine(char * buffer, size_t maxBufferSize)
-	{
-		int c = GetByte();
-		size_t currentOffset = 0;
-		while (c != EOF && c != '\n' && currentOffset < maxBufferSize - 1)
-		{
-			buffer[currentOffset++] = c;
-			c = GetByte();
-		}
-
-		buffer[currentOffset] = 0;
-
-		return currentOffset > 0;
-	}
-
-	int BufferedDataReader::Seek(long long offset, StreamSeekOrigin origin)
+	int DataReader::Seek(long long offset, StreamSeekOrigin origin)
 	{
 		size_t position = 0;
 		size_t currentPosition = CLAMP_TO_ZERO(Tell());
@@ -706,18 +770,18 @@ namespace HQWinStoreFileSystem
 		return 0;
 	}
 
-	void BufferedDataReader::Rewind()
+	void DataReader::Rewind()
 	{
 		Seek(0, SSO_BEGIN);
 	}
 
-	long long BufferedDataReader::Tell() const
+	long long DataReader::Tell() const
 	{
 		return this->currentPointer.QuadPart;
 	}
 
 
-	int BufferedDataReader::Close()
+	int DataReader::Close()
 	{
 		if (this->fileHandle != nullptr)
 		{
@@ -729,6 +793,8 @@ namespace HQWinStoreFileSystem
 		return 0;
 	}
 #else
+	//async version
+
 	BufferedDataReader::BufferedDataReader(Windows::Storage::Streams::IRandomAccessStream ^stream, const char* _name)
 		: reader(nullptr)
 	{
@@ -860,21 +926,6 @@ namespace HQWinStoreFileSystem
 		ReadBytes((unsigned char *)&byte, 1);
 
 		return byte;
-	}
-
-	bool BufferedDataReader::GetLine(char * buffer, size_t maxBufferSize)
-	{
-		int c = GetByte();
-		size_t currentOffset = 0;
-		while (c != EOF && c != '\n' && currentOffset < maxBufferSize - 1)
-		{
-			buffer[currentOffset++] = c;
-			c = GetByte();
-		}
-
-		buffer[currentOffset] = 0;
-
-		return currentOffset > 0;
 	}
 
 	int BufferedDataReader::Seek(long long offset, StreamSeekOrigin origin)

@@ -31,84 +31,6 @@ namespace HQWinStoreFileSystem
 		unsigned int dataSize;
 	};
 
-#	pragma warning( push )
-#	pragma warning( disable : 4275 )//non-dll interface
-
-#if USE_WIN32_HANDLE
-	class HQENGINE_API BufferedDataReader: public HQDataReaderStream
-	{
-	public:
-		BufferedDataReader(const char *fileName, bool useExactFileName = false);
-		~BufferedDataReader();
-
-		void Release() {delete this;}
-
-		int GetByte();
-		size_t ReadBytes(void* dataOut, size_t elemSize, size_t elemCount);
-		int Close();
-		int Seek(long long offset, StreamSeekOrigin origin);
-		void Rewind();
-		long long Tell() const;//ftell implemetation
-
-		size_t TotalSize() const {return totalSize;}
-		bool Good() const {return Tell() < TotalSize();}
-
-		bool GetLine(char * buffer, size_t maxBufferSize);//maxBufferSize includes terminating character
-
-		const char *GetName() const {return name;}
-	private:
-		bool ReadBytes(unsigned char *ptr, size_t bytes);
-
-		HANDLE fileHandle;
-
-		LARGE_INTEGER currentPointer;
-		size_t totalSize;//total size of stream from the start to the end
-
-		char * name;//file name
-	};
-#else
-	//async version
-	class HQENGINE_API BufferedDataReader: public HQDataReaderStream
-	{
-	public:
-		BufferedDataReader(Windows::Storage::Streams::IRandomAccessStream ^stream, const char *_name);
-		~BufferedDataReader();
-
-		void Release() {delete this;}
-
-		int GetByte();
-		size_t ReadBytes(void* dataOut, size_t elemSize, size_t elemCount);
-		int Close();
-		int Seek(long long offset, StreamSeekOrigin origin);
-		void Rewind();
-		long long Tell() const;//ftell implemetation
-
-		size_t TotalSize() const {return totalSize;}
-		bool Good() const {return Tell() < TotalSize();}
-
-		bool GetLine(char * buffer, size_t maxBufferSize);//maxBufferSize includes terminating character
-		
-		const char *GetName() const {return name;}
-	private:
-		void ResetStream(size_t position);
-		void ReadBytes(unsigned char *ptr, size_t bytes);
-		bool FillBuffer();
-
-		Windows::Storage::Streams::IRandomAccessStream ^stream; 
-		Windows::Storage::Streams::DataReader ^reader;
-
-		Platform::Array<unsigned char>^ buffer;
-		size_t bufferSize;
-		size_t unconsumedBufferLength;
-		size_t bufferOffset;
-		size_t streamOffset;
-		size_t totalSize;//total size of stream from the start to the end
-
-		char * name;//file name
-	};
-#endif
-
-#	pragma warning( pop )
 
 	//this will search file in installed folder, local folder, roaming folder, temp folder of the app
 	HQENGINE_API Windows::Storage::StorageFile ^ OpenFile(const char *file);
@@ -120,10 +42,10 @@ namespace HQWinStoreFileSystem
 	HQENGINE_API Windows::Storage::Streams::DataWriter ^ OpenOrCreateFileForWrite(const char *file);
 
 	//this will search file in installed folder, local folder, roaming folder, temp folder of the app
-	HQENGINE_API BufferedDataReader * OpenFileForRead(const char *file);
+	HQENGINE_API HQDataReaderStream * OpenFileForRead(const char *file);
 
 	//this will open a file using the exact name specified by <file>. No concatenate  with current directory
-	HQENGINE_API BufferedDataReader * OpenExactFileForRead(const char *file);
+	HQENGINE_API HQDataReaderStream * OpenExactFileForRead(const char *file);
 
 	//*ppDataOut must be release by calling delete[]
 	HQENGINE_API bool ReadData(const char *fileName, unsigned char *&pDataOut, unsigned int &pDataSizeOut);

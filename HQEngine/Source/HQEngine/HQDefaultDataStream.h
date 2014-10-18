@@ -46,8 +46,6 @@ public:
 		delete[] m_name;
 	}
 
-	void Release() {delete this;}
-
 	hqint32 GetByte()
 	{
 		if (m_file == NULL)

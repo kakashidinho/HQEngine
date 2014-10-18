@@ -12,10 +12,12 @@ COPYING.txt included with this distribution for more information.
 #define HQ_DATA_STREAM_H
 
 #include "HQPrimitiveDataType.h"
+#include "HQReferenceCountObj.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
-class HQDataReaderStream
+class HQDataReaderStream : public HQReferenceCountObj
 {
 public:
 	enum StreamSeekOrigin
@@ -24,8 +26,6 @@ public:
 		SSO_CURRENT = 1,
 		SSO_END = 2
 	};
-
-	virtual void Release() = 0;//close the stream and release the object
 
 	virtual hqint32 GetByte()= 0 ;///get next byte, return -1 if error
 	virtual size_t ReadBytes(void* dataOut, size_t elemSize, size_t elemCount)= 0 ;///returns number of successfully read elements
@@ -38,9 +38,27 @@ public:
 	
 	virtual const char *GetName() const = 0;//can be NULL, this can return name of the opened file
 
+	bool GetLine(char * buffer, size_t maxBufferSize);
+
 protected:
 	virtual ~HQDataReaderStream() {}
 };
+
+
+inline bool HQDataReaderStream::GetLine(char * buffer, size_t maxBufferSize)
+{
+	int c = GetByte();
+	size_t currentOffset = 0;
+	while (c != EOF && c != '\n' && currentOffset < maxBufferSize - 1)
+	{
+		buffer[currentOffset++] = c;
+		c = GetByte();
+	}
+
+	buffer[currentOffset] = 0;
+
+	return currentOffset > 0;
+}
 
 
 #endif
