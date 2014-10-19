@@ -115,14 +115,14 @@ inline size_t HQBufferedDataReader::ReadBytes(void* dataOut, size_t elemSize, si
 	return elems;
 }
 
-inline size_t HQBufferedDataReader::ReadBytes(unsigned char *buffer, size_t maxBytesToCopy)
+inline size_t HQBufferedDataReader::ReadBytes(unsigned char *dest_buffer, size_t maxBytesToCopy)
 {
-	unsigned char *ptr = buffer;
+	unsigned char *ptr = dest_buffer;
 	size_t bytesToCopy = maxBytesToCopy;
 	if (this->unconsumedBufferLength > 0 && bytesToCopy >= this->unconsumedBufferLength)
 	{
 		//read remaining buffer data
-		memcpy(ptr, buffer + this->bufferOffset, this->unconsumedBufferLength);
+		memcpy(ptr, this->buffer + this->bufferOffset, this->unconsumedBufferLength);
 
 		bytesToCopy -= this->unconsumedBufferLength;
 		ptr += this->unconsumedBufferLength;
@@ -153,7 +153,7 @@ inline size_t HQBufferedDataReader::ReadBytes(unsigned char *buffer, size_t maxB
 				size_t maxPossibleBytesToCopy = __min__(this->unconsumedBufferLength, bytesToCopy);
 
 				//copy from buffer
-				memcpy(ptr, buffer + this->bufferOffset, maxPossibleBytesToCopy);
+				memcpy(ptr, this->buffer + this->bufferOffset, maxPossibleBytesToCopy);
 
 				//decrease the available bytes from buffer and total bytes that are still required
 				this->unconsumedBufferLength -= maxPossibleBytesToCopy;
@@ -172,7 +172,7 @@ inline size_t HQBufferedDataReader::ReadBytes(unsigned char *buffer, size_t maxB
 		}//while (bytesToCopy > 0)
 	}
 
-	return ptr - buffer;
+	return ptr - dest_buffer;
 }
 
 inline int HQBufferedDataReader::GetByte()
