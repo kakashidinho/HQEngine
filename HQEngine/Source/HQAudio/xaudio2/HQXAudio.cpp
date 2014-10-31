@@ -374,6 +374,8 @@ HQReturnVal HQXAudioDevice::AttachAudioBuffer(hq_uint32 bufferID, hq_uint32 sour
 		return HQ_FAILED_INVALID_ID;
 	HQReturnVal re = ((HQXAudioSourceController*) source.GetRawPointer())->AttachBuffer(buffer);
 #if defined _DEBUG || defined DEBUG
+	if (buffer == NULL && bufferID != INVALID_ID)
+		this->Log("Warning : Attached buffer is null!");
 	if (re != HQ_OK)
 		this->Log("Error : Buffer couldn't attached to source!");
 #endif

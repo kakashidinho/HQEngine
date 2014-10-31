@@ -20,7 +20,7 @@ class HQAudioSourceControllerAL: public  HQBaseAudioSourceController{
 public:
 
 	HQAudioSourceControllerAL(const HQAudioSourceInfo &info, HQSharedPtr<HQBaseAudioBuffer> &pBuffer) 
-		:m_positioning(HQ_TRUE), m_info(info), m_continuous(HQ_FALSE)
+		:m_positioning(HQ_TRUE), m_info(info), m_continuous(HQ_FALSE), m_state(STOPPED)
 	{
 		alGenSources(1, &m_sourceName);
 		if (AL_OUT_OF_MEMORY == alGetError())
@@ -200,9 +200,7 @@ public:
 
 	HQReturnVal Play(HQBool continuous) 
 	{
-		ALint state ;
-		alGetSourcei(m_sourceName, AL_SOURCE_STATE, &state);
-		if (state == AL_PLAYING)//source is playing
+		if (m_state == PLAYING)//source is playing
 			return HQ_FAILED_PLAYING;
 		
 		HQBaseAudioBuffer *pRawBuffer = m_pBuffer.GetRawPointer();
@@ -220,23 +218,23 @@ public:
 		alSourcePlay(m_sourceName);
 
 		m_continuous = continuous;
+		m_state = PLAYING;
 
 		return HQ_OK;
 	}
 	HQReturnVal Pause()
 	{
-		ALint state;
-		alGetSourcei(m_sourceName, AL_SOURCE_STATE, &state);
-		if (state == AL_PLAYING)//source is playing
+		if (m_state == PLAYING)//source is playing
+		{
 			alSourcePause(m_sourceName);
+			m_state = PAUSED;
+		}
 		return HQ_OK;
 	}
 
 	HQReturnVal Resume()
 	{
-		ALint state;
-		alGetSourcei(m_sourceName, AL_SOURCE_STATE, &state);
-		if (state == AL_PAUSED)//source is paused
+		if (m_state == PAUSED)//source is paused
 		{
 			this->Play(m_continuous);
 		}
@@ -256,10 +254,13 @@ public:
 			bufferAL->Stop();
 		}
 
+		m_state = STOPPED;
+
 		return HQ_OK;
 	}
 	HQAudioSourceController::State GetCurrentState()
 	{
+		/* //removed because the stream buffer case may report stopped state
 		ALint state ;
 		alGetSourcei(m_sourceName, AL_SOURCE_STATE, &state);
 		switch(state)
@@ -274,7 +275,10 @@ public:
 			return HQAudioSourceController::STOPPED;
 		default:
 			return HQAudioSourceController::UNDEFINED;
-		}
+		}*/
+
+		return m_state;
+
 	}
 
 	HQReturnVal UpdateStream()
@@ -310,7 +314,9 @@ protected:
 private:
 	hqfloat32 m_position[3];//cached position
 	HQSharedPtr<HQBaseAudioBuffer> m_pBuffer;
-	const HQAudioSourceInfo m_info;
+	const HQAudioSourceInfo m_info; 
+	
+	State m_state;
 };
 
 

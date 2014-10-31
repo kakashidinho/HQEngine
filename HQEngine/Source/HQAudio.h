@@ -121,6 +121,8 @@ public:
 	virtual HQReturnVal CreateStreamAudioBufferFromFile(const char *fileName, hq_uint32 *pBufferID) = 0;///Create Stream Buffer with default num sub buffers and default sub buffer size (Implementation dependent)
 	///get playback duration in seconds of audio buffer
 	virtual hqfloat32 GetAudioBufferPlaybackTime(hquint32 bufferID) = 0;
+virtual bool IsStreamAudioBuffer(hquint32 bufferID) = 0;///is this buffer a stream buffer
+	virtual bool IsValidBuffer(hquint32 bufferID) = 0;
 	virtual HQReturnVal RemoveAudioBuffer(hquint32 bufferID) = 0;
 	virtual void RemoveAllAudioBuffers() = 0;
 	///

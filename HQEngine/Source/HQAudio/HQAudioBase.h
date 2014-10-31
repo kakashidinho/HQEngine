@@ -81,6 +81,25 @@ public:
 
 		return buffer->m_playTime;
 	}
+
+	virtual bool IsStreamAudioBuffer(hquint32 bufferID)
+	{
+		HQSharedPtr<HQBaseAudioBuffer> buffer = m_bufferManager.GetItemPointer(bufferID);
+		if (buffer == NULL)
+			return false;
+
+		return buffer->m_type == HQBaseAudioBuffer::STREAM_BUFFER;
+	}
+
+	virtual bool IsValidBuffer(hquint32 bufferID)
+	{
+		HQSharedPtr<HQBaseAudioBuffer> buffer = m_bufferManager.GetItemPointer(bufferID);
+		if (buffer == NULL)
+			return false;
+
+		return true;
+	}
+
 	virtual HQReturnVal RemoveAudioBuffer(hquint32 bufferID) 
 	{
 		return (HQReturnVal) m_bufferManager.Remove(bufferID);

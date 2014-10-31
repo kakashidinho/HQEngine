@@ -316,7 +316,7 @@ void HQAudioStreamBufferAL::UpdateStream()
 			//remove the buffer from removed buffers list
 			m_removedSubBuffers.RemoveAt(oldRemovedBuferNode);
 
-			//need to restart source if it is stop
+			//need to restart source if it is stopped
 			if (sourceState != AL_PLAYING && (m_state & BUFFER_SOURCE_MUST_STOP) == 0)//source is not playing
 			{
 				alSourcePlay(m_attachedSource);
