@@ -22,6 +22,15 @@
     <Filter Include="Source">
       <UniqueIdentifier>{493d8e81-37db-4364-aea5-ab5824907f87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ARM_prebuilt">
+      <UniqueIdentifier>{15e801b4-f462-4db6-9e13-b182e41c11b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Win32_prebuilt">
+      <UniqueIdentifier>{cd78e170-3b20-4d61-b0e5-e9a2d54463f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="x64_prebuilt">
+      <UniqueIdentifier>{243cad94-8c16-437d-a045-3218be553f3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Source\test\winmain.cpp">
@@ -42,8 +51,15 @@
   <ItemGroup>
     <None Include="test_TemporaryKey.pfx" />
     <None Include="ClassDiagram.cd" />
-    <None Include="..\..\..\..\Source\test\meshes\tiny.hqanimation" />
-    <None Include="..\..\..\..\Source\test\meshes\tiny.hqmesh" />
+    <None Include="..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\ARM\OpenAL.winrt.dll">
+      <Filter>ARM_prebuilt</Filter>
+    </None>
+    <None Include="..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\x64\OpenAL.winrt.dll">
+      <Filter>x64_prebuilt</Filter>
+    </None>
+    <None Include="..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\Win32\OpenAL.winrt.dll">
+      <Filter>Win32_prebuilt</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\test\meshes\Bat_Albedo.jpg">
@@ -65,6 +81,8 @@
     <Media Include="Assets\test\audio\battletoads-double-dragons-2.ogg" />
     <Media Include="Assets\test\meshes\bat.hqanimation" />
     <Media Include="Assets\test\meshes\bat.hqmesh" />
+    <Media Include="..\..\..\..\Source\test\meshes\tiny.hqanimation" />
+    <Media Include="..\..\..\..\Source\test\meshes\tiny.hqmesh" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\..\Source\test\script\resourcesCommon.script" />

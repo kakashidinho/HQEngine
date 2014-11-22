@@ -5,6 +5,12 @@
       <UniqueIdentifier>17b52f90-9b33-4188-8a0e-808582bbabbc</UniqueIdentifier>
       <Extensions>ico;bmp;dlg;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;resw;resjson</Extensions>
     </Filter>
+    <Filter Include="ARM_prebuilt">
+      <UniqueIdentifier>{7a3fd0a2-d275-4e14-8a71-0e2a87f5f7dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Win32_prebuilt">
+      <UniqueIdentifier>{0cc44d39-07e9-42f3-b674-4ffc191fa75e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\ApplicationIcon.png">
@@ -86,6 +92,8 @@
     </Media>
     <Media Include="Assets\test\meshes\bat.hqanimation" />
     <Media Include="Assets\test\meshes\bat.hqmesh" />
+    <Media Include="..\..\..\..\Source\test\meshes\tiny.hqanimation" />
+    <Media Include="..\..\..\..\Source\test\meshes\tiny.hqmesh" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\..\Source\test\script\effects.script" />
@@ -96,7 +104,11 @@
     <CustomBuild Include="..\..\..\..\Source\test\script\resourcesGL.script" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Source\test\meshes\tiny.hqanimation" />
-    <None Include="..\..\..\..\Source\test\meshes\tiny.hqmesh" />
+    <None Include="..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\ARM\OpenAL.wp8.dll">
+      <Filter>ARM_prebuilt</Filter>
+    </None>
+    <None Include="..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\Win32\OpenAL.wp8.dll">
+      <Filter>Win32_prebuilt</Filter>
+    </None>
   </ItemGroup>
 </Project>

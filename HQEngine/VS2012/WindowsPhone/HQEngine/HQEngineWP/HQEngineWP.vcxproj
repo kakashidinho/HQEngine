@@ -184,7 +184,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
@@ -221,7 +221,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
@@ -239,7 +239,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -272,7 +272,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -289,7 +289,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
@@ -307,7 +307,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
@@ -326,7 +326,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
@@ -363,7 +363,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
@@ -381,7 +381,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
@@ -416,7 +416,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -434,7 +434,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>
@@ -453,7 +453,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(SolutionDir)..\Libs\$(Platform)\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.wp8.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>ole32.lib</IgnoreSpecificDefaultLibraries>

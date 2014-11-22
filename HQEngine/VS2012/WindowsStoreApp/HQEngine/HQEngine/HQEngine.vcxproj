@@ -172,7 +172,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -192,7 +192,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -213,7 +213,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -233,7 +233,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -253,7 +253,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -274,7 +274,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -294,7 +294,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -314,7 +314,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -335,7 +335,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\winrt\$(Platform);$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
