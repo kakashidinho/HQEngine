@@ -13,10 +13,18 @@ COPYING.txt included with this distribution for more information.
 
 #include "../HQAudioBase.h"
 
-#ifndef WIN32
+#if !defined HQ_WIN_DESKTOP_PLATFORM
 #	ifndef IMPLICIT_LINK
 #		define IMPLICIT_LINK
 #	endif
+#endif
+
+#if defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM
+#	define AL_LIBTYPE_STATIC
+#endif
+
+#if defined AL_LIBTYPE_STATIC && !defined IMPLICIT_LINK
+#	define IMPLICIT_LINK//static library must be implicitly linked
 #endif
 
 #ifdef IMPLICIT_LINK

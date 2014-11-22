@@ -23,7 +23,7 @@ HQXAudioStreamBuffer::HQXAudioStreamBuffer(
 		HQStreamBufferSupplier *supplier,
 		size_t numSubBuffers,
 		size_t subBufferSize)
-		: HQBaseAudioBuffer(STREAM_BUFFER), 
+		: HQBaseAudioBuffer(fileName, STREAM_BUFFER), 
 		HQThread("HQXAudioStreamBuffer Thread"),
 		m_info(info) , m_state(BUFFER_STILL_ALIVE | BUFFER_FIRST_ATTACH_STATE), m_streamPosition(0),
 		m_supplier(supplier), m_numSubBuffers(numSubBuffers), m_subBufferSize (subBufferSize),

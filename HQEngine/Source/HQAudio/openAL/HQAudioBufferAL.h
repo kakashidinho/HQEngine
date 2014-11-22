@@ -21,15 +21,12 @@ class HQAudioBufferAL : public HQBaseAudioBuffer
 {
 public:
 	HQAudioBufferAL(const char *fileName, ALenum alFormat, const HQBaseAudioDevice:: AudioDataInfo &info)
+		: HQBaseAudioBuffer(fileName, NORMAL_BUFFER)
 	{
 		m_bufferName = 0;
 		alGenBuffers(1, &m_bufferName);
 		if (AL_OUT_OF_MEMORY == alGetError())
 			throw std::bad_alloc();
-		//copy file name
-		size_t len = strlen(fileName);
-		m_audioFileName = new char [len + 1];
-		strcpy(m_audioFileName, fileName);
 
 		//specify buffer format
 		this->SetFormatType(alFormat);
@@ -95,6 +92,8 @@ public:
 
 	ALuint GetAttachedSource() {return m_attachedSource;}
 	void AttachSource(ALuint  source);
+
+	bool IsStopped() const;
 
 	void Stop();
 

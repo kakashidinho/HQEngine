@@ -260,24 +260,31 @@ public:
 	}
 	HQAudioSourceController::State GetCurrentState()
 	{
-		/* //removed because the stream buffer case may report stopped state
-		ALint state ;
-		alGetSourcei(m_sourceName, AL_SOURCE_STATE, &state);
-		switch(state)
+		ALint alstate;
+		alGetSourcei(m_sourceName, AL_SOURCE_STATE, &alstate);
+		switch (alstate)
 		{
 		case AL_INITIAL:
-			return HQAudioSourceController::STOPPED;
+			return m_state = STOPPED;
 		case AL_PLAYING:
-			return HQAudioSourceController::PLAYING;
+			return m_state = PLAYING;
 		case AL_PAUSED:
-			return HQAudioSourceController::PAUSED;
+			return m_state = PAUSED;
 		case AL_STOPPED:
-			return HQAudioSourceController::STOPPED;
+		{
+			HQBaseAudioBuffer *pRawBuffer = m_pBuffer.GetRawPointer();
+			if (pRawBuffer != NULL && pRawBuffer->m_type == HQBaseAudioBuffer::STREAM_BUFFER)
+			{
+				//streaming mode may report stopped sometimes due to starvation of buffer
+				if (m_state == PLAYING && !static_cast<HQAudioStreamBufferAL*>(pRawBuffer)->IsStopped())
+					return PLAYING;
+			}
+			return m_state = STOPPED;
+		}
 		default:
-			return HQAudioSourceController::UNDEFINED;
-		}*/
+			return m_state = UNDEFINED;
+		}
 
-		return m_state;
 
 	}
 

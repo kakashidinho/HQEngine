@@ -17,9 +17,23 @@ COPYING.txt included with this distribution for more information.
 
 using namespace HQEngineHelper;
 
-#ifdef WIN32
+#if defined HQ_WIN_DESKTOP_PLATFORM
 #	ifdef IMPLICIT_LINK
 #		pragma comment(lib, "OpenAL32.lib")
+#	endif
+#elif defined HQ_WIN_STORE_PLATFORM
+#	ifdef AL_LIBTYPE_STATIC
+#		pragma comment(lib, "Mmdevapi.lib")//required lib
+#	endif
+#	ifdef HQ_STATIC_ENGINE
+#		pragma comment(lib, "OpenAL.winrt.lib")	
+#	endif
+#elif defined HQ_WIN_PHONE_PLATFORM
+#	ifdef AL_LIBTYPE_STATIC
+#		pragma comment(lib, "Phoneaudioses.lib")//required lib 
+#	endif
+#	ifdef HQ_STATIC_ENGINE
+#		pragma comment(lib, "OpenAL.wp8.lib")	
 #	endif
 #endif
 

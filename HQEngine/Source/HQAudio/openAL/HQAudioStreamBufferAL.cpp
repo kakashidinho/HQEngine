@@ -28,7 +28,7 @@ HQAudioStreamBufferAL::HQAudioStreamBufferAL(
 		HQStreamBufferSupplier *supplier,
 		size_t numSubBuffers,
 		size_t subBufferSize)
-		: HQBaseAudioBuffer(STREAM_BUFFER), 
+		: HQBaseAudioBuffer(fileName, STREAM_BUFFER),
 		HQThread("HQAudioStreamBufferAL Thread"),
 		m_formatAL (alFormat),
 		m_info(info) , m_state(BUFFER_STILL_ALIVE | BUFFER_FIRST_ATTACH_STATE), m_streamPosition(0),
@@ -245,6 +245,13 @@ void HQAudioStreamBufferAL::EnableLoop(bool loop)
 		m_state |= BUFFER_LOOP_ENABLE;
 	else
 		m_state &= ~BUFFER_LOOP_ENABLE;
+}
+
+bool HQAudioStreamBufferAL::IsStopped() const
+{
+	hquint32 state = m_state;
+	return (state & BUFFER_SOURCE_MUST_STOP) != 0
+		|| (m_streamPosition >= m_info.size && (state & BUFFER_LOOP_ENABLE) == 0);
 }
 
 void HQAudioStreamBufferAL::Stop()

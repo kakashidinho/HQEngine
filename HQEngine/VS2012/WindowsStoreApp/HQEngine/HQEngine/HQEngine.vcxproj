@@ -165,7 +165,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
@@ -173,7 +173,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -186,14 +186,14 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -206,7 +206,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -214,7 +214,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -227,14 +227,14 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -247,14 +247,14 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -267,7 +267,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -275,7 +275,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -288,14 +288,14 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -308,14 +308,14 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -328,7 +328,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>HQRENDERER_EXPORTS;HQENGINE_DLL;HQENGINE_EXPORTS;Q_UTIL_EXPORTS;HQUTIL_EXPORTS;HQSCENEMANAGEMENT_EXPORTS;HQAUDIO_EXPORTS;HQ_CUSTOM_NEW_OPERATOR;HQ_CUSTOM_MALLOC;_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions);HQ_WIN_STORE_PLATFORM</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\include\AL;..\..\..\..\..\ThirdParty-mod\libogg\include;..\..\..\..\..\ThirdParty-mod\libvorbis\include;..\..\..\..\Source;..\..\..\..\Source\ImagesLoader\zlib-1.2.6;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -336,7 +336,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Libs\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL.winrt.lib;libvorbis_static.lib;libvorbisfile.lib;libogg_static.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -363,6 +363,9 @@
     <ClInclude Include="..\..\..\..\Source\HQ3DMathBasics.h" />
     <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioInternal.h" />
     <ClInclude Include="..\..\..\..\Source\HQAudio\HQAudioPCH.h" />
+    <ClInclude Include="..\..\..\..\Source\HQAudio\openAL\HQAudioAL.h" />
+    <ClInclude Include="..\..\..\..\Source\HQAudio\openAL\HQAudioBufferAL.h" />
+    <ClInclude Include="..\..\..\..\Source\HQAudio\openAL\HQAudioSourceAL.h" />
     <ClInclude Include="..\..\..\..\Source\HQConditionVariable.h" />
     <ClInclude Include="..\..\..\..\Source\HQDataStream.h" />
     <ClInclude Include="..\..\..\..\Source\HQDXMatrixInline.h" />
@@ -654,6 +657,8 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HQAudioPCH.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)HQAudioPCH.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\openAL\HQAudioAL.cpp" />
+    <ClCompile Include="..\..\..\..\Source\HQAudio\openAL\HQAudioStreamBufferAL.cpp" />
     <ClCompile Include="..\..\..\..\Source\HQAudio\xaudio2\HQXAudio.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_nooptimize|ARM'">..\HQAudioPCH.h</PrecompiledHeaderFile>

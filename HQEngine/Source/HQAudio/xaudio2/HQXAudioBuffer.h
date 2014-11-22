@@ -20,13 +20,8 @@ class HQXAudioBuffer : public HQBaseAudioBuffer
 {
 public:
 	HQXAudioBuffer(const char *fileName, HQBaseAudioDevice::AudioDataInfo &info)
-		: HQBaseAudioBuffer(NORMAL_BUFFER), m_info(info)
+		: HQBaseAudioBuffer(fileName, NORMAL_BUFFER), m_info(info)
 	{
-		//copy file name
-		size_t len = strlen(fileName);
-		m_audioFileName = HQ_NEW char [len + 1];
-		strcpy(m_audioFileName, fileName);
-
 		//init buffer
 		m_xBuffer.pAudioData = (BYTE*)info.data;
 		m_xBuffer.AudioBytes = info.size;

@@ -80,6 +80,9 @@
     <Filter Include="Source\HQEngine\res_parser">
       <UniqueIdentifier>{d04f4a4a-f0d3-4a5b-b6c8-d4959f10532e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\HQAudio\openal">
+      <UniqueIdentifier>{c4b74014-b7a6-40ff-9eeb-60347c789bf3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -590,6 +593,15 @@
     <ClInclude Include="..\..\..\..\Source\HQEngine\HQBufferedDataStream.h">
       <Filter>Source\HQEngine</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\openAL\HQAudioAL.h">
+      <Filter>Source\HQAudio\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\openAL\HQAudioBufferAL.h">
+      <Filter>Source\HQAudio\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\HQAudio\openAL\HQAudioSourceAL.h">
+      <Filter>Source\HQAudio\openal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Source\HQUtilMath\HQAABB.cpp">
@@ -1065,6 +1077,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Source\HQRendererD3D11\HQCommonD3D11.cpp">
       <Filter>Source\HQRenderDeviceD3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\openAL\HQAudioAL.cpp">
+      <Filter>Source\HQAudio\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\HQAudio\openAL\HQAudioStreamBufferAL.cpp">
+      <Filter>Source\HQAudio\openal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

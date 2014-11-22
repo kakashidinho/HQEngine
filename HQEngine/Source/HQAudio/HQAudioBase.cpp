@@ -25,6 +25,8 @@ using namespace HQEngineHelper;
 
 #endif
 
+#define HQ_NO_XAUDIO//disable Xaudio for now because of thread-safety problems
+
 HQBaseAudioDevice * ge_pAudioDevice = NULL;
 
 static ov_callbacks g_vorbis_callback = {
@@ -450,7 +452,7 @@ HQAudioDevice * HQCreateAudioDevice(hqfloat32 speedOfSound, HQLogStream *logStre
 		if (ge_pAudioDevice == NULL)//failed , now try openAL
 #endif
 
-#if !(defined HQ_NO_OPEN_AL || defined HQ_WIN_PHONE_PLATFORM || defined HQ_WIN_STORE_PLATFORM)//windows store app does not support openAL
+#if !(defined HQ_NO_OPEN_AL)
 			ge_pAudioDevice = HQCreateAudioDeviceAL(speedOfSound, logStream, flushLog, leftHandedCoordinate);
 #else
 			return NULL;

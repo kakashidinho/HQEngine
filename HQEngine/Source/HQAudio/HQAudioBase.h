@@ -44,6 +44,13 @@ public:
 	};
 
 	HQBaseAudioBuffer(BufferType type = NORMAL_BUFFER) :m_audioFileName(NULL), m_type(type) {}
+	HQBaseAudioBuffer(const char *audiofileName, BufferType type = NORMAL_BUFFER) : m_type(type) {
+		//copy file name
+		size_t len = strlen(audiofileName);
+		m_audioFileName = HQ_NEW char[len + 1];
+		strcpy(m_audioFileName, audiofileName);
+
+	}
 	virtual ~HQBaseAudioBuffer() {
 		if (m_audioFileName != NULL)
 			delete[] m_audioFileName;
