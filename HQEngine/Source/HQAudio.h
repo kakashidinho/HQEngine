@@ -147,7 +147,7 @@ virtual bool IsStreamAudioBuffer(hquint32 bufferID) = 0;///is this buffer a stre
 	///default velocity is {0 , 0 , 0}
 	virtual HQReturnVal SetListenerVelocity(const hqfloat32 velocity[3]) = 0;
 	///default direction is {0 , 0 , -1} &  up is (0 , 1 , 0 )
-	virtual HQReturnVal SetListenerOrientation(const hqfloat32 at[3], const hqfloat32 up[3]) = 0;
+	virtual HQReturnVal SetListenerOrientation(const hqfloat32 at[3], const hqfloat32 direction[3]) = 0;
 
 	///{volume}must be in [0..1]. default is 1.0
 	virtual HQReturnVal SetListenerVolume(hqfloat32 volume) = 0;
