@@ -210,7 +210,7 @@
       <AdditionalDependencies>HQEngineWP.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <IgnoreSpecificDefaultLibraries>ole32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(OutDir)..\HQEngineWP</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(OutDir)..\HQEngineWP</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_noD3DDebugLayer|Win32'">
@@ -255,7 +255,7 @@
       <AdditionalDependencies>HQEngineWP.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <IgnoreSpecificDefaultLibraries>ole32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(OutDir)..\HQEngineWP</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(OutDir)..\HQEngineWP</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|Win32'">
@@ -332,7 +332,7 @@
       <AdditionalDependencies>HQEngineWP.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <IgnoreSpecificDefaultLibraries>ole32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(OutDir)..\HQEngineWP</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(OutDir)..\HQEngineWP</AdditionalLibraryDirectories>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
     </Link>
   </ItemDefinitionGroup>
@@ -378,7 +378,7 @@
       <AdditionalDependencies>HQEngineWP.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <IgnoreSpecificDefaultLibraries>ole32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(OutDir)..\HQEngineWP</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\ThirdParty-mod\openal-soft\pre_built\wp8\$(Platform);$(OutDir)..\HQEngineWP</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_D3DDebugLayer|ARM'">
