@@ -374,11 +374,6 @@ bool HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , Mem
 			*pBucketIndex = index;
 		this->m_numItems ++;
 
-		if ((hq_float32)this->m_numItems / this->m_numBuckets >= this->m_maxLoadFactor)//ratio between number of used slot and number of buckets exceeds load factor
-		{
-			this->Resize();
-		}
-
 		return true;
 	}
 	return false;
