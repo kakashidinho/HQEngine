@@ -306,7 +306,7 @@ bool HQClosedHashTable<Key , T , HashFunction , ProbingFunction , KeyEqual , Mem
 		this->m_buckets = oldBuckets;
 		this->m_numBuckets = oldNumBuckets;
 
-		return failed;
+		return false;
 	}
 
 	this->FreeBuckets(oldBuckets ,oldNumBuckets );
