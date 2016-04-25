@@ -1832,6 +1832,7 @@ bool HQIsPrime(hq_uint32 n)
 	{
 		hq_uint32 i;
 		hq_uint32 sqrtVal = (hq_uint32)floor(sqrt((double)n));
+		hq_uint32 limit = sqrtVal + 1;
 		//check if n is divisible by any prime in pre calculated prime numbers
 		for (i = 0 ; i < numPrePrimes && primes[i] <= sqrtVal ; ++i)
 			if (n % primes[i] == 0)
@@ -1844,7 +1845,7 @@ bool HQIsPrime(hq_uint32 n)
 		
 		i = nearest6k; 
 		
-		while(isPrime && i <= sqrtVal)
+		while(isPrime && i <= limit)
 		{
 			hq_uint32 val1 = i - 1 ;//6k - 1
 			hq_uint32 val2 = i + 1 ;//6k + 1
