@@ -187,8 +187,8 @@ protected:
 	static T m_invalidValue;
 	static Key m_invalidKey;
 
-	hq_uint32 m_numBuckets;
-	hq_uint32 m_numItems;//num allocated slot
+	hq_uint32 m_numBuckets;//num allocated slots
+	hq_uint32 m_numItems;
 	hq_float32 m_maxLoadFactor;
 	HashFunction m_hashFunction;
 	ProbingFunction m_probeFunction;
