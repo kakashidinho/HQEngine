@@ -56,21 +56,21 @@ public:
 	{
 		friend class HQLinkedList;
 	private:
-		HQLinkedListNode<T> * m_pRoot;
+		HQLinkedListNode<T> *const* m_ppRoot;
 		HQLinkedListNode<T> * m_pCurrentNode;
 	public:
-		Iterator() : m_pRoot (NULL) , m_pCurrentNode(NULL) {}
+		Iterator() : m_ppRoot (NULL) , m_pCurrentNode(NULL) {}
 		Iterator& operator ++();//prefix addition  . shift to next node
 		Iterator operator ++(hq_int32);//suffic addition . shift to next node
 
 		Iterator& operator --();//prefix subtraction . shift to prev node
 		Iterator operator --(hq_int32);//suffix subtraction . shift to prev node
 
-		bool IsAtBegin(){return (m_pCurrentNode == m_pRoot);};//is at first node location
+		bool IsAtBegin(){return (m_pCurrentNode == *m_ppRoot);};//is at first node location
 		bool IsAtEnd(){return (m_pCurrentNode == NULL);};//is at invalid location (ie location after the last node)
 
-		void Rewind(){m_pCurrentNode = m_pRoot;};//go to first node
-		void ToLastItem() {if (m_pRoot != NULL) m_pCurrentNode = m_pRoot->m_pPrev; }//go to last item
+		void Rewind(){m_pCurrentNode = m_ppRoot;};//go to first node
+		void ToLastItem() {if (*m_ppRoot != NULL) m_pCurrentNode = (*m_ppRoot)->m_pPrev; }//go to last item
 
 		T* operator->();
 		T& operator *() ;//unsafe
@@ -78,7 +78,7 @@ public:
 		T* GetPointerNonCheck() {return &m_pCurrentNode->m_element;}
 		HQLinkedListNode<T> * GetNode() {return  m_pCurrentNode;}
 
-		void Invalid() {m_pRoot = m_pCurrentNode = NULL;}
+		void Invalid() {m_ppRoot = NULL; m_pCurrentNode = NULL;}
 	};
 	/*--------member functions------------*/
 	HQLinkedList(const HQLinkedList &src ,const HQSharedPtr<MemManager> &pMemoryManager = HQ_NEW MemManager());
@@ -162,14 +162,14 @@ inline HQLinkedList<T , MemManager> & HQLinkedList<T , MemManager> :: TransferFr
 template <class T , class MemManager>
 inline void HQLinkedList<T, MemManager>::GetIterator(typename HQLinkedList<T, MemManager>::Iterator & iterator)const
 {
-	iterator.m_pRoot = this->m_pRoot;
+	iterator.m_ppRoot = &this->m_pRoot;
 	iterator.m_pCurrentNode = this->m_pRoot;
 }
 
 template <class T , class MemManager>
 inline void HQLinkedList<T, MemManager>::GetIteratorFromLastItem(typename HQLinkedList<T, MemManager>::Iterator & iterator)const
 {
-	iterator.m_pRoot = this->m_pRoot;
+	iterator.m_ppRoot = &this->m_pRoot;
 	if (this->m_pRoot == NULL)
 		iterator.m_pCurrentNode = NULL;
 	else
@@ -351,7 +351,7 @@ inline typename HQLinkedList<T , MemManager>::Iterator HQLinkedList<T , MemManag
 	Iterator preAdd = *this;
 	if (!this->IsAtEnd())
 	{
-		if (this->m_pCurrentNode == this->m_pRoot->m_pPrev)//last node in list
+		if (this->m_pCurrentNode == (*this->m_ppRoot)->m_pPrev)//last node in list
 			this->m_pCurrentNode = NULL;
 		else
 			this->m_pCurrentNode = this->m_pCurrentNode->m_pNext;
@@ -364,7 +364,7 @@ inline typename HQLinkedList<T , MemManager>::Iterator& HQLinkedList<T , MemMana
 {
 	if (!this->IsAtEnd())
 	{
-		if (this->m_pCurrentNode == this->m_pRoot->m_pPrev)//last node in list
+		if (this->m_pCurrentNode == (*this->m_ppRoot)->m_pPrev)//last node in list
 			this->m_pCurrentNode = NULL;
 		else
 			this->m_pCurrentNode = this->m_pCurrentNode->m_pNext;
@@ -376,8 +376,8 @@ template <class T , class MemManager>
 inline typename HQLinkedList<T , MemManager>::Iterator HQLinkedList<T , MemManager>::Iterator::operator --(hq_int32 i)
 {
 	Iterator preSub = *this;
-	if (this->IsAtEnd() && this->m_pRoot != NULL)
-		this->m_pCurrentNode = this->m_pRoot->m_pPrev;
+	if (this->IsAtEnd() && (*this->m_ppRoot) != NULL)
+		this->m_pCurrentNode = (*this->m_ppRoot)->m_pPrev;
 	else if (!this->IsAtBegin())
 	{
 		this->m_pCurrentNode = this->m_pCurrentNode->m_pPrev;
@@ -388,8 +388,8 @@ inline typename HQLinkedList<T , MemManager>::Iterator HQLinkedList<T , MemManag
 template <class T , class MemManager>
 inline typename HQLinkedList<T , MemManager>::Iterator& HQLinkedList<T , MemManager>::Iterator::operator --()
 {
-	if (this->IsAtEnd() && this->m_pRoot != NULL)
-		this->m_pCurrentNode = this->m_pRoot->m_pPrev;
+	if (this->IsAtEnd() && (*this->m_ppRoot) != NULL)
+		this->m_pCurrentNode = (*this->m_ppRoot)->m_pPrev;
 	else if (!this->IsAtBegin())
 	{
 		this->m_pCurrentNode = this->m_pCurrentNode->m_pPrev;
