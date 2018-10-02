@@ -14,6 +14,17 @@ COPYING.txt included with this distribution for more information.
 #include "HQSharedPointer.h"
 
 #include <new>
+
+#ifdef new
+#ifdef _MSC_VER
+#pragma push_macro("new")
+#define HQ_NEW_DEFINED
+#undef new
+#else
+#	error new defined
+#endif
+#endif
+
 /*---------------------------------------------
 double linked list
 ---------------------------------------------*/
@@ -77,9 +88,11 @@ public:
 	HQLinkedList & operator = (const HQLinkedList &src);//copy operator
 	HQLinkedList & TransferFrom (HQLinkedList &src);//transfer content of list <src> to this list.<src> will be empty
 
+	HQLinkedList & operator << (const T & val);//add to the back
+
 	inline HQLinkedListNode<T> * GetRoot() {return m_pRoot;}//get first node in the list
 	inline const HQLinkedListNode<T> * GetRoot() const {return m_pRoot;}//get first node in the list
-	inline hq_uint32 GetSize() {return m_size;}
+	inline hq_uint32 GetSize() const {return m_size;}
 	inline T& GetFront() {return this->m_pRoot->m_element;}//get first element
 	inline const T& GetFront() const {return this->m_pRoot->m_element;}//get first element
 	inline T& GetBack() {return this->m_pRoot->m_pPrev->m_element;}//get last element
@@ -94,8 +107,8 @@ public:
 	void RemoveAt(HQLinkedListNode<T> *node);
 	void RemoveAll();
 
-	void GetIterator(Iterator& iterator);//get iterator starting at the first item
-	void GetIteratorFromLastItem(Iterator& iterator);//get iterator starting at the last item
+	void GetIterator(Iterator& iterator) const;//get iterator starting at the first item
+	void GetIteratorFromLastItem(Iterator& iterator) const;//get iterator starting at the last item
 
 	///use these methods with care. The element must be initialized after these methods are called because the constructor of the new element is not called by these methods
 	HQLinkedListNode<T> * PushBack();//add a new element at the end. The new element is not initialized, returned pointer can be used to initialize the new element
@@ -147,14 +160,14 @@ inline HQLinkedList<T , MemManager> & HQLinkedList<T , MemManager> :: TransferFr
 }
 
 template <class T , class MemManager>
-inline void HQLinkedList<T , MemManager>::GetIterator(typename HQLinkedList<T , MemManager>::Iterator & iterator)
+inline void HQLinkedList<T, MemManager>::GetIterator(typename HQLinkedList<T, MemManager>::Iterator & iterator)const
 {
 	iterator.m_pRoot = this->m_pRoot;
 	iterator.m_pCurrentNode = this->m_pRoot;
 }
 
 template <class T , class MemManager>
-inline void HQLinkedList<T , MemManager>::GetIteratorFromLastItem(typename HQLinkedList<T , MemManager>::Iterator & iterator)
+inline void HQLinkedList<T, MemManager>::GetIteratorFromLastItem(typename HQLinkedList<T, MemManager>::Iterator & iterator)const
 {
 	iterator.m_pRoot = this->m_pRoot;
 	if (this->m_pRoot == NULL)
@@ -216,6 +229,14 @@ inline HQLinkedListNode<T> * HQLinkedList<T , MemManager>::PushBack(const T & va
 		return this->AddAfter(this->m_pRoot->m_pPrev,val);
 	}
 }
+
+template <class T, class MemManager>
+inline HQLinkedList<T, MemManager> & HQLinkedList<T, MemManager>::operator << (const T & val)
+{
+	PushBack(val);
+	return *this;
+}
+
 template <class T , class MemManager>
 inline HQLinkedListNode<T> * HQLinkedList<T , MemManager>::PushFront(const T &val)//add new element at the beginning of the list
 {
@@ -391,5 +412,10 @@ inline T & HQLinkedList<T , MemManager>::Iterator::operator *()
 
 	return this->m_pCurrentNode->m_element;
 }
+
+#if defined _MSC_VER && defined HQ_NEW_DEFINED
+#pragma pop_macro("new")
+#undef HQ_NEW_DEFINED
+#endif
 
 #endif
